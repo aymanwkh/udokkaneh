@@ -114,14 +114,9 @@ const Store = props => {
     auth_email_already_in_use: 'لقد سجلت سابقا برقم هذا الموبايل',
     auth_wrong_password: 'كلمة السر غير صحيحة'
   }
-  const basket = []
-  const initState = {sections, randomColors, categories, locations, countries, units, labels, orderStatus, basket, trademarks, orderByList, stores}
-
-  const [state, dispatch] = useReducer(Reducer, initState)
-  const [currentUser, setCurrentUser] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [rating, setRating] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const localData = localStorage.getItem('basket');
+  const basket = localData ? JSON.parse(localData) : []
+  const orders = []
   useEffect(() => {
     firebase.auth().onAuthStateChanged(setCurrentUser);
     firebase.firestore().collection('products').onSnapshot(docs => {
@@ -138,16 +133,14 @@ const Store = props => {
       })
       setRating(ratingArray)
     })
-    firebase.firestore().collection('orders').onSnapshot(docs => {
-      let ordersArray = []
-      docs.forEach(doc => {
-        ordersArray.push({...doc.data(), id:doc.id})
-      })
-      setOrders(ordersArray)
-    })
   }, []);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [rating, setRating] = useState([]);
+  const initState = {sections, randomColors, categories, locations, countries, units, labels, orderStatus, basket, orders, trademarks, orderByList, stores}
+  const [state, dispatch] = useReducer(Reducer, initState)
   return (
-    <StoreContext.Provider value={{state, currentUser, products, rating, orders, dispatch}}>
+    <StoreContext.Provider value={{state, currentUser, products, rating, dispatch}}>
       {props.children}
     </StoreContext.Provider>
   );

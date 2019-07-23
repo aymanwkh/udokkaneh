@@ -7,8 +7,8 @@ import { StoreContext } from '../data/Store';
 
 
 const OrderDetails = props => {
-  const { state, orders, currentUser, dispatch } = useContext(StoreContext)
-  const order = orders.find(order => order.id === props.id)
+  const { state, currentUser, dispatch } = useContext(StoreContext)
+  const order = state.orders.find(order => order.id === props.id)
   const [error, setError] = useState('')
   const handleEdit = () => {
     if (state.basket.length > 0) {

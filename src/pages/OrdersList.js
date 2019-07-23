@@ -1,21 +1,34 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar} from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/Store';
-
+import firebase from '../data/firebase'
 
 const OrdersList = props => {
-  const { state, orders, currentUser } = useContext(StoreContext)
-  const userOrders = orders.filter(order => order.user === currentUser.uid)
-  userOrders.sort((ordera, orderb) => orderb.time.seconds - ordera.time.seconds)
+  const { state, currentUser, dispatch } = useContext(StoreContext)
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const docs = await firebase.firestore().collection('orders')
+                            .where('user', '==', currentUser.uid)
+                            .orderBy('time', 'desc')
+                            .get()
+      let ordersArray = []
+      docs.forEach(doc => {
+        ordersArray.push({...doc.data(), id:doc.id})
+      })
+      ordersArray = ordersArray.filter(order => order.status != 3)
+      dispatch({type: 'GET_ORDERS', ordersArray})
+    }
+    fetchOrders()
+  }, [])
   return(
     <Page>
       <Navbar title="Orders" backLink="Back" />
       <Block>
           <List mediaList>
-            {userOrders && userOrders.map(order =>
+            {state.orders && state.orders.map(order =>
               <ListItem
                 link={`/order/${order.id}`}
                 title={moment(order.time.toDate()).fromNow()}
@@ -25,7 +38,7 @@ const OrdersList = props => {
               >
               </ListItem>
             )}
-            { userOrders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
+            { state.orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
 
           </List>
       </Block>

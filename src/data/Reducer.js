@@ -1,29 +1,41 @@
+import { Actions } from "framework7-react";
+
 const Reducer = (state, action) => {
     let newQuantity
     let newBasket
     switch (action.type){
       case 'ADD_TO_BASKET':
         if (state.basket.find(product => product.id === action.product.id)) return state
-        return {...state, basket: [...state.basket, {...action.product, quantity: 1, netPrice: action.product.price}]}
+        newBasket = [...state.basket, {...action.product, quantity: 1, netPrice: action.product.price}]
+        localStorage.setItem('basket', JSON.stringify(newBasket));
+        return {...state, basket: newBasket}
       case 'ADD_QUANTITY':
         newQuantity = state.basket.find(product => product.id === action.product.id).quantity
         newBasket = state.basket.filter(product => product.id !== action.product.id)
-        return {...state, basket: [...newBasket, {...action.product, quantity: ++newQuantity, netPrice: newQuantity * action.product.price}]}
+        newBasket = [...newBasket, {...action.product, quantity: ++newQuantity, netPrice: newQuantity * action.product.price}]
+        localStorage.setItem('basket', JSON.stringify(newBasket));
+        return {...state, basket: newBasket}
       case 'REMOVE_QUANTITY':
         newQuantity = state.basket.find(product => product.id === action.product.id).quantity--
         newBasket = state.basket.filter(product => product.id !== action.product.id)
-        if (--newQuantity === 0) return {...state, basket: newBasket}
-        else return {...state, basket: [...newBasket, {...action.product, quantity: newQuantity, netPrice: newQuantity * action.product.price}]}
+        if (--newQuantity > 0) {
+          newBasket = [...newBasket, {...action.product, quantity: newQuantity, netPrice: newQuantity * action.product.price}]
+        }
+        localStorage.setItem('basket', JSON.stringify(newBasket));
+        return {...state, basket: newBasket}
       case 'CLEAR_BASKET':
-        return {
-          ...state,
-          basket: []
-        }
+        newBasket = []
+        localStorage.setItem('basket', JSON.stringify(newBasket));
+        return {...state, basket: newBasket}
       case 'LOAD_BASKET':
-        return {
-          ...state,
-          basket: action.order.basket
-        }
+        newBasket = action.order.basket
+        localStorage.setItem('basket', JSON.stringify(newBasket));
+        return {...state, basket: newBasket}
+      case 'GET_ORDERS':
+          return {
+            ...state,
+            orders: action.ordersArray
+          }
       case 'DONE':
         return {
           ...state,
