@@ -1,5 +1,3 @@
-import { Actions } from "framework7-react";
-
 const Reducer = (state, action) => {
     let newQuantity
     let newBasket

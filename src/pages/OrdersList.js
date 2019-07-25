@@ -18,11 +18,11 @@ const OrdersList = props => {
       docs.forEach(doc => {
         ordersArray.push({...doc.data(), id:doc.id})
       })
-      ordersArray = ordersArray.filter(order => order.status != 3)
+      ordersArray = ordersArray.filter(order => order.status !== 3)
       dispatch({type: 'GET_ORDERS', ordersArray})
     }
     fetchOrders()
-  }, [])
+  }, [currentUser])
   return(
     <Page>
       <Navbar title="Orders" backLink="Back" />
