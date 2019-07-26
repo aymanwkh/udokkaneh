@@ -61,13 +61,11 @@ const Store = props => {
     {id: '8', name: 'الدرة'}
   ]
   const orderByList = [
-    {id: '0', name: 'بلا'},
     {id: '1', name: 'القيمة'},
     {id: '2', name: 'السعر'},
     {id: '3', name: 'المبيعات'},
     {id: '4', name: 'التقييم'},
-    {id: '5', name: 'اﻻحدث'},
-    {id: '6', name: 'العلامة التجارية'}
+    {id: '5', name: 'اﻻحدث'}
   ]
   const countries = [
     {id: '1', name: 'الاردن'},

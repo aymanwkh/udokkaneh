@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from 'react'
+import React, { useContext, useState } from 'react'
 import { Page, Navbar, List, ListInput, ListButton, Block, Link} from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import firebase from '../data/firebase'
@@ -50,31 +50,29 @@ const Login = props => {
     setError('')
     validateMobile(e.target.value)
   }
-  const handleLogin = useCallback(
-    async e => {
-      e.preventDefault();
-      try {
-        if (mobile === '') {
-          setMobileErrorMessage('enter your mobile number')
-          throw 'enter your mobile number'
-        }
-        if (password === '') {
-          setPasswordErrorMessage('enter your password')
-          throw 'enter your password'
-        }
-        if (passwordErrorMessage !== '') {
-          throw passwordErrorMessage
-        }
-        if (mobileErrorMessage !== '') {
-          throw mobileErrorMessage
-        }
-        await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password);
-        props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
-      } catch (err) {
-        err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err)
+  const handleLogin = async e => {
+    e.preventDefault();
+    try {
+      if (mobile === '') {
+        setMobileErrorMessage('enter your mobile number')
+        throw 'enter your mobile number'
       }
+      if (password === '') {
+        setPasswordErrorMessage('enter your password')
+        throw 'enter your password'
+      }
+      if (passwordErrorMessage !== '') {
+        throw passwordErrorMessage
+      }
+      if (mobileErrorMessage !== '') {
+        throw mobileErrorMessage
+      }
+      await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password);
+      props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
+    } catch (err) {
+      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err)
     }
-  )
+  }
 
   const handleForgetPassword = () => {
     console.log('handle forget password')

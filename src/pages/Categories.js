@@ -8,13 +8,14 @@ const Categories = props => {
   const { state } = useContext(StoreContext)
   const section = state.sections.find(section => section.id === props.id)
   const categories = state.categories.filter(category => category.section === props.id)
+  let i = 0
   return(
     <Page>
       <Navbar title={section.name} backLink="Back" />
       <Block>
         {categories && categories.map(category => {
           return (
-            <Button large fill className="sections" color={state.randomColors[parseInt(category.id) % 13].name} href={`/category/${category.id}`} key={category.id}>
+            <Button large fill className="sections" color={state.randomColors[i++ % 13].name} href={`/category/${category.id}`} key={category.id}>
               {category.name}
             </Button>
           )

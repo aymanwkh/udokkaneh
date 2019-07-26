@@ -11,7 +11,6 @@ import Products from './pages/Products'
 import ProductDetails from './pages/ProductDetails'
 import Basket from './pages/Basket'
 import ConfirmOrder from './pages/ConfirmOrder'
-import Search from './pages/Search'
 import OrdersList from './pages/OrdersList';
 import OrderDetails from './pages/OrderDetails';
 
@@ -70,7 +69,7 @@ export default [
   },
   {
     path: '/search/',
-    component: Search,
+    component: Products,
   },
   {
     path: '/ordersList/',
