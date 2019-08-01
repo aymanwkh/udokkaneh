@@ -114,31 +114,42 @@ const Store = props => {
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
-  const orders = []
+  const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [rating, setRating] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const initState = {sections, randomColors, categories, locations, countries, units, labels, orderStatus, basket, orders, trademarks, orderByList, stores}
+  const [state, dispatch] = useReducer(Reducer, initState)
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(setCurrentUser);
-    firebase.firestore().collection('products').onSnapshot(docs => {
+    firebase.auth().onAuthStateChanged(user => {
+      setUser(user)
+      if (user){
+        firebase.firestore().collection('orders').where('user', '==', user.uid).onSnapshot(docs => {
+          let ordersArray = []
+          docs.forEach(doc => {
+            ordersArray.push({...doc.data(), id:doc.id})
+          })
+          setOrders(ordersArray)
+        })  
+        firebase.firestore().collection('rating').where('user', '==', user.uid).onSnapshot(docs => {
+          let ratingArray = []
+          docs.forEach(doc => {
+            ratingArray.push({...doc.data(), id: doc.id})
+          })
+          setRating(ratingArray)
+        })
+      }
+    });
+    firebase.firestore().collection('products').where('status', '==', 1).onSnapshot(docs => {
       let productsArray = []
       docs.forEach(doc => {
         productsArray.push({...doc.data(), id: doc.id})
       })
       setProducts(productsArray)
     })
-    firebase.firestore().collection('rating').onSnapshot(docs => {
-      let ratingArray = []
-      docs.forEach(doc => {
-        ratingArray.push({...doc.data(), id: doc.id})
-      })
-      setRating(ratingArray)
-    })
   }, []);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [rating, setRating] = useState([]);
-  const initState = {sections, randomColors, categories, locations, countries, units, labels, orderStatus, basket, orders, trademarks, orderByList, stores}
-  const [state, dispatch] = useReducer(Reducer, initState)
   return (
-    <StoreContext.Provider value={{state, currentUser, products, rating, dispatch}}>
+    <StoreContext.Provider value={{state, user, products, rating, orders, dispatch}}>
       {props.children}
     </StoreContext.Provider>
   );

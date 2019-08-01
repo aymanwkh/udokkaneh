@@ -29,11 +29,6 @@ const Reducer = (state, action) => {
         newBasket = action.order.basket
         localStorage.setItem('basket', JSON.stringify(newBasket));
         return {...state, basket: newBasket}
-      case 'GET_ORDERS':
-          return {
-            ...state,
-            orders: action.ordersArray
-          }
       case 'DONE':
         return {
           ...state,
