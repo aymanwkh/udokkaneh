@@ -1,13 +1,14 @@
 import firebase from './firebase'
 
-export const rateProduct = (product, rating) => {
+export const rateProduct = async (product, rating) => {
   const ratingRec = {
     productId: product.id,
     user: firebase.auth().currentUser.uid,
     rating: rating,
     time: new Date()
   }
-  firebase.firestore().collection('rating').add(ratingRec)
+  const docRef = await firebase.firestore().collection('rating').add(ratingRec)
+  return docRef.id
 }
 
 export const confirmOrder = async order => {

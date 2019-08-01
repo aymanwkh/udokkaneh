@@ -73,7 +73,7 @@ const Products = props => {
                 link={`/product/${product.id}`}
                 title={product.name}
                 after={parseFloat(product.price).toFixed(3)}
-                subtitle={state.trademarks.find(trademark => trademark.id === product.trademark).name}
+                subtitle={product.trademark ? state.trademarks.find(trademark => trademark.id === product.trademark).name : ''}
                 text={product.name}
                 key={product.id}
               >
