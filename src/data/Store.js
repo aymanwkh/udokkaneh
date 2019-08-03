@@ -28,11 +28,11 @@ const Store = props => {
     {id: '5', name: 'مخيم جبل الحسين'}
   ]
   const orderByList = [
-    {id: '1', name: 'القيمة'},
-    {id: '2', name: 'السعر'},
-    {id: '3', name: 'المبيعات'},
-    {id: '4', name: 'التقييم'},
-    {id: '5', name: 'اﻻحدث'}
+    {id: 'v', name: 'القيمة'},
+    {id: 'p', name: 'السعر'},
+    {id: 's', name: 'المبيعات'},
+    {id: 'r', name: 'التقييم'},
+    {id: 't', name: 'اﻻحدث'}
   ]
   const units = [
     {id: '1', name: 'حبة'},
