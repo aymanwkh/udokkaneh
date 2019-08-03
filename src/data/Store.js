@@ -77,6 +77,10 @@ const Store = props => {
   let countries = []
   let stores = []
   let rating = []
+  const initState = {sections, randomColors, categories, locations, countries, units, 
+    labels, orderStatus, basket, orders, trademarks, orderByList, stores, rating}
+  const [state, dispatch] = useReducer(Reducer, initState)
+
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
@@ -123,14 +127,12 @@ const Store = props => {
     firebase.firestore().collection('products').where('status', '==', 1).onSnapshot(docs => {
       let productsArray = []
       docs.forEach(doc => {
-        productsArray.push({...doc.data(), id: doc.id})
+        const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
+        productsArray.push({...doc.data(), id: doc.id, price: minPrice})
       })
       setProducts(productsArray)
     })
   }, []);
-  const initState = {sections, randomColors, categories, locations, countries, units, 
-                      labels, orderStatus, basket, orders, trademarks, orderByList, stores, rating}
-  const [state, dispatch] = useReducer(Reducer, initState)
   return (
     <StoreContext.Provider value={{state, user, products, orders, dispatch}}>
       {props.children}
