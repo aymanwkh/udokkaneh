@@ -40,9 +40,15 @@ const Store = props => {
     {id: '3', name: 'كيلو غرام'}
   ]
   const orderStatus = [
-    {id: 1, name: 'قيد التسليم'},
-    {id: 2, name: 'تم اﻻستلام'},
-    {id: 3, name: 'ملغي'}
+    {id: 'a', name: 'فعال'},
+    {id: 's', name: 'معلق'},
+    {id: 'r', name: 'مرفوض'},
+    {id: 'e', name: 'قيد التسليم'},
+    {id: 'f', name: 'جاهز'},
+    {id: 'd', name: 'تم اﻻستلام'},
+    {id: 'l', name: 'متأخر'},
+    {id: 'c', name: 'ملغي'},
+    {id: 'i', name: 'في المستودع'}
   ]  
   const labels = {
     appTitle: 'حريص',

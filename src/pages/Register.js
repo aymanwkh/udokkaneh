@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { Page, Navbar, List, ListInput, ListButton, ListItem, Block} from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import firebase from '../data/firebase'
+import { registerUser } from '../data/Actions'
 
 const Register = props => {
   const { state } = useContext(StoreContext)
@@ -73,11 +73,9 @@ const Register = props => {
         setPasswordErrorMessage('enter your password')
         throw 'enter your password'
       }
-      await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password);
-      await firebase.auth().currentUser.updateProfile({
-        displayName: name + '-' + mobile
+      registerUser(mobile, password, name).then(() => {
+        props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
       })
-      props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
     } catch (err) {
       err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err)
     }

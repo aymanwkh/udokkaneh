@@ -15,7 +15,7 @@ export const confirmOrder = async order => {
   const newOrder = {
     ...order,
     user: firebase.auth().currentUser.uid,
-    status: 1,
+    status: 'a',
     time: new Date()
   }
   await firebase.firestore().collection('orders').add(newOrder)
@@ -24,11 +24,11 @@ export const confirmOrder = async order => {
 export const addProduct = async storeProduct => {
   const stores = [...storeProduct.product.stores, {id: storeProduct.storeId, price: parseFloat(storeProduct.price).toFixed(3), time: new Date()}]
   const minPrice = Math.min(...stores.map(store => store.price))
-  await firebase.firestore().collection('products').doc(storeProduct.product.id).set({
+  await firebase.firestore().collection('products').doc(storeProduct.product.id).update({
     stores: stores,
     price: parseFloat(minPrice).toFixed(3),
     value: minPrice / storeProduct.product.quantity,
-  }, { merge: true })
+  })
 }
 
 export const newProduct = async product => {
@@ -61,31 +61,40 @@ export const newProduct = async product => {
 }
 
 export const editOrder = async order => {
-  await firebase.firestore().collection("orders").doc(order.id).set({
-    status: 3
-  }, { merge: true })
+  await firebase.firestore().collection("orders").doc(order.id).update({
+    status: 'c'
+  })
 }
 
 export const editPrice = async (storeId, product, price) => {
   let stores = product.stores.filter(store => store.id !== storeId)
   stores = [...stores, {id: storeId, price: parseFloat(price).toFixed(3), time: new Date()}]
   const minPrice = Math.min(...stores.map(store => store.price))
-  await firebase.firestore().collection('products').doc(product.id).set({
+  await firebase.firestore().collection('products').doc(product.id).update({
     stores: stores,
     price: parseFloat(minPrice).toFixed(3),
     value: minPrice / product.quantity,
-  }, { merge: true })
+  })
 }
 
 
 export const deleteProduct = async (storeId, product) => {
   const stores = product.stores.filter(store => store.id !== storeId)
   const minPrice = (stores.length > 0) ? Math.min(...stores.map(store => store.price)) : 0
-  await firebase.firestore().collection('products').doc(product.id).set({
+  await firebase.firestore().collection('products').doc(product.id).update({
     stores: stores,
     price: parseFloat(minPrice).toFixed(3),
     value: minPrice / product.quantity,
-  }, { merge: true })
+  })
+}
+
+export const registerUser = async (mobile, password, name) => {
+  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password);
+  await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+    name,
+    mobile,
+    time: new Date()
+  })
 }
 
 
