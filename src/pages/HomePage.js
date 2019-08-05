@@ -21,8 +21,6 @@ const HomePage = props => (
     <Sections/>
     <List>
       <ListItem link="/about/" title="About"></ListItem>
-      <ListItem link="/form/" title="Form"></ListItem>
-      <ListItem link="/addProduct/1/category/1" title="Add Product"></ListItem>
     </List>
     <BlockTitle>Modals</BlockTitle>
     <Block strong>

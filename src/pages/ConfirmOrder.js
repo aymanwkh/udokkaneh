@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, ListInput, Button} from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, ListInput, Fab, Icon} from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
@@ -24,8 +24,8 @@ const ConfirmOrder = props => {
   if (!user) return <ReLogin callingPage="order"/>
   return(
     <Page>
-    <Navbar title="Order" backLink="Back" />
-    <Block>
+      <Navbar title="Order" backLink="Back" />
+      <Block>
         <List>
           {state.basket && state.basket.map(product => {
             return (
@@ -42,13 +42,15 @@ const ConfirmOrder = props => {
             value={note}
             onChange={(e) => setNote(e.target.value)}
           />
-          <Button fill onClick={() => handleOrder()}>Confirm</Button>
         </List>
-    </Block>
-    <Toolbar bottom>
-      <BottomToolbar/>
-    </Toolbar>
-  </Page>
+      </Block>
+      <Fab position="center-bottom" slot="fixed" text="Confirm" color="green" onClick={() => handleOrder()}>
+          <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
+        </Fab>
+      <Toolbar bottom>
+        <BottomToolbar/>
+      </Toolbar>
+    </Page>
   )
 }
 export default ConfirmOrder
