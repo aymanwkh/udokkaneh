@@ -7,8 +7,8 @@ import { StoreContext } from '../data/Store';
 
 
 const OrderDetails = props => {
-  const { state, user, dispatch } = useContext(StoreContext)
-  const order = state.orders.find(order => order.id === props.id)
+  const { state, user, orders, dispatch } = useContext(StoreContext)
+  const order = orders.find(order => order.id === props.id)
   const [error, setError] = useState('')
   const handleEdit = () => {
     if (state.basket.length > 0) {
@@ -30,12 +30,12 @@ const OrderDetails = props => {
           <List>
             {order.basket && order.basket.map(product => {
               return (
-                <ListItem key={product.id} title={product.name} after={parseFloat(product.netPrice).toFixed(3)}></ListItem>
+                <ListItem key={product.id} title={product.name} after={product.netPrice}></ListItem>
               )
             })}
-            <ListItem title="Total" className="total" after={(parseFloat(order.total) - 0.250).toFixed(3)}></ListItem>
+            <ListItem title="Total" className="total" after={parseFloat(order.total - 0.250).toFixed(3)}></ListItem>
             <ListItem title="Delivery" className="delivery" after="0.250"></ListItem>
-            <ListItem title="Net Total" className="net" after={parseFloat(order.total).toFixed(3)}></ListItem>
+            <ListItem title="Net Total" className="net" after={order.total}></ListItem>
             <ListInput
               label="Note"
               type="textarea"

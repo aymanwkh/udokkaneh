@@ -18,13 +18,13 @@ const OrdersList = props => {
               <ListItem
                 link={`/order/${order.id}`}
                 title={moment(order.time.toDate()).fromNow()}
-                after={parseFloat(order.total).toFixed(3)}
+                after={order.total}
                 text={state.orderStatus.find(orderStatus => orderStatus.id === order.status).name}
                 key={order.id}
               >
               </ListItem>
             )}
-            { state.orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
+            { orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
 
           </List>
       </Block>

@@ -130,11 +130,11 @@ const Store = props => {
         stores.push({...doc.data(), id:doc.id})
       })
     })  
-    firebase.firestore().collection('products').where('status', '==', 1).onSnapshot(docs => {
+    firebase.firestore().collection('products').where('status', '==', 'a').onSnapshot(docs => {
       let productsArray = []
       docs.forEach(doc => {
         const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
-        productsArray.push({...doc.data(), id: doc.id, price: minPrice})
+        productsArray.push({...doc.data(), id: doc.id, price: parseFloat(minPrice).toFixed(3)})
       })
       setProducts(productsArray)
     })

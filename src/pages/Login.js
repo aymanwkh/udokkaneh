@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, ListButton, Block, Link} from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import firebase from '../data/firebase'
@@ -22,34 +22,30 @@ const Login = props => {
     password: /^.{4}$/,
     mobile: /^07[7-9][0-9]{7}$/
   }
-  const validatePassword = (value) => {
-    if (patterns.password) {
-      if (patterns.password.test(value)){
-        setPasswordErrorMessage('')
-      } else {
-        setPasswordErrorMessage('not a valid password')
+  useEffect(() => {
+    const validatePassword = (value) => {
+      if (patterns.password) {
+        if (patterns.password.test(value)){
+          setPasswordErrorMessage('')
+        } else {
+          setPasswordErrorMessage('not a valid password')
+        }
       }
     }
-  }
-  const validateMobile = (value) => {
-    if (patterns.mobile) {
-      if (patterns.mobile.test(value)){
-        setMobileErrorMessage('')
-      } else {
-        setMobileErrorMessage('not a valid mobile number')
+    if (password !== '') validatePassword(password)
+  }, [password])
+  useEffect(() => {
+    const validateMobile = (value) => {
+      if (patterns.mobile) {
+        if (patterns.mobile.test(value)){
+          setMobileErrorMessage('')
+        } else {
+          setMobileErrorMessage('not a valid mobile number')
+        }
       }
     }
-  }
-  const handlePasswordChange = e => {
-    setPassword(e.target.value)
-    setError('')
-    validatePassword(e.target.value)
-  }
-  const handleMobileChange = e => {
-    setMobile(e.target.value)
-    setError('')
-    validateMobile(e.target.value)
-  }
+    if (mobile !== '') validateMobile(mobile)
+  }, [mobile])
   const handleLogin = async e => {
     e.preventDefault();
     try {
@@ -85,21 +81,24 @@ const Login = props => {
           label="Mobile"
           type="number"
           placeholder="Your Mobile beginning with 07"
-          inputId="mobile"
+          name="mobile"
+          clearButton
           value={mobile}
           errorMessage={mobileErrorMessage}
           errorMessageForce
-          onChange={(e) => handleMobileChange(e)}
+          onChange={(e) => setMobile(e.target.value)}
+          onInputClear={() => setMobile('')}
         />
         <ListInput
           label="Password"
           type="number"
           placeholder="Your password"
-          inputId="password"
+          name="password"
           value={password}
           errorMessage={passwordErrorMessage}
           errorMessageForce
-          onChange={(e) => handlePasswordChange(e)}
+          onChange={(e) => setPassword(e.target.value)}
+          onInputClear={() => setPassword('')}
         />
       </List>
       <List>

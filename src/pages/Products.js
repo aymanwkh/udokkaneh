@@ -12,7 +12,7 @@ const Products = props => {
   const sort = () => {
     switch(orderBy){
       case 'v':
-        setCategoryProducts([...categoryProducts].sort((producta, productb) => producta.price / producta.quantity - productb.price / productb.quantity))
+        setCategoryProducts([...categoryProducts].sort((producta, productb) => producta.price / producta.size - productb.price / productb.size))
         break
       case 'p':
         setCategoryProducts([...categoryProducts].sort((producta, productb) => producta.price - productb.price))
@@ -72,7 +72,7 @@ const Products = props => {
               <ListItem
                 link={`/product/${product.id}`}
                 title={product.name}
-                after={parseFloat(product.price).toFixed(3)}
+                after={product.price}
                 subtitle={product.trademark ? state.trademarks.find(trademark => trademark.id === product.trademark).name : ''}
                 text={product.name}
                 key={product.id}
