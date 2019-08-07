@@ -9,10 +9,8 @@ import { confirmOrder } from '../data/Actions'
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const totalPrice = state.basket.reduce((a, product) => a + Number(product.netPrice), 0)
-  const [note, setNote] = useState('')
   const handleOrder = e => {
     const order = {
-      note: note,
       basket: state.basket,
       total: parseFloat(totalPrice + 0.250).toFixed(3)
     }
@@ -29,19 +27,16 @@ const ConfirmOrder = props => {
         <List>
           {state.basket && state.basket.map(product => {
             return (
-              <ListItem key={product.id} title={product.name} after={product.netPrice}></ListItem>
+              <ListItem 
+                key={product.id} 
+                title={`${product.name} (${product.quantity})`} 
+                after={product.netPrice}
+              ></ListItem>
             )
           })}
           <ListItem title="Total" className="total" after={parseFloat(totalPrice).toFixed(3)}></ListItem>
           <ListItem title="Delivery" className="delivery" after="0.250"></ListItem>
           <ListItem title="Net Total" className="net" after={parseFloat(totalPrice + 0.250).toFixed(3)}></ListItem>
-          <ListInput
-            label="Note"
-            type="textarea"
-            name="note"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
         </List>
       </Block>
       <Fab position="center-bottom" slot="fixed" text="Confirm" color="green" onClick={() => handleOrder()}>

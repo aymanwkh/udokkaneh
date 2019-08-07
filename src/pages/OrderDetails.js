@@ -28,22 +28,17 @@ const OrderDetails = props => {
       <Navbar title="Order" backLink="Back" />
       <Block>
           <List>
-            {order.basket && order.basket.map(product => {
-              return (
-                <ListItem key={product.id} title={product.name} after={product.netPrice}></ListItem>
-              )
-            })}
+            {order.basket && order.basket.map(product => 
+              <ListItem 
+                key={product.id} 
+                title={`${product.name} (${product.quantity})`} 
+                after={product.netPrice}
+              ></ListItem>
+            )}
             <ListItem title="Total" className="total" after={parseFloat(order.total - 0.250).toFixed(3)}></ListItem>
             <ListItem title="Delivery" className="delivery" after="0.250"></ListItem>
             <ListItem title="Net Total" className="net" after={order.total}></ListItem>
-            <ListInput
-              label="Note"
-              type="textarea"
-              inputId="note"
-              value={order.note}
-              readonly
-            />
-            { order.status === 1 ? <Button fill onClick={() => handleEdit()}>Edit</Button> : null }
+            { order.status === 'n' ? <Button fill onClick={() => handleEdit()}>Edit</Button> : null }
           </List>
       </Block>
       <Block strong className="error">

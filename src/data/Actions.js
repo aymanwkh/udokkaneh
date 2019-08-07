@@ -15,7 +15,7 @@ export const confirmOrder = async order => {
   const newOrder = {
     ...order,
     user: firebase.auth().currentUser.uid,
-    status: 'a',
+    status: 'n',
     time: new Date()
   }
   await firebase.firestore().collection('orders').add(newOrder)
