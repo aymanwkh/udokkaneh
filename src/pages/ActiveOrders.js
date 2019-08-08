@@ -22,8 +22,7 @@ const ActiveOrders = props => {
                 after={order.total}
                 text={moment(order.time.toDate()).fromNow()}
                 key={order.id}
-              >
-              </ListItem>
+              />
             )}
             { activeOrders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
 

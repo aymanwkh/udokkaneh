@@ -21,8 +21,7 @@ const OrdersList = props => {
                 after={order.total}
                 text={state.orderStatus.find(orderStatus => orderStatus.id === order.status).name}
                 key={order.id}
-              >
-              </ListItem>
+              />
             )}
             { orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
 

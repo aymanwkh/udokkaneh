@@ -19,24 +19,22 @@ const ConfirmOrder = props => {
       dispatch({type: 'CLEAR_BASKET'})
     })
   }
-  if (!user) return <ReLogin callingPage="order"/>
+  if (!user) return <ReLogin callingPage="confirmOrder"/>
   return(
     <Page>
       <Navbar title="Order" backLink="Back" />
       <Block>
         <List>
-          {state.basket && state.basket.map(product => {
-            return (
-              <ListItem 
-                key={product.id} 
-                title={`${product.name} (${product.quantity})`} 
-                after={product.netPrice}
-              ></ListItem>
-            )
-          })}
-          <ListItem title="Total" className="total" after={parseFloat(totalPrice).toFixed(3)}></ListItem>
-          <ListItem title="Delivery" className="delivery" after="0.250"></ListItem>
-          <ListItem title="Net Total" className="net" after={parseFloat(totalPrice + 0.250).toFixed(3)}></ListItem>
+          {state.basket && state.basket.map(product => 
+            <ListItem 
+              key={product.id} 
+              title={`${product.name} (${product.quantity})`} 
+              after={product.netPrice}
+            />
+          )}
+          <ListItem title="Total" className="total" after={parseFloat(totalPrice).toFixed(3)} />
+          <ListItem title="Delivery" className="delivery" after="0.250" />
+          <ListItem title="Net Total" className="net" after={parseFloat(totalPrice + 0.250).toFixed(3)} />
         </List>
       </Block>
       <Fab position="center-bottom" slot="fixed" text="Confirm" color="green" onClick={() => handleOrder()}>

@@ -20,7 +20,7 @@ const HomePage = props => (
     <BlockTitle>Navigation</BlockTitle>
     <Sections/>
     <List>
-      <ListItem link="/about/" title="About"></ListItem>
+      <ListItem link="/about/" title="About" />
     </List>
     <BlockTitle>Modals</BlockTitle>
     <Block strong>
@@ -31,7 +31,7 @@ const HomePage = props => (
       </Row>
     </Block>
     <List>
-      <ListItem link="/load-something-that-doesnt-exist/" title="Default Route (404)"></ListItem>
+      <ListItem link="/load-something-that-doesnt-exist/" title="Default Route (404)" />
     </List>
     <Toolbar bottom>
       <BottomToolbar isHome="1"/>

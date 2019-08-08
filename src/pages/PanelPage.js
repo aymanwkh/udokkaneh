@@ -10,7 +10,7 @@ const PanelPage = props => {
       dispatch({type: 'CLEAR_BASKET'})
     })
   }
-  const login_logout = user ? <ListItem link="#" onClick={() => handleLogout()} title="Log Out"></ListItem> : <ListItem link="/login/panel" title="Login"></ListItem>
+  const login_logout = user ? <ListItem link="#" onClick={() => handleLogout()} title="Log Out" /> : <ListItem link="/login/panel" title="Login" />
   return(
     <Page>
       <Navbar title="Right Panel" />
@@ -23,7 +23,7 @@ const PanelPage = props => {
       </List>
       <BlockTitle>Load page in main view</BlockTitle>
       <List>
-        { user ? <ListItem link="/ordersList/" title="Orders" view="#main-view" panelClose></ListItem> : null }
+        { user ? <ListItem link="/ordersList/" title="Orders" view="#main-view" panelClose /> : null }
       </List>
     </Page>
   )
