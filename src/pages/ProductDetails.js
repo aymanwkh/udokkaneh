@@ -12,7 +12,7 @@ const ProductDetails = props => {
   }
   const { state, products, user, dispatch } = useContext(StoreContext)
   const product = products.find(product => product.id === props.id)
-  const rating_links = user && state.rating.findIndex(rating => rating.productId === props.id) === -1 ? <RateProduct product={product}/> : null
+  const rating_links = user && state.rating.find(rating => rating.productId === props.id) ? <RateProduct product={product}/> : null
   return (
     <Page>
       <Navbar title={product.name} backLink="Back" />

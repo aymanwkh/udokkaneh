@@ -14,14 +14,15 @@ const Basket = props => {
 
   return(
     <Page>
-    <Navbar title="basket" backLink="Back" />
+    <Navbar title={state.labels.basket} backLink="Back" />
     <Block>
         <List mediaList>
           {products && products.map(product => 
             <ListItem
               title={product.name}
               after={product.netPrice}
-              subtitle={`انتاج ${state.countries.find(rec => rec.id === product.country).name}`}
+              subtitle={`${product.size} ${state.units.find(rec => rec.id === product.unit).name}`}
+              text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}
               key={product.id}
             >
               <img slot="media" src={product.imageUrl} width="80" alt=""/>
@@ -45,7 +46,7 @@ const Basket = props => {
           )}
         </List>
     </Block>
-    <Fab position="center-bottom" slot="fixed" text={`اعتماد ${totalPrice}`} color="red" onClick={() => props.f7router.navigate('/confirmOrder/')}>
+    <Fab position="center-bottom" slot="fixed" text={`${state.labels.confirm} ${totalPrice}`} color="red" onClick={() => props.f7router.navigate('/confirmOrder/')}>
       <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
     </Fab>
 

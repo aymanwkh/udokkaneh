@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link} from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge} from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 
@@ -23,9 +23,6 @@ const Products = props => {
       case 'r':
         setCategoryProducts([...categoryProducts].sort((producta, productb) => productb.rating - producta.rating))
         break
-      case 't':
-        setCategoryProducts([...categoryProducts].sort((producta, productb) => productb.time.seconds - producta.time.seconds))
-        break
       default:
         return null
     }
@@ -45,7 +42,7 @@ const Products = props => {
       <Block>
         <List>
           <ListItem
-            title="Order"
+            title={state.labels.order}
             smartSelect
             smartSelectParams={{openIn: 'popover', closeOnSelect: true}}
           >
@@ -73,11 +70,12 @@ const Products = props => {
                 link={`/product/${product.id}`}
                 title={product.name}
                 after={product.price}
-                subtitle={product.trademark ? state.trademarks.find(trademark => trademark.id === product.trademark).name : ''}
-                text={product.name}
+                subtitle={`${product.size} ${state.units.find(rec => rec.id === product.unit).name}`}
+                text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}
                 key={product.id}
               >
                 <img slot="media" src={product.imageUrl} width="80" className="lazy lazy-fadeIn demo-lazy" alt=""/>
+                {product.isNew ? <Badge slot="after-title" color="red">{state.labels.new}</Badge> : null}
               </ListItem>
             )
           })}

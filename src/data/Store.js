@@ -31,13 +31,14 @@ const Store = props => {
     {id: 'v', name: 'القيمة'},
     {id: 'p', name: 'السعر'},
     {id: 's', name: 'المبيعات'},
-    {id: 'r', name: 'التقييم'},
-    {id: 't', name: 'اﻻحدث'}
+    {id: 'r', name: 'التقييم'}
   ]
   const units = [
-    {id: '1', name: 'حبة'},
-    {id: '2', name: 'غرام'},
-    {id: '3', name: 'كيلو غرام'}
+    {id: 'p', name: 'حبة'},
+    {id: 'g', name: 'غرام'},
+    {id: 'kg', name: 'كيلو غرام'},
+    {id: 'ml', name: 'مل لتر'},
+    {id: 'l', name: 'لتر'}
   ]
   const orderStatus = [
     {id: 'n', name: 'جديد'},
@@ -71,7 +72,13 @@ const Store = props => {
     open_order_found: 'هناك طلبية سابقة لم يتم استلامها',
     auth_user_not_found: 'الرجاء التأكد من رقم الموبايل وكلمة المرور',
     auth_email_already_in_use: 'لقد سجلت سابقا برقم هذا الموبايل',
-    auth_wrong_password: 'كلمة السر غير صحيحة'
+    auth_wrong_password: 'كلمة السر غير صحيحة',
+    productOf: 'انتاج',
+    order: 'الترتيب',
+    new: 'جديد',
+    confirmOrder: 'اعتماد الطلب',
+    basket: 'سلة المشتريات',
+    confirm: 'اعتماد'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []

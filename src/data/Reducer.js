@@ -3,45 +3,30 @@ const Reducer = (state, action) => {
   let newQuantity
   let otherProducts
   let newBasket
-  let time
   switch (action.type){
     case 'ADD_TO_BASKET':
       if (state.basket.find(product => product.id === action.product.id)) return state
       product = {
-        id: action.product.id,
-        name: action.product.name,
-        country: action.product.country,
-        price: action.product.price,
-        imageUrl: action.product.imageUrl,
+        ...action.product,
         quantity: 1,
-        purchasedQuantity: 0,
-        netPrice: parseFloat(action.product.price).toFixed(3),
-        time: new Date()
+        netPrice: parseFloat(action.product.price).toFixed(3)
       }
       newBasket = [...state.basket, product]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'ADD_QUANTITY':
       newQuantity = state.basket.find(product => product.id === action.product.id).quantity
-      time = state.basket.find(product => product.id === action.product.id).time
       otherProducts = state.basket.filter(product => product.id !== action.product.id)
       product = {
-        id: action.product.id,
-        name: action.product.name,
-        country: action.product.country,
-        imageUrl: action.product.imageUrl,
-        price: action.product.price,
+        ...action.product,
         quantity: ++newQuantity,
-        purchasedQuantity: 0,
         netPrice: parseFloat(newQuantity * action.product.price).toFixed(3),
-        time: time
       }
       newBasket = [...otherProducts, product]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'REMOVE_QUANTITY':
       newQuantity = state.basket.find(product => product.id === action.product.id).quantity
-      time = state.basket.find(product => product.id === action.product.id).time
       otherProducts = state.basket.filter(product => product.id !== action.product.id)
       if (--newQuantity === 0) {
         if (otherProducts.length > 0){
@@ -51,15 +36,9 @@ const Reducer = (state, action) => {
         }
       } else {
         product = {
-          id: action.product.id,
-          name: action.product.name,
-          country: action.product.country,
-          imageUrl: action.product.imageUrl,
-          price: action.product.price,
+          ...action.product,
           quantity: newQuantity,
-          purchasedQuantity: 0,
-          netPrice: parseFloat(newQuantity * action.product.price).toFixed(3),
-          time: time
+          netPrice: parseFloat(newQuantity * action.product.price).toFixed(3)
         }
         newBasket = [...otherProducts, product]
       }
