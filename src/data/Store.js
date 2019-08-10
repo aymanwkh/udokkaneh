@@ -78,21 +78,35 @@ const Store = props => {
     new: 'جديد',
     confirmOrder: 'اعتماد الطلب',
     basket: 'سلة المشتريات',
-    confirm: 'اعتماد'
+    confirm: 'اعتماد',
+    orderDetails: 'تفاصيل الطلب'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
   const [user, setUser] = useState(null);
-  const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
   let sections = []
   let categories = []
   let trademarks = []
   let countries = []
   let stores = []
   let rating = []
-  const initState = {sections, randomColors, categories, locations, countries, units, 
-    labels, orderStatus, basket, orders, trademarks, orderByList, stores, rating}
+  const initState = {
+    sections, 
+    randomColors, 
+    categories, 
+    locations, 
+    countries, 
+    units, 
+    labels, 
+    orderStatus, 
+    basket, 
+    trademarks, 
+    orderByList, 
+    stores, 
+    rating
+  }
   const [state, dispatch] = useReducer(Reducer, initState)
 
   useEffect(() => {
@@ -105,7 +119,7 @@ const Store = props => {
             ordersArray.push({...doc.data(), id:doc.id})
           })
           setOrders(ordersArray)
-        })  
+        })
         firebase.firestore().collection('rating').where('user', '==', user.uid).get().then(docs => {
           docs.forEach(doc => {
             rating.push({...doc.data(), id:doc.id})
@@ -137,7 +151,7 @@ const Store = props => {
       docs.forEach(doc => {
         stores.push({...doc.data(), id:doc.id})
       })
-    })  
+    }) 
     firebase.firestore().collection('products').where('status', '==', 'a').onSnapshot(docs => {
       let productsArray = []
       docs.forEach(doc => {
@@ -148,7 +162,7 @@ const Store = props => {
     })
   }, []);
   return (
-    <StoreContext.Provider value={{state, user, products, orders, dispatch}}>
+    <StoreContext.Provider value={{state, user, orders, products, dispatch}}>
       {props.children}
     </StoreContext.Provider>
   );

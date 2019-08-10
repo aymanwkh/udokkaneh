@@ -8,7 +8,8 @@ import firebase from '../data/firebase'
 
 const OrdersList = props => {
   const { state, orders } = useContext(StoreContext)
-  const sortedOrders = orders.sort((ordera, orderb) => orderb.time.seconds - ordera.time.seconds)
+  let sortedOrders = orders
+  sortedOrders.sort((order1, order2) => order2.time.seconds - order1.time.seconds)
   return(
     <Page>
       <Navbar title="Orders" backLink="Back" />
@@ -23,7 +24,7 @@ const OrdersList = props => {
                 key={order.id}
               />
             )}
-            { orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
+            { sortedOrders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
 
           </List>
       </Block>

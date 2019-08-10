@@ -7,7 +7,7 @@ import { StoreContext } from '../data/Store';
 
 
 const OrderDetails = props => {
-  const { state, user, orders, dispatch } = useContext(StoreContext)
+  const { state, user, orders, products, dispatch } = useContext(StoreContext)
   const order = orders.find(order => order.id === props.id)
   const [error, setError] = useState('')
   const handleEdit = () => {
@@ -25,15 +25,18 @@ const OrderDetails = props => {
   if (!user) return <ReLogin callingPage="order"/>
   return(
     <Page>
-      <Navbar title="Order" backLink="Back" />
+      <Navbar title={state.labels.OrderDetails} backLink="Back" />
       <Block>
         <List>
-          {order.basket && order.basket.map(product => 
-            <ListItem 
-              key={product.id} 
-              title={`${product.name} (${product.quantity})`} 
-              after={product.netPrice}
-            />
+          {order.basket && order.basket.map(product => {
+            const productInfo = products.find(rec => rec.id === product.id)
+            return (
+              <ListItem 
+                key={product.id} 
+                title={productInfo.name} 
+                after={parseFloat(product.price * product.quantity).toFixed(3)}
+              />
+            )}
           )}
           <ListItem title="Total" className="total" after={parseFloat(order.total - 0.250).toFixed(3)} />
           <ListItem title="Delivery" className="delivery" after="0.250" />
