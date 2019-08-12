@@ -28,7 +28,6 @@ const Store = props => {
     {id: '5', name: 'مخيم جبل الحسين'}
   ]
   const orderByList = [
-    {id: 'v', name: 'القيمة'},
     {id: 'p', name: 'السعر'},
     {id: 's', name: 'المبيعات'},
     {id: 'r', name: 'التقييم'}
@@ -74,8 +73,9 @@ const Store = props => {
     auth_email_already_in_use: 'لقد سجلت سابقا برقم هذا الموبايل',
     auth_wrong_password: 'كلمة السر غير صحيحة',
     productOf: 'انتاج',
-    order: 'الترتيب',
+    orderBy: 'الترتيب حسب',
     new: 'جديد',
+    offer: 'عرض',
     confirmOrder: 'اعتماد الطلب',
     basket: 'سلة المشتريات',
     confirm: 'اعتماد',

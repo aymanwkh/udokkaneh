@@ -28,7 +28,8 @@ const ProductDetails = props => {
               <Rating rating={product.rating} />
             </Col>
             </Row>
-            <p>Quisque eget vestibulum nulla. Quisque quis dui quis ex ultricies efficitur vitae non felis. Phasellus quis nibh hendrerit...</p>
+            <p>{product.description}</p>
+            <p>{`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}</p>
           </CardContent>
           <CardFooter>
             {rating_links}

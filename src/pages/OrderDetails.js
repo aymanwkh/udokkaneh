@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { editOrder } from '../data/Actions'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, NavRight, Link} from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge} from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
@@ -25,7 +25,7 @@ const OrderDetails = props => {
   if (!user) return <ReLogin callingPage="order"/>
   return(
     <Page>
-      <Navbar title={state.labels.OrderDetails} backLink="Back" />
+      <Navbar title={state.labels.orderDetails} backLink="Back" />
       <Block>
         <List>
           {order.basket && order.basket.map(product => {
@@ -34,8 +34,11 @@ const OrderDetails = props => {
               <ListItem 
                 key={product.id} 
                 title={productInfo.name} 
+                footer={productInfo.description}
                 after={parseFloat(product.price * product.quantity).toFixed(3)}
-              />
+              >
+                {product.quantity > 1 ? <Badge slot="title" color="red">{product.quantity}</Badge> : null}
+              </ListItem>
             )}
           )}
           <ListItem title="Total" className="total" after={parseFloat(order.total - 0.250).toFixed(3)} />

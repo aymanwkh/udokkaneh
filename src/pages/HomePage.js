@@ -17,11 +17,7 @@ const HomePage = props => (
     <Block strong>
       <p>Here is your blank Framework7 app what we have here.</p>
     </Block>
-    <BlockTitle>Navigation</BlockTitle>
     <Sections/>
-    <List>
-      <ListItem link="/about/" title="About" />
-    </List>
     <BlockTitle>Modals</BlockTitle>
     <Block strong>
       <Row>

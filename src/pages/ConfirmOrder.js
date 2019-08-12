@@ -38,7 +38,7 @@ const ConfirmOrder = props => {
               key={product.id} 
               title={product.name} 
               after={product.netPrice}
-              footer={`${product.size} ${state.units.find(rec => rec.id === product.unit).name}`}>
+              footer={product.description}>
               {product.quantity > 1 ? <Badge slot="title" color="red">{product.quantity}</Badge> : null}
             </ListItem>
           )}

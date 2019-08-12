@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge} from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Button, Popover} from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 
@@ -7,21 +7,18 @@ const Products = props => {
   const { state, products } = useContext(StoreContext)
   const [categoryProducts, setCategoryProducts] = useState(products.filter(product => props.id ? product.category === props.id : true))
   const category = state.categories.find(category => category.id === props.id)
-  const [orderBy, setOrderBy] = useState('v')
+  const [orderBy, setOrderBy] = useState('p')
 
   const sort = () => {
     switch(orderBy){
-      case 'v':
-        setCategoryProducts([...categoryProducts].sort((producta, productb) => producta.price / producta.size - productb.price / productb.size))
-        break
       case 'p':
-        setCategoryProducts([...categoryProducts].sort((producta, productb) => producta.price - productb.price))
+        setCategoryProducts([...categoryProducts].sort((product1, product2) => product1.price - product2.price))
         break
       case 's':
-        setCategoryProducts([...categoryProducts].sort((producta, productb) => productb.sales - producta.sales))
+        setCategoryProducts([...categoryProducts].sort((product1, product2) => product2.sales - product1.sales))
         break
       case 'r':
-        setCategoryProducts([...categoryProducts].sort((producta, productb) => productb.rating - producta.rating))
+        setCategoryProducts([...categoryProducts].sort((product1, product2) => product2.rating - product1.rating))
         break
       default:
         return null
@@ -31,7 +28,15 @@ const Products = props => {
     sort(orderBy)
   }, [orderBy])
 
-  const orderByList = state.orderByList.map(orderByItem => <option key={orderByItem.id} value={orderByItem.id}>{orderByItem.name}</option>)
+  const orderByList = state.orderByList.filter(rec => rec.id !== orderBy)
+  const orderByListTags = orderByList.map(orderByItem => 
+    <ListItem 
+      link="#" 
+      popoverClose 
+      key={orderByItem.id} 
+      title={orderByItem.name} 
+      onClick={() => setOrderBy(orderByItem.id)}/> 
+  )
   return(
     <Page>
       <Navbar title={category ? category.name : 'All Products'} backLink="Back">
@@ -39,27 +44,23 @@ const Products = props => {
           <Link searchbarEnable=".searchbar-demo" iconIos="f7:search" iconAurora="f7:search" iconMd="material:search"></Link>
         </NavRight>
       </Navbar>
-      <Block>
+      <Block inset>
+        <Button raised popoverOpen=".popover-menu">{`${state.labels.orderBy} ${state.orderByList.find(rec => rec.id === orderBy).name}`}</Button>
+        <Searchbar
+          className="searchbar-demo"
+          searchContainer=".search-list"
+          searchIn=".item-title, .item-subtitle"
+          clearButton
+          expandable
+          placeholder={state.labels.search}
+        />
+      </Block>
+      <Popover className="popover-menu">
         <List>
-          <ListItem
-            title={state.labels.order}
-            smartSelect
-            smartSelectParams={{openIn: 'popover', closeOnSelect: true}}
-          >
-            <select name="order" value={orderBy} onChange={(e) => setOrderBy(e.target.value)}>
-              {orderByList}
-            </select>
-          </ListItem>
-          <Searchbar
-            className="searchbar-demo"
-            searchContainer=".search-list"
-            searchIn=".item-title, .item-subtitle"
-            clearButton
-            expandable
-            placeholder={state.labels.search}
-          >
-          </Searchbar>
+          {orderByListTags}
         </List>
+      </Popover>
+      <Block>
         <List className="searchbar-not-found">
           <ListItem title={state.labels.not_found} />
         </List>
@@ -70,12 +71,13 @@ const Products = props => {
                 link={`/product/${product.id}`}
                 title={product.name}
                 after={product.price}
-                subtitle={`${product.size} ${state.units.find(rec => rec.id === product.unit).name}`}
+                subtitle={product.description}
                 text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}
                 key={product.id}
               >
                 <img slot="media" src={product.imageUrl} width="80" className="lazy lazy-fadeIn demo-lazy" alt=""/>
-                {product.isNew ? <Badge slot="after-title" color="red">{state.labels.new}</Badge> : null}
+                {product.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : null}
+                {product.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : null}
               </ListItem>
             )
           })}
