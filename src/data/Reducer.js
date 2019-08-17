@@ -9,7 +9,7 @@ const Reducer = (state, action) => {
       product = {
         ...action.product,
         quantity: 1,
-        netPrice: parseFloat(action.product.price).toFixed(3)
+        netPrice: Number(action.product.price)
       }
       newBasket = [...state.basket, product]
       localStorage.setItem('basket', JSON.stringify(newBasket));
@@ -20,7 +20,7 @@ const Reducer = (state, action) => {
       product = {
         ...action.product,
         quantity: ++newQuantity,
-        netPrice: parseFloat(newQuantity * action.product.price).toFixed(3),
+        netPrice: newQuantity * action.product.price,
       }
       newBasket = [...otherProducts, product]
       localStorage.setItem('basket', JSON.stringify(newBasket));
@@ -38,7 +38,7 @@ const Reducer = (state, action) => {
         product = {
           ...action.product,
           quantity: newQuantity,
-          netPrice: parseFloat(newQuantity * action.product.price).toFixed(3)
+          netPrice: newQuantity * action.product.price
         }
         newBasket = [...otherProducts, product]
       }

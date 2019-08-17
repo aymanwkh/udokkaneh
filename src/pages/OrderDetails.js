@@ -35,15 +35,15 @@ const OrderDetails = props => {
                 key={product.id} 
                 title={productInfo.name} 
                 footer={productInfo.description}
-                after={parseFloat(product.price * product.quantity).toFixed(3)}
+                after={(product.price * product.quantity).toFixed(3)}
               >
                 {product.quantity > 1 ? <Badge slot="title" color="red">{product.quantity}</Badge> : null}
               </ListItem>
             )}
           )}
-          <ListItem title="Total" className="total" after={parseFloat(order.total - 0.250).toFixed(3)} />
+          <ListItem title="Total" className="total" after={(order.total - 0.250).toFixed(3)} />
           <ListItem title="Delivery" className="delivery" after="0.250" />
-          <ListItem title="Net Total" className="net" after={order.total} />
+          <ListItem title="Net Total" className="net" after={(order.total).toFixed(3)} />
         </List>
       </Block>
       <Block strong className="error">

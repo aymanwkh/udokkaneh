@@ -5,14 +5,6 @@ import firebase from '../data/firebase'
 
 const Login = props => {
   const { state } = useContext(StoreContext)
-  /*useEffect(() => {
-    dispatch({type: 'CLEAR_ERRORS'})
-  }, [])
-  componentDidUpdate(){
-    if (this.$f7router.currentRoute.name == 'login' && state.result.finished && state.result.message === '') {
-      this.$f7router.navigate(`/${this.$f7route.params.callingPage}/`)
-    }
-  }*/
   const [password, setPassword] = useState('')
   const [mobile, setMobile] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
@@ -28,7 +20,7 @@ const Login = props => {
         if (patterns.password.test(value)){
           setPasswordErrorMessage('')
         } else {
-          setPasswordErrorMessage('not a valid password')
+          setPasswordErrorMessage(state.labels.invalidPassword)
         }
       }
     }
@@ -40,7 +32,7 @@ const Login = props => {
         if (patterns.mobile.test(value)){
           setMobileErrorMessage('')
         } else {
-          setMobileErrorMessage('not a valid mobile number')
+          setMobileErrorMessage(state.labels.invalidMobile)
         }
       }
     }
@@ -50,12 +42,12 @@ const Login = props => {
     e.preventDefault();
     try {
       if (mobile === '') {
-        setMobileErrorMessage('enter your mobile number')
-        throw 'enter your mobile number'
+        setMobileErrorMessage(state.labels.enterMobile)
+        throw state.labels.enterMobileNumber
       }
       if (password === '') {
-        setPasswordErrorMessage('enter your password')
-        throw 'enter your password'
+        setPasswordErrorMessage(state.labels.enterPassword)
+        throw state.labels.enterPassword
       }
       if (passwordErrorMessage !== '') {
         throw passwordErrorMessage
@@ -75,12 +67,12 @@ const Login = props => {
   }
   return (
     <Page loginScreen>
-      <Navbar title="Login" backLink="Back" />
+      <Navbar title={state.labels.loginTitle} backLink="Back" />
       <List form>
         <ListInput
-          label="Mobile"
+          label={state.labels.mobile}
           type="number"
-          placeholder="Your Mobile beginning with 07"
+          placeholder={state.labels.mobilePlaceholder}
           name="mobile"
           clearButton
           value={mobile}
@@ -90,9 +82,9 @@ const Login = props => {
           onInputClear={() => setMobile('')}
         />
         <ListInput
-          label="Password"
+          label={state.labels.password}
           type="number"
-          placeholder="Your password"
+          placeholder={state.labels.passwordPlaceholder}
           name="password"
           value={password}
           errorMessage={passwordErrorMessage}
@@ -102,9 +94,9 @@ const Login = props => {
         />
       </List>
       <List>
-        <ListButton onClick={(e) => handleLogin(e)}>Sign In</ListButton>
-        <Link href={`/register/${props.f7route.params.callingPage}/`}>New User</Link>
-        <ListButton onClick={() => handleForgetPassword()}>Forget Password</ListButton>
+        <ListButton onClick={(e) => handleLogin(e)}>{state.labels.login}</ListButton>
+        <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>
+        <ListButton onClick={() => handleForgetPassword()}>{state.labels.forgetPassword}</ListButton>
       </List>
       <Block strong className="error">
         <p>{error}</p>

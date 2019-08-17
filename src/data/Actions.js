@@ -36,5 +36,14 @@ export const registerUser = async (mobile, password, name) => {
   })
 }
 
+export const addLessPrice = async lessPrice => {
+  const newlessPrice = {
+    ...lessPrice,
+    user: firebase.auth().currentUser.uid,
+    status: 'n',
+    time: new Date()
+  }
+  await firebase.firestore().collection("lessPrice").add(newlessPrice)
+}
 
 

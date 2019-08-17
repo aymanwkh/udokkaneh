@@ -6,7 +6,7 @@ import { registerUser } from '../data/Actions'
 const Register = props => {
   const { state } = useContext(StoreContext)
   const [name, setName] = useState('')
-  const [mobile, setMobile] = useState('07')
+  const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
   const [location, setLocation] = useState('')
   const [nameErrorMessage, setNameErrorMessage] = useState('')
@@ -25,7 +25,7 @@ const Register = props => {
         if (patterns.name.test(value)){
           setNameErrorMessage('')
         } else {
-          setNameErrorMessage('not a valid name')
+          setNameErrorMessage(state.labels.invalidName)
         }
       }
     }  
@@ -37,7 +37,7 @@ const Register = props => {
         if (patterns.password.test(value)){
           setPasswordErrorMessage('')
         } else {
-          setPasswordErrorMessage('not a valid password')
+          setPasswordErrorMessage(state.labels.invalidPassword)
         }
       }
     }
@@ -49,7 +49,7 @@ const Register = props => {
         if (patterns.mobile.test(value)){
           setMobileErrorMessage('')
         } else {
-          setMobileErrorMessage('not a valid mobile number')
+          setMobileErrorMessage(state.labels.invalidMobile)
         }
       }
     }
@@ -58,16 +58,16 @@ const Register = props => {
   const handleRegister = async e => {
     e.preventDefault();
     if (name === '') {
-      setNameErrorMessage('enter your name')
-      throw 'enter your name'
+      setNameErrorMessage(state.labels.enterName)
+      throw state.labels.enterName
     }
     if (mobile === '') {
-      setMobileErrorMessage('enter your mobile number')
-      throw 'enter your mobile number'
+      setMobileErrorMessage(state.labels.enterMobile)
+      throw state.labels.enterMobile
     }
     if (password === '') {
-      setPasswordErrorMessage('enter your password')
-      throw 'enter your password'
+      setPasswordErrorMessage(state.labels.enterPassword)
+      throw state.labels.enterPassword
     }
     registerUser(mobile, password, name).then(() => {
       props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
@@ -84,7 +84,7 @@ const Register = props => {
         <ListInput
           label={state.labels.name}
           type="text"
-          placeholder={state.labels.name_placeholder}
+          placeholder={state.labels.namePlaceholder}
           name="name"
           clearButton
           value={name}
@@ -96,7 +96,7 @@ const Register = props => {
         <ListInput
           label={state.labels.mobile}
           type="number"
-          placeholder={state.labels.mobile_placeholder}
+          placeholder={state.labels.mobilePlaceholder}
           name="mobile"
           clearButton
           value={mobile}
@@ -108,7 +108,7 @@ const Register = props => {
         <ListInput
           label={state.labels.password}
           type="number"
-          placeholder={state.labels.password_placeholder}
+          placeholder={state.labels.passwordPlaceholder}
           name="password"
           clearButton
           value={password}

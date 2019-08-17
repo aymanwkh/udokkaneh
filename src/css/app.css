@@ -55,7 +55,30 @@
     background-color: lime;
   }
   
-  .price {
-    height: 20px;
+  .banner {
+    position: relative;
+    bottom: 1.5rem;
+    color: rgb(0, 102, 255);
+    font-size: 0.9rem;
+    padding-right: 1rem;
+  }
+
+  .less-price {
+    font-size: 0.8rem;
+    margin: 0;
   }
   
+  .price {
+    font-size: 1.2rem;
+    color: blue;
+    margin-right: 0.2rem;
+  }
+
+  .rating {
+    margin-top: 2rem;
+    margin-bottom: 0;
+  }
+
+  .card-title p {
+    margin-bottom: 0;
+  }

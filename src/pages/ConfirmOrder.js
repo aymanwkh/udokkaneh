@@ -8,19 +8,19 @@ import { confirmOrder } from '../data/Actions'
 
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const totalPrice = state.basket.reduce((a, product) => a + Number(product.netPrice), 0)
+  const totalPrice = state.basket.reduce((a, product) => a + product.netPrice, 0)
   const handleOrder = () => {
     const basket = state.basket.map(product => {
       return ({
         id: product.id,
-        price: product.price,
+        price: Number(product.price),
         quantity: product.quantity,
         purchasedQuantity: 0
       })
     })
     const order = {
       basket,
-      total: parseFloat(totalPrice + 0.250).toFixed(3)
+      total: totalPrice + 0.250
     }
     confirmOrder(order).then(() => {
       props.f7router.navigate('/home/')
@@ -37,14 +37,14 @@ const ConfirmOrder = props => {
             <ListItem 
               key={product.id} 
               title={product.name} 
-              after={product.netPrice}
+              after={(product.netPrice).toFixed(3)}
               footer={product.description}>
               {product.quantity > 1 ? <Badge slot="title" color="red">{product.quantity}</Badge> : null}
             </ListItem>
           )}
-          <ListItem title="Total" className="total" after={parseFloat(totalPrice).toFixed(3)} />
+          <ListItem title="Total" className="total" after={(totalPrice).toFixed(3)} />
           <ListItem title="Delivery" className="delivery" after="0.250" />
-          <ListItem title="Net Total" className="net" after={parseFloat(totalPrice + 0.250).toFixed(3)} />
+          <ListItem title="Net Total" className="net" after={(totalPrice + 0.250).toFixed(3)} />
         </List>
       </Block>
       <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleOrder()}>

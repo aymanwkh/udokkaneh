@@ -11,6 +11,7 @@ import Basket from './pages/Basket'
 import ConfirmOrder from './pages/ConfirmOrder'
 import OrdersList from './pages/OrdersList';
 import OrderDetails from './pages/OrderDetails';
+import LessPrice from './pages/LessPrice';
 
 export default [
   {
@@ -48,6 +49,10 @@ export default [
   {
     path: '/product/:id',
     component: ProductDetails
+  },
+  {
+    path: '/lessPrice/:id',
+    component: LessPrice
   },
   {
     path: '/basket/',

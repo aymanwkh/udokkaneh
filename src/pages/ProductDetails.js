@@ -1,47 +1,49 @@
 import React, { useContext } from 'react'
-import { Block, Page, Navbar, Card, CardContent, CardFooter, Icon, Row, Col, Fab, Toolbar} from 'framework7-react'
+import { Block, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, Toolbar, Icon} from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
-import RateProduct from './RateProduct'
 import Rating from './Rating'
+import RateProduct from './RateProduct'
 import { StoreContext } from '../data/Store';
 
 const ProductDetails = props => {
+  const { state, products, user, dispatch } = useContext(StoreContext)
+  const product = products.find(product => product.id === props.id)
   const handleAddProduct = () => {
     dispatch({type: 'ADD_TO_BASKET', product})
     props.f7router.back()
   }
-  const { state, products, user, dispatch } = useContext(StoreContext)
-  const product = products.find(product => product.id === props.id)
-  const rating_links = user && state.rating.find(rating => rating.productId === props.id) ? <RateProduct product={product}/> : null
+
+  const rating_links = !user || state.rating.find(rating => rating.productId === props.id) ? null : <RateProduct product={product} />
+
   return (
     <Page>
       <Navbar title={product.name} backLink="Back" />
       <Block>
         <Card className="demo-card-header-pic">
+          <CardHeader>
+            <p className="less-price">
+              <span className="price">
+                {(product.price).toFixed(3)}
+              </span> <br />
+              <Link iconIos="f7:bell" iconMd="material:notifications_none" text={state.labels.lessPrice} color="red" onClick={() => props.f7router.navigate(`/lessPrice/${props.id}`)}/>
+            </p>
+            <p className="rating"><Rating rating={product.rating} /> </p>
+          </CardHeader>
           <CardContent>
             <img src={product.imageUrl} width="100%" height="250" alt=""/>
-            <Row>
-            <Col width="20">
-              {product.price}
-            </Col>
-            <Col width="60" className="left">
-              <Rating rating={product.rating} />
-            </Col>
-            </Row>
             <p>{product.description}</p>
             <p>{`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}</p>
           </CardContent>
-          <CardFooter>
-            {rating_links}
-          </CardFooter>
         </Card>
       </Block>
-      <Fab position="center-bottom" slot="fixed" text="Create" color="red" onClick={() => handleAddProduct()}>
+      <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddProduct()}>
         <Icon ios="f7:add" aurora="f7:add" md="material:add"></Icon>
       </Fab>
+      {rating_links}
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>
+
     </Page>
   )
 }

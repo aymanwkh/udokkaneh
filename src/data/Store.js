@@ -65,9 +65,6 @@ const Store = props => {
     error: 'خطأ',
     not_found: 'ﻻ يوجد بيانات',
     search: 'بحث',
-    password_placeholder: '4 ارقام',
-    name_placeholder: 'من 4-50 حرف',
-    mobile_placeholder: 'يجب ان يبدأ ب07',
     open_order_found: 'هناك طلبية سابقة لم يتم استلامها',
     auth_user_not_found: 'الرجاء التأكد من رقم الموبايل وكلمة المرور',
     auth_email_already_in_use: 'لقد سجلت سابقا برقم هذا الموبايل',
@@ -79,7 +76,29 @@ const Store = props => {
     confirmOrder: 'اعتماد الطلب',
     basket: 'سلة المشتريات',
     confirm: 'اعتماد',
-    orderDetails: 'تفاصيل الطلب'
+    orderDetails: 'تفاصيل الطلب',
+    addToBasket: 'شراء',
+    submit: 'موافق',
+    banner: 'ابحث معنا عن السعر اﻻفضل',
+    lessPrice: 'اﻻبلاغ عن سعر أقل',
+    storeName: 'اسم المحل',
+    storePlace: 'عنوان المحل',
+    price: 'السعر',
+    login: 'دخول',
+    loginTitle: 'تسجيل دخول',
+    relogin: 'عليك تسجيل الدخول أوﻻ',
+    reloginTitle: 'طلب تسجيل دخول',
+    enterMobile: 'الرجاء ادخال رقم الموبايل',
+    enterPassword: 'الرجاء ادخال كلمة السر',
+    invalidPassword: 'كلمة السر غير صحيحة',
+    invalidMobile: 'رقم الموبايل غير صحيح',
+    mobilePlaceholder: 'رقم الموبايل مبتدئا ب07',
+    passwordPlaceholder: 'كلمة السر من اربعة ارقام',
+    newUser: 'مستخدم جديد',
+    forgetPassword: 'نسيت كلمة السر',
+    enterName: 'الرجاء ادخال اﻻسم',
+    namePlaceholder: 'من 4-50 حرف',
+    invalidName: 'اﻻسم غير صحيح'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
@@ -156,7 +175,7 @@ const Store = props => {
       let productsArray = []
       docs.forEach(doc => {
         const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
-        productsArray.push({...doc.data(), id: doc.id, price: parseFloat(minPrice).toFixed(3)})
+        productsArray.push({...doc.data(), id: doc.id, price: minPrice})
       })
       setProducts(productsArray)
     })
