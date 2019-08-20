@@ -8,8 +8,7 @@ const Reducer = (state, action) => {
       if (state.basket.find(product => product.id === action.product.id)) return state
       product = {
         ...action.product,
-        quantity: 1,
-        netPrice: Number(action.product.price)
+        quantity: 1
       }
       newBasket = [...state.basket, product]
       localStorage.setItem('basket', JSON.stringify(newBasket));
@@ -20,7 +19,6 @@ const Reducer = (state, action) => {
       product = {
         ...action.product,
         quantity: ++newQuantity,
-        netPrice: newQuantity * action.product.price,
       }
       newBasket = [...otherProducts, product]
       localStorage.setItem('basket', JSON.stringify(newBasket));
@@ -37,8 +35,7 @@ const Reducer = (state, action) => {
       } else {
         product = {
           ...action.product,
-          quantity: newQuantity,
-          netPrice: newQuantity * action.product.price
+          quantity: newQuantity
         }
         newBasket = [...otherProducts, product]
       }

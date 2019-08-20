@@ -20,10 +20,10 @@ const ProductDetails = props => {
       <Navbar title={product.name} backLink="Back" />
       <Block>
         <Card className="demo-card-header-pic">
-          <CardHeader>
+          <CardHeader className='card-title'>
             <p className="less-price">
               <span className="price">
-                {(product.price).toFixed(3)}
+                {(product.price / 1000).toFixed(3)}
               </span> <br />
               <Link iconIos="f7:bell" iconMd="material:notifications_none" text={state.labels.lessPrice} color="red" onClick={() => props.f7router.navigate(`/lessPrice/${props.id}`)}/>
             </p>

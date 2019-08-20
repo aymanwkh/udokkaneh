@@ -5,7 +5,7 @@ import { StoreContext } from '../data/Store';
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
-  const totalPrice = (state.basket.reduce((a, product) => a + product.netPrice, 0)).toFixed(3)
+  const totalPrice = state.basket.reduce((a, product) => a + (product.price * product.quantity), 0)
   let products = state.basket
   products.sort((product1, product2) => product1.time.seconds - product2.time.seconds)
   useEffect(() => {
@@ -20,7 +20,7 @@ const Basket = props => {
         {products && products.map(product => 
           <ListItem
             title={product.name}
-            footer={(product.netPrice).toFixed(3)}
+            footer={(product.price * product.quantity / 1000).toFixed(3)}
             subtitle={product.description}
             key={product.id}
           >
@@ -38,7 +38,7 @@ const Basket = props => {
         )}
       </List>
     </Block>
-    <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${totalPrice}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
+    <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
       <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
     </Fab>
 

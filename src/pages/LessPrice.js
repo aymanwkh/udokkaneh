@@ -25,7 +25,7 @@ const LessPrice = props => {
       }
       const lessPrice = {
         productId: product.id,
-        price,
+        price: Number(price),
         storeName,
         storePlace
       }
