@@ -39,8 +39,8 @@
     color: green;
   }
   
-  .delivery {
-    color: yellow;
+  .fees {
+    color: rgb(0, 89, 255);
   }
   
   .net {
@@ -79,4 +79,9 @@
 
   .card-title p {
     margin-bottom: 0;
+  }
+
+  .note {
+    text-align: center;
+    color: red;
   }

@@ -20,13 +20,6 @@ const Store = props => {
     {id: '11', name: 'deeporange'},
     {id: '12', name: 'gray'}
   ]
-  const locations = [
-    {id: '1', name: 'جبل النزهة'},
-    {id: '2', name: 'ضاحية اﻻمير حسن'},
-    {id: '3', name: 'عرجان'},
-    {id: '4', name: 'جبل الحسين'},
-    {id: '5', name: 'مخيم جبل الحسين'}
-  ]
   const orderByList = [
     {id: 'p', name: 'السعر'},
     {id: 's', name: 'المبيعات'},
@@ -50,7 +43,14 @@ const Store = props => {
     {id: 'l', name: 'متأخر'},
     {id: 'c', name: 'ملغي'},
     {id: 'i', name: 'في المستودع'}
-  ]  
+  ]
+  const customerStatus = [
+    {id: 'n', name: 'جديد', discount: 0},
+    {id: 'a', name: 'فعال', discount: 0},
+    {id: 'b', name: 'قائمة سوداء', discount: 0},
+    {id: 'v', name: 'مميز', discount: 0},
+    {id: 's', name: 'خاص', discount: 500}
+  ]
   const labels = {
     appTitle: 'حريص',
     news: 'آخر الاخبار',
@@ -98,7 +98,19 @@ const Store = props => {
     forgetPassword: 'نسيت كلمة السر',
     enterName: 'الرجاء ادخال اﻻسم',
     namePlaceholder: 'من 4-50 حرف',
-    invalidName: 'اﻻسم غير صحيح'
+    invalidName: 'اﻻسم غير صحيح',
+    fixedFees: 500,
+    total: 'المجموع',
+    feesTitle: 'الرسوم',
+    discount: 'الخصم',
+    net: 'الصافي',
+    delivery: 'خدمة التوصيل',
+    deliveryFees: 'رسوم التوصيل',
+    noDeliveryNote: 'يتم اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول',
+    withDeliveryNote: 'يتم التوصيل خلال جولات محددة حسب المنطقة',
+    enterPrice: 'الرجاء ادخال السعر',
+    enterStore: 'الرجاء ادخال اسم المحل',
+    invalidPrice: 'الرجاء التأكد من السعر المدخل'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
@@ -111,11 +123,11 @@ const Store = props => {
   let countries = []
   let stores = []
   let rating = []
+  let customer = {}
   const initState = {
     sections, 
     randomColors, 
     categories, 
-    locations, 
     countries, 
     units, 
     labels, 
@@ -124,7 +136,9 @@ const Store = props => {
     trademarks, 
     orderByList, 
     stores, 
-    rating
+    rating,
+    customerStatus,
+    customer
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -143,6 +157,11 @@ const Store = props => {
           docs.forEach(doc => {
             rating.push({...doc.data(), id:doc.id})
           })
+        })
+        firebase.firestore().collection('customers').doc(user.uid).get().then(doc => {
+          if (doc.exists){
+            dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
+          }
         })  
       }
     });

@@ -43,22 +43,22 @@ const Login = props => {
     try {
       if (mobile === '') {
         setMobileErrorMessage(state.labels.enterMobile)
-        throw state.labels.enterMobileNumber
+        throw new Error(state.labels.enterMobile)
       }
       if (password === '') {
         setPasswordErrorMessage(state.labels.enterPassword)
-        throw state.labels.enterPassword
+        throw new Error(state.labels.enterPassword)
       }
       if (passwordErrorMessage !== '') {
-        throw passwordErrorMessage
+        throw new Error(passwordErrorMessage)
       }
       if (mobileErrorMessage !== '') {
-        throw mobileErrorMessage
+        throw new Error(mobileErrorMessage)
       }
       await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password);
       props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
     } catch (err) {
-      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err)
+      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
     }
   }
 
@@ -68,6 +68,7 @@ const Login = props => {
   return (
     <Page loginScreen>
       <Navbar title={state.labels.loginTitle} backLink="Back" />
+      {error ? <Block strong className="error">{error}</Block> : null}
       <List form>
         <ListInput
           label={state.labels.mobile}
@@ -98,9 +99,6 @@ const Login = props => {
         <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>
         <ListButton onClick={() => handleForgetPassword()}>{state.labels.forgetPassword}</ListButton>
       </List>
-      <Block strong className="error">
-        <p>{error}</p>
-      </Block>
     </Page>
   )
 }

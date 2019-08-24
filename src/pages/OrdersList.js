@@ -4,7 +4,6 @@ import BottomToolbar from './BottomToolbar';
 import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/Store';
-import firebase from '../data/firebase'
 
 const OrdersList = props => {
   const { state, orders } = useContext(StoreContext)

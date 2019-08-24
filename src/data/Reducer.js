@@ -54,10 +54,10 @@ const Reducer = (state, action) => {
         ...state,
         rating: [...state.rating, action.rating]
       }
-    case 'ADD_PRODUCT':
+    case 'SET_CUSTOMER':
       return {
         ...state,
-        products: [...state.products, action.product]
+        customer: action.customer
       }
     case 'DONE':
       return {

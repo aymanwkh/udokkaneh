@@ -15,17 +15,17 @@ const LessPrice = props => {
   const handleSubmit = () => {
     try{
       if (price === '' || Number(price) === 0) {
-        throw 'enter the price'
+        throw new Error(state.labels.enterPrice)
       }
       if (storeName === '') {
-        throw 'enter store name'
+        throw new Error(state.labels.enterStore)
       }
       if (Number(price) >= product.price) {
-        throw 'enter a valid price'
+        throw new Error(state.labels.invalidPrice)
       }
       const lessPrice = {
         productId: product.id,
-        price: Number(price),
+        price: price * 1000,
         storeName,
         storePlace
       }
@@ -33,18 +33,19 @@ const LessPrice = props => {
         props.f7router.back()
       })  
     } catch (err){
-      setError(err)
+      setError(err.message)
     }
   }
   if (!user) return <ReLogin callingPage='home'/>
   return (
     <Page>
       <Navbar title={state.labels.lessPrice} backLink="Back" />
+      {error ? <Block strong className="error">{error}</Block> : null}
       <Block>
         <Card className="demo-card-header-pic">
           <CardHeader className="card-title">
             <p>{product.name}</p>
-            <p>{(product.price).toFixed(3)}</p>
+            <p>{(product.price / 1000).toFixed(3)}</p>
           </CardHeader>
           <CardContent>
             <img src={product.imageUrl} width="100%" height="250" alt=""/>
@@ -87,9 +88,6 @@ const LessPrice = props => {
       <Fab position="center-bottom" slot="fixed" text={state.labels.submit} color="green" onClick={() => handleSubmit()}>
         <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
       </Fab>
-      <Block strong className="error">
-        <p>{error}</p>
-      </Block>
     </Page>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton, ListItem, Block} from 'framework7-react'
+import { Page, Navbar, List, ListInput, ListButton, Block} from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { registerUser } from '../data/Actions'
 
@@ -8,7 +8,6 @@ const Register = props => {
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
-  const [location, setLocation] = useState('')
   const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
@@ -59,27 +58,27 @@ const Register = props => {
     e.preventDefault();
     if (name === '') {
       setNameErrorMessage(state.labels.enterName)
-      throw state.labels.enterName
+      throw new Error(state.labels.enterName)
     }
     if (mobile === '') {
       setMobileErrorMessage(state.labels.enterMobile)
-      throw state.labels.enterMobile
+      throw new Error(state.labels.enterMobile)
     }
     if (password === '') {
       setPasswordErrorMessage(state.labels.enterPassword)
-      throw state.labels.enterPassword
+      throw new Error(state.labels.enterPassword)
     }
     registerUser(mobile, password, name).then(() => {
       props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
     }).catch (err => {
-      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err)
+      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
     })
   }
 
-  const locations = state.locations.map(location => <option key={location.id} value={location.id}>{location.name}</option>)
   return (
     <Page loginScreen>
       <Navbar title={state.labels.registerTitle} backLink="Back" />
+      {error ? <Block strong className="error">{error}</Block> : null}
       <List form>
         <ListInput
           label={state.labels.name}
@@ -117,23 +116,10 @@ const Register = props => {
           onChange={(e) => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
-        <ListItem
-          title={state.labels.location}
-          smartSelect
-          smartSelectParams={{openIn: 'popover', closeOnSelect: true}}
-        >
-          <select name="location" value={location} onChange={(e) => setLocation(e.target.value)}>
-            <option value="" disabled></option>
-            {locations}
-          </select>
-        </ListItem>
       </List>
       <List>
         <ListButton onClick={(e) => handleRegister(e)}>{state.labels.register}</ListButton>
       </List>
-      <Block strong className="error">
-        <p>{error}</p>
-      </Block>
     </Page>
   )
 }

@@ -43,9 +43,6 @@ const Products = props => {
         <NavRight>
           <Link searchbarEnable=".searchbar-demo" iconIos="f7:search" iconAurora="f7:search" iconMd="material:search"></Link>
         </NavRight>
-      </Navbar>
-      <Block inset>
-        <Button raised popoverOpen=".popover-menu">{`${state.labels.orderBy} ${state.orderByList.find(rec => rec.id === orderBy).name}`}</Button>
         <Searchbar
           className="searchbar-demo"
           searchContainer=".search-list"
@@ -54,6 +51,9 @@ const Products = props => {
           expandable
           placeholder={state.labels.search}
         />
+      </Navbar>
+      <Block inset>
+        <Button raised popoverOpen=".popover-menu">{`${state.labels.orderBy} ${state.orderByList.find(rec => rec.id === orderBy).name}`}</Button>
       </Block>
       <Popover className="popover-menu">
         <List>
