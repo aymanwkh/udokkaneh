@@ -69,7 +69,7 @@ const ConfirmOrder = props => {
           </ListItem>
           <ListItem title={state.labels.total} className="total" after={(total / 1000).toFixed(3)} />
           <ListItem title={state.labels.feesTitle} className="fees" after={(state.labels.fixedFees / 1000).toFixed(3)} />
-          {withDelivery ? <ListItem title={state.labels.deliveryFees} className="fees" after={(deliveryFees / 1000).toFixed(3)} /> : null}
+          {deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="fees" after={(deliveryFees / 1000).toFixed(3)} /> : null}
           {specialDiscount + customerDiscount > 0 ? <ListItem title={state.labels.discount} className="discount" after={((specialDiscount + customerDiscount) / 1000).toFixed(3)} /> : null}
           <ListItem title={state.labels.net} className="net" after={((total + state.labels.fixedFees + deliveryFees - (specialDiscount + customerDiscount)) / 1000).toFixed(3)} />
         </List>

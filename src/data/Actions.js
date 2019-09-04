@@ -28,7 +28,7 @@ export const editOrder = async order => {
 }
 
 export const registerUser = async (mobile, password, name) => {
-  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password);
+  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
   await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,

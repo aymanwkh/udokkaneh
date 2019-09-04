@@ -79,7 +79,7 @@ const Store = props => {
     orderDetails: 'تفاصيل الطلب',
     addToBasket: 'شراء',
     submit: 'موافق',
-    banner: 'ابحث معنا عن السعر اﻻفضل',
+    banner: 'شاركنا البحث عن السعر اﻻفضل',
     lessPrice: 'اﻻبلاغ عن سعر أقل',
     storeName: 'اسم المحل',
     storePlace: 'عنوان المحل',
