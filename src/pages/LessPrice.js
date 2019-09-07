@@ -6,8 +6,8 @@ import ReLogin from './ReLogin'
 
 
 const LessPrice = props => {
-  const { state, products, user } = useContext(StoreContext)
-  const product = products.find(rec => rec.id === props.id)
+  const { state, user } = useContext(StoreContext)
+  const product = state.products.find(rec => rec.id === props.id)
   const [price, setPrice] = useState('')
   const [storeName, setStoreName] = useState('')
   const [storePlace, setStorePlace] = useState('')

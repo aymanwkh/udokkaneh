@@ -10,6 +10,17 @@ export const rateProduct = async (product, rating) => {
   const docRef = await firebase.firestore().collection('rating').add(ratingRec)
   return docRef.id
 }
+export const login = async (mobile, password) => {
+  await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
+}
+
+export const forgetPassword = async mobile => {
+  await firebase.firestore().collection('forgetPassword').add({
+    mobile,
+    time: new Date(),
+    resolved: false
+  })
+}
 
 export const confirmOrder = async order => {
   const newOrder = {

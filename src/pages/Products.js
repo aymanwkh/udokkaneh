@@ -4,8 +4,9 @@ import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 
 const Products = props => {
-  const { state, products } = useContext(StoreContext)
-  const [categoryProducts, setCategoryProducts] = useState(products.filter(product => props.id ? product.category === props.id : true))
+  const { state } = useContext(StoreContext)
+  const products = state.products.filter(product => props.id ? product.category === props.id : true)
+  const [categoryProducts, setCategoryProducts] = useState(products)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
 

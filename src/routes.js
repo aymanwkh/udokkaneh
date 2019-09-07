@@ -12,6 +12,7 @@ import ConfirmOrder from './pages/ConfirmOrder'
 import OrdersList from './pages/OrdersList';
 import OrderDetails from './pages/OrderDetails';
 import LessPrice from './pages/LessPrice';
+import ForgetPassword from './pages/ForgetPassword';
 
 export default [
   {
@@ -19,6 +20,7 @@ export default [
     component: HomePage,
   },
   {
+    name: 'home',
     path: '/home/',
     component: HomePage,
   },
@@ -29,6 +31,10 @@ export default [
   {
     path: '/login/:callingPage',
     component: Login
+  },
+  {
+    path: '/forgetPassword/',
+    component: ForgetPassword
   },
   {
     path: '/register/:callingPage',

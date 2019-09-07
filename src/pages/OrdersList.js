@@ -6,15 +6,15 @@ import 'moment/locale/ar'
 import { StoreContext } from '../data/Store';
 
 const OrdersList = props => {
-  const { state, orders } = useContext(StoreContext)
-  let sortedOrders = orders
-  sortedOrders.sort((order1, order2) => order2.time.seconds - order1.time.seconds)
+  const { state } = useContext(StoreContext)
+  let orders = state.orders
+  orders.sort((order1, order2) => order2.time.seconds - order1.time.seconds)
   return(
     <Page>
       <Navbar title="Orders" backLink="Back" />
       <Block>
           <List mediaList>
-            {sortedOrders && sortedOrders.map(order =>
+            {orders && orders.map(order =>
               <ListItem
                 link={`/order/${order.id}`}
                 title={moment(order.time.toDate()).fromNow()}
@@ -23,7 +23,7 @@ const OrdersList = props => {
                 key={order.id}
               />
             )}
-            { sortedOrders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
+            { orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
 
           </List>
       </Block>

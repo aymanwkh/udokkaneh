@@ -6,8 +6,8 @@ import RateProduct from './RateProduct'
 import { StoreContext } from '../data/Store';
 
 const ProductDetails = props => {
-  const { state, products, user, dispatch } = useContext(StoreContext)
-  const product = products.find(product => product.id === props.id)
+  const { state, user, dispatch } = useContext(StoreContext)
+  const product = state.products.find(product => product.id === props.id)
   const handleAddProduct = () => {
     dispatch({type: 'ADD_TO_BASKET', product})
     props.f7router.back()

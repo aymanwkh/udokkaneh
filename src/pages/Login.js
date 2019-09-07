@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton, Block, Link} from 'framework7-react'
+import { Page, Navbar, List, ListInput, ListButton, Block, Link, Toolbar} from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import firebase from '../data/firebase'
+import { login } from '../data/Actions'
 
 const Login = props => {
   const { state } = useContext(StoreContext)
@@ -38,8 +38,7 @@ const Login = props => {
     }
     if (mobile !== '') validateMobile(mobile)
   }, [mobile])
-  const handleLogin = async e => {
-    e.preventDefault();
+  const handleLogin = async () => {
     try {
       if (mobile === '') {
         setMobileErrorMessage(state.labels.enterMobile)
@@ -55,16 +54,14 @@ const Login = props => {
       if (mobileErrorMessage !== '') {
         throw new Error(mobileErrorMessage)
       }
-      await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password);
+      await login(mobile, password)
       props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
+      props.f7router.app.panel.close('right')  
     } catch (err) {
       err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
     }
   }
 
-  const handleForgetPassword = () => {
-    console.log('handle forget password')
-  }
   return (
     <Page loginScreen>
       <Navbar title={state.labels.loginTitle} backLink="Back" />
@@ -93,12 +90,12 @@ const Login = props => {
           onChange={(e) => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
-      </List>
-      <List>
         <ListButton onClick={(e) => handleLogin(e)}>{state.labels.login}</ListButton>
-        <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>
-        <ListButton onClick={() => handleForgetPassword()}>{state.labels.forgetPassword}</ListButton>
       </List>
+      <Toolbar bottom>
+        <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>
+        <Link href='/forgetPassword/'>{state.labels.forgetPassword}</Link>
+      </Toolbar>
     </Page>
   )
 }

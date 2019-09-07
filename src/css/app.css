@@ -35,6 +35,11 @@
     color: red;
   }
   
+  .message {
+    text-align: center;
+    color: green;
+  }
+
   .total {
     color: green;
   }

@@ -59,6 +59,41 @@ const Reducer = (state, action) => {
         ...state,
         customer: action.customer
       }
+    case 'SET_ORDERS':
+      return {
+        ...state,
+        orders: action.orders
+      }
+    case 'SET_PRODUCTS':
+      return {
+        ...state,
+        products: action.products
+      }
+    case 'SET_SECTIONS':
+      return {
+        ...state,
+        sections: action.sections
+      }
+    case 'SET_CATEGORIES':
+      return {
+        ...state,
+        categories: action.categories
+      }
+    case 'SET_TRADEMARKS':
+      return {
+        ...state,
+        trademarks: action.trademarks
+      }
+    case 'SET_COUNTRIES':
+      return {
+        ...state,
+        countries: action.countries
+      }
+    case 'SET_STORES':
+      return {
+        ...state,
+        stores: action.stores
+      }
     case 'DONE':
       return {
         ...state,

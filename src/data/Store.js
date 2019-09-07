@@ -110,19 +110,22 @@ const Store = props => {
     withDeliveryNote: 'يتم التوصيل خلال جولات محددة حسب المنطقة',
     enterPrice: 'الرجاء ادخال السعر',
     enterStore: 'الرجاء ادخال اسم المحل',
-    invalidPrice: 'الرجاء التأكد من السعر المدخل'
+    invalidPrice: 'الرجاء التأكد من السعر المدخل',
+    forgetPasswordTitle: 'طلب كلمة سر جديدة',
+    send: 'ارسال',
+    sendMessage: 'تم ارسال طلبك بنجاح'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
   const [user, setUser] = useState(null);
-  const [orders, setOrders] = useState([]);
-  const [products, setProducts] = useState([]);
   let sections = []
   let categories = []
   let trademarks = []
   let countries = []
   let stores = []
   let rating = []
+  let orders = []
+  let products = []
   let customer = {}
   const initState = {
     sections, 
@@ -138,7 +141,9 @@ const Store = props => {
     stores, 
     rating,
     customerStatus,
-    customer
+    customer,
+    orders,
+    products
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -147,16 +152,16 @@ const Store = props => {
       setUser(user)
       if (user){
         firebase.firestore().collection('orders').where('user', '==', user.uid).onSnapshot(docs => {
-          let ordersArray = []
           docs.forEach(doc => {
-            ordersArray.push({...doc.data(), id:doc.id})
+            orders.push({...doc.data(), id:doc.id})
           })
-          setOrders(ordersArray)
+          dispatch({type: 'SET_ORDERS', orders})
         })
         firebase.firestore().collection('rating').where('user', '==', user.uid).get().then(docs => {
           docs.forEach(doc => {
             rating.push({...doc.data(), id:doc.id})
           })
+          dispatch({type: 'SET_RATING', rating})
         })
         firebase.firestore().collection('customers').doc(user.uid).get().then(doc => {
           if (doc.exists){
@@ -169,38 +174,42 @@ const Store = props => {
       docs.forEach(doc => {
         sections.push({...doc.data(), id:doc.id})
       })
+      dispatch({type: 'SET_SECTIONS', sections})
     })  
     firebase.firestore().collection('categories').get().then(docs => {
       docs.forEach(doc => {
         categories.push({...doc.data(), id:doc.id})
       })
+      dispatch({type: 'SET_CATEGORIES', categories})
     })  
     firebase.firestore().collection('trademarks').get().then(docs => {
       docs.forEach(doc => {
         trademarks.push({...doc.data(), id:doc.id})
       })
+      dispatch({type: 'SET_TRADEMARKS', trademarks})
     })  
     firebase.firestore().collection('countries').get().then(docs => {
       docs.forEach(doc => {
         countries.push({...doc.data(), id:doc.id})
       })
+      dispatch({type: 'SET_COUNTRIES', countries})
     })  
     firebase.firestore().collection('stores').get().then(docs => {
       docs.forEach(doc => {
         stores.push({...doc.data(), id:doc.id})
       })
+      dispatch({type: 'SET_STORES', stores})
     }) 
     firebase.firestore().collection('products').where('status', '==', 'a').onSnapshot(docs => {
-      let productsArray = []
       docs.forEach(doc => {
         const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
-        productsArray.push({...doc.data(), id: doc.id, price: minPrice})
+        products.push({...doc.data(), id: doc.id, price: minPrice})
       })
-      setProducts(productsArray)
+      dispatch({type: 'SET_PRODUCTS', products})
     })
   }, []);
   return (
-    <StoreContext.Provider value={{state, user, orders, products, dispatch}}>
+    <StoreContext.Provider value={{state, user, dispatch}}>
       {props.children}
     </StoreContext.Provider>
   );
