@@ -118,32 +118,23 @@ const Store = props => {
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
   const [user, setUser] = useState(null);
-  let sections = []
-  let categories = []
-  let trademarks = []
-  let countries = []
-  let stores = []
-  let rating = []
-  let orders = []
-  let products = []
-  let customer = {}
   const initState = {
-    sections, 
+    sections: [], 
     randomColors, 
-    categories, 
-    countries, 
+    categories: [], 
+    countries: [], 
     units, 
     labels, 
     orderStatus, 
     basket, 
-    trademarks, 
+    trademarks: [], 
     orderByList, 
-    stores, 
-    rating,
+    stores: [], 
+    rating: [],
     customerStatus,
-    customer,
-    orders,
-    products
+    customer: {},
+    orders: [],
+    products: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -152,12 +143,14 @@ const Store = props => {
       setUser(user)
       if (user){
         firebase.firestore().collection('orders').where('user', '==', user.uid).onSnapshot(docs => {
+          let orders = []
           docs.forEach(doc => {
             orders.push({...doc.data(), id:doc.id})
           })
           dispatch({type: 'SET_ORDERS', orders})
         })
         firebase.firestore().collection('rating').where('user', '==', user.uid).get().then(docs => {
+          let rating = []
           docs.forEach(doc => {
             rating.push({...doc.data(), id:doc.id})
           })
@@ -171,36 +164,42 @@ const Store = props => {
       }
     });
     firebase.firestore().collection('sections').get().then(docs => {
+      let sections = []
       docs.forEach(doc => {
         sections.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_SECTIONS', sections})
     })  
     firebase.firestore().collection('categories').get().then(docs => {
+      let categories = []
       docs.forEach(doc => {
         categories.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_CATEGORIES', categories})
     })  
     firebase.firestore().collection('trademarks').get().then(docs => {
+      let trademarks = []
       docs.forEach(doc => {
         trademarks.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_TRADEMARKS', trademarks})
     })  
     firebase.firestore().collection('countries').get().then(docs => {
+      let countries = []
       docs.forEach(doc => {
         countries.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_COUNTRIES', countries})
     })  
     firebase.firestore().collection('stores').get().then(docs => {
+      let stores = []
       docs.forEach(doc => {
         stores.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_STORES', stores})
     }) 
     firebase.firestore().collection('products').where('status', '==', 'a').onSnapshot(docs => {
+      let products = []
       docs.forEach(doc => {
         const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
         products.push({...doc.data(), id: doc.id, price: minPrice})
