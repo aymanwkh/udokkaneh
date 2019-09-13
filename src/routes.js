@@ -5,8 +5,8 @@ import Categories from './pages/Categories'
 import PanelPage from './pages/PanelPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Products from './pages/Products'
-import ProductDetails from './pages/ProductDetails'
+import Packs from './pages/Packs'
+import PackDetails from './pages/PackDetails'
 import Basket from './pages/Basket'
 import ConfirmOrder from './pages/ConfirmOrder'
 import OrdersList from './pages/OrdersList';
@@ -50,11 +50,11 @@ export default [
   },
   {
     path: '/category/:id',
-    component: Products
+    component: Packs
   },
   {
-    path: '/product/:id',
-    component: ProductDetails
+    path: '/pack/:id',
+    component: PackDetails
   },
   {
     path: '/lessPrice/:id',
@@ -70,7 +70,7 @@ export default [
   },
   {
     path: '/search/',
-    component: Products,
+    component: Packs,
   },
   {
     path: '/ordersList/',

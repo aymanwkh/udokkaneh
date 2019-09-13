@@ -5,9 +5,9 @@ import { StoreContext } from '../data/Store';
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
-  const totalPrice = state.basket.reduce((a, product) => a + (product.price * product.quantity), 0)
-  let products = state.basket
-  products.sort((product1, product2) => product1.time.seconds - product2.time.seconds)
+  const totalPrice = state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0)
+  let packs = state.basket
+  packs.sort((pack1, pack2) => pack1.time.seconds - pack2.time.seconds)
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/')
   }, [state.basket])
@@ -17,25 +17,28 @@ const Basket = props => {
     <Navbar title={state.labels.basket} backLink="Back" />
     <Block>
       <List mediaList>
-        {products && products.map(product => 
-          <ListItem
-            title={product.name}
-            footer={(product.price * product.quantity / 1000).toFixed(3)}
-            subtitle={product.description}
-            key={product.id}
-          >
-            <img slot="media" src={product.imageUrl} width="80" alt=""/>
-            {product.quantity > 1 ? <Badge slot="title" color="red">{product.quantity}</Badge> : null}
-            <Stepper 
-              slot="after" 
-              buttonsOnly={true} 
-              small 
-              raised
-              onStepperPlusClick={() => dispatch({type: 'ADD_QUANTITY', product})}
-              onStepperMinusClick={() => dispatch({type: 'REMOVE_QUANTITY', product})}
-            />
-          </ListItem>
-        )}
+        {packs && packs.map(pack => {
+          const productInfo = state.products.find(rec => rec.id === pack.productId)
+          return (
+            <ListItem
+              title={productInfo.name}
+              footer={(pack.price * pack.quantity / 1000).toFixed(3)}
+              subtitle={pack.name}
+              key={pack.id}
+            >
+              <img slot="media" src={productInfo.imageUrl} width="80" alt=""/>
+              {pack.quantity > 1 ? <Badge slot="title" color="red">{pack.quantity}</Badge> : null}
+              <Stepper 
+                slot="after" 
+                buttonsOnly={true} 
+                small 
+                raised
+                onStepperPlusClick={() => dispatch({type: 'ADD_QUANTITY', pack})}
+                onStepperMinusClick={() => dispatch({type: 'REMOVE_QUANTITY', pack})}
+              />
+            </ListItem>
+          )
+        })}
       </List>
     </Block>
     <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>

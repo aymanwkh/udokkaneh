@@ -5,11 +5,12 @@ import Rating from './Rating'
 import RateProduct from './RateProduct'
 import { StoreContext } from '../data/Store';
 
-const ProductDetails = props => {
+const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const product = state.products.find(product => product.id === props.id)
-  const handleAddProduct = () => {
-    dispatch({type: 'ADD_TO_BASKET', product})
+  const pack = state.packs.find(rec => rec.id === props.id)
+  const product = state.products.find(rec => rec.id === pack.productId)
+  const handleAddPack = () => {
+    dispatch({type: 'ADD_TO_BASKET', pack})
     props.f7router.back()
   }
 
@@ -23,7 +24,7 @@ const ProductDetails = props => {
           <CardHeader className='card-title'>
             <p className="less-price">
               <span className="price">
-                {(product.price / 1000).toFixed(3)}
+                {(pack.price / 1000).toFixed(3)}
               </span> <br />
               <Link iconIos="f7:bell" iconMd="material:notifications_none" text={state.labels.lessPrice} color="red" onClick={() => props.f7router.navigate(`/lessPrice/${props.id}`)}/>
             </p>
@@ -31,12 +32,12 @@ const ProductDetails = props => {
           </CardHeader>
           <CardContent>
             <img src={product.imageUrl} width="100%" height="250" alt=""/>
-            <p>{product.description}</p>
+            <p>{pack.name}</p>
             <p>{`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}</p>
           </CardContent>
         </Card>
       </Block>
-      <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddProduct()}>
+      <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
         <Icon ios="f7:add" aurora="f7:add" md="material:add"></Icon>
       </Fab>
       {rating_links}
@@ -48,4 +49,4 @@ const ProductDetails = props => {
   )
 }
 
-export default ProductDetails
+export default PackDetails

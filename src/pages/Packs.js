@@ -3,23 +3,24 @@ import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 
-const Products = props => {
+const Packs = props => {
   const { state } = useContext(StoreContext)
-  const products = state.products.filter(product => props.id ? product.category === props.id : true)
-  const [categoryProducts, setCategoryProducts] = useState(products)
+  let packs = state.packs.filter(rec => props.id ? state.products.find(product => product.id === rec.productId).category === props.id : true)
+  packs = packs.filter(rec => rec.stores.length > 0)
+  const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
 
   const sort = () => {
     switch(orderBy){
       case 'p':
-        setCategoryProducts([...categoryProducts].sort((product1, product2) => product1.price - product2.price))
+        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack1.price - pack2.price))
         break
       case 's':
-        setCategoryProducts([...categoryProducts].sort((product1, product2) => product2.sales - product1.sales))
+        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.sales - pack1.sales))
         break
       case 'r':
-        setCategoryProducts([...categoryProducts].sort((product1, product2) => product2.rating - product1.rating))
+        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.rating - pack1.rating))
         break
       default:
         return null
@@ -40,7 +41,7 @@ const Products = props => {
   )
   return(
     <Page>
-      <Navbar title={category ? category.name : 'All Products'} backLink="Back">
+      <Navbar title={category ? category.name : state.labels.allProducts} backLink="Back">
         <NavRight>
           <Link searchbarEnable=".searchbar-demo" iconIos="f7:search" iconAurora="f7:search" iconMd="material:search"></Link>
         </NavRight>
@@ -66,19 +67,20 @@ const Products = props => {
           <ListItem title={state.labels.not_found} />
         </List>
         <List mediaList className="search-list searchbar-found">
-          {categoryProducts && categoryProducts.map(product => {
+          {categoryPacks && categoryPacks.map(pack => {
+            const productInfo = state.products.find(rec => rec.id === pack.productId)
             return (
               <ListItem
-                link={`/product/${product.id}`}
-                title={product.name}
-                after={(product.price / 1000).toFixed(3)}
-                subtitle={product.description}
-                text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}
-                key={product.id}
+                link={`/pack/${pack.id}`}
+                title={productInfo.name}
+                after={(pack.price / 1000).toFixed(3)}
+                subtitle={pack.name}
+                text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === productInfo.country).name}`}
+                key={pack.id}
               >
-                <img slot="media" src={product.imageUrl} width="80" className="lazy lazy-fadeIn demo-lazy" alt=""/>
-                {product.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : null}
-                {product.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : null}
+                <img slot="media" src={productInfo.imageUrl} width="80" className="lazy lazy-fadeIn demo-lazy" alt=""/>
+                {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : null}
+                {pack.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : null}
               </ListItem>
             )
           })}
@@ -91,4 +93,4 @@ const Products = props => {
   )
 }
 
-export default Products
+export default Packs

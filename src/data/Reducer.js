@@ -1,43 +1,43 @@
 const Reducer = (state, action) => {
-  let product
+  let pack
   let newQuantity
-  let otherProducts
+  let otherPacks
   let newBasket
   switch (action.type){
     case 'ADD_TO_BASKET':
-      if (state.basket.find(product => product.id === action.product.id)) return state
-      product = {
-        ...action.product,
+      if (state.basket.find(rec => rec.id === action.pack.id)) return state
+      pack = {
+        ...action.pack,
         quantity: 1
       }
-      newBasket = [...state.basket, product]
+      newBasket = [...state.basket, pack]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'ADD_QUANTITY':
-      newQuantity = state.basket.find(product => product.id === action.product.id).quantity
-      otherProducts = state.basket.filter(product => product.id !== action.product.id)
-      product = {
-        ...action.product,
+      newQuantity = state.basket.find(rec => rec.id === action.pack.id).quantity
+      otherPacks = state.basket.filter(rec => rec.id !== action.pack.id)
+      pack = {
+        ...action.pack,
         quantity: ++newQuantity,
       }
-      newBasket = [...otherProducts, product]
+      newBasket = [...otherPacks, pack]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'REMOVE_QUANTITY':
-      newQuantity = state.basket.find(product => product.id === action.product.id).quantity
-      otherProducts = state.basket.filter(product => product.id !== action.product.id)
+      newQuantity = state.basket.find(rec => rec.id === action.pack.id).quantity
+      otherPacks = state.basket.filter(rec => rec.id !== action.pack.id)
       if (--newQuantity === 0) {
-        if (otherProducts.length > 0){
-          newBasket = [...otherProducts]
+        if (otherPacks.length > 0){
+          newBasket = [...otherPacks]
         } else {
           newBasket = []
         }
       } else {
-        product = {
-          ...action.product,
+        pack = {
+          ...action.pack,
           quantity: newQuantity
         }
-        newBasket = [...otherProducts, product]
+        newBasket = [...otherPacks, pack]
       }
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
@@ -68,6 +68,11 @@ const Reducer = (state, action) => {
       return {
         ...state,
         products: action.products
+      }
+    case 'SET_PACKS':
+      return {
+        ...state,
+        packs: action.packs
       }
     case 'SET_SECTIONS':
       return {

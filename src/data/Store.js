@@ -113,7 +113,8 @@ const Store = props => {
     invalidPrice: 'الرجاء التأكد من السعر المدخل',
     forgetPasswordTitle: 'طلب كلمة سر جديدة',
     send: 'ارسال',
-    sendMessage: 'تم ارسال طلبك بنجاح'
+    sendMessage: 'تم ارسال طلبك بنجاح',
+    allProducts: 'كل المنتجات'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
@@ -134,7 +135,8 @@ const Store = props => {
     customerStatus,
     customer: {},
     orders: [],
-    products: []
+    products: [],
+    packs: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -201,10 +203,17 @@ const Store = props => {
     firebase.firestore().collection('products').where('status', '==', 'a').onSnapshot(docs => {
       let products = []
       docs.forEach(doc => {
-        const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
-        products.push({...doc.data(), id: doc.id, price: minPrice})
+        products.push({...doc.data(), id: doc.id})
       })
       dispatch({type: 'SET_PRODUCTS', products})
+    })
+    firebase.firestore().collection('packs').where('status', '==', 'a').onSnapshot(docs => {
+      let packs = []
+      docs.forEach(doc => {
+        const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
+        packs.push({...doc.data(), id: doc.id, price: minPrice === Infinity ? 0 : minPrice})
+      })
+      dispatch({type: 'SET_PACKS', packs})
     })
   }, []);
   return (
