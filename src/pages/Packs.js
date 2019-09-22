@@ -22,6 +22,9 @@ const Packs = props => {
       case 'r':
         setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.rating - pack1.rating))
         break
+      case 'o':
+        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.isOffer - pack1.isOffer))
+        break
       default:
         return null
     }

@@ -13,6 +13,7 @@ import OrdersList from './pages/OrdersList';
 import OrderDetails from './pages/OrderDetails';
 import LessPrice from './pages/LessPrice';
 import ForgetPassword from './pages/ForgetPassword';
+import InviteFriend from './pages/InviteFriend';
 
 export default [
   {
@@ -39,6 +40,10 @@ export default [
   {
     path: '/register/:callingPage',
     component: Register
+  },
+  {
+    path: '/inviteFriend/',
+    component: InviteFriend
   },
   {
     path: '/dynamic-route/blog/:blogId/post/:postId/',

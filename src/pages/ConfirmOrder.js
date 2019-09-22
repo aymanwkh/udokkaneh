@@ -3,7 +3,7 @@ import { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle 
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
-import { confirmOrder } from '../data/Actions'
+import { confirmOrder, showMessage } from '../data/Actions'
 
 
 const ConfirmOrder = props => {
@@ -39,6 +39,7 @@ const ConfirmOrder = props => {
       total
     }
     confirmOrder(order).then(() => {
+      showMessage(props, 'success', state.labels.confirmSuccess)
       props.f7router.navigate('/home/')
       dispatch({ type: 'CLEAR_BASKET' })
     })

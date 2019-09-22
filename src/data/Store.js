@@ -23,7 +23,8 @@ const Store = props => {
   const orderByList = [
     {id: 'p', name: 'السعر'},
     {id: 's', name: 'المبيعات'},
-    {id: 'r', name: 'التقييم'}
+    {id: 'r', name: 'التقييم'},
+    {id: 'o', name: 'العروض'}
   ]
   const units = [
     {id: 'p', name: 'حبة'},
@@ -88,8 +89,6 @@ const Store = props => {
     loginTitle: 'تسجيل دخول',
     relogin: 'عليك تسجيل الدخول أوﻻ',
     reloginTitle: 'طلب تسجيل دخول',
-    enterMobile: 'الرجاء ادخال رقم الموبايل',
-    enterPassword: 'الرجاء ادخال كلمة السر',
     invalidPassword: 'كلمة السر غير صحيحة',
     invalidMobile: 'رقم الموبايل غير صحيح',
     mobilePlaceholder: 'رقم الموبايل مبتدئا ب07',
@@ -114,7 +113,17 @@ const Store = props => {
     forgetPasswordTitle: 'طلب كلمة سر جديدة',
     send: 'ارسال',
     sendMessage: 'تم ارسال طلبك بنجاح',
-    allProducts: 'كل المنتجات'
+    allProducts: 'كل المنتجات',
+    orders: 'الطلبات السابقة',
+    inviteFriend: 'دعوة صديق',
+    sendSuccess: 'تم الارسال بنجاح',
+    loginSuccess: 'اهلا وسهلا بك',
+    registerSuccess: 'شكرا لتسجيلك معنا',
+    confirmSuccess: 'تم ارسال الطلب بنجاح',
+    lessPricePlaceholder: 'ادخل سعرا اقل من السعر الحالي',
+    logout: 'تسجيل خروج',
+    mainPanelTitle: 'الوظائف المساندة',
+    sendSuggestion: 'تقديم اقتراح'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
@@ -136,7 +145,8 @@ const Store = props => {
     customer: {},
     orders: [],
     products: [],
-    packs: []
+    packs: [],
+    invitations: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -158,6 +168,14 @@ const Store = props => {
           })
           dispatch({type: 'SET_RATING', rating})
         })
+        firebase.firestore().collection('invitations').where('user', '==', user.uid).onSnapshot(docs => {
+          let invitations = []
+          docs.forEach(doc => {
+            invitations.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_INVITATIONS', invitations})
+        })
+
         firebase.firestore().collection('customers').doc(user.uid).get().then(doc => {
           if (doc.exists){
             dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
@@ -211,7 +229,16 @@ const Store = props => {
       let packs = []
       docs.forEach(doc => {
         const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
-        packs.push({...doc.data(), id: doc.id, price: minPrice === Infinity ? 0 : minPrice})
+        let isOffer = doc.data().isOffer
+        if (isOffer === false) {
+          const store = doc.data().stores.find(rec => rec.offerEnd && new Date() <= rec.offerEnd.toDate())
+          if (store) {
+            if (store.price === minPrice) {
+              isOffer = true
+            }
+          }
+        }
+        packs.push({...doc.data(), id: doc.id, isOffer, price: minPrice === Infinity ? 0 : minPrice})
       })
       dispatch({type: 'SET_PACKS', packs})
     })

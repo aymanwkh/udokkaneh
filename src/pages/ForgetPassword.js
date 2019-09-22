@@ -1,14 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton, Block, Link} from 'framework7-react'
+import { Page, Navbar, List, ListInput, ListButton } from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import { forgetPassword } from '../data/Actions'
+import { forgetPassword, showMessage } from '../data/Actions'
 
 const ForgetPassword = props => {
   const { state } = useContext(StoreContext)
   const [mobile, setMobile] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
-  const [message, setMessage] = useState('')
   const patterns = {
     mobile: /^07[7-9][0-9]{7}$/
   }
@@ -24,30 +23,25 @@ const ForgetPassword = props => {
     }
     if (mobile !== '') validateMobile(mobile)
   }, [mobile])
-  const handleForgetPassword = async () => {
-    try {
-      if (mobile === '') {
-        setMobileErrorMessage(state.labels.enterMobile)
-        throw new Error(state.labels.enterMobile)
-      }
-      if (mobileErrorMessage !== '') {
-        throw new Error(mobileErrorMessage)
-      }
-      await forgetPassword(mobile)
-      setMessage(state.labels.sendMessage)
-      setTimeout(() => {
-        props.f7router.app.views.main.router.navigate('/home/')
-        props.f7router.app.panel.close('right')    
-      }, 2000)
-    } catch (err) {
-      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
+  useEffect(() => {
+    if (error) {
+      showMessage(props, 'error', error)
     }
+  }, [error])
+
+  const handleForgetPassword = () => {
+    forgetPassword(mobile).then(() => {
+      showMessage(props, 'success', state.labels.sendSuccess)
+      props.f7router.app.views.main.router.navigate('/home/')
+      props.f7router.app.panel.close('right')  
+    }).catch (err => {
+      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
+    })
   }
 
   return (
     <Page loginScreen>
       <Navbar title={state.labels.forgetPasswordTitle} backLink="Back" />
-      {error ? <Block strong className="error">{error}</Block> : null}
       <List form>
         <ListInput
           label={state.labels.mobile}
@@ -63,8 +57,7 @@ const ForgetPassword = props => {
         />
       </List>
       <List>
-        {message ? <Block strong className="message">{message}</Block> : <ListButton onClick={(e) => handleForgetPassword(e)}>{state.labels.send}</ListButton>}
-
+      {!mobile || mobileErrorMessage ? '' : <ListButton onClick={() => handleForgetPassword()}>{state.labels.send}</ListButton>}
       </List>
     </Page>
   )

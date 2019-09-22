@@ -99,21 +99,11 @@ const Reducer = (state, action) => {
         ...state,
         stores: action.stores
       }
-    case 'DONE':
-      return {
-        ...state,
-        result: {message: '', finished: true}
-      }
-    case 'ERROR':
-      return {
-        ...state,
-        result: {message: action.message, finished: true}
-      }
-    case 'CLEAR_ERRORS':
-      return {
-        ...state,
-        result: {message: '', finished: false}
-      }
+    case 'SET_INVITATIONS':
+        return {
+          ...state,
+          invitations: action.invitations
+        }
     default:
       return state
   }

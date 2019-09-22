@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, ListButton, Block, Link, Toolbar} from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import { login } from '../data/Actions'
+import { login, showMessage } from '../data/Actions'
 
 const Login = props => {
   const { state } = useContext(StoreContext)
@@ -38,34 +38,26 @@ const Login = props => {
     }
     if (mobile !== '') validateMobile(mobile)
   }, [mobile])
-  const handleLogin = async () => {
-    try {
-      if (mobile === '') {
-        setMobileErrorMessage(state.labels.enterMobile)
-        throw new Error(state.labels.enterMobile)
-      }
-      if (password === '') {
-        setPasswordErrorMessage(state.labels.enterPassword)
-        throw new Error(state.labels.enterPassword)
-      }
-      if (passwordErrorMessage !== '') {
-        throw new Error(passwordErrorMessage)
-      }
-      if (mobileErrorMessage !== '') {
-        throw new Error(mobileErrorMessage)
-      }
-      await login(mobile, password)
+  useEffect(() => {
+    if (error) {
+      showMessage(props, 'error', error)
+      setError('')
+    }
+  }, [error])
+
+  const handleLogin = () => {
+    login(mobile, password).then(() => {
+      showMessage(props, 'success', state.labels.loginSuccess)
       props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
       props.f7router.app.panel.close('right')  
-    } catch (err) {
-      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
-    }
+    }).catch (err => {
+      setError(state.labels[err.code.replace(/-|\//g, '_')])
+    })
   }
 
   return (
     <Page loginScreen>
       <Navbar title={state.labels.loginTitle} backLink="Back" />
-      {error ? <Block strong className="error">{error}</Block> : null}
       <List form>
         <ListInput
           label={state.labels.mobile}
@@ -84,13 +76,14 @@ const Login = props => {
           type="number"
           placeholder={state.labels.passwordPlaceholder}
           name="password"
+          clearButton
           value={password}
           errorMessage={passwordErrorMessage}
           errorMessageForce
           onChange={(e) => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
-        <ListButton onClick={(e) => handleLogin(e)}>{state.labels.login}</ListButton>
+        {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <ListButton onClick={() => handleLogin()}>{state.labels.login}</ListButton>}
       </List>
       <Toolbar bottom>
         <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>

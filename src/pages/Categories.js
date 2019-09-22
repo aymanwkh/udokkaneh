@@ -6,8 +6,8 @@ import BottomToolbar from './BottomToolbar';
 
 const Categories = props => {
   const { state } = useContext(StoreContext)
-  const section = state.sections.find(section => section.id === props.id)
-  const categories = state.categories.filter(category => category.sectionId === props.id)
+  const section = state.sections.find(rec => rec.id === props.id)
+  const categories = state.categories.filter(rec => rec.sectionId === props.id && rec.isActive === true)
   let i = 0
   return(
     <Page>

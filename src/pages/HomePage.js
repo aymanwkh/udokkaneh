@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
-import {Page, Navbar, NavLeft, NavTitle, Link, Block, BlockTitle,
-        List, ListItem, Toolbar, Row, Col, Button} from 'framework7-react'
+import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar } from 'framework7-react'
 import Sections from './Sections'
 import BottomToolbar from './BottomToolbar';
 import logo from '../coollogo_com-18673500.png'
@@ -21,21 +20,7 @@ const HomePage = props => {
           <span className='banner'>{state.labels.banner}</span>
         </NavTitle>
       </Navbar>
-      <Block strong>
-        <p>Here is your blank Framework7 app what we have here.</p>
-      </Block>
       <Sections/>
-      <BlockTitle>Modals</BlockTitle>
-      <Block strong>
-        <Row>
-          <Col width="50">
-            <Button fill raised popupOpen="#popup">Popup</Button>
-          </Col>
-        </Row>
-      </Block>
-      <List>
-        <ListItem link="/load-something-that-doesnt-exist/" title="Default Route (404)" />
-      </List>
       <Toolbar bottom>
         <BottomToolbar isHome="1"/>
       </Toolbar>

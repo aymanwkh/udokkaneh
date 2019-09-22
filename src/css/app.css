@@ -31,11 +31,10 @@
   }
   
   .error {
-    text-align: center;
     color: red;
   }
   
-  .message {
+  .success {
     text-align: center;
     color: green;
   }
