@@ -10,6 +10,8 @@ const OrderDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const order = state.orders.find(order => order.id === props.id)
   const [error, setError] = useState('')
+  const netPrice = order.total + order.fixedFees + order.deliveryFees - (order.specialDiscount + order.customerDiscount)
+
   const handleEdit = () => {
     if (state.basket.length > 0) {
       setError('your basket must be empty')
@@ -28,32 +30,32 @@ const OrderDetails = props => {
       <Navbar title={state.labels.orderDetails} backLink="Back" />
       <Block>
         <List>
-          {order.basket && order.basket.map(product => {
-            const productInfo = state.products.find(rec => rec.id === product.id)
+          {order.basket && order.basket.map(pack => {
+            const packInfo = state.packs.find(rec => rec.id === pack.id)
+            const productInfo = state.products.find(rec => rec.id === packInfo.productId)
             return (
               <ListItem 
-                key={product.id} 
+                key={pack.id} 
                 title={productInfo.name} 
-                footer={productInfo.description}
-                after={(product.price * product.quantity).toFixed(3)}
+                footer={packInfo.name}
+                after={(pack.price * pack.quantity / 1000).toFixed(3)}
               >
-                {product.quantity > 1 ? <Badge slot="title" color="red">{product.quantity}</Badge> : null}
+                {pack.quantity > 1 ? <Badge slot="title" color="red">{pack.quantity}</Badge> : null}
               </ListItem>
             )}
           )}
-          <ListItem title="Total" className="total" after={(order.total - 0.250).toFixed(3)} />
-          <ListItem title="Delivery" className="delivery" after="0.250" />
-          <ListItem title="Net Total" className="net" after={(order.total).toFixed(3)} />
+          <ListItem title={state.labels.total} after={(order.total / 1000).toFixed(3)} />
+          <ListItem title={state.labels.feesTitle} className="red" after={(order.fixedFees / 1000).toFixed(3)} />
+          {order.deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="red" after={(order.deliveryFees / 1000).toFixed(3)} /> : null}
+          {order.specialDiscount + order.customerDiscount > 0 ? <ListItem title={state.labels.discount} className="discount" after={((order.specialDiscount + order.customerDiscount) / 1000).toFixed(3)} /> : null}
+          <ListItem title={state.labels.net} className="blue" after={(netPrice / 1000).toFixed(3)} />
         </List>
-      </Block>
-      <Block strong className="error">
-        <p>{error}</p>
       </Block>
       { order.status === 'n' ? 
         <Fab position="left-bottom" slot="fixed" color="red" onClick={() => handleEdit()}>
           <Icon ios="f7:edit" aurora="f7:edit" md="material:edit"></Icon>
         </Fab>
-        : null
+        : ''
       }
       <Toolbar bottom>
         <BottomToolbar/>

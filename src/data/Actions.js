@@ -3,7 +3,6 @@ import firebase from './firebase'
 export const showMessage = (props, type, messageText) => {
   const message = props.f7router.app.toast.create({
     text: `<span class=${type}>${messageText}<span>`,
-    position: 'top',
     closeTimeout: 3000,
   });
   message.open();
@@ -57,6 +56,19 @@ export const registerUser = async (mobile, password, name) => {
   await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,
+    isActive: false,
+    time: new Date()
+  })
+}
+
+export const registerStoreOwner = async (mobile, password, name, storeName, address) => {
+  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
+  await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+    name,
+    mobile,
+    storeName,
+    address,
+    isActive: false,
     time: new Date()
   })
 }

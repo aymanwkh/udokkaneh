@@ -9,10 +9,22 @@ import { confirmOrder, showMessage } from '../data/Actions'
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
-  const [deliveryFees, setDeliveryFees] = useState(0)
+  const [deliveryFees, setDeliveryFees] = useState(state.customer.deliveryFees || 0)
   const total = state.basket.reduce((a, product) => a + (product.price * product.quantity), 0)
-  const specialDiscount = state.customerStatus.find(rec => rec.id === state.customer.status).discount
-  const customerDiscount = state.customer.discount || 0
+  let discount = {value: 0, type: ''}
+  if (state.orders.length === 0) {
+    discount.value = state.labels.firstOrderDiscount
+    discount.type = 'f'
+  } else if (state.customer.type === 's') {
+    discount.value = state.labels.specialDiscount
+    discount.type = 's'
+  } else if (state.customer.invitationsDiscount > 0) {
+    discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
+    discount.type = 'i'
+  } else if (state.customer.lessPriceDiscount > 0) {
+    discount.value = Math.min(state.customer.lessPriceDiscount, state.labels.maxDiscount)
+    discount.type = 'l'
+  }
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(state.customer.deliveryFees || 0)
@@ -33,8 +45,7 @@ const ConfirmOrder = props => {
       basket,
       fixedFees: state.labels.fixedFees,
       deliveryFees,
-      specialDiscount,
-      customerDiscount,
+      discount,
       withDelivery,
       total
     }
@@ -70,9 +81,9 @@ const ConfirmOrder = props => {
           </ListItem>
           <ListItem title={state.labels.total} className="total" after={(total / 1000).toFixed(3)} />
           <ListItem title={state.labels.feesTitle} className="fees" after={(state.labels.fixedFees / 1000).toFixed(3)} />
-          {deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="fees" after={(deliveryFees / 1000).toFixed(3)} /> : null}
-          {specialDiscount + customerDiscount > 0 ? <ListItem title={state.labels.discount} className="discount" after={((specialDiscount + customerDiscount) / 1000).toFixed(3)} /> : null}
-          <ListItem title={state.labels.net} className="net" after={((total + state.labels.fixedFees + deliveryFees - (specialDiscount + customerDiscount)) / 1000).toFixed(3)} />
+          {deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="fees" after={(deliveryFees / 1000).toFixed(3)} /> : ''}
+          {discount.value > 0 ? <ListItem title={state.discountTypes.find(rec => rec.id === discount.type).name} className="discount" after={(discount.value / 1000).toFixed(3)} /> : ''}
+          <ListItem title={state.labels.net} className="net" after={((total + state.labels.fixedFees + deliveryFees - discount.value) / 1000).toFixed(3)} />
         </List>
         <p className="note">{withDelivery ? state.labels.withDeliveryNote : state.labels.noDeliveryNote}</p>
       </Block>

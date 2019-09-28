@@ -25,6 +25,9 @@ const Packs = props => {
       case 'o':
         setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.isOffer - pack1.isOffer))
         break
+      case 'v':
+        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack1.value - pack2.value))
+        break
       default:
         return null
     }
@@ -40,7 +43,8 @@ const Packs = props => {
       popoverClose 
       key={orderByItem.id} 
       title={orderByItem.name} 
-      onClick={() => setOrderBy(orderByItem.id)}/> 
+      onClick={() => setOrderBy(orderByItem.id)}
+    /> 
   )
   return(
     <Page>

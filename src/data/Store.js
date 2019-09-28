@@ -24,14 +24,8 @@ const Store = props => {
     {id: 'p', name: 'السعر'},
     {id: 's', name: 'المبيعات'},
     {id: 'r', name: 'التقييم'},
-    {id: 'o', name: 'العروض'}
-  ]
-  const units = [
-    {id: 'p', name: 'حبة'},
-    {id: 'g', name: 'غرام'},
-    {id: 'kg', name: 'كيلو غرام'},
-    {id: 'ml', name: 'مل لتر'},
-    {id: 'l', name: 'لتر'}
+    {id: 'o', name: 'العروض'},
+    {id: 'v', name: 'القيمة'}
   ]
   const orderStatus = [
     {id: 'n', name: 'جديد'},
@@ -45,12 +39,11 @@ const Store = props => {
     {id: 'c', name: 'ملغي'},
     {id: 'i', name: 'في المستودع'}
   ]
-  const customerStatus = [
-    {id: 'n', name: 'جديد', discount: 0},
-    {id: 'a', name: 'فعال', discount: 0},
-    {id: 'b', name: 'قائمة سوداء', discount: 0},
-    {id: 'v', name: 'مميز', discount: 0},
-    {id: 's', name: 'خاص', discount: 500}
+  const discountTypes = [
+    {id: 'f', name: 'خصم اول طلب'},
+    {id: 's', name: 'خصم خاص'},
+    {id: 'i', name: 'خصم دعوة صديق'},
+    {id: 'l', name: 'خصم ابلاغ عن سعر اقل'}
   ]
   const labels = {
     appTitle: 'حريص',
@@ -81,7 +74,7 @@ const Store = props => {
     addToBasket: 'شراء',
     submit: 'موافق',
     banner: 'شاركنا البحث عن السعر اﻻفضل',
-    lessPrice: 'اﻻبلاغ عن سعر أقل',
+    lessPrice: 'وجدت سعرا أقل؟',
     storeName: 'اسم المحل',
     storePlace: 'عنوان المحل',
     price: 'السعر',
@@ -99,6 +92,9 @@ const Store = props => {
     namePlaceholder: 'من 4-50 حرف',
     invalidName: 'اﻻسم غير صحيح',
     fixedFees: 500,
+    specialDiscount: 500,
+    firstOrderDiscount: 500,
+    maxDiscount: 500,
     total: 'المجموع',
     feesTitle: 'الرسوم',
     discount: 'الخصم',
@@ -123,7 +119,10 @@ const Store = props => {
     lessPricePlaceholder: 'ادخل سعرا اقل من السعر الحالي',
     logout: 'تسجيل خروج',
     mainPanelTitle: 'الوظائف المساندة',
-    sendSuggestion: 'تقديم اقتراح'
+    sendSuggestion: 'تقديم اقتراح',
+    registerStoreOwner: 'انا صاحب محل، أود الاشتراك',
+    registerStoreOwnerTitle: 'تسجيل صاحب محل',
+    address: 'العنوان'
   }
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
@@ -133,7 +132,6 @@ const Store = props => {
     randomColors, 
     categories: [], 
     countries: [], 
-    units, 
     labels, 
     orderStatus, 
     basket, 
@@ -141,12 +139,12 @@ const Store = props => {
     orderByList, 
     stores: [], 
     rating: [],
-    customerStatus,
     customer: {},
     orders: [],
     products: [],
     packs: [],
-    invitations: []
+    invitations: [],
+    discountTypes
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -218,17 +216,19 @@ const Store = props => {
       })
       dispatch({type: 'SET_STORES', stores})
     }) 
-    firebase.firestore().collection('products').where('status', '==', 'a').onSnapshot(docs => {
+    firebase.firestore().collection('products').where('isActive', '==', true).onSnapshot(docs => {
       let products = []
       docs.forEach(doc => {
         products.push({...doc.data(), id: doc.id})
       })
       dispatch({type: 'SET_PRODUCTS', products})
     })
-    firebase.firestore().collection('packs').where('status', '==', 'a').onSnapshot(docs => {
+    firebase.firestore().collection('packs').where('isActive', '==', true).onSnapshot(docs => {
       let packs = []
       docs.forEach(doc => {
-        const minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
+        let minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || new Date() <= store.offerEnd.toDate() ? store.price : store.oldPrice))
+        minPrice = minPrice === Infinity ? 0 : minPrice
+        const value = doc.data().units ? minPrice / doc.data().units : 0
         let isOffer = doc.data().isOffer
         if (isOffer === false) {
           const store = doc.data().stores.find(rec => rec.offerEnd && new Date() <= rec.offerEnd.toDate())
@@ -238,7 +238,7 @@ const Store = props => {
             }
           }
         }
-        packs.push({...doc.data(), id: doc.id, isOffer, price: minPrice === Infinity ? 0 : minPrice})
+        packs.push({...doc.data(), id: doc.id, isOffer, value, price: minPrice})
       })
       dispatch({type: 'SET_PACKS', packs})
     })

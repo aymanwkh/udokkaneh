@@ -10,7 +10,8 @@ const PanelPage = props => {
       dispatch({type: 'CLEAR_BASKET'})
     })
   }
-  const login_logout = user ? <ListItem link="#" onClick={() => handleLogout()} title={state.labels.logout} /> : <ListItem link="/login/panel" title="Login" />
+  const login_logout = user ? <ListItem link="#" onClick={() => handleLogout()} title={state.labels.logout} /> : <ListItem link="/login/panel" title={state.labels.loginTitle} />
+  const register = user ? <ListItem link="#" onClick={() => handleLogout()} title={state.labels.logout} /> : <ListItem link="/login/panel" title={state.labels.loginTitle} />
   return(
     <Page>
       <Navbar title={state.labels.mainPanelTitle} />
@@ -20,11 +21,37 @@ const PanelPage = props => {
       <List>
         {login_logout}
       </List>
-      <List>
-        { user ? <ListItem link="/ordersList/" title={state.labels.orders} view="#main-view" panelClose /> : null }
-        { user ? <ListItem link="/inviteFriend/" title={state.labels.inviteFriend} view="#main-view" panelClose /> : null }
-        { user ? <ListItem link="/sendSuggestion/" title={state.labels.sendSuggestion} view="#main-view" panelClose /> : null }
-      </List>
+      {user ? 
+        <List>
+          <ListItem 
+            link="/ordersList/" 
+            title={state.labels.orders} 
+            view="#main-view" 
+            panelClose 
+          />
+          <ListItem 
+            link="/inviteFriend/" 
+            title={state.labels.inviteFriend} 
+            view="#main-view" 
+            panelClose 
+          />
+          <ListItem 
+            link="/sendSuggestion/" 
+            title={state.labels.sendSuggestion} 
+            view="#main-view" 
+            panelClose
+          />
+        </List>
+      :
+        <List>
+          <ListItem 
+            link="/storeOwner/" 
+            title={state.labels.registerStoreOwner} 
+            view="#main-view" 
+            panelClose 
+          />
+        </List>
+      }
     </Page>
   )
 }

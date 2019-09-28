@@ -14,6 +14,7 @@ import OrderDetails from './pages/OrderDetails';
 import LessPrice from './pages/LessPrice';
 import ForgetPassword from './pages/ForgetPassword';
 import InviteFriend from './pages/InviteFriend';
+import StoreOwner from './pages/StoreOwner';
 
 export default [
   {
@@ -40,6 +41,10 @@ export default [
   {
     path: '/register/:callingPage',
     component: Register
+  },
+  {
+    path: '/storeOwner/',
+    component: StoreOwner
   },
   {
     path: '/inviteFriend/',
