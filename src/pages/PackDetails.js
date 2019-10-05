@@ -14,18 +14,23 @@ const PackDetails = props => {
     props.f7router.back()
   }
 
-  const rating_links = !user || state.rating.find(rating => rating.productId === props.id) ? null : <RateProduct product={product} />
+  const rating_links = !user || state.rating.find(rating => rating.productId === props.id) ? '' : <RateProduct product={product} />
 
   return (
     <Page>
-      <Navbar title={product.name} backLink="Back" />
+      <Navbar title={product.name} backLink={state.labels.back} />
       <Card className="demo-card-header-pic">
         <CardHeader className='card-title'>
           <p className="less-price">
             <span className="price">
               {(pack.price / 1000).toFixed(3)}
             </span> <br />
-            <Link iconIos="f7:bell" iconMd="material:notifications_none" text={state.labels.lessPrice} color="red" onClick={() => props.f7router.navigate(`/lessPrice/${props.id}`)}/>
+            <Link 
+              iconIos="f7:bell" 
+              iconMd="material:notifications_none" 
+              text={state.customer.type === 'o' ? state.labels.havePack : state.labels.lessPrice} 
+              color="red" 
+              onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}/>
           </p>
           <p className="rating"><Rating rating={product.rating} /> </p>
         </CardHeader>

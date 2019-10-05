@@ -41,7 +41,7 @@ const ForgetPassword = props => {
 
   return (
     <Page loginScreen>
-      <Navbar title={state.labels.forgetPasswordTitle} backLink="Back" />
+      <Navbar title={state.labels.forgetPasswordTitle} backLink={state.labels.back} />
       <List form>
         <ListInput
           label={state.labels.mobile}

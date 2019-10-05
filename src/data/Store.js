@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, useEffect, useState } from 'react';
 import Reducer from './Reducer'
 import firebase from './firebase'
+import labels from './labels'
 
 export const StoreContext = createContext()
 
@@ -25,7 +26,8 @@ const Store = props => {
     {id: 's', name: 'المبيعات'},
     {id: 'r', name: 'التقييم'},
     {id: 'o', name: 'العروض'},
-    {id: 'v', name: 'القيمة'}
+    {id: 'v', name: 'القيمة'},
+    {id: 't', name: 'المنتج'}
   ]
   const orderStatus = [
     {id: 'n', name: 'جديد'},
@@ -45,85 +47,7 @@ const Store = props => {
     {id: 'i', name: 'خصم دعوة صديق'},
     {id: 'l', name: 'خصم ابلاغ عن سعر اقل'}
   ]
-  const labels = {
-    appTitle: 'حريص',
-    news: 'آخر الاخبار',
-    offers: 'العروض',
-    popular: 'اﻻكثر مبيعا',
-    registerTitle: 'التسجيل ﻷول مرة',
-    name: 'اﻻسم',
-    mobile: 'الموبايل',
-    password: 'كلمة السر',
-    location: 'الموقع',
-    register: 'تسجيل',
-    error: 'خطأ',
-    not_found: 'ﻻ يوجد بيانات',
-    search: 'بحث',
-    open_order_found: 'هناك طلبية سابقة لم يتم استلامها',
-    auth_user_not_found: 'الرجاء التأكد من رقم الموبايل وكلمة المرور',
-    auth_email_already_in_use: 'لقد سجلت سابقا برقم هذا الموبايل',
-    auth_wrong_password: 'كلمة السر غير صحيحة',
-    productOf: 'انتاج',
-    orderBy: 'الترتيب حسب',
-    new: 'جديد',
-    offer: 'عرض',
-    confirmOrder: 'اعتماد الطلب',
-    basket: 'سلة المشتريات',
-    confirm: 'اعتماد',
-    orderDetails: 'تفاصيل الطلب',
-    addToBasket: 'شراء',
-    submit: 'موافق',
-    banner: 'شاركنا البحث عن السعر اﻻفضل',
-    lessPrice: 'وجدت سعرا أقل؟',
-    storeName: 'اسم المحل',
-    storePlace: 'عنوان المحل',
-    price: 'السعر',
-    login: 'دخول',
-    loginTitle: 'تسجيل دخول',
-    relogin: 'عليك تسجيل الدخول أوﻻ',
-    reloginTitle: 'طلب تسجيل دخول',
-    invalidPassword: 'كلمة السر غير صحيحة',
-    invalidMobile: 'رقم الموبايل غير صحيح',
-    mobilePlaceholder: 'رقم الموبايل مبتدئا ب07',
-    passwordPlaceholder: 'كلمة السر من اربعة ارقام',
-    newUser: 'مستخدم جديد',
-    forgetPassword: 'نسيت كلمة السر',
-    enterName: 'الرجاء ادخال اﻻسم',
-    namePlaceholder: 'من 4-50 حرف',
-    invalidName: 'اﻻسم غير صحيح',
-    fixedFees: 500,
-    specialDiscount: 500,
-    firstOrderDiscount: 500,
-    maxDiscount: 500,
-    total: 'المجموع',
-    feesTitle: 'الرسوم',
-    discount: 'الخصم',
-    net: 'الصافي',
-    delivery: 'خدمة التوصيل',
-    deliveryFees: 'رسوم التوصيل',
-    noDeliveryNote: 'يتم اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول',
-    withDeliveryNote: 'يتم التوصيل خلال جولات محددة حسب المنطقة',
-    enterPrice: 'الرجاء ادخال السعر',
-    enterStore: 'الرجاء ادخال اسم المحل',
-    invalidPrice: 'الرجاء التأكد من السعر المدخل',
-    forgetPasswordTitle: 'طلب كلمة سر جديدة',
-    send: 'ارسال',
-    sendMessage: 'تم ارسال طلبك بنجاح',
-    allProducts: 'كل المنتجات',
-    orders: 'الطلبات السابقة',
-    inviteFriend: 'دعوة صديق',
-    sendSuccess: 'تم الارسال بنجاح',
-    loginSuccess: 'اهلا وسهلا بك',
-    registerSuccess: 'شكرا لتسجيلك معنا',
-    confirmSuccess: 'تم ارسال الطلب بنجاح',
-    lessPricePlaceholder: 'ادخل سعرا اقل من السعر الحالي',
-    logout: 'تسجيل خروج',
-    mainPanelTitle: 'الوظائف المساندة',
-    sendSuggestion: 'تقديم اقتراح',
-    registerStoreOwner: 'انا صاحب محل، أود الاشتراك',
-    registerStoreOwnerTitle: 'تسجيل صاحب محل',
-    address: 'العنوان'
-  }
+
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
   const [user, setUser] = useState(null);

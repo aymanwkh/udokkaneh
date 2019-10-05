@@ -27,7 +27,7 @@ const OrderDetails = props => {
   if (!user) return <ReLogin callingPage="order"/>
   return(
     <Page>
-      <Navbar title={state.labels.orderDetails} backLink="Back" />
+      <Navbar title={state.labels.orderDetails} backLink={state.labels.back} />
       <Block>
         <List>
           {order.basket && order.basket.map(pack => {

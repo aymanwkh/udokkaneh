@@ -12,7 +12,7 @@ const ActiveOrders = props => {
   activeOrders.sort((ordera, orderb) => orderb.time.seconds - ordera.time.seconds)
   return(
     <Page>
-      <Navbar title="Orders" backLink="Back" />
+      <Navbar title="Orders" backLink={state.labels.back} />
       <Block>
           <List mediaList>
             {activeOrders && activeOrders.map(order =>

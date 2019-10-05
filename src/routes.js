@@ -1,5 +1,4 @@
 import HomePage from './pages/HomePage';
-import DynamicRoutePage from './pages/DynamicRoutePage';
 import NotFoundPage from './pages/NotFoundPage';
 import Categories from './pages/Categories'
 import PanelPage from './pages/PanelPage'
@@ -11,7 +10,7 @@ import Basket from './pages/Basket'
 import ConfirmOrder from './pages/ConfirmOrder'
 import OrdersList from './pages/OrdersList';
 import OrderDetails from './pages/OrderDetails';
-import LessPrice from './pages/LessPrice';
+import PriceAlarm from './pages/PriceAlarm';
 import ForgetPassword from './pages/ForgetPassword';
 import InviteFriend from './pages/InviteFriend';
 import StoreOwner from './pages/StoreOwner';
@@ -51,10 +50,6 @@ export default [
     component: InviteFriend
   },
   {
-    path: '/dynamic-route/blog/:blogId/post/:postId/',
-    component: DynamicRoutePage,
-  },
-  {
     path: '/section/:id',
     component: Categories
   },
@@ -67,8 +62,8 @@ export default [
     component: PackDetails
   },
   {
-    path: '/lessPrice/:id',
-    component: LessPrice
+    path: '/priceAlarm/:id',
+    component: PriceAlarm
   },
   {
     path: '/basket/',

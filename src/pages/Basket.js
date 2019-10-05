@@ -14,7 +14,7 @@ const Basket = props => {
 
   return(
     <Page>
-    <Navbar title={state.labels.basket} backLink="Back" />
+    <Navbar title={state.labels.basket} backLink={state.labels.back} />
     <Block>
       <List mediaList>
         {packs && packs.map(pack => {
@@ -47,7 +47,7 @@ const Basket = props => {
 
     <Toolbar bottom>
     <Link href='/home/'>
-        <Icon ios="f7:home_fill" aurora="f7:home_fill" md="material:home"></Icon>
+        <Icon ios="f7:home" aurora="f7:home" md="material:home"></Icon>
       </Link>
       <Link href='#' onClick={() => dispatch({type: 'CLEAR_BASKET'})}>
         <Icon ios="f7:trash_fill" aurora="f7:trash_fill" md="material:delete"></Icon>

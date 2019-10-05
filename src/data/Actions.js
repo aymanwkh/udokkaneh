@@ -73,14 +73,14 @@ export const registerStoreOwner = async (mobile, password, name, storeName, addr
   })
 }
 
-export const addLessPrice = async lessPrice => {
-  const newlessPrice = {
-    ...lessPrice,
+export const addPriceAlarm = async priceAlarm => {
+  const newPriceAlarm = {
+    ...priceAlarm,
     user: firebase.auth().currentUser.uid,
-    status: 'n',
+    isActive: false,
     time: new Date()
   }
-  await firebase.firestore().collection("lessPrice").add(newlessPrice)
+  await firebase.firestore().collection("priceAlarms").add(newPriceAlarm)
 }
 
 export const inviteFriend = async (mobile, name) => {

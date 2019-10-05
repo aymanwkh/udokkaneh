@@ -56,7 +56,7 @@ const InviteFriend = props => {
 
   return (
     <Page loginScreen>
-      <Navbar title={state.labels.inviteFriend} backLink="Back" />
+      <Navbar title={state.labels.inviteFriend} backLink={state.labels.back} />
       <List form>
         <ListInput
           label={state.labels.name}

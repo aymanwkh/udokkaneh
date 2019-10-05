@@ -58,7 +58,7 @@ const ConfirmOrder = props => {
   if (!user) return <ReLogin callingPage="confirmOrder" />
   return (
     <Page>
-      <Navbar title={state.labels.confirmOrder} backLink="Back" />
+      <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />
       <Block>
         <List>
           {state.basket && state.basket.map(pack => 

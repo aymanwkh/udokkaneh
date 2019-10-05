@@ -57,7 +57,7 @@ const Login = props => {
 
   return (
     <Page loginScreen>
-      <Navbar title={state.labels.loginTitle} backLink="Back" />
+      <Navbar title={state.labels.loginTitle} backLink={state.labels.back} />
       <List form>
         <ListInput
           label={state.labels.mobile}

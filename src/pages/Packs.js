@@ -28,6 +28,9 @@ const Packs = props => {
       case 'v':
         setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack1.value - pack2.value))
         break
+      case 't':
+        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => state.products.find(rec => rec.id === pack1.productId).name > state.products.find(rec => rec.id === pack2.productId).name ? 1 : -1))
+        break
       default:
         return null
     }
@@ -48,7 +51,7 @@ const Packs = props => {
   )
   return(
     <Page>
-      <Navbar title={category ? category.name : state.labels.allProducts} backLink="Back">
+      <Navbar title={category ? category.name : state.labels.allProducts} backLink={state.labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar-demo" iconIos="f7:search" iconAurora="f7:search" iconMd="material:search"></Link>
         </NavRight>

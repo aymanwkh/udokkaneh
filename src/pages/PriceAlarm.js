@@ -1,18 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react'
 import {Page, Navbar, List, ListInput, Fab, Icon, Block, Card, CardContent, CardHeader} from 'framework7-react';
 import { StoreContext } from '../data/Store';
-import { addLessPrice, showMessage } from '../data/Actions'
+import { addPriceAlarm, showMessage } from '../data/Actions'
 import ReLogin from './ReLogin'
 
 
-const LessPrice = props => {
+const PriceAlarm = props => {
   const { state, user } = useContext(StoreContext)
   const pack = state.packs.find(rec => rec.id === props.id)
   const product = state.products.find(rec => rec.id === pack.productId)
   const [price, setPrice] = useState('')
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
-  const [storePlaceErrorMessage, setStorePlaceErrorMessage] = useState('')
   const [storeName, setStoreName] = useState('')
   const [storePlace, setStorePlace] = useState('')
   const [error, setError] = useState('')
@@ -22,10 +21,18 @@ const LessPrice = props => {
 
   useEffect(() => {
     const validatePrice = (value) => {
-      if (Number(value * 1000) < pack.price) {
-        setPriceErrorMessage('')
+      if (state.customer.type === 'o') {
+        if (Number(value) > 0 && Number(value * 1000) <= pack.price) {
+          setPriceErrorMessage('')
+        } else {
+          setPriceErrorMessage(state.labels.invalidPrice)
+        }
       } else {
-        setPriceErrorMessage(state.labels.invalidPrice)
+        if (Number(value) > 0 && Number(value * 1000) < pack.price) {
+          setPriceErrorMessage('')
+        } else {
+          setPriceErrorMessage(state.labels.invalidPrice)
+        }  
       }
     }
     if (price !== '') validatePrice(price)
@@ -42,18 +49,6 @@ const LessPrice = props => {
     }  
     if (storeName !== '') validateStoreName(storeName)
   }, [storeName])
-  useEffect(() => {
-    const validateStorePlace = (value) => {
-      if (patterns.name) {
-        if (patterns.name.test(value)){
-          setStorePlaceErrorMessage('')
-        } else {
-          setStorePlaceErrorMessage(state.labels.invalidName)
-        }
-      }
-    }  
-    if (storePlace !== '') validateStorePlace(storePlace)
-  }, [storePlace])
 
   useEffect(() => {
     if (error) {
@@ -65,13 +60,13 @@ const LessPrice = props => {
     return (Number(value) * 1000 / 1000).toFixed(3)
   } 
   const handleSubmit = () => {
-    const lessPrice = {
-      productId: product.id,
+    const priceAlarm = {
+      packId: pack.id,
       price: price * 1000,
       storeName,
       storePlace
     }
-    addLessPrice(lessPrice).then(() => {
+    addPriceAlarm(priceAlarm).then(() => {
       showMessage(props, 'success', state.labels.sendSuccess)
       props.f7router.back()
     }).catch (err => {
@@ -81,7 +76,7 @@ const LessPrice = props => {
   if (!user) return <ReLogin callingPage='home'/>
   return (
     <Page>
-      <Navbar title={state.labels.lessPrice} backLink="Back" />
+      <Navbar title={state.customer.type === 'o' ? state.labels.havePack : state.labels.lessPrice} backLink={state.labels.back} />
       <Block>
         <Card className="demo-card-header-pic">
           <CardHeader className="card-title">
@@ -97,7 +92,7 @@ const LessPrice = props => {
           <ListInput 
             name="price" 
             label={state.labels.price}
-            placeholder={state.labels.lessPricePlaceholder}
+            placeholder={state.customer.type === 'o' ? state.labels.pricePlaceholder : state.labels.lessPricePlaceholder}
             clearButton 
             type="number" 
             value={price} 
@@ -107,39 +102,43 @@ const LessPrice = props => {
             onInputClear={() => setPrice('')}
             onBlur={(e) => setPrice(formatPrice(e.target.value))}
           />
-          <ListInput 
-            name="storeName" 
-            label={state.labels.storeName}
-            placeholder={state.labels.namePlaceholder}
-            clearButton 
-            type="text" 
-            value={storeName} 
-            errorMessage={storeNameErrorMessage}
-            errorMessageForce  
-            onChange={(e) => setStoreName(e.target.value)}
-            onInputClear={() => setStoreName('')}
-          />
-          <ListInput 
-            name="storePlace" 
-            label={state.labels.storePlace}
-            placeholder={state.labels.namePlaceholder}
-            clearButton 
-            type="text" 
-            value={storePlace} 
-            errorMessage={storePlaceErrorMessage}
-            errorMessageForce  
-            onChange={(e) => setStorePlace(e.target.value)}
-            onInputClear={() => setStorePlace('')}
-          />
+          {state.customer.type === 'o'
+          ? ''
+          : <ListInput 
+              name="storeName" 
+              label={state.labels.storeName}
+              placeholder={state.labels.namePlaceholder}
+              clearButton 
+              type="text" 
+              value={storeName} 
+              errorMessage={storeNameErrorMessage}
+              errorMessageForce  
+              onChange={(e) => setStoreName(e.target.value)}
+              onInputClear={() => setStoreName('')}
+            />
+          }
+          {state.customer.type === 'o'
+          ? ''
+          : <ListInput 
+              name="storePlace" 
+              label={state.labels.storePlace}
+              placeholder={state.labels.namePlaceholder}
+              clearButton 
+              type="text" 
+              value={storePlace} 
+              onChange={(e) => setStorePlace(e.target.value)}
+              onInputClear={() => setStorePlace('')}
+            />
+          }
         </List>
       </Block>
-      {!price || !storeName || !storePlace || priceErrorMessage || storeNameErrorMessage || storePlaceErrorMessage 
+      {!price || (state.customer.type !== 'o' && !storeName) || priceErrorMessage || storeNameErrorMessage 
         ? '' 
-        : <Fab position="center-bottom" slot="fixed" text={state.labels.send} color="green" onClick={() => handleSubmit()}>
+        : <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>
             <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
           </Fab>
       }
     </Page>
   )
 }
-export default LessPrice
+export default PriceAlarm
