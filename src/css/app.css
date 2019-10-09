@@ -89,3 +89,7 @@
     text-align: center;
     color: red;
   }
+
+  .avatar {
+    width: 100px;
+  }

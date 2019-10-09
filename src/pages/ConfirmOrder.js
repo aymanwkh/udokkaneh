@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useMemo } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
@@ -10,21 +10,24 @@ const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
   const [deliveryFees, setDeliveryFees] = useState(state.customer.deliveryFees || 0)
-  const total = state.basket.reduce((a, product) => a + (product.price * product.quantity), 0)
-  let discount = {value: 0, type: ''}
-  if (state.orders.length === 0) {
-    discount.value = state.labels.firstOrderDiscount
-    discount.type = 'f'
-  } else if (state.customer.type === 's') {
-    discount.value = state.labels.specialDiscount
-    discount.type = 's'
-  } else if (state.customer.invitationsDiscount > 0) {
-    discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
-    discount.type = 'i'
-  } else if (state.customer.lessPriceDiscount > 0) {
-    discount.value = Math.min(state.customer.lessPriceDiscount, state.labels.maxDiscount)
-    discount.type = 'l'
-  }
+  const total = useMemo(() => state.basket.reduce((a, product) => a + (product.price * product.quantity), 0), [state.basket])
+  const discount = useMemo(() => {
+    let discount = {value: 0, type: ''}
+    if (state.orders.length === 0) {
+      discount.value = state.labels.firstOrderDiscount
+      discount.type = 'f'
+    } else if (state.customer.type === 's') {
+      discount.value = state.labels.specialDiscount
+      discount.type = 's'
+    } else if (state.customer.invitationsDiscount > 0) {
+      discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
+      discount.type = 'i'
+    } else if (state.customer.lessPriceDiscount > 0) {
+      discount.value = Math.min(state.customer.lessPriceDiscount, state.labels.maxDiscount)
+      discount.type = 'l'
+    }
+    return discount
+  }, [state.orders, state.customer]) 
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(state.customer.deliveryFees || 0)

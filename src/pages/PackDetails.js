@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, Toolbar, Icon} from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import Rating from './Rating'
@@ -7,8 +7,8 @@ import { StoreContext } from '../data/Store';
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const pack = state.packs.find(rec => rec.id === props.id)
-  const product = state.products.find(rec => rec.id === pack.productId)
+  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id), [state.packs])
+  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId), [state.products])
   const handleAddPack = () => {
     dispatch({type: 'ADD_TO_BASKET', pack})
     props.f7router.back()

@@ -1,12 +1,14 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useMemo } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Button, Popover} from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
-  let packs = state.packs.filter(rec => props.id ? state.products.find(product => product.id === rec.productId).category === props.id : true)
-  packs = packs.filter(rec => rec.stores.length > 0)
+  const packs = useMemo(() => {
+    let packs = state.packs.filter(rec => props.id ? state.products.find(product => product.id === rec.productId).category === props.id : true)
+    return packs.filter(rec => rec.stores.length > 0)
+  }, [state.packs]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
@@ -39,16 +41,18 @@ const Packs = props => {
     sort(orderBy)
   }, [orderBy])
 
-  const orderByList = state.orderByList.filter(rec => rec.id !== orderBy)
-  const orderByListTags = orderByList.map(orderByItem => 
-    <ListItem 
-      link="#" 
-      popoverClose 
-      key={orderByItem.id} 
-      title={orderByItem.name} 
-      onClick={() => setOrderBy(orderByItem.id)}
-    /> 
-  )
+  const orderByListTags = useMemo(() => {
+    const orderByList = state.orderByList.filter(rec => rec.id !== orderBy)
+    return orderByList.map(orderByItem => 
+      <ListItem 
+        link="#" 
+        popoverClose 
+        key={orderByItem.id} 
+        title={orderByItem.name} 
+        onClick={() => setOrderBy(orderByItem.id)}
+      /> 
+    )
+  }, [state.orderByList]) 
   return(
     <Page>
       <Navbar title={category ? category.name : state.labels.allProducts} backLink={state.labels.back}>
@@ -88,7 +92,7 @@ const Packs = props => {
                 text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === productInfo.country).name}`}
                 key={pack.id}
               >
-                <img slot="media" src={productInfo.imageUrl} width="80" className="lazy lazy-fadeIn demo-lazy" alt=""/>
+                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn demo-lazy avatar" alt=""/>
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : null}
                 {pack.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : null}
               </ListItem>

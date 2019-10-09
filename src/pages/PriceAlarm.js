@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useMemo } from 'react'
 import {Page, Navbar, List, ListInput, Fab, Icon, Block, Card, CardContent, CardHeader} from 'framework7-react';
 import { StoreContext } from '../data/Store';
 import { addPriceAlarm, showMessage } from '../data/Actions'
@@ -7,8 +7,8 @@ import ReLogin from './ReLogin'
 
 const PriceAlarm = props => {
   const { state, user } = useContext(StoreContext)
-  const pack = state.packs.find(rec => rec.id === props.id)
-  const product = state.products.find(rec => rec.id === pack.productId)
+  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id), [state.packs])
+  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId), [state.products])
   const [price, setPrice] = useState('')
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
@@ -21,13 +21,7 @@ const PriceAlarm = props => {
 
   useEffect(() => {
     const validatePrice = (value) => {
-      if (state.customer.type === 'o') {
-        if (Number(value) > 0 && Number(value * 1000) <= pack.price) {
-          setPriceErrorMessage('')
-        } else {
-          setPriceErrorMessage(state.labels.invalidPrice)
-        }
-      } else {
+      if (state.customer.type !== 'o') {
         if (Number(value) > 0 && Number(value * 1000) < pack.price) {
           setPriceErrorMessage('')
         } else {

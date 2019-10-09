@@ -77,7 +77,7 @@ export const addPriceAlarm = async priceAlarm => {
   const newPriceAlarm = {
     ...priceAlarm,
     user: firebase.auth().currentUser.uid,
-    isActive: false,
+    status: 'n',
     time: new Date()
   }
   await firebase.firestore().collection("priceAlarms").add(newPriceAlarm)

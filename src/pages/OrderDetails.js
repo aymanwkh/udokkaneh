@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useMemo } from 'react'
 import { editOrder } from '../data/Actions'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge} from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
@@ -8,9 +8,9 @@ import { StoreContext } from '../data/Store';
 
 const OrderDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const order = state.orders.find(order => order.id === props.id)
+  const order = useMemo(() => state.orders.find(order => order.id === props.id), [state.orders])
   const [error, setError] = useState('')
-  const netPrice = order.total + order.fixedFees + order.deliveryFees - (order.specialDiscount + order.customerDiscount)
+  const netPrice = useMemo(() => order.total + order.fixedFees + order.deliveryFees - (order.specialDiscount + order.customerDiscount), [order])
 
   const handleEdit = () => {
     if (state.basket.length > 0) {

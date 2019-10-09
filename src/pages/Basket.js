@@ -1,13 +1,12 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Badge} from 'framework7-react'
 import { StoreContext } from '../data/Store';
 
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
-  const totalPrice = state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0)
-  let packs = state.basket
-  packs.sort((pack1, pack2) => pack1.time.seconds - pack2.time.seconds)
+  const totalPrice = useMemo(() => state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0), [state.basket])
+  const packs = useMemo(() => [...state.basket].sort((rec1, rec2) => rec1.time.seconds - rec2.time.seconds), [state.basket])
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/')
   }, [state.basket])
