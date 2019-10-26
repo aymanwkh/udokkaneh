@@ -4,92 +4,96 @@
     margin: 1rem;
   }
   
-  .center {
-    text-align: center;
-  }
-  
-  .total-price {
-    margin: 20px;
-  }
-  
-  .order-button {
-    margin: 20px;
-    width: 10em;
-  }
-  
-  .search-icon {
-    margin-top: 0.8rem;
-  }
-  
-  .star {
-    color: yellow;
-    margin: 3px;
-  }
-  
-  .left {
-    text-align: left;
-  }
-  
-  .error {
-    color: red;
-  }
-  
-  .success {
-    text-align: center;
-    color: green;
-  }
+.center {
+  text-align: center;
+}
 
-  .total {
-    color: green;
-  }
-  
-  .fees {
-    color: rgb(0, 89, 255);
-  }
-  
-  .net {
-    color: red;
-  }
-  
-  .logo {
-    width: 100px;
-  }
-  
-  .current-store {
-    background-color: lime;
-  }
-  
-  .banner {
-    position: relative;
-    bottom: 1.5rem;
-    color: rgb(0, 102, 255);
-    font-size: 0.9rem;
-    padding-right: 1rem;
-  }
+.total-price {
+  margin: 20px;
+}
 
-  .less-price {
-    font-size: 0.8rem;
-  }
-  
-  .price {
-    font-size: 1.2rem;
-    color: blue;
-    margin-right: 0.2rem;
-  }
+.order-button {
+  margin: 20px;
+  width: 10em;
+}
 
-  .rating {
-    margin-top: 2rem;
-  }
+.search-icon {
+  margin-top: 0.8rem;
+}
 
-  .card-title p {
-    margin-bottom: 0;
-  }
+.star {
+  color: yellow;
+  margin: 3px;
+}
 
-  .note {
-    text-align: center;
-    color: red;
-  }
+.left {
+  text-align: left;
+}
 
-  .avatar {
-    width: 100px;
-  }
+.error {
+  color: red;
+}
+
+.success {
+  text-align: center;
+  color: green;
+}
+
+.total {
+  color: green;
+}
+
+.fees {
+  color: rgb(0, 89, 255);
+}
+
+.net {
+  color: red;
+}
+
+.logo {
+  width: 100px;
+}
+
+.current-store {
+  background-color: lime;
+}
+
+.banner {
+  position: relative;
+  bottom: 1.5rem;
+  color: rgb(0, 102, 255);
+  font-size: 0.9rem;
+  padding-right: 1rem;
+}
+
+.less-price {
+  font-size: 0.8rem;
+}
+
+.price {
+  font-size: 1.2rem;
+  color: blue;
+  margin-right: 0.2rem;
+}
+
+.rating {
+  margin-top: 2rem;
+}
+
+.card-title p {
+  margin-bottom: 0;
+}
+
+.note {
+  text-align: center;
+  color: red;
+}
+
+.avatar {
+  width: 100px;
+}
+
+.button-label {
+  font-size: 1.2rem;
+}

@@ -57,10 +57,10 @@ const Packs = props => {
     <Page>
       <Navbar title={category ? category.name : state.labels.allProducts} backLink={state.labels.back}>
         <NavRight>
-          <Link searchbarEnable=".searchbar-demo" iconIos="f7:search" iconAurora="f7:search" iconMd="material:search"></Link>
+          <Link searchbarEnable=".searchbar" iconIos="f7:search" iconAurora="f7:search" iconMd="material:search"></Link>
         </NavRight>
         <Searchbar
-          className="searchbar-demo"
+          className="searchbar"
           searchContainer=".search-list"
           searchIn=".item-title, .item-subtitle"
           clearButton
@@ -92,9 +92,10 @@ const Packs = props => {
                 text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === productInfo.country).name}`}
                 key={pack.id}
               >
-                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn demo-lazy avatar" alt=""/>
-                {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : null}
-                {pack.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : null}
+                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt=""/>
+                {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
+                {pack.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
+                {state.customer.type === 'o' && pack.stores.find(rec => rec.id === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(pack.stores.find(rec => rec.id === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )
           })}

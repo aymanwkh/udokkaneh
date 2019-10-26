@@ -16,7 +16,7 @@ const Categories = props => {
         {categories && categories.map(category => {
           return (
             <Button large fill className="sections" color={state.randomColors[i++ % 13].name} href={`/category/${category.id}`} key={category.id}>
-              {category.name}
+              <span className="button-label">{category.name}</span>
             </Button>
           )
         })}

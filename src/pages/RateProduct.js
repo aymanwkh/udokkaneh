@@ -5,7 +5,7 @@ import { StoreContext } from '../data/Store';
 
 const RateProduct = props => {
   const { user, dispatch } = useContext(StoreContext)
-  const handleRate = (rating) => {
+  const handleRate = rating => {
     rateProduct(props.product, rating).then(id => {
       dispatch({type: 'RATE_PRODUCT', rating: {id, productId: props.product.id, user: user.uid, rating, time: new Date()}})
     })

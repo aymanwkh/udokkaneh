@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton, Block, Link, Toolbar} from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button, Link, Toolbar} from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { login, showMessage } from '../data/Actions'
 
@@ -56,7 +56,7 @@ const Login = props => {
   }
 
   return (
-    <Page loginScreen>
+    <Page>
       <Navbar title={state.labels.loginTitle} backLink={state.labels.back} />
       <List form>
         <ListInput
@@ -83,9 +83,9 @@ const Login = props => {
           onChange={(e) => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
-        {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <ListButton onClick={() => handleLogin()}>{state.labels.login}</ListButton>}
       </List>
-      <Toolbar bottom>
+      {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <Button onClick={() => handleLogin()}>{state.labels.login}</Button>}
+     <Toolbar bottom>
         <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>
         <Link href='/forgetPassword/'>{state.labels.forgetPassword}</Link>
       </Toolbar>

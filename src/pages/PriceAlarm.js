@@ -71,61 +71,59 @@ const PriceAlarm = props => {
   return (
     <Page>
       <Navbar title={state.customer.type === 'o' ? state.labels.havePack : state.labels.lessPrice} backLink={state.labels.back} />
-      <Block>
-        <Card className="demo-card-header-pic">
-          <CardHeader className="card-title">
-            <p>{product.name}</p>
-            <p>{(pack.price / 1000).toFixed(3)}</p>
-          </CardHeader>
-          <CardContent>
-            <img src={product.imageUrl} width="100%" height="250" alt=""/>
-            <p>{pack.name}</p>
-          </CardContent>
-        </Card>
-        <List form>
-          <ListInput 
-            name="price" 
-            label={state.labels.price}
-            placeholder={state.customer.type === 'o' ? state.labels.pricePlaceholder : state.labels.lessPricePlaceholder}
+      <Card>
+        <CardHeader className="card-title">
+          <p>{product.name}</p>
+          <p>{(pack.price / 1000).toFixed(3)}</p>
+        </CardHeader>
+        <CardContent>
+          <img src={product.imageUrl} width="100%" height="250" alt=""/>
+          <p>{pack.name}</p>
+        </CardContent>
+      </Card>
+      <List form>
+        <ListInput 
+          name="price" 
+          label={state.labels.price}
+          placeholder={state.customer.type === 'o' ? state.labels.pricePlaceholder : state.labels.lessPricePlaceholder}
+          clearButton 
+          type="number" 
+          value={price} 
+          errorMessage={priceErrorMessage}
+          errorMessageForce  
+          onChange={(e) => setPrice(e.target.value)}
+          onInputClear={() => setPrice('')}
+          onBlur={(e) => setPrice(formatPrice(e.target.value))}
+        />
+        {state.customer.type === 'o'
+        ? ''
+        : <ListInput 
+            name="storeName" 
+            label={state.labels.storeName}
+            placeholder={state.labels.namePlaceholder}
             clearButton 
-            type="number" 
-            value={price} 
-            errorMessage={priceErrorMessage}
+            type="text" 
+            value={storeName} 
+            errorMessage={storeNameErrorMessage}
             errorMessageForce  
-            onChange={(e) => setPrice(e.target.value)}
-            onInputClear={() => setPrice('')}
-            onBlur={(e) => setPrice(formatPrice(e.target.value))}
+            onChange={(e) => setStoreName(e.target.value)}
+            onInputClear={() => setStoreName('')}
           />
-          {state.customer.type === 'o'
-          ? ''
-          : <ListInput 
-              name="storeName" 
-              label={state.labels.storeName}
-              placeholder={state.labels.namePlaceholder}
-              clearButton 
-              type="text" 
-              value={storeName} 
-              errorMessage={storeNameErrorMessage}
-              errorMessageForce  
-              onChange={(e) => setStoreName(e.target.value)}
-              onInputClear={() => setStoreName('')}
-            />
-          }
-          {state.customer.type === 'o'
-          ? ''
-          : <ListInput 
-              name="storePlace" 
-              label={state.labels.storePlace}
-              placeholder={state.labels.namePlaceholder}
-              clearButton 
-              type="text" 
-              value={storePlace} 
-              onChange={(e) => setStorePlace(e.target.value)}
-              onInputClear={() => setStorePlace('')}
-            />
-          }
-        </List>
-      </Block>
+        }
+        {state.customer.type === 'o'
+        ? ''
+        : <ListInput 
+            name="storePlace" 
+            label={state.labels.storePlace}
+            placeholder={state.labels.namePlaceholder}
+            clearButton 
+            type="text" 
+            value={storePlace} 
+            onChange={(e) => setStorePlace(e.target.value)}
+            onInputClear={() => setStorePlace('')}
+          />
+        }
+      </List>
       {!price || (state.customer.type !== 'o' && !storeName) || priceErrorMessage || storeNameErrorMessage 
         ? '' 
         : <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>

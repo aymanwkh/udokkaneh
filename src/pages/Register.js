@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton, Block} from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button} from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { registerUser, showMessage } from '../data/Actions'
 
@@ -72,7 +72,7 @@ const Register = props => {
   }
 
   return (
-    <Page loginScreen>
+    <Page>
       <Navbar title={state.labels.registerTitle} backLink={state.labels.back} />
       <List form>
         <ListInput
@@ -112,9 +112,7 @@ const Register = props => {
           onInputClear={() => setPassword('')}
         />
       </List>
-      <List>
-      {!name || !mobile || !password || nameErrorMessage || mobileErrorMessage || passwordErrorMessage ? '' : <ListButton onClick={() => handleRegister()}>{state.labels.register}</ListButton>}
-      </List>
+      {!name || !mobile || !password || nameErrorMessage || mobileErrorMessage || passwordErrorMessage ? '' : <Button href="#" onClick={() => handleRegister()}>{state.labels.register}</Button>}
     </Page>
   )
 }

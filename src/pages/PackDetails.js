@@ -19,8 +19,8 @@ const PackDetails = props => {
   return (
     <Page>
       <Navbar title={product.name} backLink={state.labels.back} />
-      <Card className="demo-card-header-pic">
-        <CardHeader className='card-title'>
+      <Card>
+        <CardHeader className="card-title">
           <p className="less-price">
             <span className="price">
               {(pack.price / 1000).toFixed(3)}

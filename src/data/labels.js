@@ -70,7 +70,7 @@ const labels = {
   registerSuccess: 'شكرا لتسجيلك معنا',
   confirmSuccess: 'تم ارسال الطلب بنجاح',
   lessPricePlaceholder: 'ادخل سعرا اقل من السعر الحالي',
-  pricePlaceholder:' ادخل سعرا اقل من السعر الحالي او مساوي له',
+  pricePlaceholder:' ادخل سعر المنتج',
   logout: 'تسجيل خروج',
   mainPanelTitle: 'الوظائف المساندة',
   sendSuggestion: 'تقديم اقتراح',
@@ -80,8 +80,8 @@ const labels = {
   havePack: 'عندي هذا المنتج',
   notFoundPageTitle: 'الصفحة غير موجودة',
   notFoundPageError: 'حدث خطأ ... الصفحة غير موجودة',
-  back: 'رجوع'
-
+  back: 'رجوع',
+  myPrice: 'سعري'
 }
 
 export default labels

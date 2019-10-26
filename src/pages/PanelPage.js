@@ -11,7 +11,6 @@ const PanelPage = props => {
     })
   }
   const login_logout = user ? <ListItem link="#" onClick={() => handleLogout()} title={state.labels.logout} /> : <ListItem link="/login/panel" title={state.labels.loginTitle} />
-  const register = user ? <ListItem link="#" onClick={() => handleLogout()} title={state.labels.logout} /> : <ListItem link="/login/panel" title={state.labels.loginTitle} />
   return(
     <Page>
       <Navbar title={state.labels.mainPanelTitle} />

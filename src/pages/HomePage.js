@@ -10,7 +10,7 @@ const HomePage = props => {
 
   return (
     <Page>
-      <Navbar large largeTransparent sliding={false}>
+      <Navbar large>
         <NavLeft>
           <Link iconIos="f7:bars" iconMd="material:menu" panelOpen="right"></Link>
         </NavLeft>

@@ -24,6 +24,9 @@ export default [
     name: 'home',
     path: '/home/',
     component: HomePage,
+    options: {
+      transition: 'f7-cover-v',
+    }
   },
   {
     path: '/panel/',
@@ -51,39 +54,66 @@ export default [
   },
   {
     path: '/section/:id',
-    component: Categories
+    component: Categories,
+    options: {
+      transition: 'f7-cover',
+    }
   },
   {
     path: '/category/:id',
-    component: Packs
+    component: Packs,
+    options: {
+      transition: 'f7-cover',
+    }
   },
   {
     path: '/pack/:id',
-    component: PackDetails
+    component: PackDetails,
+    options: {
+      transition: 'f7-cover',
+    }
   },
   {
     path: '/priceAlarm/:id',
-    component: PriceAlarm
+    component: PriceAlarm,
+    options: {
+      transition: 'f7-cover',
+    }
   },
   {
     path: '/basket/',
-    component: Basket
+    component: Basket,
+    options: {
+      transition: 'f7-cover-v',
+    }
   },
   {
     path: '/confirmOrder/',
-    component: ConfirmOrder
+    component: ConfirmOrder,
+    options: {
+      transition: 'f7-cover-v',
+    }
   },
   {
     path: '/search/',
     component: Packs,
+    options: {
+      transition: 'f7-cover-v',
+    }
   },
   {
     path: '/ordersList/',
-    component: OrdersList
+    component: OrdersList,
+    options: {
+      transition: 'f7-cover',
+    }
   },
   {
     path: '/order/:id',
-    component: OrderDetails
+    component: OrderDetails,
+    options: {
+      transition: 'f7-cover',
+    }
   },
   {
     path: '(.*)',

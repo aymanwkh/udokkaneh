@@ -76,28 +76,33 @@ const Store = props => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
       if (user){
-        firebase.firestore().collection('orders').where('user', '==', user.uid).onSnapshot(docs => {
+        const unsubscribeOrders = firebase.firestore().collection('orders').where('user', '==', user.uid).onSnapshot(docs => {
           let orders = []
           docs.forEach(doc => {
             orders.push({...doc.data(), id:doc.id})
           })
           dispatch({type: 'SET_ORDERS', orders})
-        })
-        firebase.firestore().collection('rating').where('user', '==', user.uid).get().then(docs => {
+        }, err => {
+          unsubscribeOrders()
+        })  
+        const unsubscribeRating = firebase.firestore().collection('rating').where('user', '==', user.uid).onSnapshot(docs => {
           let rating = []
           docs.forEach(doc => {
             rating.push({...doc.data(), id:doc.id})
           })
           dispatch({type: 'SET_RATING', rating})
-        })
-        firebase.firestore().collection('invitations').where('user', '==', user.uid).onSnapshot(docs => {
+        }, err => {
+          unsubscribeRating()
+        })  
+        const unsubscribeInvitations = firebase.firestore().collection('invitations').where('user', '==', user.uid).onSnapshot(docs => {
           let invitations = []
           docs.forEach(doc => {
             invitations.push({...doc.data(), id:doc.id})
           })
           dispatch({type: 'SET_INVITATIONS', invitations})
-        })
-
+        }, err => {
+          unsubscribeInvitations()
+        })  
         firebase.firestore().collection('customers').doc(user.uid).get().then(doc => {
           if (doc.exists){
             dispatch({type: 'SET_CUSTOMER', customer: doc.data()})

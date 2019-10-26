@@ -19,34 +19,34 @@ export const rateProduct = async (product, rating) => {
   return docRef.id
 }
 
-export const login = async (mobile, password) => {
-  await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
+export const login = (mobile, password) => {
+  return firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
 }
 
-export const logout = async () => {
-  await firebase.auth().signOut()
+export const logout = () => {
+  return firebase.auth().signOut()
 }
 
-export const forgetPassword = async mobile => {
-  await firebase.firestore().collection('forgetPassword').add({
+export const forgetPassword = mobile => {
+  return firebase.firestore().collection('forgetPassword').add({
     mobile,
     time: new Date(),
     resolved: false
   })
 }
 
-export const confirmOrder = async order => {
+export const confirmOrder = order => {
   const newOrder = {
     ...order,
     user: firebase.auth().currentUser.uid,
     status: 'n',
     time: new Date()
   }
-  await firebase.firestore().collection('orders').add(newOrder)
+  return firebase.firestore().collection('orders').add(newOrder)
 }
 
-export const editOrder = async order => {
-  await firebase.firestore().collection("orders").doc(order.id).update({
+export const editOrder = order => {
+  return firebase.firestore().collection("orders").doc(order.id).update({
     status: 'c'
   })
 }
@@ -73,18 +73,18 @@ export const registerStoreOwner = async (mobile, password, name, storeName, addr
   })
 }
 
-export const addPriceAlarm = async priceAlarm => {
+export const addPriceAlarm = priceAlarm => {
   const newPriceAlarm = {
     ...priceAlarm,
     user: firebase.auth().currentUser.uid,
     status: 'n',
     time: new Date()
   }
-  await firebase.firestore().collection("priceAlarms").add(newPriceAlarm)
+  return firebase.firestore().collection("priceAlarms").add(newPriceAlarm)
 }
 
-export const inviteFriend = async (mobile, name) => {
-  await firebase.firestore().collection('invitations').add({
+export const inviteFriend = (mobile, name) => {
+  return firebase.firestore().collection('invitations').add({
     user: firebase.auth().currentUser.uid,
     friendName: name,
     firnedMobile: mobile,
