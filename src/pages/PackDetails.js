@@ -15,7 +15,17 @@ const PackDetails = props => {
   }
 
   const rating_links = !user || state.rating.find(rating => rating.productId === props.id) ? '' : <RateProduct product={product} />
-
+  const priceAlarmText = useMemo(() => {
+    if (state.customer.type === 'o') {
+      if (pack.stores.find(rec => rec.id === state.customer.storeId)) {
+        return `${state.labels.changePrice} ${(pack.stores.find(rec => rec.id === state.customer.storeId).price / 1000).toFixed(3)}`
+      } else {
+       return state.labels.havePack
+      }
+    } else {
+      return state.labels.lessPrice
+    }
+  }, [state.packs])
   return (
     <Page>
       <Navbar title={product.name} backLink={state.labels.back} />
@@ -28,7 +38,7 @@ const PackDetails = props => {
             <Link 
               iconIos="f7:bell" 
               iconMd="material:notifications_none" 
-              text={state.customer.type === 'o' ? state.labels.havePack : state.labels.lessPrice} 
+              text={priceAlarmText} 
               color="red" 
               onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}/>
           </p>

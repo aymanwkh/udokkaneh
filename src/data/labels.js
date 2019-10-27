@@ -81,7 +81,9 @@ const labels = {
   notFoundPageTitle: 'الصفحة غير موجودة',
   notFoundPageError: 'حدث خطأ ... الصفحة غير موجودة',
   back: 'رجوع',
-  myPrice: 'سعري'
+  myPrice: 'سعري',
+  changePrice: 'تغيير سعري',
+  haveNoPacks: 'لم يعد عندي هذا المنتج'
 }
 
 export default labels

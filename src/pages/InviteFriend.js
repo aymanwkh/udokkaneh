@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { inviteFriend, showMessage } from '../data/Actions'
 
@@ -55,7 +55,7 @@ const InviteFriend = props => {
   }
 
   return (
-    <Page loginScreen>
+    <Page>
       <Navbar title={state.labels.inviteFriend} backLink={state.labels.back} />
       <List form>
         <ListInput
@@ -84,7 +84,7 @@ const InviteFriend = props => {
         />
       </List>
       <List>
-      {!name || !mobile || nameErrorMessage || mobileErrorMessage ? '' : <ListButton onClick={() => handleSend()}>{state.labels.send}</ListButton>}
+      {!name || !mobile || nameErrorMessage || mobileErrorMessage ? '' : <Button onClick={() => handleSend()}>{state.labels.send}</Button>}
       </List>
     </Page>
   )

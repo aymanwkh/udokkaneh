@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react'
-import {Page, Navbar, List, ListInput, Fab, Icon, Block, Card, CardContent, CardHeader} from 'framework7-react';
+import {Page, Navbar, List, ListInput, Fab, Icon, Button, Card, CardContent, CardHeader, CardFooter} from 'framework7-react';
 import { StoreContext } from '../data/Store';
 import { addPriceAlarm, showMessage } from '../data/Actions'
 import ReLogin from './ReLogin'
@@ -21,7 +21,13 @@ const PriceAlarm = props => {
 
   useEffect(() => {
     const validatePrice = (value) => {
-      if (state.customer.type !== 'o') {
+      if (state.customer.type === 'o') {
+        if (Number(value) > 0) {
+          setPriceErrorMessage('')
+        } else {
+          setPriceErrorMessage(state.labels.invalidPrice)
+        }  
+      } else {
         if (Number(value) > 0 && Number(value * 1000) < pack.price) {
           setPriceErrorMessage('')
         } else {
@@ -67,10 +73,34 @@ const PriceAlarm = props => {
       setError(state.labels[err.code.replace(/-|\//g, '_')])
     })
   }
+  const handleNoPacks = () => {
+    const priceAlarm = {
+      packId: pack.id,
+      price: 0
+    }
+    addPriceAlarm(priceAlarm).then(() => {
+      showMessage(props, 'success', state.labels.sendSuccess)
+      props.f7router.back()
+    }).catch (err => {
+      setError(state.labels[err.code.replace(/-|\//g, '_')])
+    })
+  }
+  const priceAlarmText = useMemo(() => {
+    if (state.customer.type === 'o') {
+      if (pack.stores.find(rec => rec.id === state.customer.storeId)) {
+        return state.labels.changePrice
+      } else {
+       return state.labels.havePack
+      }
+    } else {
+      return state.labels.lessPrice
+    }
+  }, [state.packs])
+
   if (!user) return <ReLogin callingPage='home'/>
   return (
     <Page>
-      <Navbar title={state.customer.type === 'o' ? state.labels.havePack : state.labels.lessPrice} backLink={state.labels.back} />
+      <Navbar title={priceAlarmText} backLink={state.labels.back} />
       <Card>
         <CardHeader className="card-title">
           <p>{product.name}</p>
@@ -78,8 +108,16 @@ const PriceAlarm = props => {
         </CardHeader>
         <CardContent>
           <img src={product.imageUrl} width="100%" height="250" alt=""/>
-          <p>{pack.name}</p>
         </CardContent>
+        <CardFooter>
+          <p>{pack.name}</p>
+          <p>
+            {state.customer.type === 'o' ?
+              <Button fill round color="red" onClick={() => handleNoPacks()}>{state.labels.haveNoPacks}</Button>
+              : ''
+            }
+          </p>
+        </CardFooter>
       </Card>
       <List form>
         <ListInput 

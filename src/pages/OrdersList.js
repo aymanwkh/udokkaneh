@@ -10,7 +10,7 @@ const OrdersList = props => {
   const orders = useMemo(() => [...state.orders].sort((rec1, rec2) => rec2.time.seconds - rec1.time.seconds), [state.orders])
   return(
     <Page>
-      <Navbar title="Orders" backLink={state.labels.back} />
+      <Navbar title={state.labels.orders} backLink={state.labels.back} />
       <Block>
           <List mediaList>
             {orders && orders.map(order =>
@@ -22,7 +22,7 @@ const OrdersList = props => {
                 key={order.id}
               />
             )}
-            { orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
+            {orders.length === 0 ? <ListItem title={state.labels.not_found} /> : ''}
 
           </List>
       </Block>
