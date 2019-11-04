@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { forgetPassword, showMessage } from '../data/Actions'
 
@@ -40,7 +40,7 @@ const ForgetPassword = props => {
   }
 
   return (
-    <Page loginScreen>
+    <Page>
       <Navbar title={state.labels.forgetPasswordTitle} backLink={state.labels.back} />
       <List form>
         <ListInput
@@ -57,7 +57,7 @@ const ForgetPassword = props => {
         />
       </List>
       <List>
-      {!mobile || mobileErrorMessage ? '' : <ListButton onClick={() => handleForgetPassword()}>{state.labels.send}</ListButton>}
+      {!mobile || mobileErrorMessage ? '' : <Button large onClick={() => handleForgetPassword()}>{state.labels.send}</Button>}
       </List>
     </Page>
   )

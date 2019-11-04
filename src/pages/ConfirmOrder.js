@@ -91,7 +91,7 @@ const ConfirmOrder = props => {
         <p className="note">{withDelivery ? state.labels.withDeliveryNote : state.labels.noDeliveryNote}</p>
       </Block>
       <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleOrder()}>
-        <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
+        <Icon material="done"></Icon>
       </Fab>
       <Toolbar bottom>
         <BottomToolbar />

@@ -165,7 +165,7 @@ const PriceAlarm = props => {
       {!price || (state.customer.type !== 'o' && !storeName) || priceErrorMessage || storeNameErrorMessage 
         ? '' 
         : <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>
-            <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
+            <Icon material="done"></Icon>
           </Fab>
       }
     </Page>

@@ -36,8 +36,7 @@ const PackDetails = props => {
               {(pack.price / 1000).toFixed(3)}
             </span> <br />
             <Link 
-              iconIos="f7:bell" 
-              iconMd="material:notifications_none" 
+              iconMaterial="notifications_none" 
               text={priceAlarmText} 
               color="red" 
               onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}/>
@@ -51,7 +50,7 @@ const PackDetails = props => {
         </CardContent>
       </Card>
       <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
-        <Icon ios="f7:add" aurora="f7:add" md="material:add"></Icon>
+        <Icon material="add"></Icon>
       </Fab>
       {rating_links}
       <Toolbar bottom>

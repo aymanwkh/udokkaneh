@@ -87,7 +87,7 @@ export const inviteFriend = (mobile, name) => {
   return firebase.firestore().collection('invitations').add({
     user: firebase.auth().currentUser.uid,
     friendName: name,
-    firnedMobile: mobile,
+    friendMobile: mobile,
     time: new Date()
   })
 }

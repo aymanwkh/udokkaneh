@@ -53,7 +53,7 @@ const OrderDetails = props => {
       </Block>
       { order.status === 'n' ? 
         <Fab position="left-bottom" slot="fixed" color="red" onClick={() => handleEdit()}>
-          <Icon ios="f7:edit" aurora="f7:edit" md="material:edit"></Icon>
+          <Icon material="edit"></Icon>
         </Fab>
         : ''
       }

@@ -1,7 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button, Link, Toolbar} from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { login, showMessage } from '../data/Actions'
+
+const patterns = {
+  password: /^.{4}$/,
+  mobile: /^07[7-9][0-9]{7}$/
+}
 
 const Login = props => {
   const { state } = useContext(StoreContext)
@@ -10,10 +15,6 @@ const Login = props => {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
-  const patterns = {
-    password: /^.{4}$/,
-    mobile: /^07[7-9][0-9]{7}$/
-  }
   useEffect(() => {
     const validatePassword = (value) => {
       if (patterns.password) {
@@ -65,7 +66,6 @@ const Login = props => {
           placeholder={state.labels.mobilePlaceholder}
           name="mobile"
           clearButton
-          value={mobile}
           errorMessage={mobileErrorMessage}
           errorMessageForce
           onChange={(e) => setMobile(e.target.value)}
@@ -77,19 +77,18 @@ const Login = props => {
           placeholder={state.labels.passwordPlaceholder}
           name="password"
           clearButton
-          value={password}
           errorMessage={passwordErrorMessage}
           errorMessageForce
           onChange={(e) => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
       </List>
-      {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <Button onClick={() => handleLogin()}>{state.labels.login}</Button>}
-     <Toolbar bottom>
+      {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <Button large onClick={() => handleLogin()}>{state.labels.login}</Button>}
+      <Toolbar bottom>
         <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>
         <Link href='/forgetPassword/'>{state.labels.forgetPassword}</Link>
       </Toolbar>
     </Page>
   )
 }
-export default Login
+export default React.memo(Login)

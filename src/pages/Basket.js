@@ -26,12 +26,10 @@ const Basket = props => {
               key={pack.id}
             >
               <img slot="media" src={productInfo.imageUrl} width="80" alt=""/>
-              {pack.quantity > 1 ? <Badge slot="title" color="red">{pack.quantity}</Badge> : null}
               <Stepper 
                 slot="after" 
-                buttonsOnly={true} 
-                small 
-                raised
+                fill
+                value={pack.quantity}
                 onStepperPlusClick={() => dispatch({type: 'ADD_QUANTITY', pack})}
                 onStepperMinusClick={() => dispatch({type: 'REMOVE_QUANTITY', pack})}
               />
@@ -40,16 +38,16 @@ const Basket = props => {
         })}
       </List>
     </Block>
-    <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
-      <Icon ios="f7:check" aurora="f7:check" md="material:done"></Icon>
+    <Fab position="center-top" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
+      <Icon material="done"></Icon>
     </Fab>
 
     <Toolbar bottom>
-    <Link href='/home/'>
-        <Icon ios="f7:home" aurora="f7:home" md="material:home"></Icon>
+      <Link href='/home/'>
+        <Icon material="home"></Icon>
       </Link>
       <Link href='#' onClick={() => dispatch({type: 'CLEAR_BASKET'})}>
-        <Icon ios="f7:trash_fill" aurora="f7:trash_fill" md="material:delete"></Icon>
+        <Icon material="delete"></Icon>
       </Link>
     </Toolbar>
   </Page>

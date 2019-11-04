@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, ListButton, Block} from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { registerStoreOwner, showMessage } from '../data/Actions'
 
@@ -87,7 +87,7 @@ const StoreOwner = props => {
   }
 
   return (
-    <Page loginScreen>
+    <Page>
       <Navbar title={state.labels.registerStoreOwnerTitle} backLink={state.labels.back} />
       <List form>
         <ListInput
@@ -150,7 +150,7 @@ const StoreOwner = props => {
 
       </List>
       <List>
-      {!name || !mobile || !password || !storeName || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' : <ListButton onClick={() => handleRegister()}>{state.labels.register}</ListButton>}
+      {!name || !mobile || !password || !storeName || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' : <Button large onClick={() => handleRegister()}>{state.labels.register}</Button>}
       </List>
     </Page>
   )
