@@ -53,22 +53,20 @@ export const editOrder = order => {
 
 export const registerUser = async (mobile, password, name) => {
   await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
-  await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,
-    isActive: false,
     time: new Date()
   })
 }
 
 export const registerStoreOwner = async (mobile, password, name, storeName, address) => {
   await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
-  await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,
     storeName,
     address,
-    isActive: false,
     time: new Date()
   })
 }

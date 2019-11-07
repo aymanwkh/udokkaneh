@@ -14,6 +14,7 @@ import PriceAlarm from './pages/PriceAlarm';
 import ForgetPassword from './pages/ForgetPassword';
 import InviteFriend from './pages/InviteFriend';
 import StoreOwner from './pages/StoreOwner';
+import OwnerPacks from './pages/OwnerPacks';
 
 export default [
   {
@@ -84,6 +85,10 @@ export default [
   {
     path: '/order/:id',
     component: OrderDetails,
+  },
+  {
+    path: '/ownerPacks/',
+    component: OwnerPacks,
   },
   {
     path: '(.*)',

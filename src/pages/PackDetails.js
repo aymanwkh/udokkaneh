@@ -3,7 +3,8 @@ import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, Toolbar, Icon} 
 import BottomToolbar from './BottomToolbar'
 import Rating from './Rating'
 import RateProduct from './RateProduct'
-import { StoreContext } from '../data/Store';
+import { StoreContext } from '../data/Store'
+import { showMessage } from '../data/Actions'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -11,10 +12,11 @@ const PackDetails = props => {
   const product = useMemo(() => state.products.find(rec => rec.id === pack.productId), [state.products])
   const handleAddPack = () => {
     dispatch({type: 'ADD_TO_BASKET', pack})
+    showMessage(props, 'success', state.labels.addToBasketSuccess)
     props.f7router.back()
   }
 
-  const rating_links = !user || state.rating.find(rating => rating.productId === props.id) ? '' : <RateProduct product={product} />
+  const rating_links = !user || state.customer.type === 'b' || state.rating.find(rating => rating.productId === props.id) ? '' : <RateProduct product={product} />
   const priceAlarmText = useMemo(() => {
     if (state.customer.type === 'o') {
       if (pack.stores.find(rec => rec.id === state.customer.storeId)) {
@@ -35,11 +37,14 @@ const PackDetails = props => {
             <span className="price">
               {(pack.price / 1000).toFixed(3)}
             </span> <br />
-            <Link 
-              iconMaterial="notifications_none" 
-              text={priceAlarmText} 
-              color="red" 
-              onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}/>
+            {state.customer.type === 'b' ? '' : 
+              <Link 
+                iconMaterial="notifications_none" 
+                text={priceAlarmText} 
+                color="red" 
+                onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}
+              />
+            }
           </p>
           <p className="rating"><Rating rating={product.rating} /> </p>
         </CardHeader>
@@ -49,9 +54,11 @@ const PackDetails = props => {
           <p>{`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}</p>
         </CardContent>
       </Card>
-      <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
-        <Icon material="add"></Icon>
-      </Fab>
+      {state.customer.type === 'b' ? '' :
+        <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
+          <Icon material="add"></Icon>
+        </Fab>
+      }
       {rating_links}
       <Toolbar bottom>
         <BottomToolbar/>

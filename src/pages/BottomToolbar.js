@@ -7,9 +7,7 @@ const BottomToolbar = props => {
   const searchHome = props.isHome === '1' ? 'search' : 'home'
   return (
     <React.Fragment>
-      <Link href={`/${searchHome}/`}>
-        <Icon material={searchHome} />
-      </Link>
+      <Link href={`/${searchHome}/`} iconMaterial={searchHome} />
       <Link href={state.basket.length > 0 ? '/basket/' : ''}>
         <Icon material="shopping_cart" >
           {state.basket.length > 0 ? <Badge color="red">{state.basket.length}</Badge> : ''}

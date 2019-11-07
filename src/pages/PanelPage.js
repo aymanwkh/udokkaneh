@@ -28,18 +28,31 @@ const PanelPage = props => {
             view="#main-view" 
             panelClose 
           />
-          <ListItem 
-            link="/inviteFriend/" 
-            title={state.labels.inviteFriend} 
-            view="#main-view" 
-            panelClose 
-          />
-          <ListItem 
-            link="/sendSuggestion/" 
-            title={state.labels.sendSuggestion} 
-            view="#main-view" 
-            panelClose
-          />
+          {state.customer.type === 'b' ? '' : 
+            <ListItem 
+              link="/inviteFriend/" 
+              title={state.labels.inviteFriend} 
+              view="#main-view" 
+              panelClose 
+            />
+          }
+          {state.customer.type === 'b' ? '' : 
+            <ListItem 
+              link="/sendSuggestion/" 
+              title={state.labels.sendSuggestion} 
+              view="#main-view" 
+              panelClose
+            />
+          }
+          {state.customer.type === 'o' ?
+            <ListItem 
+              link="/ownerPacks/" 
+              title={state.labels.ownerPacks} 
+              view="#main-view" 
+              panelClose
+            />
+            : ''
+          }
         </List>
       :
         <List>

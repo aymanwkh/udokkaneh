@@ -14,6 +14,8 @@ const PriceAlarm = props => {
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
   const [storeName, setStoreName] = useState('')
   const [storePlace, setStorePlace] = useState('')
+  const [offerEnd, setOfferEnd] = useState('')
+  const [offerEndErrorMessage, setOfferEndErrorMessage] = useState('')
   const [error, setError] = useState('')
   const patterns = {
     name: /^.{4,50}$/,
@@ -56,15 +58,29 @@ const PriceAlarm = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    const validateDate = (value) => {
+      if (new Date(value) > new Date()){
+        setOfferEndErrorMessage('')
+      } else {
+        setOfferEndErrorMessage(state.labels.invalidOfferEnd)
+      }
+    }
+    if (offerEnd.length > 0) validateDate(offerEnd)
+    else setOfferEndErrorMessage('')
+  }, [offerEnd])
+
   const formatPrice = value => {
     return (Number(value) * 1000 / 1000).toFixed(3)
   } 
   const handleSubmit = () => {
+    const offerEndDate = offerEnd.length > 0 ? new Date(offerEnd) : ''
     const priceAlarm = {
       packId: pack.id,
       price: price * 1000,
       storeName,
-      storePlace
+      storePlace,
+      offerEnd: offerEndDate
     }
     addPriceAlarm(priceAlarm).then(() => {
       showMessage(props, 'success', state.labels.sendSuccess)
@@ -73,7 +89,7 @@ const PriceAlarm = props => {
       setError(state.labels[err.code.replace(/-|\//g, '_')])
     })
   }
-  const handleNoPacks = () => {
+  const handleFinishedPack = () => {
     const priceAlarm = {
       packId: pack.id,
       price: 0
@@ -113,7 +129,7 @@ const PriceAlarm = props => {
           <p>{pack.name}</p>
           <p>
             {state.customer.type === 'o' ?
-              <Button fill round color="red" onClick={() => handleNoPacks()}>{state.labels.haveNoPacks}</Button>
+              <Button fill round color="red" onClick={() => handleFinishedPack()}>{state.labels.haveNoPacks}</Button>
               : ''
             }
           </p>
@@ -160,6 +176,20 @@ const PriceAlarm = props => {
             onChange={(e) => setStorePlace(e.target.value)}
             onInputClear={() => setStorePlace('')}
           />
+        }
+        {state.customer.type === 'o'
+        ? <ListInput
+            name="offerEnd"
+            label={state.labels.offerEnd}
+            type="datepicker"
+            value={offerEnd} 
+            clearButton
+            errorMessage={offerEndErrorMessage}
+            errorMessageForce
+            onCalendarChange={(value) => setOfferEnd(value)}
+            onInputClear={() => setOfferEnd([])}
+          />
+        : ''
         }
       </List>
       {!price || (state.customer.type !== 'o' && !storeName) || priceErrorMessage || storeNameErrorMessage 

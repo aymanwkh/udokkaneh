@@ -5,7 +5,7 @@ import { StoreContext } from '../data/Store';
 const Sections = props => {
   const { state } = useContext(StoreContext)
   const sections = useMemo(() => {
-    let sections = state.sections.filter(rec => rec.isActive === true)
+    let sections = state.sections
     return sections.sort((rec1, rec2) => rec1.name > rec2.name ? 1 : -1)
   }, [state.sections])
   let i = 0

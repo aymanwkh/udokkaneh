@@ -42,10 +42,10 @@ const Store = props => {
     {id: 'i', name: 'في المستودع'}
   ]
   const discountTypes = [
-    {id: 'f', name: 'خصم اول طلب'},
-    {id: 's', name: 'خصم خاص'},
-    {id: 'i', name: 'خصم دعوة صديق'},
-    {id: 'l', name: 'خصم ابلاغ عن سعر اقل'}
+    {id: 'f', name: 'خصم اول طلب', value: 500},
+    {id: 's', name: 'خصم خاص', value: 500},
+    {id: 'i', name: 'خصم دعوة صديق', value: 500},
+    {id: 'p', name: 'خصم ابلاغ عن سعر اقل', value: 500}
   ]
 
   const localData = localStorage.getItem('basket');
@@ -145,7 +145,7 @@ const Store = props => {
       })
       dispatch({type: 'SET_STORES', stores})
     }) 
-    firebase.firestore().collection('products').where('isActive', '==', true).onSnapshot(docs => {
+    firebase.firestore().collection('products').onSnapshot(docs => {
       let products = []
       docs.forEach(doc => {
         products.push({...doc.data(), id: doc.id})
@@ -153,7 +153,7 @@ const Store = props => {
       dispatch({type: 'SET_PRODUCTS', products})
     })
     const today = (new Date()).setHours(0, 0, 0, 0)
-    firebase.firestore().collection('packs').where('isActive', '==', true).onSnapshot(docs => {
+    firebase.firestore().collection('packs').onSnapshot(docs => {
       let packs = []
       docs.forEach(doc => {
         let minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || today <= store.offerEnd.toDate() ? store.price : null))

@@ -91,4 +91,4 @@ const Login = props => {
     </Page>
   )
 }
-export default React.memo(Login)
+export default Login

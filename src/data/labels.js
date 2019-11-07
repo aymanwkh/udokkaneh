@@ -83,7 +83,10 @@ const labels = {
   back: 'رجوع',
   myPrice: 'سعري',
   changePrice: 'تغيير سعري',
-  haveNoPacks: 'لم يعد عندي هذا المنتج'
+  haveNoPacks: 'لم يعد عندي هذا المنتج',
+  ownerPacks: 'منتجاتي',
+  invalidOfferEnd: 'الرجاء التأكد من تاريخ انتهاء العرض',
+  limitOverFlow: 'لقد تجاوزت الحد المسموح به للطلبات التي هي قيد التسليم'
 }
 
 export default labels

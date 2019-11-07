@@ -38,17 +38,14 @@ const Basket = props => {
         })}
       </List>
     </Block>
-    <Fab position="center-top" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
-      <Icon material="done"></Icon>
-    </Fab>
-
+    {state.customer.type === 'b' ? '' : 
+      <Fab position="center-top" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
+        <Icon material="done"></Icon>
+      </Fab>
+    }
     <Toolbar bottom>
-      <Link href='/home/'>
-        <Icon material="home"></Icon>
-      </Link>
-      <Link href='#' onClick={() => dispatch({type: 'CLEAR_BASKET'})}>
-        <Icon material="delete"></Icon>
-      </Link>
+      <Link href='/home/' iconMaterial="home" />
+      <Link href='#' iconMaterial="delete" onClick={() => dispatch({type: 'CLEAR_BASKET'})} />
     </Toolbar>
   </Page>
   )

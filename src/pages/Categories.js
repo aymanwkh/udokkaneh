@@ -7,7 +7,7 @@ import BottomToolbar from './BottomToolbar';
 const Categories = props => {
   const { state } = useContext(StoreContext)
   const section = useMemo(() => state.sections.find(rec => rec.id === props.id), [state.sections])
-  const categories = useMemo(() => state.categories.filter(rec => rec.sectionId === props.id && rec.isActive === true), [state.categories])
+  const categories = useMemo(() => state.categories.filter(rec => rec.sectionId === props.id), [state.categories])
   let i = 0
   return(
     <Page>
