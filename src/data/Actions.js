@@ -20,7 +20,7 @@ export const rateProduct = async (product, rating) => {
 }
 
 export const login = (mobile, password) => {
-  return firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
+  return firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
 }
 
 export const logout = () => {
@@ -52,7 +52,7 @@ export const editOrder = order => {
 }
 
 export const registerUser = async (mobile, password, name) => {
-  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
+  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,
@@ -60,8 +60,16 @@ export const registerUser = async (mobile, password, name) => {
   })
 }
 
+export const changePassword = async (oldPassword, newPassword) => {
+  let user = firebase.auth().currentUser
+  const mobile = user.email.substring(0, 10)
+  await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + oldPassword)
+  user = firebase.auth().currentUser
+  return user.updatePassword(mobile.substring(9, 2) + newPassword)
+}
+
 export const registerStoreOwner = async (mobile, password, name, storeName, address) => {
-  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(8, 2) + password)
+  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,

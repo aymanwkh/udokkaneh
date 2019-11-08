@@ -15,6 +15,7 @@ import ForgetPassword from './pages/ForgetPassword';
 import InviteFriend from './pages/InviteFriend';
 import StoreOwner from './pages/StoreOwner';
 import OwnerPacks from './pages/OwnerPacks';
+import ChangePassword from './pages/ChangePassword';
 
 export default [
   {
@@ -37,6 +38,10 @@ export default [
   {
     path: '/forgetPassword/',
     component: ForgetPassword
+  },
+  {
+    path: '/changePassword/',
+    component: ChangePassword
   },
   {
     path: '/register/:callingPage',

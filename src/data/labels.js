@@ -45,8 +45,6 @@ const labels = {
   namePlaceholder: 'من 4-50 حرف',
   invalidName: 'اﻻسم غير صحيح',
   fixedFees: 500,
-  specialDiscount: 500,
-  firstOrderDiscount: 500,
   maxDiscount: 500,
   total: 'المجموع',
   feesTitle: 'الرسوم',
@@ -86,7 +84,11 @@ const labels = {
   haveNoPacks: 'لم يعد عندي هذا المنتج',
   ownerPacks: 'منتجاتي',
   invalidOfferEnd: 'الرجاء التأكد من تاريخ انتهاء العرض',
-  limitOverFlow: 'لقد تجاوزت الحد المسموح به للطلبات التي هي قيد التسليم'
+  limitOverFlow: 'لقد تجاوزت الحد المسموح به للطلبات التي هي قيد التسليم',
+  changePasswordSuccess: 'تم تغيير كلمة السر بنجاح',
+  changePassword: 'تغيير كلمة السر',
+  oldPassword: 'كلمة السر الحالية',
+  newPassword: 'كلمة السر الجديدة',
 }
 
 export default labels

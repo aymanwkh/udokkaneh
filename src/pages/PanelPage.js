@@ -23,6 +23,10 @@ const PanelPage = props => {
       {user ? 
         <List>
           <ListItem 
+            link="/changePassword/" 
+            title={state.labels.changePassword} 
+          />
+          <ListItem 
             link="/ordersList/" 
             title={state.labels.orders} 
             view="#main-view" 
