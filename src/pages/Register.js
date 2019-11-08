@@ -62,11 +62,12 @@ const Register = props => {
   }, [error])
 
   const handleRegister = () => {
-    registerUser(mobile, password, name).then(() => {
+    registerUser(mobile, password, name, state.randomColors).then(() => {
       showMessage(props, 'success', state.labels.registerSuccess)
       props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
       props.f7router.app.panel.close('right') 
     }).catch (err => {
+      console.log('error == ', err)
       setError(state.labels[err.code.replace(/-|\//g, '_')])
     })
   }

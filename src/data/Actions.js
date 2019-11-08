@@ -31,7 +31,7 @@ export const forgetPassword = mobile => {
   return firebase.firestore().collection('forgetPassword').add({
     mobile,
     time: new Date(),
-    resolved: false
+    resolved: false,
   })
 }
 
@@ -51,21 +51,33 @@ export const editOrder = order => {
   })
 }
 
-export const registerUser = async (mobile, password, name) => {
+export const registerUser = async (mobile, password, name, randomColors) => {
   await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
+  let colors = []
+  for (var i = 0; i < 4; i++){
+    colors.push(randomColors[Number(password.charAt(i))].name)
+  }
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,
+    colors,
     time: new Date()
   })
 }
 
-export const changePassword = async (oldPassword, newPassword) => {
+export const changePassword = async (oldPassword, newPassword, randomColors) => {
   let user = firebase.auth().currentUser
   const mobile = user.email.substring(0, 10)
   await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + oldPassword)
   user = firebase.auth().currentUser
-  return user.updatePassword(mobile.substring(9, 2) + newPassword)
+  await user.updatePassword(mobile.substring(9, 2) + newPassword)
+  let colors = []
+  for (var i = 0; i < 4; i++){
+    colors.push(randomColors[Number(newPassword.charAt(i))].name)
+  }
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+    colors
+  })
 }
 
 export const registerStoreOwner = async (mobile, password, name, storeName, address) => {

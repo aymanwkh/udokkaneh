@@ -46,7 +46,7 @@ const ChangePassword = props => {
   }, [error])
 
   const handleSubmit = () => {
-    changePassword(oldPassword, newPassword).then(() => {
+    changePassword(oldPassword, newPassword, state.randomColors).then(() => {
       showMessage(props, 'success', state.labels.changePasswordSuccess)
       props.f7router.back()
     }).catch (err => {
