@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle } from 'framework7-react'
+import Framework7React, { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
@@ -11,7 +11,11 @@ const ConfirmOrder = props => {
   const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
   const [deliveryFees, setDeliveryFees] = useState(state.customer.deliveryFees || 0)
   const [error, setError] = useState('')
-  const total = useMemo(() => state.basket.reduce((a, product) => a + (product.price * product.quantity), 0), [state.basket])
+  const total = useMemo(() => {
+    const total = state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0)
+    return Math.floor(total / 5) * 5
+  }, [state.basket])
+
   const discount = useMemo(() => {
     let discount = {value: 0, type: ''}
     if (state.orders.length === 0) {
@@ -29,6 +33,7 @@ const ConfirmOrder = props => {
     }
     return discount
   }, [state.orders, state.customer]) 
+  const net = useMemo(() => ((total + state.labels.fixedFees + deliveryFees - discount.value) / 1000).toFixed(3), [total, discount, deliveryFees])
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(state.customer.deliveryFees || 0)
@@ -36,12 +41,18 @@ const ConfirmOrder = props => {
       setDeliveryFees(0)
     }
   }, [withDelivery])
-  const net = useMemo(() => ((total + state.labels.fixedFees + deliveryFees - discount.value) / 1000).toFixed(3), [total, discount, deliveryFees])
+  useEffect(() => {
+    if (error) {
+      showMessage(props, 'error', error)
+      setError('')
+    }
+  }, [error])
+
   const handleOrder = () => {
     try{
       const activeOrders = state.orders.filter(rec => rec.status === 'n' || rec.status === 'a' || rec.status === 's')
-      const totalOrders = activeOrders.reduce((a, order) => a + (order.total + order.fixedFees + order.deliveryFees - order.discount), 0)
-      if ((totalOrders + net) > state.customer.limit) {
+      const totalOrders = activeOrders.reduce((a, order) => a + (order.total + order.fixedFees + order.deliveryFees - order.discount.value), 0)
+      if ((totalOrders + (net * 1000)) > state.customer.limit) {
         throw new Error(state.labels.limitOverFlow)
       }
       const basket = state.basket.map(pack => {
@@ -84,6 +95,11 @@ const ConfirmOrder = props => {
               {pack.quantity > 1 ? <Badge slot="title" color="red">{pack.quantity}</Badge> : null}
             </ListItem>
           )}
+          <ListItem title={state.labels.total} className="total" after={(total / 1000).toFixed(3)} />
+          <ListItem title={state.labels.feesTitle} className="fees" after={(state.labels.fixedFees / 1000).toFixed(3)} />
+          {deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="fees" after={(deliveryFees / 1000).toFixed(3)} /> : ''}
+          {discount.value > 0 ? <ListItem title={state.discountTypes.find(rec => rec.id === discount.type).name} className="discount" after={(discount.value / 1000).toFixed(3)} /> : ''}
+          <ListItem title={state.labels.net} className="net" after={net} />
           <ListItem>
             <span>{state.labels.delivery}</span>
             <Toggle 
@@ -93,11 +109,6 @@ const ConfirmOrder = props => {
               onToggleChange={() => setWithDelivery(!withDelivery)}
             />
           </ListItem>
-          <ListItem title={state.labels.total} className="total" after={(total / 1000).toFixed(3)} />
-          <ListItem title={state.labels.feesTitle} className="fees" after={(state.labels.fixedFees / 1000).toFixed(3)} />
-          {deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="fees" after={(deliveryFees / 1000).toFixed(3)} /> : ''}
-          {discount.value > 0 ? <ListItem title={state.discountTypes.find(rec => rec.id === discount.type).name} className="discount" after={(discount.value / 1000).toFixed(3)} /> : ''}
-          <ListItem title={state.labels.net} className="net" after={net} />
         </List>
         <p className="note">{withDelivery ? state.labels.withDeliveryNote : state.labels.noDeliveryNote}</p>
       </Block>

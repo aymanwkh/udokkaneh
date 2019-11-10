@@ -156,7 +156,7 @@ const Store = props => {
         let minPrice = Math.min(...doc.data().stores.map(store => !store.offerEnd || today <= store.offerEnd.toDate() ? store.price : null))
         minPrice = minPrice === Infinity ? 0 : minPrice
         if (minPrice > 0) {
-          const value = doc.data().units ? minPrice / doc.data().units : 0
+          const value = doc.data().unitsCount ? minPrice / doc.data().unitsCount : 0
           let isOffer = doc.data().isOffer
           if (isOffer === false) {
             const store = doc.data().stores.find(rec => rec.price === minPrice && rec.offerEnd && today <= rec.offerEnd.toDate())

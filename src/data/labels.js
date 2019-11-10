@@ -89,6 +89,8 @@ const labels = {
   changePassword: 'تغيير كلمة السر',
   oldPassword: 'كلمة السر الحالية',
   newPassword: 'كلمة السر الجديدة',
+  addToBasketSuccess: 'تمت الاضافة الى سلة المشتريات',
+  alreadyInBasket: 'هذا المنتج موجود في سلة المشتريات'
 }
 
 export default labels

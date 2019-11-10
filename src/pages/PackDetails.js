@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, Toolbar, Icon} from 'framework7-react'
+import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, Toolbar, Icon, CardFooter } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import Rating from './Rating'
 import RateProduct from './RateProduct'
@@ -11,8 +11,12 @@ const PackDetails = props => {
   const pack = useMemo(() => state.packs.find(rec => rec.id === props.id), [state.packs])
   const product = useMemo(() => state.products.find(rec => rec.id === pack.productId), [state.products])
   const handleAddPack = () => {
-    dispatch({type: 'ADD_TO_BASKET', pack})
-    showMessage(props, 'success', state.labels.addToBasketSuccess)
+    if (state.basket.find(rec => rec.id === pack.id)) {
+      showMessage(props, 'error', state.labels.alreadyInBasket)
+    } else {
+      dispatch({type: 'ADD_TO_BASKET', pack})
+      showMessage(props, 'success', state.labels.addToBasketSuccess)
+    }
     props.f7router.back()
   }
 
@@ -50,9 +54,11 @@ const PackDetails = props => {
         </CardHeader>
         <CardContent>
           <img src={product.imageUrl} width="100%" height="250" alt=""/>
+        </CardContent>
+        <CardFooter>
           <p>{pack.name}</p>
           <p>{`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}</p>
-        </CardContent>
+        </CardFooter>
       </Card>
       {state.customer.type === 'b' ? '' :
         <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>

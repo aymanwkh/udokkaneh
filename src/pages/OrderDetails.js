@@ -3,7 +3,7 @@ import { editOrder } from '../data/Actions'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge} from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
-import { StoreContext } from '../data/Store';
+import { StoreContext } from '../data/Store'
 
 
 const OrderDetails = props => {

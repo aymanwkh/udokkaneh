@@ -32,12 +32,12 @@
 
 .error {
   font-size: 1.2rem;
-  color: red;
+  color: gold;
 }
 
 .success {
   font-size: 1.2rem;
-  color: rgb(0, 225, 255);
+  color:cyan;
 }
 
 .total {
@@ -45,7 +45,7 @@
 }
 
 .fees {
-  color: rgb(0, 89, 255);
+  color: blue;
 }
 
 .net {
@@ -56,14 +56,10 @@
   width: 100px;
 }
 
-.current-store {
-  background-color: lime;
-}
-
 .banner {
   position: relative;
   bottom: 1.5rem;
-  color: rgb(0, 102, 255);
+  color: blue;
   font-size: 0.9rem;
   padding-right: 1rem;
 }

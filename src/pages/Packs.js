@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Button, Popover} from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Popover } from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 
@@ -7,13 +7,12 @@ const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
     let packs = state.packs.filter(rec => props.id ? state.products.find(product => product.id === rec.productId).category === props.id : true)
-    return packs.filter(rec => rec.stores.length > 0)
+    return packs.filter(rec => rec.price > 0)
   }, [state.packs]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
-
-  const sort = () => {
+  useEffect(() => {
     switch(orderBy){
       case 'p':
         setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack1.price - pack2.price))
@@ -36,9 +35,6 @@ const Packs = props => {
       default:
         return null
     }
-  }
-  useEffect(() => {
-    sort(orderBy)
   }, [orderBy])
 
   const orderByListTags = useMemo(() => {
@@ -68,9 +64,6 @@ const Packs = props => {
           placeholder={state.labels.search}
         />
       </Navbar>
-      <Block inset>
-        <Button raised popoverOpen=".popover-menu">{`${state.labels.orderBy} ${state.orderByList.find(rec => rec.id === orderBy).name}`}</Button>
-      </Block>
       <Popover className="popover-menu">
         <List>
           {orderByListTags}
@@ -81,6 +74,12 @@ const Packs = props => {
           <ListItem title={state.labels.not_found} />
         </List>
         <List mediaList className="search-list searchbar-found">
+          <ListItem 
+            link="#"
+            popoverOpen=".popover-menu"
+            title={state.labels.orderBy} 
+            after={state.orderByList.find(rec => rec.id === orderBy).name}
+          />
           {categoryPacks && categoryPacks.map(pack => {
             const productInfo = state.products.find(rec => rec.id === pack.productId)
             return (

@@ -77,7 +77,13 @@ const StoreOwner = props => {
   }, [storeName])
 
   const handleRegister = () => {
-    registerStoreOwner(mobile, password, name, storeName, address).then(() => {
+    const owner = {
+      mobile,
+      name,
+      storeName,
+      address
+    }
+    registerStoreOwner(owner, password, state.randomColors).then(() => {
       showMessage(props, 'success', state.labels.registerSuccess)
       props.f7router.navigate('/home/')
       props.f7router.app.panel.close('right') 

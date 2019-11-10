@@ -80,13 +80,15 @@ export const changePassword = async (oldPassword, newPassword, randomColors) => 
   })
 }
 
-export const registerStoreOwner = async (mobile, password, name, storeName, address) => {
-  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
+export const registerStoreOwner = async (owner, password, randomColors) => {
+  await firebase.auth().createUserWithEmailAndPassword(owner.mobile + '@gmail.com', owner.mobile.substring(9, 2) + password)
+  let colors = []
+  for (var i = 0; i < 4; i++){
+    colors.push(randomColors[Number(password.charAt(i))].name)
+  }
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
-    name,
-    mobile,
-    storeName,
-    address,
+    ...owner,
+    colors,
     time: new Date()
   })
 }

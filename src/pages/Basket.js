@@ -39,7 +39,7 @@ const Basket = props => {
       </List>
     </Block>
     {state.customer.type === 'b' ? '' : 
-      <Fab position="center-top" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
+      <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
         <Icon material="done"></Icon>
       </Fab>
     }
