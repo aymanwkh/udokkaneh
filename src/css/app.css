@@ -53,14 +53,14 @@
 }
 
 .logo {
-  width: 100px;
+  width: 120px;
 }
 
 .banner {
   position: relative;
   bottom: 1.5rem;
   color: blue;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   padding-right: 1rem;
 }
 

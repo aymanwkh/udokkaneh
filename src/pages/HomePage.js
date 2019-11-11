@@ -15,11 +15,11 @@ const HomePage = props => {
           <Link iconMaterial="menu" panelOpen="right"></Link>
         </NavLeft>
         <NavTitle sliding>
-          <img src="/logo.png" alt="" className="logo" />
+          <img src="/dokaneh_logo.png" alt="" className="logo" />
           <span className='banner'>{state.labels.banner}</span>
         </NavTitle>
         <NavTitleLarge>
-          <img src="/logo.png" alt="" className="logo" />
+          <img src="/dokaneh_logo.png" alt="" className="logo" />
           <span className='banner'>{state.labels.banner}</span>
         </NavTitleLarge>
       </Navbar>

@@ -26,7 +26,7 @@ const labels = {
   orderDetails: 'تفاصيل الطلب',
   addToBasket: 'شراء',
   submit: 'موافق',
-  banner: 'شاركنا البحث عن السعر اﻻفضل',
+  banner: 'وفر وقت وجهد ومال',
   lessPrice: 'وجدت سعرا أقل؟',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',
