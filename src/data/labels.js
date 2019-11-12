@@ -1,5 +1,4 @@
 const labels = {
-  appTitle: 'حريص',
   news: 'آخر الاخبار',
   offers: 'العروض',
   popular: 'اﻻكثر مبيعا',

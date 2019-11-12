@@ -77,7 +77,7 @@ const PriceAlarm = props => {
     const offerEndDate = offerEnd.length > 0 ? new Date(offerEnd) : ''
     const priceAlarm = {
       packId: pack.id,
-      price: price * 1000,
+      price: parseInt(price * 1000),
       storeName,
       storePlace,
       offerEnd: offerEndDate

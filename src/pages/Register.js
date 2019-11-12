@@ -67,7 +67,6 @@ const Register = props => {
       props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
       props.f7router.app.panel.close('right') 
     }).catch (err => {
-      console.log('error == ', err)
       setError(state.labels[err.code.replace(/-|\//g, '_')])
     })
   }

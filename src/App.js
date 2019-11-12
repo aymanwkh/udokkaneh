@@ -7,8 +7,8 @@ import Store from './data/Store';
 export default function (props) {
 
   const f7params = {
-    id: 'io.framework7.harees', 
-    name: 'Harees', 
+    id: 'io.framework7.dokaneh', 
+    name: 'DokanehNet', 
     theme: 'ios',
     routes,
   };
