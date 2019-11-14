@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { Block, Fab, Icon, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, FabButton, FabButtons } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge } from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 import moment from 'moment'
@@ -23,8 +23,9 @@ const OwnerPacks = props => {
       }
     })
     return ownerPacks.sort((rec1, rec2) => rec2.time.seconds - rec1.time.seconds)
-  }, [state.packs, state.products])
-  const store = useMemo(() => state.stores.find(rec => rec.id === state.customer.storeId), [state.stores])
+  }, [state.packs, state.products, state.customer, props.id])
+  const store = useMemo(() => state.stores.find(rec => rec.id === state.customer.storeId)
+  , [state.stores, state.customer])
   return(
     <Page>
       <Navbar title={`${store.name}`} backLink={state.labels.back}>

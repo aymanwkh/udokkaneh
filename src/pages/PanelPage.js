@@ -7,6 +7,8 @@ const PanelPage = props => {
   const { user, state, dispatch } = useContext(StoreContext)
   const handleLogout = () => {
     logout().then(() => {
+      props.f7router.app.views.main.router.navigate('/home/', {reloadAll: true})
+      props.f7router.app.panel.close('right') 
       dispatch({type: 'CLEAR_BASKET'})
     })
   }

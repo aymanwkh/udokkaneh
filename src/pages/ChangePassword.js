@@ -1,11 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { changePassword, showMessage } from '../data/Actions'
-
-const patterns = {
-  password: /^.{4}$/,
-}
 
 const ChangePassword = props => {
   const { state } = useContext(StoreContext)
@@ -15,35 +11,37 @@ const ChangePassword = props => {
   const [newPasswordErrorMessage, setNewPasswordErrorMessage] = useState('')
   const [error, setError] = useState('')
   useEffect(() => {
-    const validatePassword = (value) => {
-      if (patterns.password) {
-        if (patterns.password.test(value)){
-          setOldPasswordErrorMessage('')
-        } else {
-          setOldPasswordErrorMessage(state.labels.invalidPassword)
-        }
+    const patterns = {
+      password: /^.{4}$/,
+    }
+    const validatePassword = value => {
+      if (patterns.password.test(value)){
+        setOldPasswordErrorMessage('')
+      } else {
+        setOldPasswordErrorMessage(state.labels.invalidPassword)
       }
     }
-    if (oldPassword !== '') validatePassword(oldPassword)
-  }, [oldPassword])
+    if (oldPassword) validatePassword(oldPassword)
+  }, [oldPassword, state.labels])
   useEffect(() => {
-    const validatePassword = (value) => {
-      if (patterns.password) {
-        if (patterns.password.test(value)){
-          setNewPasswordErrorMessage('')
-        } else {
-          setNewPasswordErrorMessage(state.labels.invalidPassword)
-        }
+    const patterns = {
+      password: /^.{4}$/,
+    }
+    const validatePassword = value => {
+      if (patterns.password.test(value)){
+        setNewPasswordErrorMessage('')
+      } else {
+        setNewPasswordErrorMessage(state.labels.invalidPassword)
       }
     }
-    if (newPassword !== '') validatePassword(newPassword)
-  }, [newPassword])
+    if (newPassword) validatePassword(newPassword)
+  }, [newPassword, state.labels])
   useEffect(() => {
     if (error) {
       showMessage(props, 'error', error)
       setError('')
     }
-  }, [error])
+  }, [error, props])
 
   const handleSubmit = () => {
     changePassword(oldPassword, newPassword, state.randomColors).then(() => {

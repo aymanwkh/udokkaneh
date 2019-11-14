@@ -11,39 +11,37 @@ const InviteFriend = props => {
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
 
-  const patterns = {
-    name: /^.{4,50}$/,
-    mobile: /^07[7-9][0-9]{7}$/
-  }
   useEffect(() => {
+    const patterns = {
+      name: /^.{4,50}$/,
+    }
     const validateName = (value) => {
-      if (patterns.name) {
-        if (patterns.name.test(value)){
-          setNameErrorMessage('')
-        } else {
-          setNameErrorMessage(state.labels.invalidName)
-        }
+      if (patterns.name.test(value)){
+        setNameErrorMessage('')
+      } else {
+        setNameErrorMessage(state.labels.invalidName)
       }
     }  
-    if (name !== '') validateName(name)
-  }, [name])
+    if (name) validateName(name)
+  }, [name, state.labels])
   useEffect(() => {
+    const patterns = {
+      mobile: /^07[7-9][0-9]{7}$/
+    }
     const validateMobile = (value) => {
-      if (patterns.mobile) {
-        if (patterns.mobile.test(value)){
-          setMobileErrorMessage('')
-        } else {
-          setMobileErrorMessage(state.labels.invalidMobile)
-        }
+      if (patterns.mobile.test(value)){
+        setMobileErrorMessage('')
+      } else {
+        setMobileErrorMessage(state.labels.invalidMobile)
       }
     }
-    if (mobile !== '') validateMobile(mobile)
-  }, [mobile])
+    if (mobile) validateMobile(mobile)
+  }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
       showMessage(props, 'error', error)
     }
-  }, [error])
+  }, [error, props])
 
   const handleSend = () => {
     inviteFriend(mobile, name).then(() => {

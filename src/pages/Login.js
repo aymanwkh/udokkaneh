@@ -3,11 +3,6 @@ import { Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7
 import { StoreContext } from '../data/Store';
 import { login, showMessage } from '../data/Actions'
 
-const patterns = {
-  password: /^.{4}$/,
-  mobile: /^07[7-9][0-9]{7}$/
-}
-
 const Login = props => {
   const { state } = useContext(StoreContext)
   const [password, setPassword] = useState('')
@@ -16,40 +11,42 @@ const Login = props => {
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
   useEffect(() => {
-    const validatePassword = (value) => {
-      if (patterns.password) {
-        if (patterns.password.test(value)){
-          setPasswordErrorMessage('')
-        } else {
-          setPasswordErrorMessage(state.labels.invalidPassword)
-        }
+    const patterns = {
+      password: /^.{4}$/,
+    }
+    const validatePassword = value => {
+      if (patterns.password.test(value)){
+        setPasswordErrorMessage('')
+      } else {
+        setPasswordErrorMessage(state.labels.invalidPassword)
       }
     }
-    if (password !== '') validatePassword(password)
-  }, [password])
+    if (password) validatePassword(password)
+  }, [password, state.labels])
   useEffect(() => {
-    const validateMobile = (value) => {
-      if (patterns.mobile) {
-        if (patterns.mobile.test(value)){
-          setMobileErrorMessage('')
-        } else {
-          setMobileErrorMessage(state.labels.invalidMobile)
-        }
+    const patterns = {
+      mobile: /^07[7-9][0-9]{7}$/
+    }
+    const validateMobile = value => {
+      if (patterns.mobile.test(value)){
+        setMobileErrorMessage('')
+      } else {
+        setMobileErrorMessage(state.labels.invalidMobile)
       }
     }
-    if (mobile !== '') validateMobile(mobile)
-  }, [mobile])
+    if (mobile) validateMobile(mobile)
+  }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
       showMessage(props, 'error', error)
       setError('')
     }
-  }, [error])
+  }, [error, props])
 
   const handleLogin = () => {
     login(mobile, password).then(() => {
       showMessage(props, 'success', state.labels.loginSuccess)
-      props.f7router.navigate(`/${props.f7route.params.callingPage}/`)
+      props.f7router.navigate(`/${props.callingPage}/`)
       props.f7router.app.panel.close('right')  
     }).catch (err => {
       setError(state.labels[err.code.replace(/-|\//g, '_')])
@@ -85,7 +82,7 @@ const Login = props => {
       </List>
       {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <Button large onClick={() => handleLogin()}>{state.labels.login}</Button>}
       <Toolbar bottom>
-        <Link href={`/register/${props.f7route.params.callingPage}/`}>{state.labels.newUser}</Link>
+        <Link href={`/register/${props.callingPage}/`}>{state.labels.newUser}</Link>
         <Link href='/forgetPassword/'>{state.labels.forgetPassword}</Link>
       </Toolbar>
     </Page>

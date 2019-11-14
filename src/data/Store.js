@@ -34,9 +34,8 @@ const Store = props => {
     {id: 'e', name: 'قيد التسليم'},
     {id: 'f', name: 'جاهز'},
     {id: 'd', name: 'تم اﻻستلام'},
-    {id: 'l', name: 'متأخر'},
     {id: 'c', name: 'ملغي'},
-    {id: 'i', name: 'في المستودع'}
+    {id: 'i', name: 'استيداع'}
   ]
   const discountTypes = [
     {id: 'f', name: 'خصم اول طلب', value: 500},
@@ -100,7 +99,7 @@ const Store = props => {
         }, err => {
           unsubscribeInvitations()
         })  
-        firebase.firestore().collection('customers').doc(user.uid).get().then(doc => {
+        firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
           if (doc.exists){
             dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
           }

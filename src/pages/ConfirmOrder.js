@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import Framework7React, { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
@@ -13,7 +13,7 @@ const ConfirmOrder = props => {
   const [error, setError] = useState('')
   const total = useMemo(() => {
     const total = state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0)
-    return Math.floor(total / 5) * 5
+    return Math.floor(total / 50) * 50
   }, [state.basket])
 
   const discount = useMemo(() => {
@@ -32,21 +32,22 @@ const ConfirmOrder = props => {
       discount.type = 'p'
     }
     return discount
-  }, [state.orders, state.customer]) 
-  const net = useMemo(() => ((total + state.labels.fixedFees + deliveryFees - discount.value) / 1000).toFixed(3), [total, discount, deliveryFees])
+  }, [state.orders, state.customer, state.discountTypes, state.labels]) 
+  const net = useMemo(() => ((total + state.labels.fixedFees + deliveryFees - discount.value) / 1000).toFixed(3)
+  , [total, discount, deliveryFees, state.labels])
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(state.customer.deliveryFees || 0)
     } else {
       setDeliveryFees(0)
     }
-  }, [withDelivery])
+  }, [withDelivery, state.customer])
   useEffect(() => {
     if (error) {
       showMessage(props, 'error', error)
       setError('')
     }
-  }, [error])
+  }, [error, props])
 
   const handleOrder = () => {
     try{
@@ -73,7 +74,7 @@ const ConfirmOrder = props => {
       }
       confirmOrder(order).then(() => {
         showMessage(props, 'success', state.labels.confirmSuccess)
-        props.f7router.navigate('/home/')
+        props.f7router.navigate('/home/', {reloadAll: true})
         dispatch({ type: 'CLEAR_BASKET' })
       })  
     } catch (err){
@@ -95,11 +96,35 @@ const ConfirmOrder = props => {
               {pack.quantity > 1 ? <Badge slot="title" color="red">{pack.quantity}</Badge> : null}
             </ListItem>
           )}
-          <ListItem title={state.labels.total} className="total" after={(total / 1000).toFixed(3)} />
-          <ListItem title={state.labels.feesTitle} className="fees" after={(state.labels.fixedFees / 1000).toFixed(3)} />
-          {deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="fees" after={(deliveryFees / 1000).toFixed(3)} /> : ''}
-          {discount.value > 0 ? <ListItem title={state.discountTypes.find(rec => rec.id === discount.type).name} className="discount" after={(discount.value / 1000).toFixed(3)} /> : ''}
-          <ListItem title={state.labels.net} className="net" after={net} />
+          <ListItem 
+            title={state.labels.total} 
+            className="total" 
+            after={(total / 1000).toFixed(3)} 
+          />
+          <ListItem 
+            title={state.labels.feesTitle} 
+            className="fees" 
+            after={(state.labels.fixedFees / 1000).toFixed(3)} 
+          />
+          {deliveryFees > 0 ? 
+            <ListItem 
+              title={state.labels.deliveryFees} 
+              className="fees" 
+              after={(deliveryFees / 1000).toFixed(3)} 
+            /> 
+          : ''}
+          {discount.value > 0 ? 
+            <ListItem 
+              title={state.discountTypes.find(rec => rec.id === discount.type).name} 
+              className="discount" 
+              after={(discount.value / 1000).toFixed(3)} 
+            /> 
+          : ''}
+          <ListItem 
+            title={state.labels.net} 
+            className="net" 
+            after={net} 
+          />
           <ListItem>
             <span>{state.labels.delivery}</span>
             <Toggle 

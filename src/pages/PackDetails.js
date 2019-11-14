@@ -8,8 +8,10 @@ import { showMessage } from '../data/Actions'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id), [state.packs])
-  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId), [state.products])
+  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id)
+  , [state.packs, props.id])
+  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId)
+  , [state.products, pack])
   const handleAddPack = () => {
     if (state.basket.find(rec => rec.id === pack.id)) {
       showMessage(props, 'error', state.labels.alreadyInBasket)
@@ -31,7 +33,7 @@ const PackDetails = props => {
     } else {
       return state.labels.lessPrice
     }
-  }, [state.packs])
+  }, [pack, state.labels, state.customer])
   return (
     <Page>
       <Navbar title={product.name} backLink={state.labels.back} />

@@ -7,8 +7,10 @@ import ReLogin from './ReLogin'
 
 const PriceAlarm = props => {
   const { state, user } = useContext(StoreContext)
-  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id), [state.packs])
-  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId), [state.products])
+  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id)
+  , [state.packs, props.id])
+  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId)
+  , [state.products, pack])
   const [price, setPrice] = useState('')
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
@@ -17,9 +19,6 @@ const PriceAlarm = props => {
   const [offerEnd, setOfferEnd] = useState('')
   const [offerEndErrorMessage, setOfferEndErrorMessage] = useState('')
   const [error, setError] = useState('')
-  const patterns = {
-    name: /^.{4,50}$/,
-  }
 
   useEffect(() => {
     const validatePrice = (value) => {
@@ -38,26 +37,27 @@ const PriceAlarm = props => {
       }
     }
     if (price !== '') validatePrice(price)
-  }, [price])
+  }, [price, pack, state.customer, state.labels])
   useEffect(() => {
-    const validateStoreName = (value) => {
-      if (patterns.name) {
-        if (patterns.name.test(value)){
-          setStoreNameErrorMessage('')
-        } else {
-          setStoreNameErrorMessage(state.labels.invalidName)
-        }
+    const patterns = {
+      name: /^.{4,50}$/,
+    }
+    const validateStoreName = value => {
+      if (patterns.name.test(value)){
+        setStoreNameErrorMessage('')
+      } else {
+        setStoreNameErrorMessage(state.labels.invalidName)
       }
     }  
-    if (storeName !== '') validateStoreName(storeName)
-  }, [storeName])
+    if (storeName) validateStoreName(storeName)
+  }, [storeName, state.labels])
 
   useEffect(() => {
     if (error) {
       showMessage(props, 'error', error)
       setError('')
     }
-  }, [error])
+  }, [error, props])
   useEffect(() => {
     const validateDate = (value) => {
       if (new Date(value) > new Date()){
@@ -68,7 +68,7 @@ const PriceAlarm = props => {
     }
     if (offerEnd.length > 0) validateDate(offerEnd)
     else setOfferEndErrorMessage('')
-  }, [offerEnd])
+  }, [offerEnd, state.labels])
 
   const formatPrice = value => {
     return (Number(value) * 1000 / 1000).toFixed(3)
@@ -111,7 +111,7 @@ const PriceAlarm = props => {
     } else {
       return state.labels.lessPrice
     }
-  }, [state.packs])
+  }, [pack, state.customer, state.labels])
 
   if (!user) return <ReLogin callingPage='home'/>
   return (
@@ -145,9 +145,9 @@ const PriceAlarm = props => {
           value={price} 
           errorMessage={priceErrorMessage}
           errorMessageForce  
-          onChange={(e) => setPrice(e.target.value)}
+          onChange={e => setPrice(e.target.value)}
           onInputClear={() => setPrice('')}
-          onBlur={(e) => setPrice(formatPrice(e.target.value))}
+          onBlur={e => setPrice(formatPrice(e.target.value))}
         />
         {state.customer.type === 'o'
         ? ''
@@ -160,7 +160,7 @@ const PriceAlarm = props => {
             value={storeName} 
             errorMessage={storeNameErrorMessage}
             errorMessageForce  
-            onChange={(e) => setStoreName(e.target.value)}
+            onChange={e => setStoreName(e.target.value)}
             onInputClear={() => setStoreName('')}
           />
         }

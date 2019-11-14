@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Page, Block, Link, Navbar} from 'framework7-react'
+import { Page, Block, Link, Navbar } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 
 const ReLogin = props => {

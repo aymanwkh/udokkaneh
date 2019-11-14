@@ -8,7 +8,7 @@ const Packs = props => {
   const packs = useMemo(() => {
     let packs = state.packs.filter(rec => props.id ? state.products.find(product => product.id === rec.productId).category === props.id : true)
     return packs.filter(rec => rec.price > 0)
-  }, [state.packs]) 
+  }, [state.packs, state.products, props.id]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
@@ -33,9 +33,8 @@ const Packs = props => {
         setCategoryPacks([...categoryPacks].sort((pack1, pack2) => state.products.find(rec => rec.id === pack1.productId).name > state.products.find(rec => rec.id === pack2.productId).name ? 1 : -1))
         break
       default:
-        return null
     }
-  }, [orderBy])
+  }, [orderBy, categoryPacks, state.products])
 
   const orderByListTags = useMemo(() => {
     const orderByList = state.orderByList.filter(rec => rec.id !== orderBy)
@@ -48,7 +47,7 @@ const Packs = props => {
         onClick={() => setOrderBy(orderByItem.id)}
       /> 
     )
-  }, [state.orderByList]) 
+  }, [state.orderByList, orderBy]) 
   return(
     <Page>
       <Navbar title={category ? category.name : state.labels.allProducts} backLink={state.labels.back}>

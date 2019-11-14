@@ -1,5 +1,5 @@
-import React, { useContext, useState, useMemo } from 'react'
-import { editOrder } from '../data/Actions'
+import React, { useContext, useState, useMemo, useEffect } from 'react'
+import { editOrder, showMessage } from '../data/Actions'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge} from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
@@ -8,19 +8,31 @@ import { StoreContext } from '../data/Store'
 
 const OrderDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const order = useMemo(() => state.orders.find(order => order.id === props.id), [state.orders])
   const [error, setError] = useState('')
-  const netPrice = useMemo(() => order.total + order.fixedFees + order.deliveryFees - (order.specialDiscount + order.customerDiscount), [order])
+  const order = useMemo(() => state.orders.find(order => order.id === props.id)
+  , [state.orders, props.id])
+  const netPrice = useMemo(() => order.total + order.fixedFees + order.deliveryFees - (order.specialDiscount + order.customerDiscount)
+  , [order])
+  useEffect(() => {
+    if (error) {
+      showMessage(props, 'error', error)
+      setError('')
+    }
+  }, [error, props])
 
   const handleEdit = () => {
-    if (state.basket.length > 0) {
-      setError('your basket must be empty')
-      return
-    }
-    editOrder(order).then(() => {
-      dispatch({type: 'LOAD_BASKET', order})
-      props.f7router.navigate('/basket/')
-    })
+    try{
+      if (state.basket.length > 0) {
+        setError('your basket must be empty')
+        return
+      }
+      editOrder(order).then(() => {
+        dispatch({type: 'LOAD_BASKET', order})
+        props.f7router.navigate('/basket/')
+      })
+		} catch(err) {
+			err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
+		}
   }
 
 
