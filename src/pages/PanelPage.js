@@ -30,7 +30,7 @@ const PanelPage = props => {
           />
           <ListItem 
             link="/ordersList/" 
-            title={state.labels.orders} 
+            title={state.labels.myOrders} 
             view="#main-view" 
             panelClose 
           />
@@ -52,7 +52,7 @@ const PanelPage = props => {
           }
           {state.customer.type === 'o' ?
             <ListItem 
-              link="/ownerPacks/" 
+              link={`/ownerPacks/${state.customer.storeId}`}
               title={state.labels.ownerPacks} 
               view="#main-view" 
               panelClose

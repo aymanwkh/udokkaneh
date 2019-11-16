@@ -33,7 +33,7 @@ const ConfirmOrder = props => {
     }
     return discount
   }, [state.orders, state.customer, state.discountTypes, state.labels]) 
-  const net = useMemo(() => ((total + state.labels.fixedFees + deliveryFees - discount.value) / 1000).toFixed(3)
+  const net = useMemo(() => ((total + state.labels.fixedFeesValue + deliveryFees - discount.value) / 1000).toFixed(3)
   , [total, discount, deliveryFees, state.labels])
   useEffect(() => {
     if (withDelivery) {
@@ -51,7 +51,7 @@ const ConfirmOrder = props => {
 
   const handleOrder = () => {
     try{
-      const activeOrders = state.orders.filter(rec => rec.status === 'n' || rec.status === 'a' || rec.status === 's')
+      const activeOrders = state.orders.filter(rec => ['n', 'a', 's'].inculdes(rec.status))
       const totalOrders = activeOrders.reduce((a, order) => a + (order.total + order.fixedFees + order.deliveryFees - order.discount.value), 0)
       if ((totalOrders + (net * 1000)) > state.customer.limit) {
         throw new Error(state.labels.limitOverFlow)
@@ -66,7 +66,7 @@ const ConfirmOrder = props => {
       })
       const order = {
         basket,
-        fixedFees: state.labels.fixedFees,
+        fixedFees: state.labels.fixedFeesValue,
         deliveryFees,
         discount,
         withDelivery,
@@ -104,7 +104,7 @@ const ConfirmOrder = props => {
           <ListItem 
             title={state.labels.feesTitle} 
             className="fees" 
-            after={(state.labels.fixedFees / 1000).toFixed(3)} 
+            after={(state.labels.fixedFeesValue / 1000).toFixed(3)} 
           />
           {deliveryFees > 0 ? 
             <ListItem 

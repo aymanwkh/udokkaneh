@@ -23,8 +23,7 @@ const OrderDetails = props => {
   const handleEdit = () => {
     try{
       if (state.basket.length > 0) {
-        setError('your basket must be empty')
-        return
+        throw new Error(state.labels.basketIsNotEmpty)
       }
       editOrder(order).then(() => {
         dispatch({type: 'LOAD_BASKET', order})

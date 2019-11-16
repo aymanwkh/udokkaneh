@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react'
+import React, { useContext, useState, useMemo } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Popover } from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
@@ -7,13 +7,15 @@ const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
     let packs = state.packs.filter(rec => props.id ? state.products.find(product => product.id === rec.productId).category === props.id : true)
-    return packs.filter(rec => rec.price > 0)
+    packs = packs.filter(rec => rec.price > 0)
+    return packs.sort((pack1, pack2) => pack1.price - pack2.price)
   }, [state.packs, state.products, props.id]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
-  useEffect(() => {
-    switch(orderBy){
+  const handleOrdering = orderByValue => {
+    setOrderBy(orderByValue)
+    switch(orderByValue){
       case 'p':
         setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack1.price - pack2.price))
         break
@@ -34,20 +36,9 @@ const Packs = props => {
         break
       default:
     }
-  }, [orderBy, categoryPacks, state.products])
-
-  const orderByListTags = useMemo(() => {
-    const orderByList = state.orderByList.filter(rec => rec.id !== orderBy)
-    return orderByList.map(orderByItem => 
-      <ListItem 
-        link="#" 
-        popoverClose 
-        key={orderByItem.id} 
-        title={orderByItem.name} 
-        onClick={() => setOrderBy(orderByItem.id)}
-      /> 
-    )
-  }, [state.orderByList, orderBy]) 
+  }
+  const orderByList = useMemo(() => state.orderByList.filter(rec => rec.id !== orderBy)
+  , [state.orderByList, orderBy]) 
   return(
     <Page>
       <Navbar title={category ? category.name : state.labels.allProducts} backLink={state.labels.back}>
@@ -65,7 +56,15 @@ const Packs = props => {
       </Navbar>
       <Popover className="popover-menu">
         <List>
-          {orderByListTags}
+        {orderByList.map(rec => 
+          <ListItem 
+            link="#" 
+            popoverClose 
+            key={rec.id} 
+            title={rec.name} 
+            onClick={() => handleOrdering(rec.id)}
+          />
+        )}
         </List>
       </Popover>
       <Block>

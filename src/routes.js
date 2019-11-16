@@ -92,7 +92,7 @@ export default [
     component: OrderDetails,
   },
   {
-    path: '/ownerPacks/',
+    path: '/ownerPacks/:id',
     component: OwnerPacks,
   },
   {

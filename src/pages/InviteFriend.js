@@ -40,6 +40,7 @@ const InviteFriend = props => {
   useEffect(() => {
     if (error) {
       showMessage(props, 'error', error)
+      setError('')
     }
   }, [error, props])
 

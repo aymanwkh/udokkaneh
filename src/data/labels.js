@@ -43,7 +43,7 @@ const labels = {
   enterName: 'الرجاء ادخال اﻻسم',
   namePlaceholder: 'من 4-50 حرف',
   invalidName: 'اﻻسم غير صحيح',
-  fixedFees: 500,
+  fixedFeesValue: 500,
   maxDiscount: 500,
   total: 'المجموع',
   feesTitle: 'الرسوم',
@@ -60,7 +60,7 @@ const labels = {
   send: 'ارسال',
   sendMessage: 'تم ارسال طلبك بنجاح',
   allProducts: 'كل المنتجات',
-  orders: 'الطلبات السابقة',
+  myOrders: 'مشترياتي السابقة',
   inviteFriend: 'دعوة صديق',
   sendSuccess: 'تم الارسال بنجاح',
   loginSuccess: 'اهلا وسهلا بك',
@@ -89,7 +89,8 @@ const labels = {
   oldPassword: 'كلمة السر الحالية',
   newPassword: 'كلمة السر الجديدة',
   addToBasketSuccess: 'تمت الاضافة الى سلة المشتريات',
-  alreadyInBasket: 'هذا المنتج موجود في سلة المشتريات'
+  alreadyInBasket: 'هذا المنتج موجود في سلة المشتريات',
+  basketIsNotEmpty: 'سلة المشتريات غير فارغة، قم بتفريغها اوﻻ'
 }
 
 export default labels

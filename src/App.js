@@ -8,7 +8,7 @@ export default function (props) {
 
   const f7params = {
     id: 'io.framework7.dokaneh', 
-    name: 'DokanehNet', 
+    name: 'دكانة نت', 
     theme: 'ios',
     routes,
   };
