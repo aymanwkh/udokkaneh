@@ -8,22 +8,22 @@ import { StoreContext } from '../data/Store';
 const Comments = props => {
   const { state } = useContext(StoreContext)
   const comments = useMemo(() => {
-    const pack = state.packs.find(rec => rec.id === props.id)
-    const comments = state.comments.filter(rec => rec.productId === pack.productId)
-    return comments.sort((rec1, rec2) => rec2.time.seconds - rec1.time.seconds)
+    const pack = state.packs.find(p => p.id === props.id)
+    const comments = state.comments.filter(c => c.productId === pack.productId)
+    return comments.sort((c1, c2) => c2.time.seconds - c1.time.seconds)
   }, [state.packs, state.comments])
   return(
     <Page>
       <Navbar title={state.labels.comments} backLink={state.labels.back} />
       <Block>
           <List mediaList>
-            {comments && comments.map(comment =>
+            {comments && comments.map(c =>
               <ListItem
                 link="#"
                 title=""
-                after={moment(comment.time.toDate()).fromNow()}
-                text={comment.text}
-                key={comment.id}
+                after={moment(c.time.toDate()).fromNow()}
+                text={c.text}
+                key={c.id}
               />
             )}
             {comments.length === 0 ? <ListItem title={state.labels.not_found} /> : ''}

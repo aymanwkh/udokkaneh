@@ -9,22 +9,22 @@ import { confirmOrder, showMessage } from '../data/Actions'
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
-  const customerLocation = useMemo(() => state.customer.locationId ? state.locations.find(rec => rec.id === state.customer.locationId) : ''
+  const customerLocation = useMemo(() => state.customer.locationId ? state.locations.find(l => l.id === state.customer.locationId) : ''
   , [state.locations, state.customer])
   const [deliveryFees, setDeliveryFees] = useState(customerLocation ? customerLocation.deliveryFees : '')
   const [error, setError] = useState('')
   const total = useMemo(() => {
-    const total = state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0)
+    const total = state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
     return Math.floor(total / 50) * 50
   }, [state.basket])
 
   const discount = useMemo(() => {
     let discount = {value: 0, type: ''}
     if (state.orders.length === 0) {
-      discount.value = state.discountTypes.find(rec => rec.id === 'f').value
+      discount.value = state.discountTypes.find(t => t.id === 'f').value
       discount.type = 'f'
     } else if (state.customer.type === 's') {
-      discount.value = state.discountTypes.find(rec => rec.id === 's').value
+      discount.value = state.discountTypes.find(t => t.id === 's').value
       discount.type = 's'
     } else if (state.customer.invitationsDiscount > 0) {
       discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
@@ -53,16 +53,16 @@ const ConfirmOrder = props => {
 
   const handleOrder = () => {
     try{
-      const activeOrders = state.orders.filter(rec => ['n', 'a', 's'].includes(rec.status))
-      const totalOrders = activeOrders.reduce((a, order) => a + (order.total + order.fixedFees + order.deliveryFees - order.discount.value), 0)
+      const activeOrders = state.orders.filter(o => ['n', 'a', 's'].includes(o.status))
+      const totalOrders = activeOrders.reduce((sum, o) => sum + (o.total + o.fixedFees + o.deliveryFees - o.discount.value), 0)
       if ((totalOrders + (net * 1000)) > state.customer.limit) {
         throw new Error(state.labels.limitOverFlow)
       }
-      const basket = state.basket.map(pack => {
+      const basket = state.basket.map(p => {
         return ({
-          id: pack.id,
-          price: pack.price,
-          quantity: pack.quantity,
+          id: p.id,
+          price: p.price,
+          quantity: p.quantity,
           purchasedQuantity: 0
         })
       })
@@ -89,13 +89,13 @@ const ConfirmOrder = props => {
       <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />
       <Block>
         <List>
-          {state.basket && state.basket.map(pack => 
+          {state.basket && state.basket.map(p => 
             <ListItem
-              key={pack.id}
-              title={state.products.find(rec => rec.id === pack.productId).name}
-              after={(pack.price * pack.quantity / 1000).toFixed(3)}
-              footer={pack.name}>
-              {pack.quantity > 1 ? <Badge slot="title" color="red">{pack.quantity}</Badge> : null}
+              key={p.id}
+              title={state.products.find(pr => pr.id === p.productId).name}
+              after={(p.price * p.quantity / 1000).toFixed(3)}
+              footer={p.name}>
+              {p.quantity > 1 ? <Badge slot="title" color="red">{p.quantity}</Badge> : ''}
             </ListItem>
           )}
           <ListItem 
@@ -117,7 +117,7 @@ const ConfirmOrder = props => {
           : ''}
           {discount.value > 0 ? 
             <ListItem 
-              title={state.discountTypes.find(rec => rec.id === discount.type).name} 
+              title={state.discountTypes.find(t => t.id === discount.type).name} 
               className="discount" 
               after={(discount.value / 1000).toFixed(3)} 
             /> 

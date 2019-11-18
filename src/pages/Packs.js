@@ -6,39 +6,39 @@ import { StoreContext } from '../data/Store';
 const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
-    let packs = state.packs.filter(rec => props.id ? state.products.find(product => product.id === rec.productId).category === props.id : true)
-    packs = packs.filter(rec => rec.price > 0)
-    return packs.sort((pack1, pack2) => pack1.price - pack2.price)
+    let packs = state.packs.filter(p => props.id ? state.products.find(pr => pr.id === p.productId).category === props.id : true)
+    packs = packs.filter(p => p.price > 0)
+    return packs.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, state.products, props.id]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
+  const orderByList = useMemo(() => state.orderByList.filter(o => o.id !== orderBy)
+  , [state.orderByList, orderBy]) 
   const handleOrdering = orderByValue => {
     setOrderBy(orderByValue)
     switch(orderByValue){
       case 'p':
-        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack1.price - pack2.price))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => p1.price - p2.price))
         break
       case 's':
-        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.sales - pack1.sales))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.sales - p1.sales))
         break
       case 'r':
-        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.rating - pack1.rating))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.rating - p1.rating))
         break
       case 'o':
-        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack2.isOffer - pack1.isOffer))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.isOffer - p1.isOffer))
         break
       case 'v':
-        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => pack1.value - pack2.value))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => p1.value - p2.value))
         break
       case 't':
-        setCategoryPacks([...categoryPacks].sort((pack1, pack2) => state.products.find(rec => rec.id === pack1.productId).name > state.products.find(rec => rec.id === pack2.productId).name ? 1 : -1))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => state.products.find(p => p.id === p1.productId).name > state.products.find(p => p.id === p2.productId).name ? 1 : -1))
         break
       default:
     }
   }
-  const orderByList = useMemo(() => state.orderByList.filter(rec => rec.id !== orderBy)
-  , [state.orderByList, orderBy]) 
   return(
     <Page>
       <Navbar title={category ? category.name : state.labels.allProducts} backLink={state.labels.back}>
@@ -56,13 +56,13 @@ const Packs = props => {
       </Navbar>
       <Popover className="popover-menu">
         <List>
-        {orderByList.map(rec => 
+        {orderByList.map(o => 
           <ListItem 
             link="#" 
             popoverClose 
-            key={rec.id} 
-            title={rec.name} 
-            onClick={() => handleOrdering(rec.id)}
+            key={o.id} 
+            title={o.name} 
+            onClick={() => handleOrdering(o.id)}
           />
         )}
         </List>
@@ -76,23 +76,23 @@ const Packs = props => {
             link="#"
             popoverOpen=".popover-menu"
             title={state.labels.orderBy} 
-            after={state.orderByList.find(rec => rec.id === orderBy).name}
+            after={state.orderByList.find(o => o.id === orderBy).name}
           />
-          {categoryPacks && categoryPacks.map(pack => {
-            const productInfo = state.products.find(rec => rec.id === pack.productId)
+          {categoryPacks && categoryPacks.map(p => {
+            const productInfo = state.products.find(pr => pr.id === p.productId)
             return (
               <ListItem
-                link={`/pack/${pack.id}`}
+                link={`/pack/${p.id}`}
                 title={productInfo.name}
-                after={(pack.price / 1000).toFixed(3)}
-                subtitle={pack.name}
-                text={`${state.labels.productOf} ${state.countries.find(rec => rec.id === productInfo.country).name}`}
-                key={pack.id}
+                after={(p.price / 1000).toFixed(3)}
+                subtitle={p.name}
+                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.country).name}`}
+                key={p.id}
               >
-                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt=""/>
+                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
-                {pack.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                {state.customer.type === 'o' && pack.stores.find(rec => rec.id === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(pack.stores.find(rec => rec.id === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
+                {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
+                {state.customer.type === 'o' && p.stores.find(s => s.id === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.id === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )
           })}

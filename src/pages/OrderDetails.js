@@ -41,17 +41,17 @@ const OrderDetails = props => {
       <Navbar title={state.labels.orderDetails} backLink={state.labels.back} />
       <Block>
         <List>
-          {order.basket && order.basket.map(pack => {
-            const packInfo = state.packs.find(rec => rec.id === pack.id)
-            const productInfo = state.products.find(rec => rec.id === packInfo.productId)
+          {order.basket && order.basket.map(p => {
+            const packInfo = state.packs.find(pa => pa.id === p.id)
+            const productInfo = state.products.find(pr => pr.id === packInfo.productId)
             return (
               <ListItem 
-                key={pack.id} 
+                key={p.id} 
                 title={productInfo.name} 
                 footer={packInfo.name}
-                after={(pack.price * pack.quantity / 1000).toFixed(3)}
+                after={(p.price * p.quantity / 1000).toFixed(3)}
               >
-                {pack.quantity > 1 ? <Badge slot="title" color="red">{pack.quantity}</Badge> : null}
+                {p.quantity > 1 ? <Badge slot="title" color="red">{p.quantity}</Badge> : ''}
               </ListItem>
             )}
           )}
@@ -62,7 +62,7 @@ const OrderDetails = props => {
           <ListItem title={state.labels.net} className="blue" after={(netPrice / 1000).toFixed(3)} />
         </List>
       </Block>
-      { order.status === 'n' ? 
+      {order.status === 'n' ? 
         <Fab position="left-bottom" slot="fixed" color="red" onClick={() => handleEdit()}>
           <Icon material="edit"></Icon>
         </Fab>

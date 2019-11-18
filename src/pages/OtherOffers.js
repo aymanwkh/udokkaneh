@@ -5,34 +5,34 @@ import { StoreContext } from '../data/Store';
 
 const OtherOffers = props => {
   const { state } = useContext(StoreContext)
-  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id)
+  const pack = useMemo(() => state.packs.find(p => p.id === props.id)
   , [state.packs, props.id])
   const offers = useMemo(() => {
-    const productPack = state.products.find(rec => rec.id === pack.productId)
-    let offers = state.packs.filter(rec1 => state.products.find(rec2 => rec2.id === rec1.productId && rec2.category === productPack.category) && rec1.isOffer === true)
-    offers = offers.filter(rec => rec.id !== pack.id && rec.price > 0)
-    return offers.sort((rec1, rec2) => rec1.price - rec2.price)
+    const productPack = state.products.find(p => p.id === pack.productId)
+    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.category === productPack.category) && p.isOffer === true)
+    offers = offers.filter(p => p.id !== pack.id && p.price > 0)
+    return offers.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, pack, state.products]) 
   return(
     <Page>
-      <Navbar title={`${state.labels.productOffers} ${state.products.find(rec => rec.id === pack.productId).name}`} backLink={state.labels.back} />
+      <Navbar title={`${state.labels.productOffers} ${state.products.find(p => p.id === pack.productId).name}`} backLink={state.labels.back} />
       <Block>
         <List mediaList>
-          {offers && offers.map(rec1 => {
-            const productInfo = state.products.find(rec2 => rec2.id === rec1.productId)
+          {offers && offers.map(p => {
+            const productInfo = state.products.find(pr => pr.id === p.productId)
             return (
               <ListItem
-                link={`/pack/${rec1.id}`}
+                link={`/pack/${p.id}`}
                 title={productInfo.name}
-                after={(rec1.price / 1000).toFixed(3)}
-                subtitle={rec1.name}
-                text={`${state.labels.productOf} ${state.countries.find(rec3 => rec3.id === productInfo.country).name}`}
-                key={rec1.id}
+                after={(p.price / 1000).toFixed(3)}
+                subtitle={p.name}
+                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.country).name}`}
+                key={p.id}
               >
-                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={rec1.name} />
+                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
-                {rec1.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                {state.customer.type === 'o' && rec1.stores.find(rec4 => rec4.id === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(rec1.stores.find(rec5 => rec5.id === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
+                {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
+                {state.customer.type === 'o' && p.stores.find(s => s.id === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.id === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )
           })}

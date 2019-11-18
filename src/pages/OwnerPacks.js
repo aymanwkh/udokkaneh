@@ -8,10 +8,10 @@ import 'moment/locale/ar'
 const OwnerPacks = props => {
   const { state } = useContext(StoreContext)
   let ownerPacks = useMemo(() => {
-    let ownerPacks = state.packs.filter(pack => pack.stores.find(store => store.id === props.id))
-    return ownerPacks.sort((rec1, rec2) => rec1.price - rec2.price)
+    let ownerPacks = state.packs.filter(p => p.stores.find(s => s.id === props.id))
+    return ownerPacks.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, props.id])
-  const store = useMemo(() => state.stores.find(rec => rec.id === props.id)
+  const store = useMemo(() => state.stores.find(s => s.id === props.id)
   , [state.stores, props.id])
   return(
     <Page>
@@ -33,21 +33,21 @@ const OwnerPacks = props => {
           <ListItem title={state.labels.noData} />
         </List>
         <List mediaList className="search-list searchbar-found">
-          {ownerPacks.map(pack => {
-            const productInfo = state.products.find(rec => rec.id === pack.productId)
+          {ownerPacks.map(p => {
+            const productInfo = state.products.find(pr => pr.id === p.productId)
             return (
               <ListItem
-                link={`/pack/${pack.id}`}
+                link={`/pack/${p.id}`}
                 title={productInfo.name}
-                after={(pack.price / 1000).toFixed(3)}
-                subtitle={pack.name}
-                text={moment(pack.stores.find(rec => rec.id === props.id).time.toDate()).fromNow()}
-                key={pack.id}
+                after={(p.price / 1000).toFixed(3)}
+                subtitle={p.name}
+                text={moment(p.stores.find(s => s.id === props.id).time.toDate()).fromNow()}
+                key={p.id}
               >
-                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={pack.productName} />
+                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color='red'>{state.labels.new}</Badge> : ''}
-                {pack.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                <Badge slot="footer" color='green'> {state.labels.myPrice} {(pack.stores.find(rec => rec.id === props.id).price / 1000).toFixed(3)} </Badge>
+                {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
+                <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.id === props.id).price / 1000).toFixed(3)} </Badge>
               </ListItem>
             )
           }

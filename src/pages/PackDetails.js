@@ -8,21 +8,21 @@ import { showMessage } from '../data/Actions'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id)
+  const pack = useMemo(() => state.packs.find(p => p.id === props.id)
   , [state.packs, props.id])
-  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId)
+  const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
   const hasOtherOffers = useMemo(() => {
-    let offers = state.packs.filter(rec1 => state.products.find(rec2 => rec2.id === rec1.productId && rec2.category === product.category) && rec1.isOffer === true)
-    offers = offers.filter(rec => rec.id !== pack.id && rec.price > 0)
+    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.category === product.category) && p.isOffer === true)
+    offers = offers.filter(p => p.id !== pack.id && p.price > 0)
     return offers.length
   }, [state.packs, pack, product, state.products]) 
 
   const rating_links = !user || state.customer.type === 'b' || state.rating.find(rating => rating.productId === props.id) ? '' : <RateProduct product={product} />
   const priceAlarmText = useMemo(() => {
     if (state.customer.type === 'o') {
-      if (pack.stores.find(rec => rec.id === state.customer.storeId)) {
-        return `${state.labels.changePrice} ${(pack.stores.find(rec => rec.id === state.customer.storeId).price / 1000).toFixed(3)}`
+      if (pack.stores.find(s => s.id === state.customer.storeId)) {
+        return `${state.labels.changePrice} ${(pack.stores.find(s => s.id === state.customer.storeId).price / 1000).toFixed(3)}`
       } else {
        return state.labels.havePack
       }
@@ -31,7 +31,7 @@ const PackDetails = props => {
     }
   }, [pack, state.labels, state.customer])
   const handleAddPack = () => {
-    if (state.basket.find(rec => rec.id === pack.id)) {
+    if (state.basket.find(p => p.id === pack.id)) {
       showMessage(props, 'error', state.labels.alreadyInBasket)
     } else {
       dispatch({type: 'ADD_TO_BASKET', pack})
@@ -60,11 +60,11 @@ const PackDetails = props => {
           <p className="rating"><Rating rating={product.rating} /> </p>
         </CardHeader>
         <CardContent>
-          <img src={product.imageUrl} width="100%" height="250" alt=""/>
+          <img src={product.imageUrl} width="100%" height="250" alt={product.name} />
         </CardContent>
         <CardFooter>
           <p>{pack.name}</p>
-          <p>{`${state.labels.productOf} ${state.countries.find(rec => rec.id === product.country).name}`}</p>
+          <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.country).name}`}</p>
         </CardFooter>
       </Card>
       {state.customer.type === 'b' ? '' :

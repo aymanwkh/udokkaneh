@@ -5,8 +5,10 @@ import { StoreContext } from '../data/Store';
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
-  const totalPrice = useMemo(() => state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0), [state.basket])
-  const packs = useMemo(() => [...state.basket].sort((rec1, rec2) => rec1.time.seconds - rec2.time.seconds), [state.basket])
+  const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
+  , [state.basket])
+  const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time.seconds - p2.time.seconds)
+  , [state.basket])
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
   }, [state.basket, props])
@@ -16,22 +18,22 @@ const Basket = props => {
     <Navbar title={state.labels.basket} backLink={state.labels.back} />
     <Block>
       <List mediaList>
-        {packs && packs.map(pack => {
-          const productInfo = state.products.find(rec => rec.id === pack.productId)
+        {packs && packs.map(p => {
+          const productInfo = state.products.find(pr => pr.id === p.productId)
           return (
             <ListItem
               title={productInfo.name}
-              footer={(pack.price * pack.quantity / 1000).toFixed(3)}
-              subtitle={pack.name}
-              key={pack.id}
+              footer={(p.price * p.quantity / 1000).toFixed(3)}
+              subtitle={p.name}
+              key={p.id}
             >
-              <img slot="media" src={productInfo.imageUrl} width="80" alt=""/>
+              <img slot="media" src={productInfo.imageUrl} width="80" alt={productInfo.name} />
               <Stepper 
                 slot="after" 
                 fill
-                value={pack.quantity}
-                onStepperPlusClick={() => dispatch({type: 'ADD_QUANTITY', pack})}
-                onStepperMinusClick={() => dispatch({type: 'REMOVE_QUANTITY', pack})}
+                value={p.quantity}
+                onStepperPlusClick={() => dispatch({type: 'ADD_QUANTITY', p})}
+                onStepperMinusClick={() => dispatch({type: 'REMOVE_QUANTITY', p})}
               />
             </ListItem>
           )

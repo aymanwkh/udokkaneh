@@ -7,9 +7,9 @@ import ReLogin from './ReLogin'
 
 const PriceAlarm = props => {
   const { state, user } = useContext(StoreContext)
-  const pack = useMemo(() => state.packs.find(rec => rec.id === props.id)
+  const pack = useMemo(() => state.packs.find(p => p.id === props.id)
   , [state.packs, props.id])
-  const product = useMemo(() => state.products.find(rec => rec.id === pack.productId)
+  const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
   const [price, setPrice] = useState('')
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
@@ -19,6 +19,17 @@ const PriceAlarm = props => {
   const [offerEnd, setOfferEnd] = useState('')
   const [offerEndErrorMessage, setOfferEndErrorMessage] = useState('')
   const [error, setError] = useState('')
+  const priceAlarmText = useMemo(() => {
+    if (state.customer.type === 'o') {
+      if (pack.stores.find(s => s.id === state.customer.storeId)) {
+        return state.labels.changePrice
+      } else {
+       return state.labels.havePack
+      }
+    } else {
+      return state.labels.lessPrice
+    }
+  }, [pack, state.customer, state.labels])
 
   useEffect(() => {
     const validatePrice = (value) => {
@@ -101,17 +112,6 @@ const PriceAlarm = props => {
       setError(state.labels[err.code.replace(/-|\//g, '_')])
     })
   }
-  const priceAlarmText = useMemo(() => {
-    if (state.customer.type === 'o') {
-      if (pack.stores.find(rec => rec.id === state.customer.storeId)) {
-        return state.labels.changePrice
-      } else {
-       return state.labels.havePack
-      }
-    } else {
-      return state.labels.lessPrice
-    }
-  }, [pack, state.customer, state.labels])
 
   if (!user) return <ReLogin callingPage='home'/>
   return (
@@ -123,7 +123,7 @@ const PriceAlarm = props => {
           <p>{(pack.price / 1000).toFixed(3)}</p>
         </CardHeader>
         <CardContent>
-          <img src={product.imageUrl} width="100%" height="250" alt=""/>
+          <img src={product.imageUrl} width="100%" height="250" alt={product.name} />
         </CardContent>
         <CardFooter>
           <p>{pack.name}</p>

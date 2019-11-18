@@ -5,7 +5,7 @@ const Reducer = (state, action) => {
   let newBasket
   switch (action.type){
     case 'ADD_TO_BASKET':
-      if (state.basket.find(rec => rec.id === action.pack.id)) return state
+      if (state.basket.find(p => p.id === action.pack.id)) return state
       pack = {
         ...action.pack,
         quantity: 1
@@ -14,8 +14,8 @@ const Reducer = (state, action) => {
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'ADD_QUANTITY':
-      newQuantity = state.basket.find(rec => rec.id === action.pack.id).quantity
-      otherPacks = state.basket.filter(rec => rec.id !== action.pack.id)
+      newQuantity = state.basket.find(p => p.id === action.pack.id).quantity
+      otherPacks = state.basket.filter(p => p.id !== action.pack.id)
       pack = {
         ...action.pack,
         quantity: ++newQuantity,
@@ -24,8 +24,8 @@ const Reducer = (state, action) => {
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'REMOVE_QUANTITY':
-      newQuantity = state.basket.find(rec => rec.id === action.pack.id).quantity
-      otherPacks = state.basket.filter(rec => rec.id !== action.pack.id)
+      newQuantity = state.basket.find(p => p.id === action.pack.id).quantity
+      otherPacks = state.basket.filter(p => p.id !== action.pack.id)
       if (--newQuantity === 0) {
         if (otherPacks.length > 0){
           newBasket = [...otherPacks]

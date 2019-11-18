@@ -6,19 +6,19 @@ import BottomToolbar from './BottomToolbar';
 
 const Categories = props => {
   const { state } = useContext(StoreContext)
-  const section = useMemo(() => state.sections.find(rec => rec.id === props.id)
+  const section = useMemo(() => state.sections.find(s => s.id === props.id)
   , [state.sections, props.id])
-  const categories = useMemo(() => state.categories.filter(rec => rec.sectionId === props.id)
+  const categories = useMemo(() => state.categories.filter(c => c.sectionId === props.id)
   , [state.categories, props.id])
   let i = 0
   return(
     <Page>
       <Navbar title={section.name} backLink={state.labels.back} />
       <Block>
-        {categories && categories.map(category => {
+        {categories && categories.map(c => {
           return (
-            <Button large fill className="sections" color={state.randomColors[i++ % 10].name} href={`/category/${category.id}`} key={category.id}>
-              <span className="button-label">{category.name}</span>
+            <Button large fill className="sections" color={state.randomColors[i++ % 10].name} href={`/category/${c.id}`} key={c.id}>
+              <span className="button-label">{c.name}</span>
             </Button>
           )
         })}

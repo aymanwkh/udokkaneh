@@ -9,8 +9,8 @@ import { StoreContext } from '../data/Store';
 const ActiveOrders = props => {
   const { state } = useContext(StoreContext)
   const orders = useMemo(() => {
-    let orders = state.orders.filter(order => order.status === 'a')
-    return orders.sort((rec1, rec2) => rec2.time.seconds - rec1.time.seconds)
+    let orders = state.orders.filter(o => o.status === 'a')
+    return orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
   }, [state.orders]) 
   
   return(
@@ -18,16 +18,16 @@ const ActiveOrders = props => {
       <Navbar title="Orders" backLink={state.labels.back} />
       <Block>
           <List mediaList>
-            {orders && orders.map(order =>
+            {orders && orders.map(o =>
               <ListItem
-                link={`/order/${order.id}`}
-                title={order.user}
-                after={order.total}
-                text={moment(order.time.toDate()).fromNow()}
-                key={order.id}
+                link={`/order/${o.id}`}
+                title={o.user}
+                after={o.total}
+                text={moment(o.time.toDate()).fromNow()}
+                key={o.id}
               />
             )}
-            { orders.length === 0 ? <ListItem title={state.labels.not_found} /> : null }
+            {orders.length === 0 ? <ListItem title={state.labels.not_found} /> : ''}
 
           </List>
       </Block>
