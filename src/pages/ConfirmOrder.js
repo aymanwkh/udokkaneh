@@ -9,7 +9,9 @@ import { confirmOrder, showMessage } from '../data/Actions'
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
-  const [deliveryFees, setDeliveryFees] = useState(state.customer.deliveryFees || 0)
+  const customerLocation = useMemo(() => state.customer.locationId ? state.locations.find(rec => rec.id === state.customer.locationId) : ''
+  , [state.locations, state.customer])
+  const [deliveryFees, setDeliveryFees] = useState(customerLocation ? customerLocation.deliveryFees : '')
   const [error, setError] = useState('')
   const total = useMemo(() => {
     const total = state.basket.reduce((a, pack) => a + (pack.price * pack.quantity), 0)
@@ -37,11 +39,11 @@ const ConfirmOrder = props => {
   , [total, discount, deliveryFees, state.labels])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees(state.customer.deliveryFees || 0)
+      setDeliveryFees(customerLocation ? customerLocation.deliveryFees : '')
     } else {
-      setDeliveryFees(0)
+      setDeliveryFees('')
     }
-  }, [withDelivery, state.customer])
+  }, [withDelivery, customerLocation])
   useEffect(() => {
     if (error) {
       showMessage(props, 'error', error)
@@ -51,7 +53,7 @@ const ConfirmOrder = props => {
 
   const handleOrder = () => {
     try{
-      const activeOrders = state.orders.filter(rec => ['n', 'a', 's'].inculdes(rec.status))
+      const activeOrders = state.orders.filter(rec => ['n', 'a', 's'].includes(rec.status))
       const totalOrders = activeOrders.reduce((a, order) => a + (order.total + order.fixedFees + order.deliveryFees - order.discount.value), 0)
       if ((totalOrders + (net * 1000)) > state.customer.limit) {
         throw new Error(state.labels.limitOverFlow)
@@ -106,7 +108,7 @@ const ConfirmOrder = props => {
             className="fees" 
             after={(state.labels.fixedFeesValue / 1000).toFixed(3)} 
           />
-          {deliveryFees > 0 ? 
+          {withDelivery ? 
             <ListItem 
               title={state.labels.deliveryFees} 
               className="fees" 
@@ -126,12 +128,13 @@ const ConfirmOrder = props => {
             after={net} 
           />
           <ListItem>
-            <span>{state.labels.delivery}</span>
+            <span>{state.labels.withDelivery}</span>
             <Toggle 
               name="withDelivery" 
               color="green" 
               checked={withDelivery} 
               onToggleChange={() => setWithDelivery(!withDelivery)}
+              disabled={customerLocation ? !customerLocation.hasDelivery : false}
             />
           </ListItem>
         </List>

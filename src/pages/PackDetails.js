@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, Toolbar, Icon, CardFooter } from 'framework7-react'
+import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, Toolbar, Icon, CardFooter, Button, Row, Col } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import Rating from './Rating'
 import RateProduct from './RateProduct'
@@ -12,15 +12,11 @@ const PackDetails = props => {
   , [state.packs, props.id])
   const product = useMemo(() => state.products.find(rec => rec.id === pack.productId)
   , [state.products, pack])
-  const handleAddPack = () => {
-    if (state.basket.find(rec => rec.id === pack.id)) {
-      showMessage(props, 'error', state.labels.alreadyInBasket)
-    } else {
-      dispatch({type: 'ADD_TO_BASKET', pack})
-      showMessage(props, 'success', state.labels.addToBasketSuccess)
-    }
-    props.f7router.back()
-  }
+  const hasOtherOffers = useMemo(() => {
+    let offers = state.packs.filter(rec1 => state.products.find(rec2 => rec2.id === rec1.productId && rec2.category === product.category) && rec1.isOffer === true)
+    offers = offers.filter(rec => rec.id !== pack.id && rec.price > 0)
+    return offers.length
+  }, [state.packs, pack, product, state.products]) 
 
   const rating_links = !user || state.customer.type === 'b' || state.rating.find(rating => rating.productId === props.id) ? '' : <RateProduct product={product} />
   const priceAlarmText = useMemo(() => {
@@ -34,6 +30,15 @@ const PackDetails = props => {
       return state.labels.lessPrice
     }
   }, [pack, state.labels, state.customer])
+  const handleAddPack = () => {
+    if (state.basket.find(rec => rec.id === pack.id)) {
+      showMessage(props, 'error', state.labels.alreadyInBasket)
+    } else {
+      dispatch({type: 'ADD_TO_BASKET', pack})
+      showMessage(props, 'success', state.labels.addToBasketSuccess)
+    }
+    props.f7router.back()
+  }
   return (
     <Page>
       <Navbar title={product.name} backLink={state.labels.back} />
@@ -68,6 +73,18 @@ const PackDetails = props => {
         </Fab>
       }
       {rating_links}
+      <Row>
+        <Col>
+          {hasOtherOffers > 0 ? 
+            <Button small fill round color="red" className="button-margin" onClick={() => props.f7router.navigate(`/otherOffers/${props.id}`)}>{state.labels.otherOffers}</Button>
+            : ''
+          }
+        </Col>
+        <Col></Col>
+        <Col>
+          <Button small fill round className="button-margin" onClick={() => props.f7router.navigate(`/comments/${props.id}`)}>{state.labels.comments}</Button>
+        </Col>
+      </Row>
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>

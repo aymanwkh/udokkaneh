@@ -16,6 +16,7 @@ import InviteFriend from './pages/InviteFriend';
 import StoreOwner from './pages/StoreOwner';
 import OwnerPacks from './pages/OwnerPacks';
 import ChangePassword from './pages/ChangePassword';
+import OtherOffers from './pages/OtherOffers';
 
 export default [
   {
@@ -94,6 +95,10 @@ export default [
   {
     path: '/ownerPacks/:id',
     component: OwnerPacks,
+  },
+  {
+    path: '/otherOffers/:id',
+    component: OtherOffers
   },
   {
     path: '(.*)',

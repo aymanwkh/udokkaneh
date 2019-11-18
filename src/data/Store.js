@@ -64,7 +64,9 @@ const Store = props => {
     products: [],
     packs: [],
     invitations: [],
-    discountTypes
+    discountTypes,
+    locations: [],
+    comments: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -99,57 +101,89 @@ const Store = props => {
         }, err => {
           unsubscribeInvitations()
         })  
-        firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
+        const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
+          let locations = []
+          docs.forEach(doc => {
+            locations.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_LOCATIONS', locations})
+        }, err => {
+          unsubscribeLocations()
+        })  
+        const unsubscribeCustomers = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
           if (doc.exists){
             dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
           }
+        }, err => {
+          unsubscribeCustomers()
         })  
       }
     });
-    firebase.firestore().collection('sections').get().then(docs => {
+    const unsubscribeSections = firebase.firestore().collection('sections').onSnapshot(docs => {
       let sections = []
       docs.forEach(doc => {
         sections.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_SECTIONS', sections})
+    }, err => {
+      unsubscribeSections()
     })  
-    firebase.firestore().collection('categories').get().then(docs => {
+    const unsubscribeCategories = firebase.firestore().collection('categories').onSnapshot(docs => {
       let categories = []
       docs.forEach(doc => {
         categories.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_CATEGORIES', categories})
+    }, err => {
+      unsubscribeCategories()
     })  
-    firebase.firestore().collection('trademarks').get().then(docs => {
+    const unsubscribeTrademarks = firebase.firestore().collection('trademarks').onSnapshot(docs => {
       let trademarks = []
       docs.forEach(doc => {
         trademarks.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_TRADEMARKS', trademarks})
+    }, err => {
+      unsubscribeTrademarks()
     })  
-    firebase.firestore().collection('countries').get().then(docs => {
+    const unsubscribeCountries = firebase.firestore().collection('countries').onSnapshot(docs => {
       let countries = []
       docs.forEach(doc => {
         countries.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_COUNTRIES', countries})
+    }, err => {
+      unsubscribeCountries()
     })  
-    firebase.firestore().collection('stores').get().then(docs => {
+    const unsubscribeStores = firebase.firestore().collection('stores').onSnapshot(docs => {
       let stores = []
       docs.forEach(doc => {
         stores.push({...doc.data(), id:doc.id})
       })
       dispatch({type: 'SET_STORES', stores})
+    }, err => {
+      unsubscribeStores()
     }) 
-    firebase.firestore().collection('products').onSnapshot(docs => {
+    const unsubscribeComments = firebase.firestore().collection('comments').onSnapshot(docs => {
+      let comments = []
+      docs.forEach(doc => {
+        comments.push({...doc.data(), id:doc.id})
+      })
+      dispatch({type: 'SET_COMMENTS', comments})
+    }, err => {
+      unsubscribeComments()
+    }) 
+    const unsubscribeProducts = firebase.firestore().collection('products').onSnapshot(docs => {
       let products = []
       docs.forEach(doc => {
         products.push({...doc.data(), id: doc.id})
       })
       dispatch({type: 'SET_PRODUCTS', products})
+    }, err => {
+      unsubscribeProducts()
     })
     const today = (new Date()).setHours(0, 0, 0, 0)
-    firebase.firestore().collection('packs').onSnapshot(docs => {
+    const unsubscribePacks = firebase.firestore().collection('packs').onSnapshot(docs => {
       let packs = []
       docs.forEach(doc => {
         let storesPrices = doc.data().stores.map(store => !store.offerEnd || today <= store.offerEnd.toDate() ? store.price : null)
@@ -169,6 +203,8 @@ const Store = props => {
         }
       })
       dispatch({type: 'SET_PACKS', packs})
+    }, err => {
+      unsubscribePacks()
     })
   }, []);
   return (

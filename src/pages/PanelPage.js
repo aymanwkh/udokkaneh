@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Page, Navbar, Block, List, ListItem } from 'framework7-react';
+import { Page, Navbar, Block, List, ListItem, Badge } from 'framework7-react';
 import { StoreContext } from '../data/Store';
 import { logout } from '../data/Actions'
 
@@ -21,55 +21,21 @@ const PanelPage = props => {
       </Block>
       <List>
         {login_logout}
+        <ListItem 
+          link="/basket/"
+          view="#main-view"
+          title={state.labels.basket} 
+          panelClose
+        >
+          {state.basket.length > 0 ? <Badge color="red">{state.basket.length}</Badge> : ''}
+        </ListItem>
+        {user ? <ListItem link="/changePassword/" title={state.labels.changePassword} /> : ''}
+        {user ? <ListItem link="/ordersList/" title={state.labels.myOrders} view="#main-view" panelClose /> : ''}
+        {state.customer.type === 'b' ? '' : <ListItem link="/inviteFriend/" title={state.labels.inviteFriend} view="#main-view" panelClose />}
+        {state.customer.type === 'b' ? '' : <ListItem link="/sendSuggestion/" title={state.labels.sendSuggestion} view="#main-view" panelClose />}
+        {state.customer.type === 'o' ? <ListItem link={`/ownerPacks/${state.customer.storeId}`} title={state.labels.ownerPacks} view="#main-view" panelClose /> : ''}
+        {user ? '' : <ListItem link="/storeOwner/" title={state.labels.registerStoreOwner} view="#main-view" panelClose />}
       </List>
-      {user ? 
-        <List>
-          <ListItem 
-            link="/changePassword/" 
-            title={state.labels.changePassword} 
-          />
-          <ListItem 
-            link="/ordersList/" 
-            title={state.labels.myOrders} 
-            view="#main-view" 
-            panelClose 
-          />
-          {state.customer.type === 'b' ? '' : 
-            <ListItem 
-              link="/inviteFriend/" 
-              title={state.labels.inviteFriend} 
-              view="#main-view" 
-              panelClose 
-            />
-          }
-          {state.customer.type === 'b' ? '' : 
-            <ListItem 
-              link="/sendSuggestion/" 
-              title={state.labels.sendSuggestion} 
-              view="#main-view" 
-              panelClose
-            />
-          }
-          {state.customer.type === 'o' ?
-            <ListItem 
-              link={`/ownerPacks/${state.customer.storeId}`}
-              title={state.labels.ownerPacks} 
-              view="#main-view" 
-              panelClose
-            />
-            : ''
-          }
-        </List>
-      :
-        <List>
-          <ListItem 
-            link="/storeOwner/" 
-            title={state.labels.registerStoreOwner} 
-            view="#main-view" 
-            panelClose 
-          />
-        </List>
-      }
     </Page>
   )
 }

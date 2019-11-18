@@ -49,7 +49,7 @@ const labels = {
   feesTitle: 'الرسوم',
   discount: 'الخصم',
   net: 'الصافي',
-  delivery: 'خدمة التوصيل',
+  withDelivery: 'خدمة التوصيل',
   deliveryFees: 'رسوم التوصيل',
   noDeliveryNote: 'يتم اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 24 ساعة',
   withDeliveryNote: 'يتم التوصيل خلال جولات محددة حسب المنطقة خلال 24 ساعة',
@@ -90,7 +90,10 @@ const labels = {
   newPassword: 'كلمة السر الجديدة',
   addToBasketSuccess: 'تمت الاضافة الى سلة المشتريات',
   alreadyInBasket: 'هذا المنتج موجود في سلة المشتريات',
-  basketIsNotEmpty: 'سلة المشتريات غير فارغة، قم بتفريغها اوﻻ'
+  basketIsNotEmpty: 'سلة المشتريات غير فارغة، قم بتفريغها اوﻻ',
+  otherOffers: 'عروض لنفس المنتج',
+  comments: 'تعليقات المستخدمين',
+  productOffers: 'عروض منتج'
 }
 
 export default labels

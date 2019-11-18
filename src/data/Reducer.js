@@ -100,10 +100,20 @@ const Reducer = (state, action) => {
         stores: action.stores
       }
     case 'SET_INVITATIONS':
-        return {
-          ...state,
-          invitations: action.invitations
-        }
+      return {
+        ...state,
+        invitations: action.invitations
+      }
+    case 'SET_COMMENTS':
+      return {
+        ...state,
+        comments: action.comments
+      }
+    case 'SET_LOCATIONS':
+      return {
+        ...state,
+        locations: action.locations
+      }
     default:
       return state
   }
