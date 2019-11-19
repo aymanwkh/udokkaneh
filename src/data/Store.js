@@ -74,7 +74,7 @@ const Store = props => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
       if (user){
-        const unsubscribeOrders = firebase.firestore().collection('orders').where('user', '==', user.uid).onSnapshot(docs => {
+        const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
           let orders = []
           docs.forEach(doc => {
             orders.push({...doc.data(), id:doc.id})

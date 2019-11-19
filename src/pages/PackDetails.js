@@ -31,7 +31,7 @@ const PackDetails = props => {
     }
   }, [pack, state.labels, state.customer])
   const handleAddPack = () => {
-    if (state.basket.find(p => p.id === pack.id)) {
+    if (state.basket.find(p => p.packId === pack.id)) {
       showMessage(props, 'error', state.labels.alreadyInBasket)
     } else {
       dispatch({type: 'ADD_TO_BASKET', pack})

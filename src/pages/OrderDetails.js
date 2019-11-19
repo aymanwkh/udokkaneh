@@ -26,7 +26,7 @@ const OrderDetails = props => {
         throw new Error(state.labels.basketIsNotEmpty)
       }
       editOrder(order).then(() => {
-        dispatch({type: 'LOAD_BASKET', order})
+        dispatch({type: 'LOAD_BASKET', basket: order.basket})
         props.f7router.navigate('/basket/')
       })
 		} catch(err) {

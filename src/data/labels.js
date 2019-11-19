@@ -25,7 +25,7 @@ const labels = {
   orderDetails: 'تفاصيل الطلب',
   addToBasket: 'شراء',
   submit: 'موافق',
-  banner: 'تنافس وتشارك وتوفير',
+  banner: 'تنافس ... تشارك ... وتوفير',
   lessPrice: 'وجدت سعرا أقل؟',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',
@@ -91,7 +91,7 @@ const labels = {
   addToBasketSuccess: 'تمت الاضافة الى سلة المشتريات',
   alreadyInBasket: 'هذا المنتج موجود في سلة المشتريات',
   basketIsNotEmpty: 'سلة المشتريات غير فارغة، قم بتفريغها اوﻻ',
-  otherOffers: 'عروض لنفس المنتج',
+  otherOffers: 'لا تفوتك العروض',
   comments: 'تعليقات المستخدمين',
   productOffers: 'عروض منتج'
 }

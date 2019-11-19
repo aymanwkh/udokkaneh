@@ -38,7 +38,7 @@ export const forgetPassword = mobile => {
 export const confirmOrder = order => {
   const newOrder = {
     ...order,
-    user: firebase.auth().currentUser.uid,
+    userId: firebase.auth().currentUser.uid,
     status: 'n',
     time: new Date()
   }

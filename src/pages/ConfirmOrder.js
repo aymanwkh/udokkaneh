@@ -58,16 +58,8 @@ const ConfirmOrder = props => {
       if ((totalOrders + (net * 1000)) > state.customer.limit) {
         throw new Error(state.labels.limitOverFlow)
       }
-      const basket = state.basket.map(p => {
-        return ({
-          id: p.id,
-          price: p.price,
-          quantity: p.quantity,
-          purchasedQuantity: 0
-        })
-      })
       const order = {
-        basket,
+        basket: state.basket,
         fixedFees: state.labels.fixedFeesValue,
         deliveryFees,
         discount,
@@ -89,15 +81,19 @@ const ConfirmOrder = props => {
       <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />
       <Block>
         <List>
-          {state.basket && state.basket.map(p => 
-            <ListItem
-              key={p.id}
-              title={state.products.find(pr => pr.id === p.productId).name}
-              after={(p.price * p.quantity / 1000).toFixed(3)}
-              footer={p.name}>
-              {p.quantity > 1 ? <Badge slot="title" color="red">{p.quantity}</Badge> : ''}
-            </ListItem>
-          )}
+          {state.basket && state.basket.map(p => {
+            const packInfo = state.packs.find(pa => pa.id === p.packId)
+            return(
+              <ListItem
+                key={p.packId}
+                title={state.products.find(pr => pr.id === packInfo.productId).name}
+                after={(p.price * p.quantity / 1000).toFixed(3)}
+                footer={packInfo.name}
+              >
+                {p.quantity > 1 ? <Badge slot="title" color="red">{p.quantity}</Badge> : ''}
+              </ListItem>
+            )
+          })}
           <ListItem 
             title={state.labels.total} 
             className="total" 

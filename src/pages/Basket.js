@@ -7,7 +7,7 @@ const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
   const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
   , [state.basket])
-  const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time.seconds - p2.time.seconds)
+  const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time > p2.time ? 1 : -1)
   , [state.basket])
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
@@ -19,21 +19,22 @@ const Basket = props => {
     <Block>
       <List mediaList>
         {packs && packs.map(p => {
-          const productInfo = state.products.find(pr => pr.id === p.productId)
+          const packInfo = state.packs.find(pa => pa.id === p.packId)
+          const productInfo = state.products.find(pr => pr.id === packInfo.productId)
           return (
             <ListItem
               title={productInfo.name}
               footer={(p.price * p.quantity / 1000).toFixed(3)}
-              subtitle={p.name}
-              key={p.id}
+              subtitle={packInfo.name}
+              key={p.packId}
             >
               <img slot="media" src={productInfo.imageUrl} width="80" alt={productInfo.name} />
               <Stepper 
                 slot="after" 
                 fill
                 value={p.quantity}
-                onStepperPlusClick={() => dispatch({type: 'ADD_QUANTITY', p})}
-                onStepperMinusClick={() => dispatch({type: 'REMOVE_QUANTITY', p})}
+                onStepperPlusClick={() => dispatch({type: 'ADD_QUANTITY', pack: p})}
+                onStepperMinusClick={() => dispatch({type: 'REMOVE_QUANTITY', pack: p})}
               />
             </ListItem>
           )

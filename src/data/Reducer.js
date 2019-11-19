@@ -1,32 +1,35 @@
 const Reducer = (state, action) => {
   let pack
-  let newQuantity
   let otherPacks
   let newBasket
   switch (action.type){
     case 'ADD_TO_BASKET':
-      if (state.basket.find(p => p.id === action.pack.id)) return state
+      if (state.basket.find(p => p.packId === action.pack.id)) return state
       pack = {
-        ...action.pack,
-        quantity: 1
+        packId: action.pack.id,
+        price: action.pack.price,
+        quantity: 1,
+        purchasedQuantity: 0,
+        time: new Date()
       }
       newBasket = [...state.basket, pack]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'ADD_QUANTITY':
-      newQuantity = state.basket.find(p => p.id === action.pack.id).quantity
-      otherPacks = state.basket.filter(p => p.id !== action.pack.id)
+      pack = state.basket.find(p => p.packId === action.pack.packId)
+      otherPacks = state.basket.filter(p => p.packId !== action.pack.packId)
       pack = {
-        ...action.pack,
-        quantity: ++newQuantity,
+        ...pack,
+        quantity: pack.quantity + 1
       }
+
       newBasket = [...otherPacks, pack]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'REMOVE_QUANTITY':
-      newQuantity = state.basket.find(p => p.id === action.pack.id).quantity
-      otherPacks = state.basket.filter(p => p.id !== action.pack.id)
-      if (--newQuantity === 0) {
+      pack = state.basket.find(p => p.packId === action.pack.packId)
+      otherPacks = state.basket.filter(p => p.packId !== action.pack.packId)
+      if (pack.quantity - 1 === 0) {
         if (otherPacks.length > 0){
           newBasket = [...otherPacks]
         } else {
@@ -34,21 +37,19 @@ const Reducer = (state, action) => {
         }
       } else {
         pack = {
-          ...action.pack,
-          quantity: newQuantity
+          ...pack,
+          quantity: pack.quantity - 1
         }
         newBasket = [...otherPacks, pack]
       }
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
     case 'CLEAR_BASKET':
-      newBasket = []
-      localStorage.setItem('basket', JSON.stringify(newBasket));
-      return {...state, basket: newBasket}
+      localStorage.setItem('basket', JSON.stringify([]));
+      return {...state, basket: []}
     case 'LOAD_BASKET':
-      newBasket = action.order.basket
-      localStorage.setItem('basket', JSON.stringify(newBasket));
-      return {...state, basket: newBasket}
+      localStorage.setItem('basket', JSON.stringify(action.basket));
+      return {...state, basket: action.basket}
     case 'RATE_PRODUCT':
       return {
         ...state,
