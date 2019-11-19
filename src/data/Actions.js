@@ -11,7 +11,7 @@ export const showMessage = (props, type, messageText) => {
 export const rateProduct = async (product, rating) => {
   const ratingRec = {
     productId: product.id,
-    user: firebase.auth().currentUser.uid,
+    userId: firebase.auth().currentUser.uid,
     rating: rating,
     time: new Date()
   }
@@ -96,7 +96,7 @@ export const registerStoreOwner = async (owner, password, randomColors) => {
 export const addPriceAlarm = priceAlarm => {
   const newPriceAlarm = {
     ...priceAlarm,
-    user: firebase.auth().currentUser.uid,
+    userId: firebase.auth().currentUser.uid,
     status: 'n',
     time: new Date()
   }
@@ -105,7 +105,7 @@ export const addPriceAlarm = priceAlarm => {
 
 export const inviteFriend = (mobile, name) => {
   return firebase.firestore().collection('invitations').add({
-    user: firebase.auth().currentUser.uid,
+    userId: firebase.auth().currentUser.uid,
     friendName: name,
     friendMobile: mobile,
     time: new Date()

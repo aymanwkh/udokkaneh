@@ -21,7 +21,7 @@ const PriceAlarm = props => {
   const [error, setError] = useState('')
   const priceAlarmText = useMemo(() => {
     if (state.customer.type === 'o') {
-      if (pack.stores.find(s => s.id === state.customer.storeId)) {
+      if (pack.stores.find(s => s.storeId === state.customer.storeId)) {
         return state.labels.changePrice
       } else {
        return state.labels.havePack

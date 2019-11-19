@@ -21,7 +21,7 @@ const PackDetails = props => {
   const rating_links = !user || state.customer.type === 'b' || state.rating.find(rating => rating.productId === props.id) ? '' : <RateProduct product={product} />
   const priceAlarmText = useMemo(() => {
     if (state.customer.type === 'o') {
-      if (pack.stores.find(s => s.id === state.customer.storeId)) {
+      if (pack.stores.find(s => s.storeId === state.customer.storeId)) {
         return `${state.labels.changePrice} ${(pack.stores.find(s => s.id === state.customer.storeId).price / 1000).toFixed(3)}`
       } else {
        return state.labels.havePack

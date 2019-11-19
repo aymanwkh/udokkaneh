@@ -93,7 +93,6 @@ const labels = {
   basketIsNotEmpty: 'سلة المشتريات غير فارغة، قم بتفريغها اوﻻ',
   otherOffers: 'لا تفوتك العروض',
   comments: 'تعليقات المستخدمين',
-  productOffers: 'عروض منتج'
 }
 
 export default labels

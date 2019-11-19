@@ -21,7 +21,7 @@ const ActiveOrders = props => {
             {orders && orders.map(o =>
               <ListItem
                 link={`/order/${o.id}`}
-                title={o.user}
+                title={o.userId}
                 after={o.total}
                 text={moment(o.time.toDate()).fromNow()}
                 key={o.id}

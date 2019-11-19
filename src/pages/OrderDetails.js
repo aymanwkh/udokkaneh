@@ -11,7 +11,7 @@ const OrderDetails = props => {
   const [error, setError] = useState('')
   const order = useMemo(() => state.orders.find(order => order.id === props.id)
   , [state.orders, props.id])
-  const netPrice = useMemo(() => order.total + order.fixedFees + order.deliveryFees - (order.specialDiscount + order.customerDiscount)
+  const netPrice = useMemo(() => order.total + order.fixedFees + order.deliveryFees - order.discount.value
   , [order])
   useEffect(() => {
     if (error) {
@@ -34,7 +34,6 @@ const OrderDetails = props => {
 		}
   }
 
-
   if (!user) return <ReLogin callingPage="order"/>
   return(
     <Page>
@@ -42,11 +41,11 @@ const OrderDetails = props => {
       <Block>
         <List>
           {order.basket && order.basket.map(p => {
-            const packInfo = state.packs.find(pa => pa.id === p.id)
+            const packInfo = state.packs.find(pa => pa.id === p.packId)
             const productInfo = state.products.find(pr => pr.id === packInfo.productId)
             return (
               <ListItem 
-                key={p.id} 
+                key={p.packId} 
                 title={productInfo.name} 
                 footer={packInfo.name}
                 after={(p.price * p.quantity / 1000).toFixed(3)}

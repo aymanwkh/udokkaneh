@@ -15,7 +15,7 @@ const OtherOffers = props => {
   }, [state.packs, pack, state.products]) 
   return(
     <Page>
-      <Navbar title={`${state.labels.productOffers} ${state.products.find(p => p.id === pack.productId).name}`} backLink={state.labels.back} />
+      <Navbar title={state.labels.offers} backLink={state.labels.back} />
       <Block>
         <List mediaList>
           {offers && offers.map(p => {
@@ -32,7 +32,7 @@ const OtherOffers = props => {
                 <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                {state.customer.type === 'o' && p.stores.find(s => s.id === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.id === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
+                {state.customer.type === 'o' && p.stores.find(s => s.storeId === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.storeId === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )
           })}

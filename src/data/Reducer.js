@@ -22,7 +22,6 @@ const Reducer = (state, action) => {
         ...pack,
         quantity: pack.quantity + 1
       }
-
       newBasket = [...otherPacks, pack]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}

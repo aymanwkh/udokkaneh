@@ -8,7 +8,7 @@ import 'moment/locale/ar'
 const OwnerPacks = props => {
   const { state } = useContext(StoreContext)
   let ownerPacks = useMemo(() => {
-    let ownerPacks = state.packs.filter(p => p.stores.find(s => s.id === props.id))
+    let ownerPacks = state.packs.filter(p => p.stores.find(s => s.storeId === props.id))
     return ownerPacks.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, props.id])
   const store = useMemo(() => state.stores.find(s => s.id === props.id)
@@ -41,13 +41,13 @@ const OwnerPacks = props => {
                 title={productInfo.name}
                 after={(p.price / 1000).toFixed(3)}
                 subtitle={p.name}
-                text={moment(p.stores.find(s => s.id === props.id).time.toDate()).fromNow()}
+                text={moment(p.stores.find(s => s.storeId === props.id).time.toDate()).fromNow()}
                 key={p.id}
               >
                 <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color='red'>{state.labels.new}</Badge> : ''}
                 {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.id === props.id).price / 1000).toFixed(3)} </Badge>
+                <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.storeId === props.id).price / 1000).toFixed(3)} </Badge>
               </ListItem>
             )
           }
