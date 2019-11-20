@@ -123,7 +123,7 @@ const PriceAlarm = props => {
           <p>{(pack.price / 1000).toFixed(3)}</p>
         </CardHeader>
         <CardContent>
-          <img src={product.imageUrl} width="100%" height="250" alt={product.name} />
+          <img src={product.imageUrl} className="img-card" alt={product.name} />
         </CardContent>
         <CardFooter>
           <p>{pack.name}</p>

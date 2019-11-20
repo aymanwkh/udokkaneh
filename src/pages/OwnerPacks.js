@@ -44,7 +44,7 @@ const OwnerPacks = props => {
                 text={moment(p.stores.find(s => s.storeId === props.id).time.toDate()).fromNow()}
                 key={p.id}
               >
-                <img slot="media" src={productInfo.imageUrl} className="lazy lazy-fadeIn avatar" alt={productInfo.name} />
+                <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color='red'>{state.labels.new}</Badge> : ''}
                 {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.storeId === props.id).price / 1000).toFixed(3)} </Badge>
