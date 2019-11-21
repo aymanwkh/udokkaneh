@@ -49,11 +49,6 @@ const Reducer = (state, action) => {
     case 'LOAD_BASKET':
       localStorage.setItem('basket', JSON.stringify(action.basket));
       return {...state, basket: action.basket}
-    case 'RATE_PRODUCT':
-      return {
-        ...state,
-        rating: [...state.rating, action.rating]
-      }
     case 'SET_CUSTOMER':
       return {
         ...state,
@@ -74,6 +69,11 @@ const Reducer = (state, action) => {
         ...state,
         packs: action.packs
       }
+    case 'SET_RATINGS':
+      return {
+        ...state,
+        ratings: action.ratings
+      }    
     case 'SET_SECTIONS':
       return {
         ...state,
@@ -103,11 +103,6 @@ const Reducer = (state, action) => {
       return {
         ...state,
         invitations: action.invitations
-      }
-    case 'SET_COMMENTS':
-      return {
-        ...state,
-        comments: action.comments
       }
     case 'SET_LOCATIONS':
       return {

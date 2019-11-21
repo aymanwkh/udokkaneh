@@ -65,7 +65,7 @@ const Login = props => {
           clearButton
           errorMessage={mobileErrorMessage}
           errorMessageForce
-          onChange={(e) => setMobile(e.target.value)}
+          onChange={e => setMobile(e.target.value)}
           onInputClear={() => setMobile('')}
         />
         <ListInput
@@ -76,7 +76,7 @@ const Login = props => {
           clearButton
           errorMessage={passwordErrorMessage}
           errorMessageForce
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
       </List>

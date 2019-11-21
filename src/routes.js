@@ -17,6 +17,9 @@ import StoreOwner from './pages/StoreOwner';
 import OwnerPacks from './pages/OwnerPacks';
 import ChangePassword from './pages/ChangePassword';
 import OtherOffers from './pages/OtherOffers';
+import ContactUs from './pages/ContactUs';
+import Rating from './pages/Rating';
+import Ratings from './pages/Ratings';
 
 export default [
   {
@@ -99,6 +102,18 @@ export default [
   {
     path: '/otherOffers/:id',
     component: OtherOffers
+  },
+  {
+    path: '/contactUs/',
+    component: ContactUs
+  },
+  {
+    path: '/rating/:productId/value/:value',
+    component: Rating
+  },
+  {
+    path: '/ratings/:id',
+    component: Ratings
   },
   {
     path: '(.*)',

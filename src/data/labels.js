@@ -91,8 +91,18 @@ const labels = {
   addToBasketSuccess: 'تمت الاضافة الى سلة المشتريات',
   alreadyInBasket: 'هذا المنتج موجود في سلة المشتريات',
   basketIsNotEmpty: 'سلة المشتريات غير فارغة، قم بتفريغها اوﻻ',
-  otherOffers: 'لا تفوتك العروض',
-  comments: 'تعليقات المستخدمين',
+  otherOffers: 'لا تفوت العروض',
+  ratings: 'تقييمات المستخدمين',
+  contactUsTitle: 'تواصل معنا',
+  contactUsText: 'تواصل معنا بشكل مباشر بالاتصال على الرقم',
+  facebookPage: 'أو من خلال صفحتنا على الفيسبوك',
+  telNo: '0799982800',
+  ratingSuccess: 'شكرا لتقييم المنتج',
+  comment: 'التعليق',
+  commentPlaceholder: 'اكتب تعليقا',
+  ratingTitle: 'تقييم المنتج',
+  commentNote: 'سوف تحصل على خصم خاص لقاء تقييم كل منتج تقوم بشرائه',
+  ratingValue: 'التقييم'
 }
 
 export default labels

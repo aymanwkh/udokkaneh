@@ -1,44 +1,45 @@
-import React, { useMemo } from 'react'
-import { Icon } from 'framework7-react'
-
+import React, { useContext, useState } from 'react'
+import { Page, Navbar, List, ListInput, Button, Toolbar, ListItem } from 'framework7-react'
+import { StoreContext } from '../data/Store';
+import { rateProduct, showMessage } from '../data/Actions'
+import BottomToolbar from './BottomToolbar'
 
 const Rating = props => {
-  const stars = useMemo(() => {
-    const rating_round = Math.round(props.rating / .5 ) * .5
-    const rating_int = parseInt(rating_round)
-    const rating_fraction = rating_round - rating_int
-    let color
-    switch(rating_int){
-      case 1:
-      case 2:
-        color = 'red'
-        break
-      case 4:
-      case 5:
-        color = 'green'
-        break;
-      default:
-        color = 'yellow'
-    }
-    let stars = []
-    let i = 0
-    while (++i <= rating_int) {
-      stars.push(<Icon key={i} material="star" color={color}></Icon>)
-    }
-    if (rating_fraction > 0) {
-      stars.unshift(<Icon key={i} material="star_half" color={color}></Icon>)
-      i++
-    }
-    while (i++ <= 5) {
-      stars.unshift(<Icon key={i} material="star_border" color={color}></Icon>)
-    }
-    return stars
-  }, [props.rating])
+  const { state } = useContext(StoreContext)
+  const [comment, setComment] = useState('')
+  const handleRate = () => {
+    rateProduct(props.productId, Number(props.value), comment).then(() => {
+      showMessage(props, 'success', state.labels.ratingSuccess)
+      props.f7router.back()
+    })
+  }
+
   return(
-    <React.Fragment>
-      {stars}
-    </React.Fragment>
+    <Page>
+      <Navbar title={state.labels.ratingTitle} backLink={state.labels.back} />
+      <List form>
+        <ListItem
+          title={state.labels.ratingValue}
+          after={state.ratingValues.find(v => v.id === Number(props.value)).name}
+        />
+        <ListInput
+          label={state.labels.comment}
+          type="textarea"
+          placeholder={state.labels.commentPlaceholder}
+          name="comment"
+          clearButton
+          onChange={e => setComment(e.target.value)}
+          onInputClear={() => setComment('')}
+        />
+      </List>
+      {!comment ? '' : <Button large onClick={() => handleRate()}>{state.labels.send}</Button>}
+      <h3 className="center">
+        {state.labels.commentNote}
+      </h3>
+      <Toolbar bottom>
+        <BottomToolbar/>
+      </Toolbar>
+    </Page>
   )
 }
-
 export default Rating

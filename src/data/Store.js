@@ -43,6 +43,10 @@ const Store = props => {
     {id: 'i', name: 'خصم دعوة صديق', value: 500},
     {id: 'p', name: 'خصم ابلاغ عن سعر اقل', value: 500}
   ]
+  const ratingValues = [
+    {id: -1, name: 'ﻻ أنصح به'},
+    {id: 1, name: 'أنصح به'}
+  ]
 
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
@@ -58,7 +62,7 @@ const Store = props => {
     trademarks: [], 
     orderByList, 
     stores: [], 
-    rating: [],
+    ratings: [],
     customer: {},
     orders: [],
     products: [],
@@ -66,7 +70,7 @@ const Store = props => {
     invitations: [],
     discountTypes,
     locations: [],
-    comments: []
+    ratingValues
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -83,12 +87,12 @@ const Store = props => {
         }, err => {
           unsubscribeOrders()
         })  
-        const unsubscribeRating = firebase.firestore().collection('rating').where('userId', '==', user.uid).onSnapshot(docs => {
-          let rating = []
+        const unsubscribeRating = firebase.firestore().collection('ratings').onSnapshot(docs => {
+          let ratings = []
           docs.forEach(doc => {
-            rating.push({...doc.data(), id:doc.id})
+            ratings.push({...doc.data(), id:doc.id})
           })
-          dispatch({type: 'SET_RATING', rating})
+          dispatch({type: 'SET_RATINGS', ratings})
         }, err => {
           unsubscribeRating()
         })  
@@ -163,15 +167,6 @@ const Store = props => {
       dispatch({type: 'SET_STORES', stores})
     }, err => {
       unsubscribeStores()
-    }) 
-    const unsubscribeComments = firebase.firestore().collection('comments').onSnapshot(docs => {
-      let comments = []
-      docs.forEach(doc => {
-        comments.push({...doc.data(), id:doc.id})
-      })
-      dispatch({type: 'SET_COMMENTS', comments})
-    }, err => {
-      unsubscribeComments()
     }) 
     const unsubscribeProducts = firebase.firestore().collection('products').onSnapshot(docs => {
       let products = []

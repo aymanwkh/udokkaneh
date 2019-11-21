@@ -8,15 +8,16 @@ export const showMessage = (props, type, messageText) => {
   message.open();
 }
 
-export const rateProduct = async (product, rating) => {
-  const ratingRec = {
-    productId: product.id,
+export const rateProduct = (productId, value, comment) => {
+  const rating = {
+    productId,
     userId: firebase.auth().currentUser.uid,
-    rating: rating,
+    value,
+    comment,
+    status: 'n',
     time: new Date()
   }
-  const docRef = await firebase.firestore().collection('rating').add(ratingRec)
-  return docRef.id
+  return firebase.firestore().collection('ratings').add(rating)
 }
 
 export const login = (mobile, password) => {
