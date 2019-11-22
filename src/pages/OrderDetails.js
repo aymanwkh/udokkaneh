@@ -1,6 +1,6 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react'
 import { editOrder, showMessage } from '../data/Actions'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge} from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge, FabButton, FabButtons } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store'
@@ -44,9 +44,9 @@ const OrderDetails = props => {
             const packInfo = state.packs.find(pa => pa.id === p.packId)
             const productInfo = state.products.find(pr => pr.id === packInfo.productId)
             return (
-              <ListItem 
-                key={p.packId} 
-                title={productInfo.name} 
+              <ListItem
+                key={p.packId}
+                title={productInfo.name}
                 footer={packInfo.name}
                 after={(p.price * p.quantity / 1000).toFixed(3)}
               >
@@ -61,11 +61,22 @@ const OrderDetails = props => {
           <ListItem title={state.labels.net} className="blue" after={(netPrice / 1000).toFixed(3)} />
         </List>
       </Block>
-      {order.status === 'n' ? 
-        <Fab position="left-bottom" slot="fixed" color="red" onClick={() => handleEdit()}>
-          <Icon material="edit"></Icon>
+      {order.status === 'd' ? '' :
+        <Fab position="left-top" slot="fixed" color="blue">
+          <Icon material="keyboard_arrow_down"></Icon>
+          <Icon material="close"></Icon>
+          <FabButtons position="bottom">
+            {order.status === 'n' ?
+              <FabButton color="blue" onClick={() => handleEdit()}>
+                <Icon material="edit"></Icon>
+              </FabButton>
+              : ''
+            }
+            <FabButton color="red" onClick={() => props.f7router.navigate(`/deleteOrder/${order.id}`)}>
+              <Icon material="delete"></Icon>
+            </FabButton>
+          </FabButtons>
         </Fab>
-        : ''
       }
       <Toolbar bottom>
         <BottomToolbar/>

@@ -6,8 +6,7 @@ import { StoreContext } from '../data/Store';
 const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
-    let packs = state.packs.filter(p => props.id ? state.products.find(pr => pr.id === p.productId).category === props.id : true)
-    packs = packs.filter(p => p.price > 0)
+    let packs = state.packs.filter(p => p.price > 0 && (props.id ? state.products.find(pr => pr.id === p.productId).category === props.id : true))
     return packs.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, state.products, props.id]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
@@ -31,7 +30,7 @@ const Packs = props => {
         setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.isOffer - p1.isOffer))
         break
       case 'v':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => p1.value - p2.value))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => p1.weightedPrice - p2.weightedPrice))
         break
       case 't':
         setCategoryPacks([...categoryPacks].sort((p1, p2) => state.products.find(p => p.id === p1.productId).name > state.products.find(p => p.id === p2.productId).name ? 1 : -1))

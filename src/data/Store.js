@@ -75,54 +75,6 @@ const Store = props => {
   const [state, dispatch] = useReducer(Reducer, initState)
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
-      setUser(user)
-      if (user){
-        const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
-          let orders = []
-          docs.forEach(doc => {
-            orders.push({...doc.data(), id:doc.id})
-          })
-          dispatch({type: 'SET_ORDERS', orders})
-        }, err => {
-          unsubscribeOrders()
-        })  
-        const unsubscribeRating = firebase.firestore().collection('ratings').onSnapshot(docs => {
-          let ratings = []
-          docs.forEach(doc => {
-            ratings.push({...doc.data(), id:doc.id})
-          })
-          dispatch({type: 'SET_RATINGS', ratings})
-        }, err => {
-          unsubscribeRating()
-        })  
-        const unsubscribeInvitations = firebase.firestore().collection('invitations').where('userId', '==', user.uid).onSnapshot(docs => {
-          let invitations = []
-          docs.forEach(doc => {
-            invitations.push({...doc.data(), id:doc.id})
-          })
-          dispatch({type: 'SET_INVITATIONS', invitations})
-        }, err => {
-          unsubscribeInvitations()
-        })  
-        const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
-          let locations = []
-          docs.forEach(doc => {
-            locations.push({...doc.data(), id:doc.id})
-          })
-          dispatch({type: 'SET_LOCATIONS', locations})
-        }, err => {
-          unsubscribeLocations()
-        })  
-        const unsubscribeCustomers = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
-          if (doc.exists){
-            dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
-          }
-        }, err => {
-          unsubscribeCustomers()
-        })  
-      }
-    });
     const unsubscribeSections = firebase.firestore().collection('sections').onSnapshot(docs => {
       let sections = []
       docs.forEach(doc => {
@@ -177,30 +129,64 @@ const Store = props => {
     }, err => {
       unsubscribeProducts()
     })
-    const today = (new Date()).setHours(0, 0, 0, 0)
     const unsubscribePacks = firebase.firestore().collection('packs').onSnapshot(docs => {
       let packs = []
       docs.forEach(doc => {
-        let storesPrices = doc.data().stores.map(s => !s.offerEnd || today <= s.offerEnd.toDate() ? s.price : null)
-        storesPrices = storesPrices.filter(s => s)
-        let minPrice = Math.min(...storesPrices)
-        minPrice = minPrice === Infinity ? 0 : minPrice
-        if (minPrice > 0) {
-          const value = doc.data().unitsCount ? minPrice / doc.data().unitsCount : 0
-          let isOffer = doc.data().isOffer
-          if (isOffer === false) {
-            const store = doc.data().stores.find(s => s.price === minPrice && s.offerEnd && today <= s.offerEnd.toDate())
-            if (store) {
-              isOffer = true
-            }
-          }
-          packs.push({...doc.data(), id: doc.id, isOffer, value, price: minPrice})
-        }
+        packs.push({...doc.data(), id: doc.id})
       })
       dispatch({type: 'SET_PACKS', packs})
     }, err => {
       unsubscribePacks()
     })
+    const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
+      let locations = []
+      docs.forEach(doc => {
+        locations.push({...doc.data(), id:doc.id})
+      })
+      dispatch({type: 'SET_LOCATIONS', locations})
+    }, err => {
+      unsubscribeLocations()
+    })  
+    const unsubscribeRating = firebase.firestore().collection('ratings').onSnapshot(docs => {
+      let ratings = []
+      docs.forEach(doc => {
+        ratings.push({...doc.data(), id:doc.id})
+      })
+      dispatch({type: 'SET_RATINGS', ratings})
+    }, err => {
+      unsubscribeRating()
+    })  
+
+    firebase.auth().onAuthStateChanged(user => {
+      setUser(user)
+      if (user){
+        const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
+          let orders = []
+          docs.forEach(doc => {
+            orders.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_ORDERS', orders})
+        }, err => {
+          unsubscribeOrders()
+        })  
+        const unsubscribeInvitations = firebase.firestore().collection('invitations').where('userId', '==', user.uid).onSnapshot(docs => {
+          let invitations = []
+          docs.forEach(doc => {
+            invitations.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_INVITATIONS', invitations})
+        }, err => {
+          unsubscribeInvitations()
+        })  
+        const unsubscribeCustomers = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
+          if (doc.exists){
+            dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
+          }
+        }, err => {
+          unsubscribeCustomers()
+        })  
+      }
+    });
   }, []);
   return (
     <StoreContext.Provider value={{state, user, dispatch}}>
