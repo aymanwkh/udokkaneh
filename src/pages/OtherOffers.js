@@ -9,7 +9,7 @@ const OtherOffers = props => {
   , [state.packs, props.id])
   const offers = useMemo(() => {
     const productPack = state.products.find(p => p.id === pack.productId)
-    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.category === productPack.category) && p.isOffer === true)
+    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.category === productPack.category) && (p.isOffer || p.hasOffer))
     offers = offers.filter(p => p.id !== pack.id && p.price > 0)
     return offers.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, pack, state.products]) 
@@ -31,7 +31,7 @@ const OtherOffers = props => {
               >
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
-                {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
+                {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 {state.customer.type === 'o' && p.stores.find(s => s.storeId === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.storeId === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )

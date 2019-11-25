@@ -10,7 +10,7 @@ const ReLogin = props => {
       <Block>
         <h3 className="center">
           {state.labels.relogin} <br/>
-          <Link className="center" href={`/login/${props.callingPage}`}>{state.labels.login}</Link>
+          <Link className="center" href="/login/">{state.labels.login}</Link>
         </h3>
       </Block>
     </Page>

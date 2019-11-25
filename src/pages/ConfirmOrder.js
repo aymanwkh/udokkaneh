@@ -55,7 +55,7 @@ const ConfirmOrder = props => {
     try{
       const activeOrders = state.orders.filter(o => ['n', 'a', 's'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + (o.total + o.fixedFees + o.deliveryFees - o.discount.value), 0)
-      if ((totalOrders + (net * 1000)) > state.customer.limit) {
+      if ((totalOrders + (net * 1000)) > state.customer.orderLimit) {
         throw new Error(state.labels.limitOverFlow)
       }
       const order = {
@@ -75,7 +75,7 @@ const ConfirmOrder = props => {
       setError(err.message)
     }
   }
-  if (!user) return <ReLogin callingPage="confirmOrder" />
+  if (!user) return <ReLogin />
   return (
     <Page>
       <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />

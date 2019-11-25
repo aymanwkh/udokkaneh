@@ -36,8 +36,15 @@ export default [
     component: PanelPage
   },
   {
-    path: '/login/:callingPage',
-    component: Login
+    path: '/login/',
+    component: Login,
+    options: {
+      reloadCurrent: true,
+    },
+  },
+  {
+    path: '/panelLogin/',
+    component: Login,
   },
   {
     path: '/forgetPassword/',
@@ -48,8 +55,11 @@ export default [
     component: ChangePassword
   },
   {
-    path: '/register/:callingPage',
-    component: Register
+    path: '/register/',
+    component: Register,
+    options: {
+      reloadCurrent: true,
+    },
   },
   {
     path: '/storeOwner/',

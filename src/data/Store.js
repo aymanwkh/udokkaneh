@@ -111,15 +111,6 @@ const Store = props => {
     }, err => {
       unsubscribeCountries()
     })  
-    const unsubscribeStores = firebase.firestore().collection('stores').onSnapshot(docs => {
-      let stores = []
-      docs.forEach(doc => {
-        stores.push({...doc.data(), id:doc.id})
-      })
-      dispatch({type: 'SET_STORES', stores})
-    }, err => {
-      unsubscribeStores()
-    }) 
     const unsubscribeProducts = firebase.firestore().collection('products').onSnapshot(docs => {
       let products = []
       docs.forEach(doc => {
@@ -138,24 +129,6 @@ const Store = props => {
     }, err => {
       unsubscribePacks()
     })
-    const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
-      let locations = []
-      docs.forEach(doc => {
-        locations.push({...doc.data(), id:doc.id})
-      })
-      dispatch({type: 'SET_LOCATIONS', locations})
-    }, err => {
-      unsubscribeLocations()
-    })  
-    const unsubscribeRating = firebase.firestore().collection('ratings').onSnapshot(docs => {
-      let ratings = []
-      docs.forEach(doc => {
-        ratings.push({...doc.data(), id:doc.id})
-      })
-      dispatch({type: 'SET_RATINGS', ratings})
-    }, err => {
-      unsubscribeRating()
-    })  
 
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
@@ -185,6 +158,34 @@ const Store = props => {
         }, err => {
           unsubscribeCustomers()
         })  
+        const unsubscribeRating = firebase.firestore().collection('ratings').onSnapshot(docs => {
+          let ratings = []
+          docs.forEach(doc => {
+            ratings.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_RATINGS', ratings})
+        }, err => {
+          unsubscribeRating()
+        })  
+        const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
+          let locations = []
+          docs.forEach(doc => {
+            locations.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_LOCATIONS', locations})
+        }, err => {
+          unsubscribeLocations()
+        })  
+        const unsubscribeStores = firebase.firestore().collection('stores').onSnapshot(docs => {
+          let stores = []
+          docs.forEach(doc => {
+            stores.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_STORES', stores})
+        }, err => {
+          unsubscribeStores()
+        }) 
+    
       }
     });
   }, []);

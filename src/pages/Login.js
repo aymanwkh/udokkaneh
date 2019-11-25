@@ -46,7 +46,7 @@ const Login = props => {
   const handleLogin = () => {
     login(mobile, password).then(() => {
       showMessage(props, 'success', state.labels.loginSuccess)
-      props.f7router.navigate(`/${props.callingPage}/`)
+      props.f7router.back()
       props.f7router.app.panel.close('right')  
     }).catch (err => {
       setError(state.labels[err.code.replace(/-|\//g, '_')])
@@ -82,8 +82,8 @@ const Login = props => {
       </List>
       {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <Button large onClick={() => handleLogin()}>{state.labels.login}</Button>}
       <Toolbar bottom>
-        <Link href={`/register/${props.callingPage}/`}>{state.labels.newUser}</Link>
-        <Link href='/forgetPassword/'>{state.labels.forgetPassword}</Link>
+        <Link href="/register/">{state.labels.newUser}</Link>
+        <Link href="/forgetPassword/">{state.labels.forgetPassword}</Link>
       </Toolbar>
     </Page>
   )
