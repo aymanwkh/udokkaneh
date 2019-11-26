@@ -3,7 +3,7 @@ import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabB
 import BottomToolbar from './BottomToolbar'
 import RatingStars from './RatingStars'
 import { StoreContext } from '../data/Store'
-import { showMessage } from '../data/Actions'
+import { showMessage, showError, getMessage } from '../data/Actions'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -38,7 +38,7 @@ const PackDetails = props => {
   }, [pack, state.labels, state.customer])
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
@@ -52,11 +52,11 @@ const PackDetails = props => {
         throw new Error(state.labels.alreadyInBasket)
       }
       dispatch({type: 'ADD_TO_BASKET', pack})
-      showMessage(props, 'success', state.labels.addToBasketSuccess)
+      showMessage(props, state.labels.addToBasketSuccess)
       props.f7router.back()  
-    } catch(err) {
-			err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
-		}
+		} catch (err){
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
   return (
     <Page>

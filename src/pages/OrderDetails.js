@@ -1,5 +1,5 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react'
-import { editOrder, showMessage } from '../data/Actions'
+import { editOrder, showError, getMessage } from '../data/Actions'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge, FabButton, FabButtons } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
@@ -15,23 +15,22 @@ const OrderDetails = props => {
   , [order])
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     try{
       if (state.basket.length > 0) {
         throw new Error(state.labels.basketIsNotEmpty)
       }
-      editOrder(order).then(() => {
-        dispatch({type: 'LOAD_BASKET', basket: order.basket})
-        props.f7router.navigate('/basket/')
-      })
-		} catch(err) {
-			err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
-		}
+      await editOrder(order)
+      dispatch({type: 'LOAD_BASKET', basket: order.basket})
+      props.f7router.navigate('/basket/')
+		} catch (err){
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
 
   if (!user) return <ReLogin />
