@@ -1,8 +1,29 @@
 import firebase from './firebase'
 
-export const showMessage = (props, type, messageText) => {
+export const getMessage = (error, labels, page) => {
+  const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
+  if (!labels[errorCode]) {
+    firebase.firestore().collection('logs').add({
+      userId: firebase.auth().currentUser.uid,
+      error,
+      page,
+      time: new Date()
+    })
+  }
+  return labels[errorCode] ? labels[errorCode] : labels['unknownError']
+}
+
+export const showMessage = (props, messageText) => {
   const message = props.f7router.app.toast.create({
-    text: `<span class=${type}>${messageText}<span>`,
+    text: `<span class="success">${messageText}<span>`,
+    closeTimeout: 3000,
+  });
+  message.open();
+}
+
+export const showError = (props, messageText) => {
+  const message = props.f7router.app.toast.create({
+    text: `<span class="error">${messageText}<span>`,
     closeTimeout: 3000,
   });
   message.open();

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import { forgetPassword, showMessage } from '../data/Actions'
+import { forgetPassword, showMessage, showError, getMessage } from '../data/Actions'
 
 const ForgetPassword = props => {
   const { state } = useContext(StoreContext)
@@ -23,19 +23,20 @@ const ForgetPassword = props => {
   }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
 
-  const handleForgetPassword = () => {
-    forgetPassword(mobile).then(() => {
-      showMessage(props, 'success', state.labels.sendSuccess)
+  const handleForgetPassword = async () => {
+    try{
+      await forgetPassword(mobile)
+      showMessage(props, state.labels.sendSuccess)
       props.f7router.app.views.main.router.navigate('/home/')
-      props.f7router.app.panel.close('right')  
-    }).catch (err => {
-      err.code ? setError(state.labels[err.code.replace(/-|\//g, '_')]) : setError(err.message)
-    })
+      props.f7router.app.panel.close('right')
+    } catch (err){
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
 
   return (

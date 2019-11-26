@@ -18,7 +18,7 @@ import OwnerPacks from './pages/OwnerPacks';
 import ChangePassword from './pages/ChangePassword';
 import OtherOffers from './pages/OtherOffers';
 import ContactUs from './pages/ContactUs';
-import Rating from './pages/Rating';
+import RateProduct from './pages/RateProduct';
 import Ratings from './pages/Ratings';
 
 export default [
@@ -118,8 +118,8 @@ export default [
     component: ContactUs
   },
   {
-    path: '/rating/:productId/value/:value',
-    component: Rating
+    path: '/rateProduct/:productId/value/:value',
+    component: RateProduct
   },
   {
     path: '/ratings/:id',

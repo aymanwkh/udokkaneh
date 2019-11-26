@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import { registerStoreOwner, showMessage } from '../data/Actions'
+import { registerStoreOwner, showMessage, showError, getMessage } from '../data/Actions'
 
 const StoreOwner = props => {
   const { state } = useContext(StoreContext)
@@ -57,7 +57,7 @@ const StoreOwner = props => {
   }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
@@ -75,20 +75,21 @@ const StoreOwner = props => {
     if (storeName) validateStoreName(storeName)
   }, [storeName, state.labels])
 
-  const handleRegister = () => {
-    const owner = {
-      mobile,
-      name,
-      storeName,
-      address
-    }
-    registerStoreOwner(owner, password, state.randomColors).then(() => {
-      showMessage(props, 'success', state.labels.registerSuccess)
+  const handleRegister = async () => {
+    try{
+      const owner = {
+        mobile,
+        name,
+        storeName,
+        address
+      }
+      await registerStoreOwner(owner, password, state.randomColors)
+      showMessage(props, state.labels.registerSuccess)
       props.f7router.navigate('/home/')
       props.f7router.app.panel.close('right') 
-    }).catch (err => {
-      setError(state.labels[err.code.replace(/-|\//g, '_')])
-    })
+    } catch (err){
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
 
   return (

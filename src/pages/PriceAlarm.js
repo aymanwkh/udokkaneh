@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react'
 import {Page, Navbar, List, ListInput, Fab, Icon, Button, Card, CardContent, CardHeader, CardFooter} from 'framework7-react';
 import { StoreContext } from '../data/Store';
-import { addPriceAlarm, showMessage } from '../data/Actions'
+import { addPriceAlarm, showMessage, showError, getMessage } from '../data/Actions'
 import ReLogin from './ReLogin'
 
 
@@ -20,7 +20,7 @@ const PriceAlarm = props => {
   const [offerEndErrorMessage, setOfferEndErrorMessage] = useState('')
   const [error, setError] = useState('')
   const priceAlarmText = useMemo(() => {
-    if (state.customer.type === 'o') {
+    if (state.customer.storeId) {
       if (pack.stores.find(s => s.storeId === state.customer.storeId)) {
         return state.labels.changePrice
       } else {
@@ -33,7 +33,7 @@ const PriceAlarm = props => {
 
   useEffect(() => {
     const validatePrice = (value) => {
-      if (state.customer.type === 'o') {
+      if (state.customer.storeId) {
         if (Number(value) > 0) {
           setPriceErrorMessage('')
         } else {
@@ -65,7 +65,7 @@ const PriceAlarm = props => {
 
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
@@ -84,36 +84,44 @@ const PriceAlarm = props => {
   const formatPrice = value => {
     return (Number(value) * 1000 / 1000).toFixed(3)
   } 
-  const handleSubmit = () => {
-    const offerEndDate = offerEnd.length > 0 ? new Date(offerEnd) : ''
-    const priceAlarm = {
-      packId: pack.id,
-      price: parseInt(price * 1000),
-      storeName,
-      storePlace,
-      offerEnd: offerEndDate
-    }
-    addPriceAlarm(priceAlarm).then(() => {
-      showMessage(props, 'success', state.labels.sendSuccess)
+  const handleSubmit = async () => {
+    try{
+      if (state.customer.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      const offerEndDate = offerEnd.length > 0 ? new Date(offerEnd) : ''
+      const priceAlarm = {
+        packId: pack.id,
+        price: parseInt(price * 1000),
+        storeName,
+        storePlace,
+        offerEnd: offerEndDate
+      }
+      await addPriceAlarm(priceAlarm)
+      showMessage(props, state.labels.sendSuccess)
       props.f7router.back()
-    }).catch (err => {
-      setError(state.labels[err.code.replace(/-|\//g, '_')])
-    })
+    } catch (err) {
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
-  const handleFinishedPack = () => {
-    const priceAlarm = {
-      packId: pack.id,
-      price: 0
-    }
-    addPriceAlarm(priceAlarm).then(() => {
-      showMessage(props, 'success', state.labels.sendSuccess)
+  const handleFinishedPack = async () => {
+    try{
+      if (state.customer.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      const priceAlarm = {
+        packId: pack.id,
+        price: 0
+      }
+      await addPriceAlarm(priceAlarm)
+      showMessage(props, state.labels.sendSuccess)
       props.f7router.back()
-    }).catch (err => {
-      setError(state.labels[err.code.replace(/-|\//g, '_')])
-    })
+    } catch (err){
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
 
-  if (!user) return <ReLogin callingPage='home'/>
+  if (!user) return <ReLogin />
   return (
     <Page>
       <Navbar title={priceAlarmText} backLink={state.labels.back} />
@@ -128,7 +136,7 @@ const PriceAlarm = props => {
         <CardFooter>
           <p>{pack.name}</p>
           <p>
-            {state.customer.type === 'o' ?
+            {state.customer.storeId ?
               <Button fill round color="red" onClick={() => handleFinishedPack()}>{state.labels.haveNoPacks}</Button>
               : ''
             }
@@ -139,7 +147,7 @@ const PriceAlarm = props => {
         <ListInput 
           name="price" 
           label={state.labels.price}
-          placeholder={state.customer.type === 'o' ? state.labels.pricePlaceholder : state.labels.lessPricePlaceholder}
+          placeholder={state.customer.storeId ? state.labels.pricePlaceholder : state.labels.lessPricePlaceholder}
           clearButton 
           type="number" 
           value={price} 
@@ -149,7 +157,7 @@ const PriceAlarm = props => {
           onInputClear={() => setPrice('')}
           onBlur={e => setPrice(formatPrice(e.target.value))}
         />
-        {state.customer.type === 'o'
+        {state.customer.storeId
         ? ''
         : <ListInput 
             name="storeName" 
@@ -164,7 +172,7 @@ const PriceAlarm = props => {
             onInputClear={() => setStoreName('')}
           />
         }
-        {state.customer.type === 'o'
+        {state.customer.storeId
         ? ''
         : <ListInput 
             name="storePlace" 
@@ -177,7 +185,7 @@ const PriceAlarm = props => {
             onInputClear={() => setStorePlace('')}
           />
         }
-        {state.customer.type === 'o'
+        {state.customer.storeId
         ? <ListInput
             name="offerEnd"
             label={state.labels.offerEnd}
@@ -192,7 +200,7 @@ const PriceAlarm = props => {
         : ''
         }
       </List>
-      {!price || (state.customer.type !== 'o' && !storeName) || priceErrorMessage || storeNameErrorMessage 
+      {!price || (!state.customer.storeId && !storeName) || priceErrorMessage || storeNameErrorMessage 
         ? '' 
         : <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>
             <Icon material="done"></Icon>

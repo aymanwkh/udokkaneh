@@ -1,17 +1,32 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button, Toolbar, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import { rateProduct, showMessage } from '../data/Actions'
+import { rateProduct, showMessage, showError, getMessage } from '../data/Actions'
 import BottomToolbar from './BottomToolbar'
 
-const Rating = props => {
+const RateProduct = props => {
   const { state } = useContext(StoreContext)
   const [comment, setComment] = useState('')
-  const handleRate = () => {
-    rateProduct(props.productId, Number(props.value), comment).then(() => {
-      showMessage(props, 'success', state.labels.ratingSuccess)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (error) {
+      showError(props, error)
+      setError('')
+    }
+  }, [error, props])
+
+  const handleRate = async () => {
+    try{
+      if (state.customer.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      await rateProduct(props.productId, Number(props.value), comment)
+      showMessage(props, state.labels.ratingSuccess)
       props.f7router.back()
-    })
+    } catch(err) {
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
 
   return(
@@ -42,4 +57,4 @@ const Rating = props => {
     </Page>
   )
 }
-export default Rating
+export default RateProduct

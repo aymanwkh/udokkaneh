@@ -1,10 +1,12 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper } from 'framework7-react'
 import { StoreContext } from '../data/Store';
-
+import { showError, getMessage } from '../data/Actions'
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
+  const [error, setError] = useState('')
+
   const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
   , [state.basket])
   const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time > p2.time ? 1 : -1)
@@ -12,7 +14,23 @@ const Basket = props => {
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
   }, [state.basket, props])
+  useEffect(() => {
+    if (error) {
+      showError(props, error)
+      setError('')
+    }
+  }, [error, props])
 
+  const handleConfirm = () => {
+    try{
+      if (state.customer.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      props.f7router.navigate('/confirmOrder/')
+    } catch(err) {
+			setError(getMessage(err, state.labels, props.f7route.route.component.name))
+		}
+  }
   return(
     <Page>
     <Navbar title={state.labels.basket} backLink={state.labels.back} />
@@ -41,11 +59,9 @@ const Basket = props => {
         })}
       </List>
     </Block>
-    {state.customer.type === 'b' ? '' : 
-      <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => props.f7router.navigate('/confirmOrder/')}>
-        <Icon material="done"></Icon>
-      </Fab>
-    }
+    <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
+      <Icon material="done"></Icon>
+    </Fab>
     <Toolbar bottom>
       <Link href='/home/' iconMaterial="home" />
       <Link href='#' iconMaterial="delete" onClick={() => dispatch({type: 'CLEAR_BASKET'})} />

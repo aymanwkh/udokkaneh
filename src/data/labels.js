@@ -102,7 +102,10 @@ const labels = {
   commentPlaceholder: 'اكتب تعليقا',
   ratingTitle: 'تقييم المنتج',
   commentNote: 'سوف تحصل على خصم خاص لقاء تقييم كل منتج تقوم بشرائه',
-  ratingValue: 'التقييم'
+  ratingValue: 'التقييم',
+  blockedUser: 'نعتذر، لا يمكنك اتمام العملية',
+  permission_denied: 'ليس لك صلاحية لاتمام هذه العملية',
+  unknownError: 'خدث خطأ، يرجى المحاولة مرة أخرى'
 }
 
 export default labels

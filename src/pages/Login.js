@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import { login, showMessage } from '../data/Actions'
+import { login, showMessage, showError, getMessage } from '../data/Actions'
 
 const Login = props => {
   const { state } = useContext(StoreContext)
@@ -38,19 +38,20 @@ const Login = props => {
   }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
 
-  const handleLogin = () => {
-    login(mobile, password).then(() => {
-      showMessage(props, 'success', state.labels.loginSuccess)
+  const handleLogin = async () => {
+    try{
+      await login(mobile, password)
+      showMessage(props, state.labels.loginSuccess)
       props.f7router.back()
-      props.f7router.app.panel.close('right')  
-    }).catch (err => {
-      setError(state.labels[err.code.replace(/-|\//g, '_')])
-    })
+      props.f7router.app.panel.close('right') 
+    } catch (err){
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
 
   return (

@@ -26,7 +26,7 @@ const PackDetails = props => {
     return deliveredOrders.length
   }, [state.orders, state.packs, product])
   const priceAlarmText = useMemo(() => {
-    if (state.customer.type === 'o') {
+    if (state.customer.storeId) {
       if (pack.stores.find(s => s.storeId === state.customer.storeId)) {
         return `${state.labels.changePrice} ${(pack.stores.find(s => s.id === state.customer.storeId).price / 1000).toFixed(3)}`
       } else {
@@ -45,6 +45,9 @@ const PackDetails = props => {
 
   const handleAddPack = () => {
     try{
+      if (state.customer.isBlocked) {
+        throw new Error(state.labels.blockedUser)
+      }
       if (state.basket.find(p => p.packId === pack.id)) {
         throw new Error(state.labels.alreadyInBasket)
       }
@@ -64,14 +67,12 @@ const PackDetails = props => {
             <span className="price">
               {(pack.price / 1000).toFixed(3)}
             </span> <br />
-            {state.customer.type === 'b' ? '' : 
-              <Link 
-                iconMaterial="notifications_none" 
-                text={priceAlarmText} 
-                color="red" 
-                onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}
-              />
-            }
+            <Link 
+              iconMaterial="notifications_none" 
+              text={priceAlarmText} 
+              color="red" 
+              onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}
+            />
           </p>
           <p className="rating">{product.rating ? `(${product.ratingCount})` : ''} <RatingStars rating={product.rating} /> </p>
         </CardHeader>
@@ -83,11 +84,9 @@ const PackDetails = props => {
           <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.country).name}`}</p>
         </CardFooter>
       </Card>
-      {state.customer.type === 'b' ? '' :
-        <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
-          <Icon material="add"></Icon>
-        </Fab>
-      }
+      <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
+        <Icon material="add"></Icon>
+      </Fab>  
       <Row>
         <Col>
           {hasOtherOffers > 0 ? 
@@ -103,15 +102,15 @@ const PackDetails = props => {
           }
         </Col>
       </Row>
-      {!user || hasPurchased === 0 || state.customer.type === 'b' || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' :
+      {!user || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' :
         <Fab position="left-top" slot="fixed" color="blue">
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
-            <FabButton color="green" onClick={() => props.f7router.navigate(`/rating/${product.id}/value/1`)}>
+            <FabButton color="green" onClick={() => props.f7router.navigate(`/rateProduct/${product.id}/value/1`)}>
               <Icon material="thumb_up"></Icon>
             </FabButton>
-            <FabButton color="red" onClick={() => props.f7router.navigate(`/rating/${product.id}/value/-1`)}>
+            <FabButton color="red" onClick={() => props.f7router.navigate(`/rateProduct/${product.id}/value/-1`)}>
             <Icon material="thumb_down"></Icon>
             </FabButton>
           </FabButtons>

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
-import { inviteFriend, showMessage } from '../data/Actions'
+import { inviteFriend, showMessage, showError, getMessage } from '../data/Actions'
 
 const InviteFriend = props => {
   const { state } = useContext(StoreContext)
@@ -39,18 +39,22 @@ const InviteFriend = props => {
   }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
 
-  const handleSend = () => {
-    inviteFriend(mobile, name).then(() => {
-      showMessage(props, 'success', state.labels.sendSuccess)
+  const handleSend = async () => {
+    try{
+      if (state.customer.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      await inviteFriend(mobile, name)
+      showMessage(props, state.labels.sendSuccess)
       props.f7router.navigate('/home/')
-    }).catch (err => {
-      setError(state.labels[err.code.replace(/-|\//g, '_')])
-    })
+    } catch (err){
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+    }
   }
 
   return (

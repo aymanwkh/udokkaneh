@@ -3,7 +3,7 @@ import { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle 
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
-import { confirmOrder, showMessage } from '../data/Actions'
+import { confirmOrder, showMessage, showError, getMessage } from '../data/Actions'
 
 
 const ConfirmOrder = props => {
@@ -23,8 +23,8 @@ const ConfirmOrder = props => {
     if (state.orders.length === 0) {
       discount.value = state.discountTypes.find(t => t.id === 'f').value
       discount.type = 'f'
-    } else if (state.customer.type === 's') {
-      discount.value = state.discountTypes.find(t => t.id === 's').value
+    } else if (state.customer.specialDiscount > 0) {
+      discount.value = Math.min(state.customer.specialDiscount, state.labels.maxDiscount)
       discount.type = 's'
     } else if (state.customer.invitationsDiscount > 0) {
       discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
@@ -46,17 +46,20 @@ const ConfirmOrder = props => {
   }, [withDelivery, customerLocation])
   useEffect(() => {
     if (error) {
-      showMessage(props, 'error', error)
+      showError(props, error)
       setError('')
     }
   }, [error, props])
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     try{
+      if (state.customer.isBlocked) {
+        throw new Error('blockedUser')
+      }
       const activeOrders = state.orders.filter(o => ['n', 'a', 's'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + (o.total + o.fixedFees + o.deliveryFees - o.discount.value), 0)
       if ((totalOrders + (net * 1000)) > state.customer.orderLimit) {
-        throw new Error(state.labels.limitOverFlow)
+        throw new Error('limitOverFlow')
       }
       const order = {
         basket: state.basket,
@@ -66,13 +69,12 @@ const ConfirmOrder = props => {
         withDelivery,
         total
       }
-      confirmOrder(order).then(() => {
-        showMessage(props, 'success', state.labels.confirmSuccess)
-        props.f7router.navigate('/home/', {reloadAll: true})
-        dispatch({ type: 'CLEAR_BASKET' })
-      })  
+      await confirmOrder(order)
+      showMessage(props, state.labels.confirmSuccess)
+      props.f7router.navigate('/home/', {reloadAll: true})
+      dispatch({ type: 'CLEAR_BASKET' })
     } catch (err){
-      setError(err.message)
+      setError(getMessage(err, state.labels, props.f7route.route.component.name))
     }
   }
   if (!user) return <ReLogin />
@@ -136,11 +138,9 @@ const ConfirmOrder = props => {
         </List>
         <p className="note">{withDelivery ? state.labels.withDeliveryNote : state.labels.noDeliveryNote}</p>
       </Block>
-      {state.customer.type === 'b' ? '' : 
-        <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleOrder()}>
-          <Icon material="done"></Icon>
-        </Fab>
-      }
+      <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleOrder()}>
+        <Icon material="done"></Icon>
+      </Fab>
       <Toolbar bottom>
         <BottomToolbar />
       </Toolbar>

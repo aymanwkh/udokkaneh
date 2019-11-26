@@ -34,7 +34,7 @@ const OrderDetails = props => {
 		}
   }
 
-  if (!user) return <ReLogin callingPage="order"/>
+  if (!user) return <ReLogin />
   return(
     <Page>
       <Navbar title={state.labels.orderDetails} backLink={state.labels.back} />
