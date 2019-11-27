@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react'
-import {Page, Navbar, List, ListInput, Fab, Icon, Button, Card, CardContent, CardHeader, CardFooter} from 'framework7-react';
+import { Page, Navbar, List, ListInput, Fab, Icon, Card, CardContent, CardHeader, Toggle, ListItem } from 'framework7-react';
 import { StoreContext } from '../data/Store';
 import { addPriceAlarm, showMessage, showError, getMessage } from '../data/Actions'
 import ReLogin from './ReLogin'
@@ -17,6 +17,7 @@ const PriceAlarm = props => {
   const [storeName, setStoreName] = useState('')
   const [storePlace, setStorePlace] = useState('')
   const [offerDays, setOfferDays] = useState('')
+  const [isOffer, setIsOffer] = useState(false)
   const [error, setError] = useState('')
   const priceAlarmText = useMemo(() => {
     if (state.customer.storeId) {
@@ -99,22 +100,6 @@ const PriceAlarm = props => {
       setError(getMessage(err, state.labels, props.f7route.route.component.name))
     }
   }
-  const handleFinishedPack = async () => {
-    try{
-      if (state.customer.isBlocked) {
-        throw new Error('blockedUser')
-      }
-      const priceAlarm = {
-        packId: pack.id,
-        price: 0
-      }
-      await addPriceAlarm(priceAlarm)
-      showMessage(props, state.labels.sendSuccess)
-      props.f7router.back()
-    } catch (err){
-      setError(getMessage(err, state.labels, props.f7route.route.component.name))
-    }
-  }
 
   if (!user) return <ReLogin />
   return (
@@ -122,21 +107,12 @@ const PriceAlarm = props => {
       <Navbar title={priceAlarmText} backLink={state.labels.back} />
       <Card>
         <CardHeader className="card-title">
-          <p>{product.name}</p>
+          <p>{`${product.name} ${pack.name}`}</p>
           <p>{(pack.price / 1000).toFixed(3)}</p>
         </CardHeader>
         <CardContent>
           <img src={product.imageUrl} className="img-card" alt={product.name} />
         </CardContent>
-        <CardFooter>
-          <p>{pack.name}</p>
-          <p>
-            {state.customer.storeId ?
-              <Button fill round color="red" onClick={() => handleFinishedPack()}>{state.labels.haveNoPacks}</Button>
-              : ''
-            }
-          </p>
-        </CardFooter>
       </Card>
       <List form>
         <ListInput 
@@ -179,6 +155,18 @@ const PriceAlarm = props => {
           />
         }
         {state.customer.storeId ? 
+          <ListItem>
+            <span>{state.labels.isOffer}</span>
+            <Toggle 
+              name="isOffer" 
+              color="green" 
+              checked={isOffer} 
+              onToggleChange={() => setIsOffer(!isOffer)}
+            />
+          </ListItem>
+        : ''
+        }
+        {isOffer ? 
           <ListInput 
             name="offerDays" 
             label={state.labels.offerDays}
@@ -189,10 +177,10 @@ const PriceAlarm = props => {
             onChange={e => setOfferDays(e.target.value)}
             onInputClear={() => setOfferDays('')}
           />
-      : ''
+        : ''
         }
       </List>
-      {!price || (!state.customer.storeId && !storeName) || priceErrorMessage || storeNameErrorMessage ? '' :
+      {!price || (isOffer && !offerDays) || (!state.customer.storeId && !storeName) || priceErrorMessage || storeNameErrorMessage ? '' :
         <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>

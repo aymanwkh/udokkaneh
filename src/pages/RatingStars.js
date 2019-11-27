@@ -36,7 +36,7 @@ const RatingStars = props => {
   }, [props.rating])
   return(
     <React.Fragment>
-      {stars}
+      {Number(props.count) > 0 ? '(' + props.count + ')' : ''}{stars}
     </React.Fragment>
   )
 }

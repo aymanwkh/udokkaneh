@@ -1,9 +1,9 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
-import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Button, Row, Col } from 'framework7-react'
+import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Popover, List, ListItem } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import RatingStars from './RatingStars'
 import { StoreContext } from '../data/Store'
-import { showMessage, showError, getMessage } from '../data/Actions'
+import { addPriceAlarm, showMessage, showError, getMessage } from '../data/Actions'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -17,10 +17,8 @@ const PackDetails = props => {
     offers = offers.filter(p => p.id !== pack.id && p.price > 0)
     return offers.length
   }, [state.packs, pack, product, state.products]) 
-  const hasComments = useMemo(() => {
-    const ratings = state.ratings.filter(r => r.productId === product.id && r.status === 'a')
-    return ratings.length
-  }, [state.ratings, product])
+  const ratings = useMemo(() => state.ratings.filter(r => r.productId === product.id && r.status === 'a')
+  , [state.ratings, product])
   const hasPurchased = useMemo(() => {
     const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => state.packs.find(pa => pa.id === p.packId).productId === product.id))
     return deliveredOrders.length
@@ -28,11 +26,7 @@ const PackDetails = props => {
   const priceAlarmText = useMemo(() => {
     if (state.customer.storeId) {
       const found = state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)
-      if (found) {
-        return `${state.labels.changePrice} ${(found.price / 1000).toFixed(3)}`
-      } else {
-       return state.labels.havePack
-      }
+      return found ? state.labels.changePrice : state.labels.havePack
     } else {
       return state.labels.lessPrice
     }
@@ -59,52 +53,46 @@ const PackDetails = props => {
       setError(getMessage(err, state.labels, props.f7route.route.component.name))
     }
   }
+  const handleFinishedPack = () => {
+    props.f7router.app.dialog.confirm(state.labels.confirmationText, state.labels.confirmationTitle, async () => {
+      try{
+        if (state.customer.isBlocked) {
+          throw new Error('blockedUser')
+        }
+        const priceAlarm = {
+          packId: pack.id,
+          price: 0
+        }
+        await addPriceAlarm(priceAlarm)
+        showMessage(props, state.labels.sendSuccess)
+        props.f7router.back()
+      } catch(err) {
+        setError(getMessage(err, state.labels, props.f7route.route.component.name))
+      }
+    })
+  }
+
   return (
     <Page>
-      <Navbar title={product.name} backLink={state.labels.back} />
+      <Navbar title={`${product.name} - ${pack.name}`} backLink={state.labels.back} />
       <Card>
         <CardHeader className="card-title">
-          <p className="less-price">
-            <span className="price">
-              {(pack.price / 1000).toFixed(3)}
-            </span> <br />
-            <Link 
-              iconMaterial="notifications_none" 
-              text={priceAlarmText} 
-              color="red" 
-              onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}
-            />
-          </p>
-          <p className="rating">{product.rating ? `(${product.ratingCount})` : ''} <RatingStars rating={product.rating} /> </p>
+          <p className="price">{(pack.price / 1000).toFixed(3)}</p>
+          <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p>
         </CardHeader>
         <CardContent>
           <img src={product.imageUrl} className="img-card" alt={product.name} />
         </CardContent>
         <CardFooter>
-          <p>{pack.name}</p>
           <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.country).name}`}</p>
+          <p><Link popoverOpen=".popover-list" iconMaterial="more_vert" /></p>
         </CardFooter>
       </Card>
       <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
         <Icon material="add"></Icon>
       </Fab>  
-      <Row>
-        <Col>
-          {hasOtherOffers > 0 ? 
-            <Button small fill round color="red" className="button-margin" onClick={() => props.f7router.navigate(`/otherOffers/${props.id}`)}>{state.labels.otherOffers}</Button>
-            : ''
-          }
-        </Col>
-        <Col></Col>
-        <Col>
-          {hasComments > 0 ? 
-            <Button small fill round className="button-margin" onClick={() => props.f7router.navigate(`/ratings/${product.id}`)}>{state.labels.ratings}</Button>
-            : ''
-          }
-        </Col>
-      </Row>
       {!user || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' :
-        <Fab position="left-top" slot="fixed" color="blue">
+        <Fab position="left-top" slot="fixed" color="blue" className="top-fab">
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
@@ -117,6 +105,15 @@ const PackDetails = props => {
           </FabButtons>
         </Fab>
       }
+      <Popover className="popover-list">
+        <List>
+          {hasOtherOffers > 0 ? <ListItem link="#" popoverClose title={state.labels.otherOffers} onClick={() => props.f7router.navigate(`/otherOffers/${props.id}`)}/> : ''}
+          {ratings.length > 0 ? <ListItem link="#" popoverClose title={state.labels.ratings} onClick={() => props.f7router.navigate(`/ratings/${product.id}`)}/> : ''}
+          <ListItem link="#" popoverClose title={priceAlarmText} onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}/>
+          {state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? <ListItem link="#" popoverClose title={state.labels.haveNoPacks} onClick={() => handleFinishedPack()}/> : ''}
+        </List>
+      </Popover>
+
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>
