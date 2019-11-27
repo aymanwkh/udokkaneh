@@ -23,7 +23,7 @@ const OrderDetails = props => {
   const handleEdit = async () => {
     try{
       if (state.basket.length > 0) {
-        throw new Error(state.labels.basketIsNotEmpty)
+        throw new Error('basketIsNotEmpty')
       }
       await editOrder(order)
       dispatch({type: 'LOAD_BASKET', basket: order.basket})

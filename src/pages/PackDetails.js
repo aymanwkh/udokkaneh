@@ -27,15 +27,16 @@ const PackDetails = props => {
   }, [state.orders, state.packs, product])
   const priceAlarmText = useMemo(() => {
     if (state.customer.storeId) {
-      if (pack.stores.find(s => s.storeId === state.customer.storeId)) {
-        return `${state.labels.changePrice} ${(pack.stores.find(s => s.id === state.customer.storeId).price / 1000).toFixed(3)}`
+      const found = state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)
+      if (found) {
+        return `${state.labels.changePrice} ${(found.price / 1000).toFixed(3)}`
       } else {
        return state.labels.havePack
       }
     } else {
       return state.labels.lessPrice
     }
-  }, [pack, state.labels, state.customer])
+  }, [pack, state.labels, state.customer, state.storePacks])
   useEffect(() => {
     if (error) {
       showError(props, error)
@@ -46,10 +47,10 @@ const PackDetails = props => {
   const handleAddPack = () => {
     try{
       if (state.customer.isBlocked) {
-        throw new Error(state.labels.blockedUser)
+        throw new Error('blockedUser')
       }
       if (state.basket.find(p => p.packId === pack.id)) {
-        throw new Error(state.labels.alreadyInBasket)
+        throw new Error('alreadyInBasket')
       }
       dispatch({type: 'ADD_TO_BASKET', pack})
       showMessage(props, state.labels.addToBasketSuccess)

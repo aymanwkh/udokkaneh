@@ -41,10 +41,11 @@ const Store = props => {
     {id: 'f', name: 'خصم اول طلب', value: 500},
     {id: 's', name: 'خصم خاص', value: 500},
     {id: 'i', name: 'خصم دعوة صديق', value: 500},
-    {id: 'p', name: 'خصم ابلاغ عن سعر اقل', value: 500}
+    {id: 'p', name: 'خصم ابلاغ عن سعر اقل', value: 500},
+    {id: 'r', name: 'خصم تقييم منتج', value: 250}
   ]
   const ratingValues = [
-    {id: -1, name: 'ﻻ أنصح به'},
+    {id: 0, name: 'ﻻ أنصح به'},
     {id: 1, name: 'أنصح به'}
   ]
 
@@ -70,7 +71,8 @@ const Store = props => {
     invitations: [],
     discountTypes,
     locations: [],
-    ratingValues
+    ratingValues,
+    storePacks: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -185,7 +187,16 @@ const Store = props => {
         }, err => {
           unsubscribeStores()
         }) 
-    
+        const unsubscribeStorePacks = firebase.firestore().collection('storePacks').onSnapshot(docs => {
+          let storePacks = []
+          docs.forEach(doc => {
+            storePacks.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_STORE_PACKS', storePacks})
+        }, err => {
+          unsubscribeStorePacks()
+        })  
+
       }
     });
   }, []);

@@ -24,7 +24,7 @@ const ConfirmOrder = props => {
       discount.value = state.discountTypes.find(t => t.id === 'f').value
       discount.type = 'f'
     } else if (state.customer.specialDiscount > 0) {
-      discount.value = Math.min(state.customer.specialDiscount, state.labels.maxDiscount)
+      discount.value = state.customer.specialDiscount
       discount.type = 's'
     } else if (state.customer.invitationsDiscount > 0) {
       discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
@@ -32,6 +32,9 @@ const ConfirmOrder = props => {
     } else if (state.customer.priceAlarmsDiscount > 0) {
       discount.value = Math.min(state.customer.priceAlarmsDiscount, state.labels.maxDiscount)
       discount.type = 'p'
+    } else if (state.customer.ratingsDiscount > 0) {
+      discount.value = Math.min(state.customer.ratingsDiscount, state.labels.maxDiscount)
+      discount.type = 'r'
     }
     return discount
   }, [state.orders, state.customer, state.discountTypes, state.labels]) 

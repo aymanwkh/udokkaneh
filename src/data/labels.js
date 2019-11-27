@@ -105,7 +105,10 @@ const labels = {
   ratingValue: 'التقييم',
   blockedUser: 'نعتذر، لا يمكنك اتمام العملية',
   permission_denied: 'ليس لك صلاحية لاتمام هذه العملية',
-  unknownError: 'خدث خطأ، يرجى المحاولة مرة أخرى'
+  unknownError: 'خدث خطأ، يرجى المحاولة مرة أخرى',
+  invalidPeriod: 'الرجاء التأكد من مدة العرض',
+  offerDays: 'عرض لمدة(بالأيام)',
+
 }
 
 export default labels

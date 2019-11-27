@@ -16,12 +16,11 @@ const PriceAlarm = props => {
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
   const [storeName, setStoreName] = useState('')
   const [storePlace, setStorePlace] = useState('')
-  const [offerEnd, setOfferEnd] = useState('')
-  const [offerEndErrorMessage, setOfferEndErrorMessage] = useState('')
+  const [offerDays, setOfferDays] = useState('')
   const [error, setError] = useState('')
   const priceAlarmText = useMemo(() => {
     if (state.customer.storeId) {
-      if (pack.stores.find(s => s.storeId === state.customer.storeId)) {
+      if (state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)) {
         return state.labels.changePrice
       } else {
        return state.labels.havePack
@@ -29,7 +28,7 @@ const PriceAlarm = props => {
     } else {
       return state.labels.lessPrice
     }
-  }, [pack, state.customer, state.labels])
+  }, [pack, state.customer, state.labels, state.storePacks])
 
   useEffect(() => {
     const validatePrice = (value) => {
@@ -69,17 +68,6 @@ const PriceAlarm = props => {
       setError('')
     }
   }, [error, props])
-  useEffect(() => {
-    const validateDate = (value) => {
-      if (new Date(value) > new Date()){
-        setOfferEndErrorMessage('')
-      } else {
-        setOfferEndErrorMessage(state.labels.invalidOfferEnd)
-      }
-    }
-    if (offerEnd.length > 0) validateDate(offerEnd)
-    else setOfferEndErrorMessage('')
-  }, [offerEnd, state.labels])
 
   const formatPrice = value => {
     return (Number(value) * 1000 / 1000).toFixed(3)
@@ -89,13 +77,20 @@ const PriceAlarm = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
-      const offerEndDate = offerEnd.length > 0 ? new Date(offerEnd) : ''
+      if (offerDays && Number(offerDays) <= 0) {
+        throw new Error('invalidPeriod')
+      }
+      let offerEnd = ''
+      if (offerDays) {
+        offerEnd = new Date()
+        offerEnd.setDate(offerEnd.getDate() + Number(offerDays))
+      }
       const priceAlarm = {
         packId: pack.id,
         price: parseInt(price * 1000),
         storeName,
         storePlace,
-        offerEnd: offerEndDate
+        offerEnd
       }
       await addPriceAlarm(priceAlarm)
       showMessage(props, state.labels.sendSuccess)
@@ -157,9 +152,8 @@ const PriceAlarm = props => {
           onInputClear={() => setPrice('')}
           onBlur={e => setPrice(formatPrice(e.target.value))}
         />
-        {state.customer.storeId
-        ? ''
-        : <ListInput 
+        {state.customer.storeId ? '' :
+          <ListInput 
             name="storeName" 
             label={state.labels.storeName}
             placeholder={state.labels.namePlaceholder}
@@ -172,9 +166,8 @@ const PriceAlarm = props => {
             onInputClear={() => setStoreName('')}
           />
         }
-        {state.customer.storeId
-        ? ''
-        : <ListInput 
+        {state.customer.storeId ? '' :
+          <ListInput 
             name="storePlace" 
             label={state.labels.storePlace}
             placeholder={state.labels.namePlaceholder}
@@ -185,26 +178,24 @@ const PriceAlarm = props => {
             onInputClear={() => setStorePlace('')}
           />
         }
-        {state.customer.storeId
-        ? <ListInput
-            name="offerEnd"
-            label={state.labels.offerEnd}
-            type="datepicker"
-            value={offerEnd} 
-            clearButton
-            errorMessage={offerEndErrorMessage}
-            errorMessageForce
-            onCalendarChange={(value) => setOfferEnd(value)}
-            onInputClear={() => setOfferEnd([])}
+        {state.customer.storeId ? 
+          <ListInput 
+            name="offerDays" 
+            label={state.labels.offerDays}
+            value={offerDays}
+            clearButton 
+            floatingLabel 
+            type="number" 
+            onChange={e => setOfferDays(e.target.value)}
+            onInputClear={() => setOfferDays('')}
           />
-        : ''
+      : ''
         }
       </List>
-      {!price || (!state.customer.storeId && !storeName) || priceErrorMessage || storeNameErrorMessage 
-        ? '' 
-        : <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>
-            <Icon material="done"></Icon>
-          </Fab>
+      {!price || (!state.customer.storeId && !storeName) || priceErrorMessage || storeNameErrorMessage ? '' :
+        <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>
+          <Icon material="done"></Icon>
+        </Fab>
       }
     </Page>
   )

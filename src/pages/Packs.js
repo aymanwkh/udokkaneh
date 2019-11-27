@@ -11,7 +11,7 @@ const Packs = props => {
   }, [state.packs, state.products, props.id]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
-  const [orderBy, setOrderBy] = useState('p')
+  const [orderBy, setOrderBy] = useState('v')
   const orderByList = useMemo(() => state.orderByList.filter(o => o.id !== orderBy)
   , [state.orderByList, orderBy]) 
   const handleOrdering = orderByValue => {
@@ -79,6 +79,7 @@ const Packs = props => {
           />
           {categoryPacks && categoryPacks.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)
+            const storePackInfo = state.customer.storeId ? state.storePacks.find(pa => pa.storeId === state.customer.storeId && pa.packId === p.id) : ''
             return (
               <ListItem
                 link={`/pack/${p.id}`}
@@ -91,7 +92,7 @@ const Packs = props => {
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                {state.customer.storeId && p.stores.find(s => s.storeId === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.stores.find(s => s.storeId === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
+                {storePackInfo ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )
           })}
