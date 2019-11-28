@@ -43,7 +43,7 @@ const labels = {
   enterName: 'الرجاء ادخال اﻻسم',
   namePlaceholder: 'من 4-50 حرف',
   invalidName: 'اﻻسم غير صحيح',
-  fixedFeesValue: 500,
+  fixedFeesPercent: 3,
   maxDiscount: 500,
   total: 'المجموع',
   feesTitle: 'الرسوم',

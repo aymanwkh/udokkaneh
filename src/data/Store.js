@@ -41,8 +41,8 @@ const Store = props => {
     {id: 'f', name: 'خصم اول طلب', value: 500},
     {id: 's', name: 'خصم خاص', value: 500},
     {id: 'i', name: 'خصم دعوة صديق', value: 500},
-    {id: 'p', name: 'خصم ابلاغ عن سعر اقل', value: 500},
-    {id: 'r', name: 'خصم تقييم منتج', value: 250}
+    {id: 'p', name: 'خصم ابلاغ عن سعر اقل', value: 250},
+    {id: 'r', name: 'خصم تقييم منتج', value: 100}
   ]
   const ratingValues = [
     {id: 0, name: 'ﻻ أنصح به'},

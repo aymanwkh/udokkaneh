@@ -13,18 +13,16 @@ const ConfirmOrder = props => {
   , [state.locations, state.customer])
   const [deliveryFees, setDeliveryFees] = useState(customerLocation ? customerLocation.deliveryFees : '')
   const [error, setError] = useState('')
-  const total = useMemo(() => {
-    const total = state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
-    return Math.floor(total / 50) * 50
-  }, [state.basket])
+  const total = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
+  , [state.basket])
 
   const discount = useMemo(() => {
     let discount = {value: 0, type: ''}
     if (state.orders.length === 0) {
       discount.value = state.discountTypes.find(t => t.id === 'f').value
       discount.type = 'f'
-    } else if (state.customer.specialDiscount > 0) {
-      discount.value = state.customer.specialDiscount
+    } else if (state.customer.specialDiscountPercent > 0) {
+      discount.value = (state.customer.specialDiscountPercent / 100) * total
       discount.type = 's'
     } else if (state.customer.invitationsDiscount > 0) {
       discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
@@ -37,9 +35,11 @@ const ConfirmOrder = props => {
       discount.type = 'r'
     }
     return discount
-  }, [state.orders, state.customer, state.discountTypes, state.labels]) 
-  const net = useMemo(() => ((total + state.labels.fixedFeesValue + deliveryFees - discount.value) / 1000).toFixed(3)
-  , [total, discount, deliveryFees, state.labels])
+  }, [state.orders, state.customer, state.discountTypes, state.labels, total]) 
+  const net = useMemo(() => {
+    const net = (total * (1 + (state.labels.fixedFeesPercent / 100))) + deliveryFees - discount.value
+    return Math.floor(net / 50) * 50
+  }, [total, discount, deliveryFees, state.labels])
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(customerLocation ? customerLocation.deliveryFees : '')
@@ -61,12 +61,12 @@ const ConfirmOrder = props => {
       }
       const activeOrders = state.orders.filter(o => ['n', 'a', 's'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + (o.total + o.fixedFees + o.deliveryFees - o.discount.value), 0)
-      if ((totalOrders + (net * 1000)) > state.customer.orderLimit) {
+      if (totalOrders + net > state.customer.orderLimit) {
         throw new Error('limitOverFlow')
       }
       const order = {
         basket: state.basket,
-        fixedFees: state.labels.fixedFeesValue,
+        fixedFees: parseInt((state.labels.fixedFeesPercent / 100) * total),
         deliveryFees,
         discount,
         withDelivery,
@@ -107,7 +107,7 @@ const ConfirmOrder = props => {
           <ListItem 
             title={state.labels.feesTitle} 
             className="fees" 
-            after={(state.labels.fixedFeesValue / 1000).toFixed(3)} 
+            after={((state.labels.fixedFeesPercent / 100) * total / 1000).toFixed(3)} 
           />
           {withDelivery ? 
             <ListItem 
@@ -126,7 +126,7 @@ const ConfirmOrder = props => {
           <ListItem 
             title={state.labels.net} 
             className="net" 
-            after={net} 
+            after={(net / 1000).toFixed(3)} 
           />
           <ListItem>
             <span>{state.labels.withDelivery}</span>
