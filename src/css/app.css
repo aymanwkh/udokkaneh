@@ -41,15 +41,19 @@
 }
 
 .total {
-  color: green;
+  color: purple;
 }
 
 .fees {
-  color: blue;
+  color: red;
+}
+
+.discount {
+  color: green;
 }
 
 .net {
-  color: red;
+  color: blue;
 }
 
 .logo {

@@ -11,7 +11,7 @@ const Packs = props => {
   }, [state.packs, state.products, props.id]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
-  const [orderBy, setOrderBy] = useState('v')
+  const [orderBy, setOrderBy] = useState('p')
   const orderByList = useMemo(() => state.orderByList.filter(o => o.id !== orderBy)
   , [state.orderByList, orderBy]) 
   const handleOrdering = orderByValue => {
@@ -21,10 +21,10 @@ const Packs = props => {
         setCategoryPacks([...categoryPacks].sort((p1, p2) => p1.price - p2.price))
         break
       case 's':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.sales - p1.sales))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).sales - state.products.find(p => p.id === p1.productId).sales))
         break
       case 'r':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.rating - p1.rating))
+        setCategoryPacks([...categoryPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).rating - state.products.find(p => p.id === p1.productId).rating))
         break
       case 'o':
         setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.isOffer - p1.isOffer))

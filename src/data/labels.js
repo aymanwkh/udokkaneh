@@ -25,7 +25,7 @@ const labels = {
   orderDetails: 'تفاصيل الطلب',
   addToBasket: 'شراء',
   submit: 'موافق',
-  banner: 'تنافس ... تشارك ... وتوفير',
+  banner: 'تنافس + تشارك = توفير حقيقي',
   lessPrice: 'الابلاغ عن سعر أقل',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',
@@ -46,7 +46,7 @@ const labels = {
   fixedFeesPercent: 3,
   maxDiscount: 500,
   total: 'المجموع',
-  feesTitle: 'الرسوم',
+  fixedFees: 'رسوم الخدمة',
   discount: 'الخصم',
   net: 'الصافي',
   withDelivery: 'خدمة التوصيل',
@@ -111,7 +111,7 @@ const labels = {
   confirmationText: 'هل انت متأكد من تنفيذ العملية؟',
   confirmationTitle: 'تأكيد العملية',
   isOffer: 'عرض؟',
-
+  orderPrice: 'السعر عند الطلب'
 }
 
 export default labels

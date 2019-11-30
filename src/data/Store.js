@@ -38,11 +38,9 @@ const Store = props => {
     {id: 'i', name: 'استيداع'}
   ]
   const discountTypes = [
-    {id: 'f', name: 'خصم اول طلب', value: 500},
-    {id: 's', name: 'خصم خاص', value: 500},
-    {id: 'i', name: 'خصم دعوة صديق', value: 500},
-    {id: 'p', name: 'خصم ابلاغ عن سعر اقل', value: 250},
-    {id: 'r', name: 'خصم تقييم منتج', value: 100}
+    {id: 'f', name: 'خصم اول طلب', value: 0},
+    {id: 'p', name: 'خصم تشجيعي', value: 250},
+    {id: 's', name: 'خصم خاص', value: 0}
   ]
   const ratingValues = [
     {id: 0, name: 'ﻻ أنصح به'},

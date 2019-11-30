@@ -15,31 +15,25 @@ const ConfirmOrder = props => {
   const [error, setError] = useState('')
   const total = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
   , [state.basket])
-
+  const fixedFees = useMemo(() => parseInt((state.labels.fixedFeesPercent / 100) * total)
+  , [total, state.labels])
   const discount = useMemo(() => {
     let discount = {value: 0, type: ''}
-    if (state.orders.length === 0) {
-      discount.value = state.discountTypes.find(t => t.id === 'f').value
+    const orders = state.orders.filter(o => o.status !== 'c')
+    if (orders.length === 0) {
       discount.type = 'f'
-    } else if (state.customer.specialDiscountPercent > 0) {
-      discount.value = (state.customer.specialDiscountPercent / 100) * total
+      discount.value = fixedFees
+    } else if (state.customer.specialDiscountPercent) {
       discount.type = 's'
-    } else if (state.customer.invitationsDiscount > 0) {
-      discount.value = Math.min(state.customer.invitationsDiscount, state.labels.maxDiscount)
-      discount.type = 'i'
-    } else if (state.customer.priceAlarmsDiscount > 0) {
-      discount.value = Math.min(state.customer.priceAlarmsDiscount, state.labels.maxDiscount)
+      discount.value = (state.customer.specialDiscountPercent / 100) * total
+    } else if (state.customer.discounts > 0) {
       discount.type = 'p'
-    } else if (state.customer.ratingsDiscount > 0) {
-      discount.value = Math.min(state.customer.ratingsDiscount, state.labels.maxDiscount)
-      discount.type = 'r'
+      discount.value = Math.min(state.customer.discounts, fixedFees, state.labels.maxDiscount)
     }
     return discount
-  }, [state.orders, state.customer, state.discountTypes, state.labels, total]) 
-  const net = useMemo(() => {
-    const net = (total * (1 + (state.labels.fixedFeesPercent / 100))) + deliveryFees - discount.value
-    return Math.floor(net / 50) * 50
-  }, [total, discount, deliveryFees, state.labels])
+  }, [state.orders, state.customer, fixedFees, total, state.labels.maxDiscount]) 
+  const net = useMemo(() => Math.floor((total + fixedFees + deliveryFees - discount.value) / 50) * 50
+  , [total, fixedFees, discount, deliveryFees])
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(customerLocation ? customerLocation.deliveryFees : '')
@@ -59,8 +53,8 @@ const ConfirmOrder = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
-      const activeOrders = state.orders.filter(o => ['n', 'a', 's'].includes(o.status))
-      const totalOrders = activeOrders.reduce((sum, o) => sum + (o.total + o.fixedFees + o.deliveryFees - o.discount.value), 0)
+      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f'].includes(o.status))
+      const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
       if (totalOrders + net > state.customer.orderLimit) {
         throw new Error('limitOverFlow')
       }
@@ -105,9 +99,9 @@ const ConfirmOrder = props => {
             after={(total / 1000).toFixed(3)} 
           />
           <ListItem 
-            title={state.labels.feesTitle} 
+            title={state.labels.fixedFees} 
             className="fees" 
-            after={((state.labels.fixedFeesPercent / 100) * total / 1000).toFixed(3)} 
+            after={(fixedFees / 1000).toFixed(3)} 
           />
           {withDelivery ? 
             <ListItem 
@@ -118,7 +112,7 @@ const ConfirmOrder = props => {
           : ''}
           {discount.value > 0 ? 
             <ListItem 
-              title={state.discountTypes.find(t => t.id === discount.type).name} 
+              title={state.labels.discount}
               className="discount" 
               after={(discount.value / 1000).toFixed(3)} 
             /> 

@@ -38,7 +38,7 @@ const OrderDetails = props => {
     <Page>
       <Navbar title={state.labels.orderDetails} backLink={state.labels.back} />
       <Block>
-        <List>
+        <List mediaList>
           {order.basket && order.basket.map(p => {
             const packInfo = state.packs.find(pa => pa.id === p.packId)
             const productInfo = state.products.find(pr => pr.id === packInfo.productId)
@@ -46,22 +46,47 @@ const OrderDetails = props => {
               <ListItem
                 key={p.packId}
                 title={productInfo.name}
-                footer={packInfo.name}
-                after={(p.price * p.quantity / 1000).toFixed(3)}
+                subtitle={packInfo.name}
+                footer={p.actualPrice && p.actualPrice !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
+                after={((p.actualPrice ? p.actualPrice : p.price) * p.quantity / 1000).toFixed(3)}
               >
                 {p.quantity > 1 ? <Badge slot="title" color="red">{p.quantity}</Badge> : ''}
               </ListItem>
             )}
           )}
-          <ListItem title={state.labels.total} after={(order.total / 1000).toFixed(3)} />
-          <ListItem title={state.labels.feesTitle} className="red" after={(order.fixedFees / 1000).toFixed(3)} />
-          {order.deliveryFees > 0 ? <ListItem title={state.labels.deliveryFees} className="red" after={(order.deliveryFees / 1000).toFixed(3)} /> : null}
-          {order.specialDiscount + order.customerDiscount > 0 ? <ListItem title={state.labels.discount} className="discount" after={((order.specialDiscount + order.customerDiscount) / 1000).toFixed(3)} /> : null}
-          <ListItem title={state.labels.net} className="blue" after={(netPrice / 1000).toFixed(3)} />
+          <ListItem 
+            title={state.labels.total} 
+            className="total"
+            after={(order.total / 1000).toFixed(3)} 
+          />
+          <ListItem 
+            title={state.labels.fixedFees} 
+            className="fees" 
+            after={(order.fixedFees / 1000).toFixed(3)} 
+          />
+          {order.deliveryFees > 0 ? 
+            <ListItem 
+              title={state.labels.deliveryFees} 
+              className="fees" 
+              after={(order.deliveryFees / 1000).toFixed(3)} 
+            /> 
+          : ''}
+          {order.discount.value ? 
+            <ListItem 
+              title={state.labels.discount} 
+              className="discount" 
+              after={((order.discount.value) / 1000).toFixed(3)} 
+            /> 
+          : ''}
+          <ListItem 
+            title={state.labels.net} 
+            className="net" 
+            after={(netPrice / 1000).toFixed(3)} 
+          />
         </List>
       </Block>
       {order.status === 'd' ? '' :
-        <Fab position="left-top" slot="fixed" color="blue">
+        <Fab position="left-top" slot="fixed" color="blue" className="top-fab">
           <Icon material="keyboard_arrow_down"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
