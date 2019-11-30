@@ -156,12 +156,8 @@ const StoreOwner = props => {
 
       </List>
       <List>
-      {!name || !mobile || !password || !storeName || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage 
-      ? '' 
-      : <Button 
-          large 
-          onClick={() => handleRegister()}
-        >
+      {!name || !mobile || !password || !storeName || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
+        <Button large onClick={() => handleRegister()}>
           {state.labels.register}
         </Button>
       }

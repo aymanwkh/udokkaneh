@@ -80,8 +80,8 @@ const ChangePassword = props => {
           onInputClear={() => setNewPassword('')}
         />
       </List>
-      {!oldPassword || !newPassword || oldPassword === newPassword || oldPasswordErrorMessage || newPasswordErrorMessage ? '' 
-      : <Button large onClick={() => handleSubmit()}>{state.labels.submit}</Button>
+      {!oldPassword || !newPassword || oldPassword === newPassword || oldPasswordErrorMessage || newPasswordErrorMessage ? '' :
+        <Button large onClick={() => handleSubmit()}>{state.labels.submit}</Button>
       }
     </Page>
   )

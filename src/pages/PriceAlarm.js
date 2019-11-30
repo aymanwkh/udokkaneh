@@ -164,8 +164,7 @@ const PriceAlarm = props => {
               onToggleChange={() => setIsOffer(!isOffer)}
             />
           </ListItem>
-        : ''
-        }
+        : ''}
         {isOffer ? 
           <ListInput 
             name="offerDays" 
@@ -177,8 +176,7 @@ const PriceAlarm = props => {
             onChange={e => setOfferDays(e.target.value)}
             onInputClear={() => setOfferDays('')}
           />
-        : ''
-        }
+        : ''}
       </List>
       {!price || (isOffer && !offerDays) || (!state.customer.storeId && !storeName) || priceErrorMessage || storeNameErrorMessage ? '' :
         <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>

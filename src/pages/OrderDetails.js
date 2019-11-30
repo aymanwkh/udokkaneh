@@ -94,8 +94,7 @@ const OrderDetails = props => {
               <FabButton color="blue" onClick={() => handleEdit()}>
                 <Icon material="edit"></Icon>
               </FabButton>
-              : ''
-            }
+            : ''}
             <FabButton color="red" onClick={() => props.f7router.navigate(`/deleteOrder/${order.id}`)}>
               <Icon material="delete"></Icon>
             </FabButton>

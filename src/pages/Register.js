@@ -113,13 +113,8 @@ const Register = props => {
           onInputClear={() => setPassword('')}
         />
       </List>
-      {!name || !mobile || !password || nameErrorMessage || mobileErrorMessage || passwordErrorMessage 
-      ? '' 
-      : <Button 
-          large 
-          href="#" 
-          onClick={() => handleRegister()}
-        >
+      {!name || !mobile || !password || nameErrorMessage || mobileErrorMessage || passwordErrorMessage ? '' :
+        <Button large href="#" onClick={() => handleRegister()}>
           {state.labels.register}
         </Button>
       }

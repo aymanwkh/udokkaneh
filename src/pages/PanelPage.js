@@ -30,8 +30,7 @@ const PanelPage = props => {
           >
             {state.basket.length > 0 ? <Badge color="red">{state.basket.length}</Badge> : ''}
           </ListItem>
-          : ''
-        }
+        : ''}
         {user ? <ListItem link="/changePassword/" title={state.labels.changePassword} /> : ''}
         {user ? <ListItem link="/ordersList/" title={state.labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/inviteFriend/" title={state.labels.inviteFriend} view="#main-view" panelClose /> : ''}
