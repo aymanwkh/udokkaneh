@@ -70,7 +70,9 @@ const Store = props => {
     discountTypes,
     locations: [],
     ratingValues,
-    storePacks: []
+    storePacks: [],
+    priceAlarms: [],
+    cancelOrders: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -193,6 +195,24 @@ const Store = props => {
           dispatch({type: 'SET_STORE_PACKS', storePacks})
         }, err => {
           unsubscribeStorePacks()
+        })  
+        const unsubscribePriceAlarms = firebase.firestore().collection('priceAlarms').where('userId', '==', user.uid).onSnapshot(docs => {
+          let priceAlarms = []
+          docs.forEach(doc => {
+            priceAlarms.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_PRICE_ALARMS', priceAlarms})
+        }, err => {
+          unsubscribePriceAlarms()
+        })  
+        const unsubscribeCancelOrders = firebase.firestore().collection('cancelOrders').where('order.userId', '==', user.uid).onSnapshot(docs => {
+          let cancelOrders = []
+          docs.forEach(doc => {
+            cancelOrders.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_CANCEL_ORDERS', cancelOrders})
+        }, err => {
+          unsubscribeCancelOrders()
         })  
 
       }

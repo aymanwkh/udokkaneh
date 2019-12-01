@@ -78,6 +78,9 @@ const PriceAlarm = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
+      if (state.priceAlarms.find(a => a.priceAlarm.packId === pack.id && a.status === 'n')){
+        throw new Error('duplicatePriceAlarms')
+      }
       if (offerDays && Number(offerDays) <= 0) {
         throw new Error('invalidPeriod')
       }

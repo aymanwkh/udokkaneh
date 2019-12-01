@@ -67,9 +67,18 @@ export const confirmOrder = order => {
   return firebase.firestore().collection('orders').add(newOrder)
 }
 
-export const editOrder = order => {
+export const cancelOrder = order => {
   return firebase.firestore().collection("orders").doc(order.id).update({
-    status: 'c'
+    status: 'c',
+    statusTime: new Date()
+  })
+}
+
+export const cancelOrderRequest = order => {
+  return firebase.firestore().collection('cancelOrders').add({
+    order,
+    status: 'n',
+    time: new Date()
   })
 }
 

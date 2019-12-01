@@ -114,6 +114,16 @@ const Reducer = (state, action) => {
         ...state,
         storePacks: action.storePacks
       }
+    case 'SET_PRICE_ALARMS':
+      return {
+        ...state,
+        priceAlarms: action.priceAlarms
+      }    
+    case 'SET_CANCEL_ORDERS':
+      return {
+        ...state,
+        cancelOrders: action.cancelOrders
+      }    
     default:
       return state
   }

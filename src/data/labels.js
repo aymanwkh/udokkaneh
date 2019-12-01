@@ -111,7 +111,10 @@ const labels = {
   confirmationText: 'هل انت متأكد من تنفيذ العملية؟',
   confirmationTitle: 'تأكيد العملية',
   isOffer: 'عرض؟',
-  orderPrice: 'السعر عند الطلب'
+  orderPrice: 'السعر عند الطلب',
+  duplicatePriceAlarms: 'لقد ارسلت ابلاغا سابقا لنفس هذا المنتج ولم يعتمد بعد',
+  duplicateOrderCancel: 'لقد ارسلت طلبا بإلغاء هذا الطلب سابقا ولم يعتمد بعد',
+  deleteSuccess: 'تم الحذف بنجاح'
 }
 
 export default labels

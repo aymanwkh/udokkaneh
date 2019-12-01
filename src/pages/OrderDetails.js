@@ -1,5 +1,5 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react'
-import { editOrder, showError, getMessage } from '../data/Actions'
+import { cancelOrder, cancelOrderRequest, showMessage, showError, getMessage } from '../data/Actions'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge, FabButton, FabButtons } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
@@ -25,14 +25,32 @@ const OrderDetails = props => {
       if (state.basket.length > 0) {
         throw new Error('basketIsNotEmpty')
       }
-      await editOrder(order)
+      await cancelOrder(order)
       dispatch({type: 'LOAD_BASKET', basket: order.basket})
       props.f7router.navigate('/basket/')
 		} catch (err){
       setError(getMessage(err, state.labels, props.f7route.route.component.name))
     }
   }
-
+  const handleDelete = () => {
+    props.f7router.app.dialog.confirm(state.labels.confirmationText, state.labels.confirmationTitle, async () => {
+      try{
+        if (order.status === 'n') {
+          await cancelOrder(order)
+          showMessage(props, state.labels.deleteSuccess)
+        } else {
+          if (state.cancelOrders.find(o => o.order.id === order.id && o.status === 'n')){
+            throw new Error('duplicateOrderCancel')
+          }
+          await cancelOrderRequest(order)
+          showMessage(props, state.labels.sendSuccess)
+        }
+        props.f7router.back()
+      } catch(err) {
+        setError(getMessage(err, state.labels, props.f7route.route.component.name))
+      }
+    })    
+  }
   if (!user) return <ReLogin />
   return(
     <Page>
@@ -95,7 +113,7 @@ const OrderDetails = props => {
                 <Icon material="edit"></Icon>
               </FabButton>
             : ''}
-            <FabButton color="red" onClick={() => props.f7router.navigate(`/deleteOrder/${order.id}`)}>
+            <FabButton color="red" onClick={() => handleDelete()}>
               <Icon material="delete"></Icon>
             </FabButton>
           </FabButtons>
