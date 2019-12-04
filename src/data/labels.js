@@ -51,8 +51,8 @@ const labels = {
   net: 'الصافي',
   withDelivery: 'خدمة التوصيل',
   deliveryFees: 'رسوم التوصيل',
-  noDeliveryNote: 'يتم اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 24 ساعة',
-  withDeliveryNote: 'يتم التوصيل خلال جولات محددة حسب المنطقة خلال 24 ساعة',
+  noDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 24 ساعة',
+  withDeliveryNote: 'التوصيل خلال جولات محددة حسب المنطقة خلال 24 ساعة',
   enterPrice: 'الرجاء ادخال السعر',
   enterStore: 'الرجاء ادخال اسم المحل',
   invalidPrice: 'الرجاء التأكد من السعر المدخل',
@@ -114,7 +114,11 @@ const labels = {
   orderPrice: 'السعر عند الطلب',
   duplicatePriceAlarms: 'لقد ارسلت ابلاغا سابقا لنفس هذا المنتج ولم يعتمد بعد',
   duplicateOrderCancel: 'لقد ارسلت طلبا بإلغاء هذا الطلب سابقا ولم يعتمد بعد',
-  deleteSuccess: 'تم الحذف بنجاح'
+  deleteSuccess: 'تم الحذف بنجاح',
+  duplicateForgetPassword: 'لقد ارسلت طلبا سابق بنسيان كلمة السر ولم يعالج بعد',
+  quantity: 'الكمية',
+  gram: 'غ',
+  weightedPricesNote: '*هذا سعر تقديري، السعر يتحدد حسب الوزن الفعلي'
 }
 
 export default labels

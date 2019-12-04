@@ -3,7 +3,7 @@ import { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle 
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
-import { confirmOrder, showMessage, showError, getMessage } from '../data/Actions'
+import { confirmOrder, showMessage, showError, getMessage, quantityText } from '../data/Actions'
 
 
 const ConfirmOrder = props => {
@@ -23,17 +23,16 @@ const ConfirmOrder = props => {
     if (orders.length === 0) {
       discount.type = 'f'
       discount.value = fixedFees
-    } else if (state.customer.specialDiscountPercent) {
-      discount.type = 's'
-      discount.value = (state.customer.specialDiscountPercent / 100) * total
     } else if (state.customer.discounts > 0) {
       discount.type = 'p'
       discount.value = Math.min(state.customer.discounts, fixedFees, state.labels.maxDiscount)
     }
     return discount
-  }, [state.orders, state.customer, fixedFees, total, state.labels.maxDiscount]) 
+  }, [state.orders, state.customer, fixedFees, state.labels.maxDiscount]) 
   const net = useMemo(() => Math.floor((total + fixedFees + deliveryFees - discount.value) / 50) * 50
   , [total, fixedFees, discount, deliveryFees])
+  const weightedPacks = useMemo(() => state.basket.filter(p => p.byWeight)
+  , [state.basket])
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(customerLocation ? customerLocation.deliveryFees : '')
@@ -58,8 +57,17 @@ const ConfirmOrder = props => {
       if (totalOrders + net > state.customer.orderLimit) {
         throw new Error('limitOverFlow')
       }
+      const basket = state.basket.map(p => {
+        return {
+          packId: p.packId,
+          price: p.price,
+          quantity: p.quantity,
+          purchasedQuantity: 0,
+          isFinished: false
+        }
+      })
       const order = {
-        basket: state.basket,
+        basket,
         fixedFees: parseInt((state.labels.fixedFeesPercent / 100) * total),
         deliveryFees,
         discount,
@@ -82,14 +90,15 @@ const ConfirmOrder = props => {
         <List>
           {state.basket && state.basket.map(p => {
             const packInfo = state.packs.find(pa => pa.id === p.packId)
+            const productInfo = state.products.find(pr => pr.id === packInfo.productId)
             return(
               <ListItem
                 key={p.packId}
-                title={state.products.find(pr => pr.id === packInfo.productId).name}
-                after={(p.price * p.quantity / 1000).toFixed(3)}
+                title={productInfo.name}
+                after={`${(p.price * p.quantity / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
                 footer={packInfo.name}
               >
-                {p.quantity > 1 ? <Badge slot="title" color="red">{p.quantity}</Badge> : ''}
+                <Badge slot="title" color="green">{quantityText(p.quantity, state.labels)}</Badge>
               </ListItem>
             )
           })}
@@ -133,6 +142,7 @@ const ConfirmOrder = props => {
             />
           </ListItem>
         </List>
+        <p className="note">{weightedPacks.length > 0 ? state.labels.weightedPricesNote : ''}</p>
         <p className="note">{withDelivery ? state.labels.withDeliveryNote : state.labels.noDeliveryNote}</p>
       </Block>
       <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleOrder()}>

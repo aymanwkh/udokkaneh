@@ -2,6 +2,8 @@ const Reducer = (state, action) => {
   let pack
   let otherPacks
   let newBasket
+  let nextQuantity
+  const increment = [0.125, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
   switch (action.type){
     case 'ADD_TO_BASKET':
       if (state.basket.find(p => p.packId === action.pack.id)) return state
@@ -9,26 +11,41 @@ const Reducer = (state, action) => {
         packId: action.pack.id,
         price: action.pack.price,
         quantity: 1,
-        purchasedQuantity: 0,
+        isDivided: action.pack.isDivided,
+        byWeight: action.pack.byWeight,
         time: new Date()
       }
       newBasket = [...state.basket, pack]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
-    case 'ADD_QUANTITY':
+    case 'INCREASE_QUANTITY':
       pack = state.basket.find(p => p.packId === action.pack.packId)
       otherPacks = state.basket.filter(p => p.packId !== action.pack.packId)
+      if (pack.isDivided) {
+        nextQuantity = increment.filter(i => i > pack.quantity)
+        nextQuantity = Math.min(...nextQuantity)
+        nextQuantity = nextQuantity === Infinity ? pack.quantity : nextQuantity
+      } else {
+        nextQuantity = pack.quantity + 1
+      }
       pack = {
         ...pack,
-        quantity: pack.quantity + 1
+        quantity: nextQuantity
       }
       newBasket = [...otherPacks, pack]
       localStorage.setItem('basket', JSON.stringify(newBasket));
       return {...state, basket: newBasket}
-    case 'REMOVE_QUANTITY':
+    case 'DECREASE_QUANTITY':
       pack = state.basket.find(p => p.packId === action.pack.packId)
       otherPacks = state.basket.filter(p => p.packId !== action.pack.packId)
-      if (pack.quantity - 1 === 0) {
+      if (pack.isDivided) {
+        nextQuantity = increment.filter(i => i < pack.quantity)
+        nextQuantity = Math.max(...nextQuantity)
+        nextQuantity = nextQuantity === -Infinity ? 0 : nextQuantity
+      } else {
+        nextQuantity = pack.quantity - 1
+      }
+      if (nextQuantity === 0) {
         if (otherPacks.length > 0){
           newBasket = [...otherPacks]
         } else {
@@ -37,7 +54,7 @@ const Reducer = (state, action) => {
       } else {
         pack = {
           ...pack,
-          quantity: pack.quantity - 1
+          quantity: nextQuantity
         }
         newBasket = [...otherPacks, pack]
       }
@@ -123,6 +140,11 @@ const Reducer = (state, action) => {
       return {
         ...state,
         cancelOrders: action.cancelOrders
+      }    
+    case 'SET_FORGET_PASSWORDS':
+      return {
+        ...state,
+        forgetPasswords: action.forgetPasswords
       }    
     default:
       return state

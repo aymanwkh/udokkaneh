@@ -37,16 +37,10 @@ const Store = props => {
     {id: 'c', name: 'ملغي'},
     {id: 'i', name: 'استيداع'}
   ]
-  const discountTypes = [
-    {id: 'f', name: 'خصم اول طلب', value: 0},
-    {id: 'p', name: 'خصم تشجيعي', value: 250},
-    {id: 's', name: 'خصم خاص', value: 0}
-  ]
   const ratingValues = [
     {id: 0, name: 'ﻻ أنصح به'},
     {id: 1, name: 'أنصح به'}
   ]
-
   const localData = localStorage.getItem('basket');
   const basket = localData ? JSON.parse(localData) : []
   const [user, setUser] = useState(null);
@@ -67,12 +61,12 @@ const Store = props => {
     products: [],
     packs: [],
     invitations: [],
-    discountTypes,
     locations: [],
     ratingValues,
     storePacks: [],
     priceAlarms: [],
-    cancelOrders: []
+    cancelOrders: [],
+    forgetPasswords: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -130,6 +124,15 @@ const Store = props => {
       dispatch({type: 'SET_PACKS', packs})
     }, err => {
       unsubscribePacks()
+    })
+    const unsubscribeForgetPasswords = firebase.firestore().collection('forgetPasswords').onSnapshot(docs => {
+      let forgetPasswords = []
+      docs.forEach(doc => {
+        forgetPasswords.push({...doc.data(), id: doc.id})
+      })
+      dispatch({type: 'SET_FORGET_PASSWORDS', forgetPasswords})
+    }, err => {
+      unsubscribeForgetPasswords()
     })
 
     firebase.auth().onAuthStateChanged(user => {

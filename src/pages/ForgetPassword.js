@@ -30,6 +30,9 @@ const ForgetPassword = props => {
 
   const handleForgetPassword = async () => {
     try{
+      if (state.forgetPasswords.find(p => p.mobile === mobile && p.status === 'n')) {
+        throw new Error('duplicateForgetPassword')
+      }
       await forgetPassword(mobile)
       showMessage(props, state.labels.sendSuccess)
       props.f7router.app.views.main.router.navigate('/home/')

@@ -29,6 +29,10 @@ export const showError = (props, messageText) => {
   message.open();
 }
 
+export const quantityText = (quantity, labels) => {
+  return `${quantity < 1 ? quantity * 1000 : quantity} ${quantity < 1 ? labels.gram : ''}`
+}
+
 export const rateProduct = (productId, value, comment) => {
   const rating = {
     productId,
@@ -50,10 +54,10 @@ export const logout = () => {
 }
 
 export const forgetPassword = mobile => {
-  return firebase.firestore().collection('forgetPassword').add({
+  return firebase.firestore().collection('forgetPasswords').add({
     mobile,
+    status: 'n',
     time: new Date(),
-    resolved: false,
   })
 }
 

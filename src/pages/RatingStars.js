@@ -4,9 +4,8 @@ import { Icon } from 'framework7-react'
 
 const RatingStars = props => {
   const stars = useMemo(() => {
-    const rating_round = Math.round(props.rating / .5 ) * .5
-    const rating_int = parseInt(rating_round)
-    const rating_fraction = rating_round - rating_int
+    const rating_int = parseInt(props.rating)
+    const rating_fraction = Number(props.rating) - rating_int
     let color
     switch(rating_int){
       case 1:

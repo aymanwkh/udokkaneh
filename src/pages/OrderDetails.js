@@ -1,9 +1,9 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react'
-import { cancelOrder, cancelOrderRequest, showMessage, showError, getMessage } from '../data/Actions'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge, FabButton, FabButtons } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store'
+import { cancelOrder, cancelOrderRequest, showMessage, showError, getMessage, quantityText } from '../data/Actions'
 
 
 const OrderDetails = props => {
@@ -65,7 +65,8 @@ const OrderDetails = props => {
                 key={p.packId}
                 title={productInfo.name}
                 subtitle={packInfo.name}
-                footer={p.actualPrice && p.actualPrice !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
+                footer={`${state.labels.price}: ${p.actualPrice && p.actualPrice !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}`}
+                text={quantityText(p.quantity, state.labels)}
                 after={((p.actualPrice ? p.actualPrice : p.price) * p.quantity / 1000).toFixed(3)}
               >
                 {p.quantity > 1 ? <Badge slot="title" color="red">{p.quantity}</Badge> : ''}
