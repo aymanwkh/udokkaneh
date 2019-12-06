@@ -15,10 +15,13 @@ const PriceAlarm = props => {
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
   const [storeName, setStoreName] = useState('')
-  const [storePlace, setStorePlace] = useState('')
   const [offerDays, setOfferDays] = useState('')
   const [isOffer, setIsOffer] = useState(false)
+  const [locationId, setLocationId] = useState('')
   const [error, setError] = useState('')
+  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.sorting - l2.sorting)
+  , [state.locations])
+
   const priceAlarmText = useMemo(() => {
     if (state.customer.storeId) {
       if (state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)) {
@@ -93,7 +96,7 @@ const PriceAlarm = props => {
         packId: pack.id,
         price: parseInt(price * 1000),
         storeName,
-        storePlace,
+        locationId,
         offerEnd
       }
       await addPriceAlarm(priceAlarm)
@@ -146,16 +149,24 @@ const PriceAlarm = props => {
           />
         }
         {state.customer.storeId ? '' :
-          <ListInput 
-            name="storePlace" 
-            label={state.labels.storePlace}
-            placeholder={state.labels.namePlaceholder}
-            clearButton 
-            type="text" 
-            value={storePlace} 
-            onChange={(e) => setStorePlace(e.target.value)}
-            onInputClear={() => setStorePlace('')}
-          />
+          <ListItem
+            title={state.labels.location}
+            smartSelect
+            smartSelectParams={{
+              openIn: 'popup', 
+              closeOnSelect: true, 
+              searchbar: true, 
+              searchbarPlaceholder: state.labels.search,
+              popupCloseLinkText: state.labels.close
+            }}
+          >
+            <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
+              <option value=""></option>
+              {locations.map(l => 
+                <option key={l.id} value={l.id}>{l.name}</option>
+              )}
+            </select>
+          </ListItem>
         }
         {state.customer.storeId ? 
           <ListItem>
@@ -181,8 +192,8 @@ const PriceAlarm = props => {
           />
         : ''}
       </List>
-      {!price || (isOffer && !offerDays) || (!state.customer.storeId && !storeName) || priceErrorMessage || storeNameErrorMessage ? '' :
-        <Fab position="left-bottom" slot="fixed" color="green" onClick={() => handleSubmit()}>
+      {!price || (isOffer && !offerDays) || (!state.customer.storeId && (!storeName || !locationId)) || priceErrorMessage || storeNameErrorMessage ? '' :
+        <Fab position="left-top" slot="fixed" color="green" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>
       }

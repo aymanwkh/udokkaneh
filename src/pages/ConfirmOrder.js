@@ -9,14 +9,15 @@ import { confirmOrder, showMessage, showError, getMessage, quantityText } from '
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
+  const [urgent, setUrgent] = useState(false)
   const customerLocation = useMemo(() => state.customer.locationId ? state.locations.find(l => l.id === state.customer.locationId) : ''
   , [state.locations, state.customer])
   const [deliveryFees, setDeliveryFees] = useState(customerLocation ? customerLocation.deliveryFees : '')
   const [error, setError] = useState('')
   const total = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
   , [state.basket])
-  const fixedFees = useMemo(() => parseInt((state.labels.fixedFeesPercent / 100) * total)
-  , [total, state.labels])
+  const fixedFees = useMemo(() => parseInt((urgent ? state.labels.urgentFixedFeesPercent : state.labels.fixedFeesPercent) / 100 * total)
+  , [total, urgent, state.labels])
   const discount = useMemo(() => {
     let discount = {value: 0, type: ''}
     const orders = state.orders.filter(o => o.status !== 'c')
@@ -35,11 +36,11 @@ const ConfirmOrder = props => {
   , [state.basket])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees(customerLocation ? customerLocation.deliveryFees : '')
+      setDeliveryFees(customerLocation ? (urgent ? customerLocation.urgentDeliveryFees : customerLocation.deliveryFees) : '')
     } else {
       setDeliveryFees('')
     }
-  }, [withDelivery, customerLocation])
+  }, [withDelivery, urgent, customerLocation])
   useEffect(() => {
     if (error) {
       showError(props, error)
@@ -68,10 +69,11 @@ const ConfirmOrder = props => {
       })
       const order = {
         basket,
-        fixedFees: parseInt((state.labels.fixedFeesPercent / 100) * total),
+        fixedFees,
         deliveryFees,
         discount,
         withDelivery,
+        urgent,
         total
       }
       await confirmOrder(order)
@@ -141,9 +143,18 @@ const ConfirmOrder = props => {
               disabled={customerLocation ? !customerLocation.hasDelivery : false}
             />
           </ListItem>
+          <ListItem>
+            <span>{state.labels.urgent}</span>
+            <Toggle 
+              name="urgent" 
+              color="green" 
+              checked={urgent} 
+              onToggleChange={() => setUrgent(!urgent)}
+            />
+          </ListItem>
         </List>
         <p className="note">{weightedPacks.length > 0 ? state.labels.weightedPricesNote : ''}</p>
-        <p className="note">{withDelivery ? state.labels.withDeliveryNote : state.labels.noDeliveryNote}</p>
+        <p className="note">{withDelivery ? (urgent ? state.labels.withUrgentDeliveryNote : state.labels.withDeliveryNote) : (urgent ? state.labels.urgentNoDeliveryNote : state.labels.noDeliveryNote)}</p>
       </Block>
       <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleOrder()}>
         <Icon material="done"></Icon>

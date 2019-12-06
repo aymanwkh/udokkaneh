@@ -6,17 +6,33 @@ import { showError, getMessage, quantityText } from '../data/Actions'
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
-
+  const [submitVisible, SetSubmitVisible] = useState(true)
   const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
   , [state.basket])
   const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time > p2.time ? 1 : -1)
   , [state.basket])
   const weightedPacks = useMemo(() => state.basket.filter(p => p.byWeight)
   , [state.basket])
-
+  const customerOrdersTotals = useMemo(() => {
+    if (state.customer){
+      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f'].includes(o.status))
+      return activeOrders.reduce((sum, o) => sum + o.total, 0)
+    } else {
+      return 0
+    }
+  }, [state.customer, state.orders])
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
   }, [state.basket, props])
+  useEffect(() => {
+    if (state.customer){
+      if (customerOrdersTotals + totalPrice > state.customer.orderLimit){
+        SetSubmitVisible(false)
+      } else {
+        SetSubmitVisible(true)
+      }
+    }
+  }, [state.customer, customerOrdersTotals, totalPrice])
   useEffect(() => {
     if (error) {
       showError(props, error)
@@ -30,6 +46,19 @@ const Basket = props => {
         throw new Error('blockedUser')
       }
       props.f7router.navigate('/confirmOrder/')
+    } catch(err) {
+			setError(getMessage(err, state.labels, props.f7route.route.component.name))
+		}
+  }
+  const handleIncrease = pack => {
+    try{
+      if (pack.orderLimit && pack.orderLimit <= pack.quantity){
+        throw new Error('ExceedPackLimit')
+      }
+      dispatch({type: 'INCREASE_QUANTITY', pack})
+      if (customerOrdersTotals + totalPrice > state.customer.orderLimit){
+        throw new Error('limitOverFlow')
+      }  
     } catch(err) {
 			setError(getMessage(err, state.labels, props.f7route.route.component.name))
 		}
@@ -55,7 +84,7 @@ const Basket = props => {
                 slot="after" 
                 fill
                 buttonsOnly
-                onStepperPlusClick={() => dispatch({type: 'INCREASE_QUANTITY', pack: p})}
+                onStepperPlusClick={() => handleIncrease(p)}
                 onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
               />
             </ListItem>
@@ -64,12 +93,17 @@ const Basket = props => {
       </List>
       <p className="note">{weightedPacks.length > 0 ? state.labels.weightedPricesNote : ''}</p>
     </Block>
-    <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
-      <Icon material="done"></Icon>
-    </Fab>
+    {submitVisible ? 
+      <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
+        <Icon material="done"></Icon>
+      </Fab>
+    : <Fab position="center-bottom" slot="fixed" text={state.labels.limitOverFlowNote} color="red" onClick={() => props.f7router.navigate('/help/orderLimit')}>
+        <Icon material="report_problem"></Icon>
+      </Fab>
+    }
     <Toolbar bottom>
-      <Link href='/home/' iconMaterial="home" />
-      <Link href='#' iconMaterial="delete" onClick={() => dispatch({type: 'CLEAR_BASKET'})} />
+      <Link href="/home/" iconMaterial="home" />
+      <Link href="#" iconMaterial="delete" onClick={() => dispatch({type: 'CLEAR_BASKET'})} />
     </Toolbar>
   </Page>
   )

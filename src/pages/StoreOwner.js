@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import React, { useContext, useState, useEffect, useMemo } from 'react'
+import { Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { registerStoreOwner, showMessage, showError, getMessage } from '../data/Actions'
 
@@ -9,12 +9,14 @@ const StoreOwner = props => {
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
   const [storeName, setStoreName] = useState('')
-  const [address, setAddress] = useState('')
   const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
+  const [locationId, setLocationId] = useState('')
   const [error, setError] = useState('')
+  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.sorting - l2.sorting)
+  , [state.locations])
 
   useEffect(() => {
     const patterns = {
@@ -81,7 +83,7 @@ const StoreOwner = props => {
         mobile,
         name,
         storeName,
-        address
+        locationId
       }
       await registerStoreOwner(owner, password, state.randomColors)
       showMessage(props, state.labels.registerSuccess)
@@ -144,19 +146,28 @@ const StoreOwner = props => {
           onChange={e => setStoreName(e.target.value)}
           onInputClear={() => setStoreName('')}
         />
-        <ListInput
-          label={state.labels.address}
-          type="text"
-          name="address"
-          clearButton
-          value={address}
-          onChange={e => setAddress(e.target.value)}
-          onInputClear={() => setAddress('')}
-        />
+        <ListItem
+          title={state.labels.location}
+          smartSelect
+          smartSelectParams={{
+            openIn: 'popup', 
+            closeOnSelect: true, 
+            searchbar: true, 
+            searchbarPlaceholder: state.labels.search,
+            popupCloseLinkText: state.labels.close
+          }}
+        >
+          <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
+            <option value=""></option>
+            {locations.map(l => 
+              <option key={l.id} value={l.id}>{l.name}</option>
+            )}
+          </select>
+        </ListItem>
 
       </List>
       <List>
-      {!name || !mobile || !password || !storeName || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
+      {!name || !mobile || !password || !storeName || !locationId || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
         <Button large onClick={() => handleRegister()}>
           {state.labels.register}
         </Button>

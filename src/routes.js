@@ -20,6 +20,7 @@ import OtherOffers from './pages/OtherOffers';
 import ContactUs from './pages/ContactUs';
 import RateProduct from './pages/RateProduct';
 import Ratings from './pages/Ratings';
+import Help from './pages/Help';
 
 export default [
   {
@@ -124,6 +125,10 @@ export default [
   {
     path: '/ratings/:id',
     component: Ratings
+  },
+  {
+    path: '/help/:id',
+    component: Help
   },
   {
     path: '(.*)',

@@ -134,6 +134,15 @@ const Store = props => {
     }, err => {
       unsubscribeForgetPasswords()
     })
+    const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
+      let locations = []
+      docs.forEach(doc => {
+        locations.push({...doc.data(), id:doc.id})
+      })
+      dispatch({type: 'SET_LOCATIONS', locations})
+    }, err => {
+      unsubscribeLocations()
+    })  
 
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
@@ -171,15 +180,6 @@ const Store = props => {
           dispatch({type: 'SET_RATINGS', ratings})
         }, err => {
           unsubscribeRating()
-        })  
-        const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
-          let locations = []
-          docs.forEach(doc => {
-            locations.push({...doc.data(), id:doc.id})
-          })
-          dispatch({type: 'SET_LOCATIONS', locations})
-        }, err => {
-          unsubscribeLocations()
         })  
         const unsubscribeStores = firebase.firestore().collection('stores').onSnapshot(docs => {
           let stores = []

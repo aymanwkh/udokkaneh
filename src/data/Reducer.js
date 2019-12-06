@@ -13,6 +13,7 @@ const Reducer = (state, action) => {
         quantity: 1,
         isDivided: action.pack.isDivided,
         byWeight: action.pack.byWeight,
+        orderLimit: action.pack.orderLimit,
         time: new Date()
       }
       newBasket = [...state.basket, pack]

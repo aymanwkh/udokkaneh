@@ -118,7 +118,17 @@ const labels = {
   duplicateForgetPassword: 'لقد ارسلت طلبا سابق بنسيان كلمة السر ولم يعالج بعد',
   quantity: 'الكمية',
   gram: 'غ',
-  weightedPricesNote: '*هذا سعر تقديري، السعر يتحدد حسب الوزن الفعلي'
+  weightedPricesNote: '*هذا سعر تقديري، السعر يتحدد حسب الوزن الفعلي',
+  ExceedPackLimit: 'لا يمكنك طلب كمية اكبر من هذا المنتج في الطلب الواحد',
+  urgentFixedFeesPercent: 4,
+  urgent: 'مستعجل',
+  withUrgentDeliveryNote: 'التوصيل خلال اقل من 12 ساعة',
+  urgentNoDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال اقل من 12 ساعة',
+  limitOverFlowNote: 'تجاوز لسقف الطلبات',
+  orderLimitHelp: 'سقف الطلبات هو القيمة القصوى لمجموع الطلبات الفعالة، وهذه القيمة تزداد بعد استلام كل طلب بمقدار عشرة دنانير الى ان تصل مائة دينار',
+  helpPageTitle: 'توضيح',
+  close: 'اغلاق',
+
 }
 
 export default labels

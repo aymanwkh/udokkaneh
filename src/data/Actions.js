@@ -86,7 +86,7 @@ export const cancelOrderRequest = order => {
   })
 }
 
-export const registerUser = async (mobile, password, name, randomColors) => {
+export const registerUser = async (mobile, password, name, locationId, randomColors) => {
   await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
   let colors = []
   for (var i = 0; i < 4; i++){
@@ -95,6 +95,7 @@ export const registerUser = async (mobile, password, name, randomColors) => {
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     name,
     mobile,
+    locationId,
     colors,
     time: new Date()
   })

@@ -46,6 +46,13 @@ const PackDetails = props => {
       if (state.basket.find(p => p.packId === pack.id)) {
         throw new Error('alreadyInBasket')
       }
+      if (state.customer){
+        const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f'].includes(o.status))
+        const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
+        if (activeOrdersTotal + pack.price > state.customer.orderLimit) {
+          throw new Error('limitOverFlow')
+        }
+      }
       dispatch({type: 'ADD_TO_BASKET', pack})
       showMessage(props, state.labels.addToBasketSuccess)
       props.f7router.back()  
