@@ -8,7 +8,7 @@ const Help = props => {
     <Page>
       <Navbar title={state.labels.helpPageTitle} backLink={state.labels.back} />
       <Block strong className="center">
-        <Icon color="red" material="report_problem"></Icon>
+        <Icon color="red" material="warning"></Icon>
         <p className="note">{state.labels.orderLimitHelp}</p>
       </Block>
     </Page>

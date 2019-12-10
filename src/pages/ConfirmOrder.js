@@ -53,7 +53,7 @@ const ConfirmOrder = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
-      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f'].includes(o.status))
+      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
       if (totalOrders + net > state.customer.orderLimit) {
         throw new Error('limitOverFlow')
@@ -63,8 +63,9 @@ const ConfirmOrder = props => {
           packId: p.packId,
           price: p.price,
           quantity: p.quantity,
+          grossPrice: p.price * p.quantity,
           purchasedQuantity: 0,
-          isFinished: false
+          status: 'n'
         }
       })
       const order = {

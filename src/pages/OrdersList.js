@@ -8,7 +8,7 @@ import { StoreContext } from '../data/Store';
 const OrdersList = props => {
   const { state } = useContext(StoreContext)
   const orders = useMemo(() => {
-    const orders = state.orders.filter(o => ['n', 'a', 's', 'f', 'd'].includes(o.status))
+    const orders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p', 'd'].includes(o.status))
     return orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
   }, [state.orders])
   return(

@@ -6,7 +6,7 @@ const labels = {
   name: 'اﻻسم',
   mobile: 'الموبايل',
   password: 'كلمة السر',
-  location: 'الموقع',
+  location: 'المنطقة',
   register: 'تسجيل',
   error: 'خطأ',
   not_found: 'ﻻ يوجد بيانات',
@@ -128,6 +128,7 @@ const labels = {
   orderLimitHelp: 'سقف الطلبات هو القيمة القصوى لمجموع الطلبات الفعالة، وهذه القيمة تزداد بعد استلام كل طلب بمقدار عشرة دنانير الى ان تصل مائة دينار',
   helpPageTitle: 'توضيح',
   close: 'اغلاق',
+  remain: 'المتبقي',
 
 }
 

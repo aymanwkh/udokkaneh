@@ -47,7 +47,7 @@ const PackDetails = props => {
         throw new Error('alreadyInBasket')
       }
       if (state.customer){
-        const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f'].includes(o.status))
+        const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
         const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
         if (activeOrdersTotal + pack.price > state.customer.orderLimit) {
           throw new Error('limitOverFlow')
@@ -114,9 +114,9 @@ const PackDetails = props => {
       }
       <Popover className="popover-list">
         <List>
-          {hasOtherOffers > 0 ? <ListItem link="#" popoverClose title={state.labels.otherOffers} onClick={() => props.f7router.navigate(`/otherOffers/${props.id}`)}/> : ''}
-          {ratings.length > 0 ? <ListItem link="#" popoverClose title={state.labels.ratings} onClick={() => props.f7router.navigate(`/ratings/${product.id}`)}/> : ''}
-          <ListItem link="#" popoverClose title={priceAlarmText} onClick={() => props.f7router.navigate(`/priceAlarm/${props.id}`)}/>
+          {hasOtherOffers > 0 ? <ListItem link={`/otherOffers/${props.id}`} popoverClose title={state.labels.otherOffers} /> : ''}
+          {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={state.labels.ratings} /> : ''}
+          <ListItem link={`/priceAlarm/${props.id}`} popoverClose title={priceAlarmText} />
           {state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? <ListItem link="#" popoverClose title={state.labels.haveNoPacks} onClick={() => handleFinishedPack()}/> : ''}
         </List>
       </Popover>

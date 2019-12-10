@@ -15,7 +15,7 @@ const Basket = props => {
   , [state.basket])
   const customerOrdersTotals = useMemo(() => {
     if (state.customer){
-      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f'].includes(o.status))
+      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       return activeOrders.reduce((sum, o) => sum + o.total, 0)
     } else {
       return 0
@@ -97,7 +97,7 @@ const Basket = props => {
       <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
         <Icon material="done"></Icon>
       </Fab>
-    : <Fab position="center-bottom" slot="fixed" text={state.labels.limitOverFlowNote} color="red" onClick={() => props.f7router.navigate('/help/orderLimit')}>
+    : <Fab position="center-bottom" slot="fixed" text={state.labels.limitOverFlowNote} color="red" href="/help/orderLimit">
         <Icon material="report_problem"></Icon>
       </Fab>
     }
