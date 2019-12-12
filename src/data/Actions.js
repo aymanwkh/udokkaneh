@@ -29,8 +29,8 @@ export const showError = (props, messageText) => {
   message.open();
 }
 
-export const quantityText = (quantity, labels) => {
-  return `${quantity < 1 ? quantity * 1000 : quantity} ${quantity < 1 ? labels.gram : ''}`
+export const quantityText = (quantity, labels, weight) => {
+  return `${quantity < 1 ? quantity * 1000 + ' ' + labels.gram : quantity} ${weight && weight !== quantity ? '(' + (weight < 1 ? weight * 1000 + ' ' + labels.gram : weight) + ')' : ''}`
 }
 
 export const rateProduct = (productId, value, comment) => {

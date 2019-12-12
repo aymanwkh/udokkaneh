@@ -14,8 +14,19 @@ const ConfirmOrder = props => {
   , [state.locations, state.customer])
   const [deliveryFees, setDeliveryFees] = useState(customerLocation ? customerLocation.deliveryFees : '')
   const [error, setError] = useState('')
-  const total = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
-  , [state.basket])
+  const basket = useMemo(() => state.basket.map(p => {
+    const packInfo = state.packs.find(pa => pa.id === p.packId)
+    return {
+      ...p,
+      price: packInfo.price,
+      oldPrice: p.price,
+      name: packInfo.name,
+      productId: packInfo.productId,
+      byWeight: packInfo.byWeight
+    }
+  }), [state.packs, state.basket])
+  const total = useMemo(() => basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
+  , [basket])
   const fixedFees = useMemo(() => parseInt((urgent ? state.labels.urgentFixedFeesPercent : state.labels.fixedFeesPercent) / 100 * total)
   , [total, urgent, state.labels])
   const discount = useMemo(() => {
@@ -32,8 +43,8 @@ const ConfirmOrder = props => {
   }, [state.orders, state.customer, fixedFees, state.labels.maxDiscount]) 
   const net = useMemo(() => Math.floor((total + fixedFees + deliveryFees - discount.value) / 50) * 50
   , [total, fixedFees, discount, deliveryFees])
-  const weightedPacks = useMemo(() => state.basket.filter(p => p.byWeight)
-  , [state.basket])
+  const weightedPacks = useMemo(() => basket.filter(p => p.byWeight)
+  , [basket])
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees(customerLocation ? (urgent ? customerLocation.urgentDeliveryFees : customerLocation.deliveryFees) : '')
@@ -58,18 +69,19 @@ const ConfirmOrder = props => {
       if (totalOrders + net > state.customer.orderLimit) {
         throw new Error('limitOverFlow')
       }
-      const basket = state.basket.map(p => {
+      let packs = basket.filter(p => p.price > 0)
+      packs = packs.map(p => {
         return {
           packId: p.packId,
           price: p.price,
           quantity: p.quantity,
-          grossPrice: p.price * p.quantity,
+          grossPrice: parseInt(p.price * p.quantity),
           purchasedQuantity: 0,
           status: 'n'
         }
       })
       const order = {
-        basket,
+        basket: packs,
         fixedFees,
         deliveryFees,
         discount,
@@ -91,17 +103,17 @@ const ConfirmOrder = props => {
       <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />
       <Block>
         <List>
-          {state.basket && state.basket.map(p => {
-            const packInfo = state.packs.find(pa => pa.id === p.packId)
-            const productInfo = state.products.find(pr => pr.id === packInfo.productId)
+          {basket && basket.map(p => {
+            const productInfo = state.products.find(pr => pr.id === p.productId)
             return(
               <ListItem
                 key={p.packId}
                 title={productInfo.name}
-                after={`${(p.price * p.quantity / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
-                footer={packInfo.name}
+                after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.byWeight ? '*' : ''}`}
+                footer={p.name}
               >
                 <Badge slot="title" color="green">{quantityText(p.quantity, state.labels)}</Badge>
+                {p.price === p.oldPrice ? '' : <Badge slot="footer" color="red">{p.price === 0 ? state.labels.unAvailableNote : state.labels.changePriceNote}</Badge>}
               </ListItem>
             )
           })}

@@ -129,7 +129,8 @@ const labels = {
   helpPageTitle: 'توضيح',
   close: 'اغلاق',
   remain: 'المتبقي',
-
+  changePriceNote: 'حدث تغير في السعر',
+  unAvailableNote: 'لم يعد متوفر'
 }
 
 export default labels

@@ -7,7 +7,7 @@ const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [submitVisible, SetSubmitVisible] = useState(true)
-  const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + (p.price * p.quantity), 0)
+  const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
   , [state.basket])
   const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time > p2.time ? 1 : -1)
   , [state.basket])
@@ -75,7 +75,7 @@ const Basket = props => {
             <ListItem
               title={productInfo.name}
               subtitle={packInfo.name}
-              footer={`${state.labels.price}: ${(p.price * p.quantity / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
+              footer={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
               key={p.packId}
             >
               <Badge slot="title" color="green">{quantityText(p.quantity, state.labels)}</Badge>
