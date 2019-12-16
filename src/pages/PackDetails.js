@@ -13,7 +13,7 @@ const PackDetails = props => {
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
   const hasOtherOffers = useMemo(() => {
-    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.category === product.category) && (p.isOffer || p.hasOffer))
+    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.categoryId === product.categoryId) && (p.isOffer || p.hasOffer))
     offers = offers.filter(p => p.id !== pack.id && p.price > 0)
     return offers.length
   }, [state.packs, pack, product, state.products]) 
@@ -89,9 +89,11 @@ const PackDetails = props => {
         </CardHeader>
         <CardContent>
           <img src={product.imageUrl} className="img-card" alt={product.name} />
+          <img src={product.imageUrl} className="img-card-small" alt={product.name} />
+
         </CardContent>
         <CardFooter>
-          <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.country).name}`}</p>
+          <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>
           <p><Link popoverOpen=".popover-list" iconMaterial="more_vert" /></p>
         </CardFooter>
       </Card>

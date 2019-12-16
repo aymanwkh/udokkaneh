@@ -55,7 +55,7 @@ const ForgetPassword = props => {
           value={mobile}
           errorMessage={mobileErrorMessage}
           errorMessageForce
-          onChange={(e) => setMobile(e.target.value)}
+          onChange={e => setMobile(e.target.value)}
           onInputClear={() => setMobile('')}
         />
       </List>

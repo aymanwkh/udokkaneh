@@ -150,7 +150,7 @@ const StoreOwner = props => {
           title={state.labels.location}
           smartSelect
           smartSelectParams={{
-            openIn: 'popup', 
+            openIn: "popup", 
             closeOnSelect: true, 
             searchbar: true, 
             searchbarPlaceholder: state.labels.search,

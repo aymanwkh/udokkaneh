@@ -6,7 +6,7 @@ import { StoreContext } from '../data/Store';
 const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
-    let packs = state.packs.filter(p => p.price > 0 && (props.id ? state.products.find(pr => pr.id === p.productId).category === props.id : true))
+    let packs = state.packs.filter(p => p.price > 0 && (props.id ? state.products.find(pr => pr.id === p.productId).categoryId === props.id : true))
     return packs.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, state.products, props.id]) 
   const [categoryPacks, setCategoryPacks] = useState(packs)
@@ -86,7 +86,7 @@ const Packs = props => {
                 title={productInfo.name}
                 after={(p.price / 1000).toFixed(3)}
                 subtitle={p.name}
-                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.country).name}`}
+                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
                 key={p.id}
               >
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />

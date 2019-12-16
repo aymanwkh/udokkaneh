@@ -94,7 +94,7 @@ const PriceAlarm = props => {
       }
       const priceAlarm = {
         packId: pack.id,
-        price: parseInt(price * 1000),
+        price: price * 1000,
         storeName,
         locationId,
         offerEnd
@@ -153,7 +153,7 @@ const PriceAlarm = props => {
             title={state.labels.location}
             smartSelect
             smartSelectParams={{
-              openIn: 'popup', 
+              openIn: "popup", 
               closeOnSelect: true, 
               searchbar: true, 
               searchbarPlaceholder: state.labels.search,

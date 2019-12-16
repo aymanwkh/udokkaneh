@@ -70,7 +70,7 @@ const InviteFriend = props => {
           value={name}
           errorMessage={nameErrorMessage}
           errorMessageForce
-          onChange={(e) => setName(e.target.value)}
+          onChange={e => setName(e.target.value)}
           onInputClear={() => setName('')}
         />
         <ListInput
@@ -82,7 +82,7 @@ const InviteFriend = props => {
           value={mobile}
           errorMessage={mobileErrorMessage}
           errorMessageForce
-          onChange={(e) => setMobile(e.target.value)}
+          onChange={e => setMobile(e.target.value)}
           onInputClear={() => setMobile('')}
         />
       </List>
