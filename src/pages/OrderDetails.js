@@ -31,7 +31,7 @@ const OrderDetails = props => {
       dispatch({type: 'LOAD_BASKET', basket: order.basket})
       props.f7router.navigate('/basket/')
 		} catch (err){
-      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+      setError(getMessage(props, err))
     }
   }
   const handleDelete = () => {
@@ -49,7 +49,7 @@ const OrderDetails = props => {
         }
         props.f7router.back()
       } catch(err) {
-        setError(getMessage(err, state.labels, props.f7route.route.component.name))
+        setError(getMessage(props, err))
       }
     })    
   }
@@ -74,7 +74,7 @@ const OrderDetails = props => {
                   footer={p.actualPrice && p.actualPrice !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
                   after={(p.grossPrice / 1000).toFixed(3)}
                 >
-                  <Badge slot="title" color="green">{quantityText(p.purchasedQuantity, state.labels, p.weight)}</Badge>
+                  <Badge slot="title" color="green">{quantityText(p.purchasedQuantity, p.weight)}</Badge>
                 </ListItem>
               )
             } else {
@@ -87,7 +87,7 @@ const OrderDetails = props => {
                   text={`${remainQuantity > 0 ? state.labels.remain + ': ' + String(remainQuantity) : ''}`}
                   after={(p.grossPrice / 1000).toFixed(3)}
                 >
-                  <Badge slot="title" color={['f', 'u', 'pu'].includes(p.status) ? 'green' : 'red'}>{quantityText(p.quantity, state.labels, p.weight)}</Badge>
+                  <Badge slot="title" color={['f', 'u', 'pu'].includes(p.status) ? 'green' : 'red'}>{quantityText(p.quantity, p.weight)}</Badge>
                 </ListItem>
               )
             }

@@ -1,12 +1,13 @@
 import firebase from './firebase'
+import labels from './labels'
 
-export const getMessage = (error, labels, page) => {
+export const getMessage = (props, error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
   if (!labels[errorCode]) {
     firebase.firestore().collection('logs').add({
       userId: firebase.auth().currentUser.uid,
       error,
-      page,
+      page: props.f7route.route.component.name,
       time: new Date()
     })
   }
@@ -29,7 +30,7 @@ export const showError = (props, messageText) => {
   message.open();
 }
 
-export const quantityText = (quantity, labels, weight) => {
+export const quantityText = (quantity, weight) => {
   return `${quantity < 1 ? quantity * 1000 + ' ' + labels.gram : quantity} ${weight && weight !== quantity ? '(' + (weight < 1 ? weight * 1000 + ' ' + labels.gram : weight) + ')' : ''}`
 }
 

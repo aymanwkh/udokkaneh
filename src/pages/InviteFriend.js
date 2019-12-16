@@ -53,7 +53,7 @@ const InviteFriend = props => {
       showMessage(props, state.labels.sendSuccess)
       props.f7router.navigate('/home/')
     } catch (err){
-      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+      setError(getMessage(props, err))
     }
   }
 

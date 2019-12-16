@@ -57,7 +57,7 @@ const PackDetails = props => {
       showMessage(props, state.labels.addToBasketSuccess)
       props.f7router.back()  
 		} catch (err){
-      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+      setError(getMessage(props, err))
     }
   }
   const handleFinishedPack = () => {
@@ -74,7 +74,7 @@ const PackDetails = props => {
         showMessage(props, state.labels.sendSuccess)
         props.f7router.back()
       } catch(err) {
-        setError(getMessage(err, state.labels, props.f7route.route.component.name))
+        setError(getMessage(props, err))
       }
     })
   }

@@ -94,7 +94,7 @@ const ConfirmOrder = props => {
       props.f7router.navigate('/home/', {reloadAll: true})
       dispatch({ type: 'CLEAR_BASKET' })
     } catch (err){
-      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+      setError(getMessage(props, err))
     }
   }
   if (!user) return <ReLogin />
@@ -112,7 +112,7 @@ const ConfirmOrder = props => {
                 after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.byWeight ? '*' : ''}`}
                 footer={p.name}
               >
-                <Badge slot="title" color="green">{quantityText(p.quantity, state.labels)}</Badge>
+                <Badge slot="title" color="green">{quantityText(p.quantity)}</Badge>
                 {p.price === p.oldPrice ? '' : <Badge slot="footer" color="red">{p.price === 0 ? state.labels.unAvailableNote : state.labels.changePriceNote}</Badge>}
               </ListItem>
             )

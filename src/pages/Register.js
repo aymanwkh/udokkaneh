@@ -70,7 +70,7 @@ const Register = props => {
       props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){
-      setError(getMessage(err, state.labels, props.f7route.route.component.name))
+      setError(getMessage(props, err))
     }
   }
 

@@ -47,7 +47,7 @@ const Basket = props => {
       }
       props.f7router.navigate('/confirmOrder/')
     } catch(err) {
-			setError(getMessage(err, state.labels, props.f7route.route.component.name))
+			setError(getMessage(props, err))
 		}
   }
   const handleIncrease = pack => {
@@ -60,7 +60,7 @@ const Basket = props => {
         throw new Error('limitOverFlow')
       }  
     } catch(err) {
-			setError(getMessage(err, state.labels, props.f7route.route.component.name))
+			setError(getMessage(props, err))
 		}
   }
   return(
@@ -78,7 +78,7 @@ const Basket = props => {
               footer={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
               key={p.packId}
             >
-              <Badge slot="title" color="green">{quantityText(p.quantity, state.labels)}</Badge>
+              <Badge slot="title" color="green">{quantityText(p.quantity)}</Badge>
               <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
               <Stepper 
                 slot="after" 
