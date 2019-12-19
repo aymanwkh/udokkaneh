@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Badge } from 'framework7-react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Badge, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { showError, getMessage, quantityText } from '../data/Actions'
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [submitVisible, SetSubmitVisible] = useState(true)
+  const [submitVisible, setSubmitVisible] = useState(true)
   const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
   , [state.basket])
   const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time > p2.time ? 1 : -1)
@@ -27,9 +27,9 @@ const Basket = props => {
   useEffect(() => {
     if (state.customer){
       if (customerOrdersTotals + totalPrice > state.customer.orderLimit){
-        SetSubmitVisible(false)
+        setSubmitVisible(false)
       } else {
-        SetSubmitVisible(true)
+        setSubmitVisible(true)
       }
     }
   }, [state.customer, customerOrdersTotals, totalPrice])
@@ -71,15 +71,25 @@ const Basket = props => {
         {packs && packs.map(p => {
           const packInfo = state.packs.find(pa => pa.id === p.packId)
           const productInfo = state.products.find(pr => pr.id === packInfo.productId)
+          const bonusProduct = packInfo.bonusPackId ? state.products.find(pr => pr.id === state.packs.find(pa => pa.id === packInfo.bonusPackId).productId) : ''
           return (
             <ListItem
               title={productInfo.name}
               subtitle={packInfo.name}
-              footer={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
+              text={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
               key={p.packId}
             >
               <Badge slot="title" color="green">{quantityText(p.quantity)}</Badge>
-              <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
+              <div slot="media" className="relative">
+                <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
+                {packInfo.offerQuantity > 1 ? <span slot="media" className="offer-quantity-list">{`× ${packInfo.offerQuantity}`}</span> : ''}
+                {packInfo.bonusPackId ? 
+                  <div>
+                    <img slot="media" src={bonusProduct.imageUrl} className="bonus-img-list" alt={bonusProduct.name} />
+                    {packInfo.bonusQuantity > 1 ? <span slot="media" className="bonus-quantity-list">{`× ${packInfo.bonusQuantity}`}</span> : ''}
+                  </div>
+                : ''}
+              </div>
               <Stepper 
                 slot="after" 
                 fill
@@ -87,6 +97,7 @@ const Basket = props => {
                 onStepperPlusClick={() => handleIncrease(p)}
                 onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
               />
+              <Button slot="footer">test</Button>
             </ListItem>
           )
         })}

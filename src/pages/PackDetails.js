@@ -12,6 +12,8 @@ const PackDetails = props => {
   , [state.packs, props.id])
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
+  const bonusProduct = useMemo(() => pack.bonusPackId ? state.products.find(p => p.id === state.packs.find(pa => pa.id === pack.bonusPackId).productId) : ''
+  , [pack, state.products, state.packs])
   const hasOtherOffers = useMemo(() => {
     let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.categoryId === product.categoryId) && (p.isOffer || p.hasOffer))
     offers = offers.filter(p => p.id !== pack.id && p.price > 0)
@@ -52,6 +54,11 @@ const PackDetails = props => {
         if (activeOrdersTotal + pack.price > state.customer.orderLimit) {
           throw new Error('limitOverFlow')
         }
+        const packInActiveOrders = activeOrders.filter(o => o.basket.find(p => p.packId === pack.id))
+        const quantityInActiveOrders = packInActiveOrders.reduce((sum, o) => sum + o.basket.find(p => p.packId === pack.id).quantity, 0)
+        if (pack.orderLimit && pack.orderLimit <= quantityInActiveOrders){
+          throw new Error('ExceedPackLimitActiveOrders')
+        }
       }
       dispatch({type: 'ADD_TO_BASKET', pack})
       showMessage(props, state.labels.addToBasketSuccess)
@@ -81,16 +88,24 @@ const PackDetails = props => {
 
   return (
     <Page>
-      <Navbar title={`${product.name} - ${pack.name}`} backLink={state.labels.back} />
+      <Navbar title={product.name} backLink={state.labels.back} />
       <Card>
-        <CardHeader className="card-title">
+        <CardHeader className="card-header">
           <p className="price">{(pack.price / 1000).toFixed(3)}</p>
           <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p>
         </CardHeader>
         <CardContent>
-          <img src={product.imageUrl} className="img-card" alt={product.name} />
-          <img src={product.imageUrl} className="img-card-small" alt={product.name} />
-
+          <div className="card-title">{pack.name}</div>
+          <div className="relative">
+            <img src={product.imageUrl} className="img-card" alt={product.name} />
+            {pack.offerQuantity > 1 ? <span className="offer-quantity-card">{`× ${pack.offerQuantity}`}</span> : ''}
+            {pack.bonusPackId ? 
+              <div>
+                <img src={bonusProduct.imageUrl} className="bonus-img-card" alt={bonusProduct.name} />
+                {pack.bonusQuantity > 1 ? <span className="bonus-quantity-card">{`× ${pack.bonusQuantity}`}</span> : ''}
+              </div>
+            : ''}
+          </div>
         </CardContent>
         <CardFooter>
           <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>

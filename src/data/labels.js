@@ -25,7 +25,7 @@ const labels = {
   orderDetails: 'تفاصيل الطلب',
   addToBasket: 'شراء',
   submit: 'موافق',
-  banner: 'تنافس + تشارك + تسوق ذكي = توفير',
+  banner: 'تنافس + تشارك = توفير',
   lessPrice: 'الابلاغ عن سعر أقل',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',
@@ -130,7 +130,9 @@ const labels = {
   close: 'اغلاق',
   remain: 'المتبقي',
   changePriceNote: 'حدث تغير في السعر',
-  unAvailableNote: 'لم يعد متوفر'
+  unAvailableNote: 'لم يعد متوفر',
+  minFees: 50,
+  ExceedPackLimitActiveOrders: 'لا يمكنك طلب كمية اكبر من هذا المنتج الى حين استلام طلبات سابقة لك',
 }
 
 export default labels

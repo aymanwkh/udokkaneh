@@ -53,8 +53,6 @@ const Store = props => {
     {id: 'pr', name: 'مرتجع جزئي'}
   ]
 
-  const localData = localStorage.getItem('basket');
-  const basket = localData ? JSON.parse(localData) : []
   const [user, setUser] = useState(null);
   const initState = {
     sections: [], 
@@ -63,7 +61,7 @@ const Store = props => {
     countries: [], 
     labels, 
     orderStatus, 
-    basket, 
+    basket: [], 
     trademarks: [], 
     orderByList, 
     stores: [], 
@@ -160,6 +158,9 @@ const Store = props => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
       if (user){
+        const localData = localStorage.getItem('basket');
+        const basket = localData ? JSON.parse(localData) : []
+        if (basket) dispatch({type: 'SET_BASKET', basket})  
         const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
           let orders = []
           docs.forEach(doc => {

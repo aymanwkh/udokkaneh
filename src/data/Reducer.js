@@ -67,6 +67,8 @@ const Reducer = (state, action) => {
     case 'LOAD_BASKET':
       localStorage.setItem('basket', JSON.stringify(action.basket));
       return {...state, basket: action.basket}
+    case 'SET_BASKET':
+      return {...state, basket: action.basket}
     case 'SET_CUSTOMER':
       return {
         ...state,

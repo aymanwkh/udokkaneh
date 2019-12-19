@@ -11,10 +11,6 @@ const OrderDetails = props => {
   const [error, setError] = useState('')
   const order = useMemo(() => state.orders.find(order => order.id === props.id)
   , [state.orders, props.id])
-  const netPrice = useMemo(() => {
-    const net = order.total + order.fixedFees + order.deliveryFees - order.discount.value
-    return Math.floor(net / 50) * 50
-  }, [order])
   useEffect(() => {
     if (error) {
       showError(props, error)
@@ -62,7 +58,7 @@ const OrderDetails = props => {
         {order.basket && order.basket.map(p => {
             const packInfo = state.packs.find(pa => pa.id === p.packId)
             const productInfo = state.products.find(pr => pr.id === packInfo.productId)
-            const remainQuantity = p.status === 'n' || p.status === 'p' ? p.quantity - p.purchasedQuantity : 0
+            const remaining = p.status === 'n' || p.status === 'p' ? p.quantity - p.purchased : 0
             if (['f', 'p', 'd'].includes(order.status)) {
               const storeName = p.storeId ? (p.storeId === 'm' ? state.labels.multipleStores : state.stores.find(s => s.id === p.storeId).name) : ''
               return (
@@ -71,10 +67,10 @@ const OrderDetails = props => {
                   title={productInfo.name}
                   subtitle={packInfo.name}
                   text={storeName}
-                  footer={p.actualPrice && p.actualPrice !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
-                  after={(p.grossPrice / 1000).toFixed(3)}
+                  footer={p.actual && p.actual !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
+                  after={(p.gross / 1000).toFixed(3)}
                 >
-                  <Badge slot="title" color="green">{quantityText(p.purchasedQuantity, p.weight)}</Badge>
+                  <Badge slot="title" color="green">{quantityText(p.purchased, p.weight)}</Badge>
                 </ListItem>
               )
             } else {
@@ -83,9 +79,9 @@ const OrderDetails = props => {
                   key={p.packId} 
                   title={productInfo.name}
                   subtitle={packInfo.name}
-                  footer={p.actualPrice && p.actualPrice !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
-                  text={`${remainQuantity > 0 ? state.labels.remain + ': ' + String(remainQuantity) : ''}`}
-                  after={(p.grossPrice / 1000).toFixed(3)}
+                  footer={p.actual && p.actual !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
+                  text={`${remaining > 0 ? state.labels.remain + ': ' + String(remaining) : ''}`}
+                  after={(p.gross / 1000).toFixed(3)}
                 >
                   <Badge slot="title" color={['f', 'u', 'pu'].includes(p.status) ? 'green' : 'red'}>{quantityText(p.quantity, p.weight)}</Badge>
                 </ListItem>
@@ -98,7 +94,7 @@ const OrderDetails = props => {
             after={(order.total / 1000).toFixed(3)} 
           />
           <ListItem 
-            title={state.labels.fixedFees} 
+            title={state.labels.fixedFeesTitle} 
             className="fees" 
             after={(order.fixedFees / 1000).toFixed(3)} 
           />
@@ -109,17 +105,17 @@ const OrderDetails = props => {
               after={(order.deliveryFees / 1000).toFixed(3)} 
             /> 
           : ''}
-          {order.discount.value ? 
+          {order.discount.value + order.fraction > 0? 
             <ListItem 
               title={state.labels.discount} 
               className="discount" 
-              after={((order.discount.value) / 1000).toFixed(3)} 
+              after={((order.discount.value + order.fraction) / 1000).toFixed(3)} 
             /> 
           : ''}
           <ListItem 
             title={state.labels.net} 
             className="net" 
-            after={(netPrice / 1000).toFixed(3)} 
+            after={((order.total + order.fixedFees + order.deliveryFees - order.discount.value - order.fraction) / 1000).toFixed(3)} 
           />
         </List>
       </Block>

@@ -27,7 +27,7 @@ const ConfirmOrder = props => {
   }), [state.packs, state.basket])
   const total = useMemo(() => basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
   , [basket])
-  const fixedFees = useMemo(() => parseInt((urgent ? state.labels.urgentFixedFeesPercent : state.labels.fixedFeesPercent) / 100 * total)
+  const fixedFees = useMemo(() => Math.max(parseInt((urgent ? state.labels.urgentFixedFeesPercent : state.labels.fixedFeesPercent) / 100 * total), state.labels.minFees)
   , [total, urgent, state.labels])
   const discount = useMemo(() => {
     let discount = {value: 0, type: ''}
@@ -41,8 +41,7 @@ const ConfirmOrder = props => {
     }
     return discount
   }, [state.orders, state.customer, fixedFees, state.labels.maxDiscount]) 
-  const net = useMemo(() => Math.floor((total + fixedFees + deliveryFees - discount.value) / 50) * 50
-  , [total, fixedFees, discount, deliveryFees])
+  const fraction = (total + fixedFees - discount.value) - Math.floor((total + fixedFees - discount.value) / 50) * 50
   const weightedPacks = useMemo(() => basket.filter(p => p.byWeight)
   , [basket])
   useEffect(() => {
@@ -66,7 +65,7 @@ const ConfirmOrder = props => {
       }
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
-      if (totalOrders + net > state.customer.orderLimit) {
+      if (totalOrders + total > state.customer.orderLimit) {
         throw new Error('limitOverFlow')
       }
       let packs = basket.filter(p => p.price > 0)
@@ -75,8 +74,8 @@ const ConfirmOrder = props => {
           packId: p.packId,
           price: p.price,
           quantity: p.quantity,
-          grossPrice: parseInt(p.price * p.quantity),
-          purchasedQuantity: 0,
+          gross: parseInt(p.price * p.quantity),
+          purchased: 0,
           status: 'n'
         }
       })
@@ -87,6 +86,7 @@ const ConfirmOrder = props => {
         discount,
         withDelivery,
         urgent,
+        fraction,
         total
       }
       await confirmOrder(order)
@@ -123,7 +123,7 @@ const ConfirmOrder = props => {
             after={(total / 1000).toFixed(3)} 
           />
           <ListItem 
-            title={state.labels.fixedFees} 
+            title={state.labels.fixedFeesTitle} 
             className="fees" 
             after={(fixedFees / 1000).toFixed(3)} 
           />
@@ -134,17 +134,17 @@ const ConfirmOrder = props => {
               after={(deliveryFees / 1000).toFixed(3)} 
             /> 
           : ''}
-          {discount.value > 0 ? 
+          {discount.value + fraction > 0 ? 
             <ListItem 
               title={state.labels.discount}
               className="discount" 
-              after={(discount.value / 1000).toFixed(3)} 
+              after={((discount.value + fraction)/ 1000).toFixed(3)} 
             /> 
           : ''}
           <ListItem 
             title={state.labels.net} 
             className="net" 
-            after={(net / 1000).toFixed(3)} 
+            after={((total + fixedFees + deliveryFees - discount.value - fraction) / 1000).toFixed(3)} 
           />
           <ListItem>
             <span>{state.labels.withDelivery}</span>

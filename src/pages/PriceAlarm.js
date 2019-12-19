@@ -112,7 +112,7 @@ const PriceAlarm = props => {
     <Page>
       <Navbar title={priceAlarmText} backLink={state.labels.back} />
       <Card>
-        <CardHeader className="card-title">
+        <CardHeader className="card-header">
           <p>{`${product.name} ${pack.name}`}</p>
           <p>{(pack.price / 1000).toFixed(3)}</p>
         </CardHeader>
