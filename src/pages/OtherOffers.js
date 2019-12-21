@@ -15,7 +15,7 @@ const OtherOffers = props => {
   }, [state.packs, pack, state.products]) 
   return(
     <Page>
-      <Navbar title={state.labels.offers} backLink={state.labels.back} />
+      <Navbar title={state.labels.offers} backLink={state.labels.back} className="page-title" />
       <Block>
         <List mediaList>
           {offers && offers.map(p => {

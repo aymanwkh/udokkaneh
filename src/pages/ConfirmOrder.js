@@ -27,7 +27,7 @@ const ConfirmOrder = props => {
   }), [state.packs, state.basket])
   const total = useMemo(() => basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
   , [basket])
-  const fixedFees = useMemo(() => Math.max(parseInt((urgent ? state.labels.urgentFixedFeesPercent : state.labels.fixedFeesPercent) / 100 * total), state.labels.minFees)
+  const fixedFees = useMemo(() => Math.ceil(((urgent ? 1.5 : 1) * state.labels.fixedFees / 100 * total) / 50) * 50
   , [total, urgent, state.labels])
   const discount = useMemo(() => {
     let discount = {value: 0, type: ''}
@@ -41,12 +41,13 @@ const ConfirmOrder = props => {
     }
     return discount
   }, [state.orders, state.customer, fixedFees, state.labels.maxDiscount]) 
-  const fraction = (total + fixedFees - discount.value) - Math.floor((total + fixedFees - discount.value) / 50) * 50
+  const fraction = total - Math.floor(total / 50) * 50
+  discount.value = discount.value + fraction
   const weightedPacks = useMemo(() => basket.filter(p => p.byWeight)
   , [basket])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees(customerLocation ? (urgent ? customerLocation.urgentDeliveryFees : customerLocation.deliveryFees) : '')
+      setDeliveryFees(customerLocation ? (urgent ? 1.5 : 1) * customerLocation.deliveryFees : '')
     } else {
       setDeliveryFees('')
     }
@@ -86,7 +87,6 @@ const ConfirmOrder = props => {
         discount,
         withDelivery,
         urgent,
-        fraction,
         total
       }
       await confirmOrder(order)
@@ -100,7 +100,7 @@ const ConfirmOrder = props => {
   if (!user) return <ReLogin />
   return (
     <Page>
-      <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />
+      <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} className="page-title" />
       <Block>
         <List>
           {basket && basket.map(p => {
@@ -113,7 +113,7 @@ const ConfirmOrder = props => {
                 footer={p.name}
               >
                 <Badge slot="title" color="green">{quantityText(p.quantity)}</Badge>
-                {p.price === p.oldPrice ? '' : <Badge slot="footer" color="red">{p.price === 0 ? state.labels.unAvailableNote : state.labels.changePriceNote}</Badge>}
+                {p.price === p.oldPrice ? '' : <Badge slot="after" color="red">{p.price === 0 ? state.labels.unAvailableNote : state.labels.changePriceNote}</Badge>}
               </ListItem>
             )
           })}

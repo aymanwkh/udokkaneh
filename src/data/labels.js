@@ -43,10 +43,10 @@ const labels = {
   enterName: 'الرجاء ادخال اﻻسم',
   namePlaceholder: 'من 4-50 حرف',
   invalidName: 'اﻻسم غير صحيح',
-  fixedFeesPercent: 2.5,
+  fixedFees: 2.5,
   maxDiscount: 500,
   total: 'المجموع',
-  fixedFees: 'رسوم الخدمة',
+  fixedFeesTitle: 'رسوم الخدمة',
   discount: 'الخصم',
   net: 'الصافي',
   withDelivery: 'خدمة التوصيل',
@@ -120,7 +120,6 @@ const labels = {
   gram: 'غ',
   weightedPricesNote: '*هذا سعر تقديري، السعر يتحدد حسب الوزن الفعلي',
   ExceedPackLimit: 'لا يمكنك طلب كمية اكبر من هذا المنتج في الطلب الواحد',
-  urgentFixedFeesPercent: 3,
   urgent: 'مستعجل',
   withUrgentDeliveryNote: 'التوصيل خلال 6-12 ساعة',
   urgentNoDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 6-12 ساعة',
@@ -129,10 +128,10 @@ const labels = {
   helpPageTitle: 'توضيح',
   close: 'اغلاق',
   remain: 'المتبقي',
-  changePriceNote: 'حدث تغير في السعر',
+  changePriceNote: 'تغير السعر',
   unAvailableNote: 'لم يعد متوفر',
-  minFees: 50,
   ExceedPackLimitActiveOrders: 'لا يمكنك طلب كمية اكبر من هذا المنتج الى حين استلام طلبات سابقة لك',
+  overPricedNote: 'بسبب ارتفاع الاسعار'
 }
 
 export default labels

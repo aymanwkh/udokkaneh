@@ -31,7 +31,7 @@ const RateProduct = props => {
 
   return(
     <Page>
-      <Navbar title={state.labels.ratingTitle} backLink={state.labels.back} />
+      <Navbar title={state.labels.ratingTitle} backLink={state.labels.back} className="page-title" />
       <List form>
         <ListItem
           title={state.labels.ratingValue}

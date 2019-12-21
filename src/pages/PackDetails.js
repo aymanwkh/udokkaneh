@@ -88,11 +88,11 @@ const PackDetails = props => {
 
   return (
     <Page>
-      <Navbar title={product.name} backLink={state.labels.back} />
+      <Navbar title={product.name} backLink={state.labels.back} className="page-title" />
       <Card>
         <CardHeader className="card-header">
           <p className="price">{(pack.price / 1000).toFixed(3)}</p>
-          <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p>
+          {product.trademarkId ? <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p> : ''}
         </CardHeader>
         <CardContent>
           <div className="card-title">{pack.name}</div>
@@ -115,7 +115,7 @@ const PackDetails = props => {
       <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
         <Icon material="add"></Icon>
       </Fab>  
-      {!user || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' :
+      {!user || !product.trademarkId || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' :
         <Fab position="left-top" slot="fixed" color="blue" className="top-fab">
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>

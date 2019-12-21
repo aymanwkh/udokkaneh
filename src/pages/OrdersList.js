@@ -8,12 +8,12 @@ import { StoreContext } from '../data/Store';
 const OrdersList = props => {
   const { state } = useContext(StoreContext)
   const orders = useMemo(() => {
-    const orders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p', 'd'].includes(o.status))
+    const orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd'].includes(o.status))
     return orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
   }, [state.orders])
   return(
     <Page>
-      <Navbar title={state.labels.myOrders} backLink={state.labels.back} />
+      <Navbar title={state.labels.myOrders} backLink={state.labels.back} className="page-title" />
       <Block>
           <List mediaList>
             {orders && orders.map(o =>

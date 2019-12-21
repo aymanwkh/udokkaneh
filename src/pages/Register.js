@@ -76,7 +76,7 @@ const Register = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.registerTitle} backLink={state.labels.back} />
+      <Navbar title={state.labels.registerTitle} backLink={state.labels.back} className="page-title" />
       <List form>
         <ListInput
           label={state.labels.name}

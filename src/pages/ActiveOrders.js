@@ -15,7 +15,7 @@ const ActiveOrders = props => {
   
   return(
     <Page>
-      <Navbar title="Orders" backLink={state.labels.back} />
+      <Navbar title="Orders" backLink={state.labels.back} className="page-title" />
       <Block>
           <List mediaList>
             {orders && orders.map(o =>

@@ -34,6 +34,14 @@ export const quantityText = (quantity, weight) => {
   return `${quantity < 1 ? quantity * 1000 + ' ' + labels.gram : quantity} ${weight && weight !== quantity ? '(' + (weight < 1 ? weight * 1000 + ' ' + labels.gram : weight) + ')' : ''}`
 }
 
+export const addQuantity = (q1, q2, q3 = 0) => {
+  if (parseInt(q1) !== q1 || parseInt(q2) !== q2 || parseInt(q3) !== q3) {
+    return parseInt((q1 * 1000) + (q2 * 1000) + (q3 * 1000)) / 1000
+  } else {
+    return q1 + q2 + q3
+  }
+}
+
 export const rateProduct = (productId, value, comment) => {
   const rating = {
     productId,

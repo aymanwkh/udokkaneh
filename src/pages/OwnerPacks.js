@@ -15,7 +15,7 @@ const OwnerPacks = props => {
   , [state.stores, props.id])
   return(
     <Page>
-      <Navbar title={`${store.name}`} backLink={state.labels.back}>
+      <Navbar title={`${store.name}`} backLink={state.labels.back} className="page-title">
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>

@@ -110,7 +110,7 @@ const PriceAlarm = props => {
   if (!user) return <ReLogin />
   return (
     <Page>
-      <Navbar title={priceAlarmText} backLink={state.labels.back} />
+      <Navbar title={priceAlarmText} backLink={state.labels.back} className="page-title" />
       <Card>
         <CardHeader className="card-header">
           <p>{`${product.name} ${pack.name}`}</p>

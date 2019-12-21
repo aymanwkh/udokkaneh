@@ -14,7 +14,7 @@ const Ratings = props => {
 
   return(
     <Page>
-      <Navbar title={state.labels.ratings} backLink={state.labels.back} />
+      <Navbar title={state.labels.ratings} backLink={state.labels.back} className="page-title" />
       <Block>
         <List mediaList>
           {ratings && ratings.map(r => 
