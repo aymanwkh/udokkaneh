@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Page, Navbar, Block, List, ListItem, Badge } from 'framework7-react';
+import { Page, Navbar, List, ListItem, Badge } from 'framework7-react';
 import { StoreContext } from '../data/Store';
 import { logout } from '../data/Actions'
 
