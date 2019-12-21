@@ -69,11 +69,10 @@ const OrderDetails = props => {
                   title={productInfo.name}
                   subtitle={packInfo.name}
                   text={storeName}
-                  footer={`${changePriceNote}
-                        ${unAvailableNote}`}
+                  footer={`${changePriceNote} ${unAvailableNote}`}
                   after={(p.gross / 1000).toFixed(3)}
                 >
-                  {addQuantity(p.purchased, -1 * (p.returned ? p.returned : 0)) > 0 ? <Badge slot="title" color="green">{quantityText(addQuantity(p.purchased, -1 * (p.returned ? p.returned : 0)), addQuantity(p.weight, -1 * (p.returned ? p.returned : 0)))}</Badge> : ''}
+                  {addQuantity(p.purchased, -1 * (p.returned ?? 0)) > 0 ? <Badge slot="title" color="green">{quantityText(addQuantity(p.purchased, -1 * (p.returned ?? 0)), addQuantity(p.weight, -1 * (p.returned ?? 0)))}</Badge> : ''}
                 </ListItem>
               )
             } else {
@@ -108,7 +107,7 @@ const OrderDetails = props => {
               after={(order.deliveryFees / 1000).toFixed(3)} 
             /> 
           : ''}
-          {order.discount.value + order.fraction > 0? 
+          {order.discount.value + order.fraction > 0 ? 
             <ListItem 
               title={state.labels.discount} 
               className="discount" 

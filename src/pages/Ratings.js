@@ -17,7 +17,7 @@ const Ratings = props => {
       <Navbar title={state.labels.ratings} backLink={state.labels.back} className="page-title" />
       <Block>
         <List mediaList>
-          {ratings && ratings.map(r => 
+          {ratings.map(r => 
             <ListItem
               title={`${r.userName}: ${state.ratingValues.find(v => v.id === r.value).name}`}
               after={moment(r.time.toDate()).fromNow()}

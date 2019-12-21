@@ -134,7 +134,14 @@ const PackDetails = props => {
           {hasOtherOffers > 0 ? <ListItem link={`/otherOffers/${props.id}`} popoverClose title={state.labels.otherOffers} /> : ''}
           {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={state.labels.ratings} /> : ''}
           <ListItem link={`/priceAlarm/${props.id}`} popoverClose title={priceAlarmText} />
-          {state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? <ListItem link="#" popoverClose title={state.labels.haveNoPacks} onClick={() => handleFinishedPack()}/> : ''}
+          {state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? 
+            <ListItem 
+              link="#" 
+              popoverClose 
+              title={state.labels.haveNoPacks} 
+              onClick={() => handleFinishedPack()}
+            /> 
+          : ''}
         </List>
       </Popover>
 

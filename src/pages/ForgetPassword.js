@@ -60,7 +60,9 @@ const ForgetPassword = props => {
         />
       </List>
       <List>
-      {!mobile || mobileErrorMessage ? '' : <Button large onClick={() => handleForgetPassword()}>{state.labels.send}</Button>}
+      {!mobile || mobileErrorMessage ? '' : 
+        <Button large onClick={() => handleForgetPassword()}>{state.labels.send}</Button>
+      }
       </List>
     </Page>
   )

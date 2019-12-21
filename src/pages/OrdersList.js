@@ -16,7 +16,7 @@ const OrdersList = props => {
       <Navbar title={state.labels.myOrders} backLink={state.labels.back} className="page-title" />
       <Block>
           <List mediaList>
-            {orders && orders.map(o =>
+            {orders.map(o =>
               <ListItem
                 link={`/order/${o.id}`}
                 title={moment(o.time.toDate()).fromNow()}

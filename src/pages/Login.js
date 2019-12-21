@@ -81,7 +81,9 @@ const Login = props => {
           onInputClear={() => setPassword('')}
         />
       </List>
-      {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : <Button large onClick={() => handleLogin()}>{state.labels.login}</Button>}
+      {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : 
+        <Button large onClick={() => handleLogin()}>{state.labels.login}</Button>
+      }
       <Toolbar bottom>
         <Link href="/register/">{state.labels.newUser}</Link>
         <Link href="/forgetPassword/">{state.labels.forgetPassword}</Link>

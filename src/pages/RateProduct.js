@@ -47,7 +47,14 @@ const RateProduct = props => {
           onInputClear={() => setComment('')}
         />
       </List>
-      {!comment ? '' : <Button large onClick={() => handleRate()}>{state.labels.send}</Button>}
+      {!comment ? '' : 
+        <Button 
+          large 
+          onClick={() => handleRate()}
+        >
+          {state.labels.send}
+        </Button>
+      }
       <h3 className="center">
         {state.labels.commentNote}
       </h3>

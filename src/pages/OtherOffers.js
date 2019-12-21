@@ -18,7 +18,7 @@ const OtherOffers = props => {
       <Navbar title={state.labels.offers} backLink={state.labels.back} className="page-title" />
       <Block>
         <List mediaList>
-          {offers && offers.map(p => {
+          {offers.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)
             return (
               <ListItem
@@ -32,7 +32,14 @@ const OtherOffers = props => {
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                {state.customer.storeId && state.storePacks.find(pa => pa.storeId === state.customer.storeId) ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(state.storePacks.find(pa => pa.storeId === state.customer.storeId).price / 1000).toFixed(3)} </Badge> : ''}
+                {state.customer.storeId && state.storePacks.find(pa => pa.storeId === state.customer.storeId) ? 
+                  <Badge 
+                    slot="footer" 
+                    color='green'
+                  > 
+                    {state.labels.myPrice} {(state.storePacks.find(pa => pa.storeId === state.customer.storeId).price / 1000).toFixed(3)} 
+                  </Badge> 
+                : ''}
               </ListItem>
             )
           })}

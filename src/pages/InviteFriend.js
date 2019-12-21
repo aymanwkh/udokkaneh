@@ -87,7 +87,9 @@ const InviteFriend = props => {
         />
       </List>
       <List>
-      {!name || !mobile || nameErrorMessage || mobileErrorMessage ? '' : <Button onClick={() => handleSend()}>{state.labels.send}</Button>}
+      {!name || !mobile || nameErrorMessage || mobileErrorMessage ? '' : 
+        <Button onClick={() => handleSend()}>{state.labels.send}</Button>
+      }
       </List>
     </Page>
   )

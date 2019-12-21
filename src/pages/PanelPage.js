@@ -12,15 +12,22 @@ const PanelPage = props => {
       dispatch({type: 'CLEAR_BASKET'})
     })
   }
-  const login_logout = user ? <ListItem link="#" onClick={() => handleLogout()} title={state.labels.logout} /> : <ListItem link="/panelLogin/" title={state.labels.loginTitle} />
   return(
     <Page>
       <Navbar title={state.labels.mainPanelTitle} />
-      <Block strong>
-        <p>{user ? user.displayName : ''}</p>
-      </Block>
       <List>
-        {login_logout}
+        {user ?
+          <ListItem 
+            link="#" 
+            title={state.labels.logout} 
+            onClick={() => handleLogout()} 
+          />
+        : 
+          <ListItem 
+            link="/panelLogin/" 
+            title={state.labels.loginTitle} 
+          />
+        }
         {user ? 
           <ListItem 
             link="/basket/"

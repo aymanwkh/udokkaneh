@@ -11,7 +11,13 @@ const Sections = props => {
     <Block>
       {sections.map(s => {
         return (
-          <Button large fill className="sections" color={state.randomColors[i++ % 10].name} href={`/section/${s.id}`} key={s.id}>
+          <Button 
+            href={`/section/${s.id}`} key={s.id}
+            large 
+            fill 
+            className="sections" 
+            color={state.randomColors[i++ % 10].name} 
+          >
             <span className="button-label">{s.name}</span>
           </Button>
         )
