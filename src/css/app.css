@@ -185,11 +185,6 @@
   color: blue;
 }
 
-.page-title {
-  font-size: 1rem;
-  color: blue;
-}
-
 .list-line1 {
   font-size: 0.8rem;
   color:blue;
@@ -217,4 +212,9 @@
 
 .item-title-row {
   font-size: 1rem;
+}
+
+.navbar-inner {
+  font-size: 1rem;
+  color: blue;
 }

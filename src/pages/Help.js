@@ -6,7 +6,7 @@ const Help = props => {
   const { state } = useContext(StoreContext)
   return (
     <Page>
-      <Navbar title={state.labels.helpPageTitle} backLink={state.labels.back} className="page-title" />
+      <Navbar title={state.labels.helpPageTitle} backLink={state.labels.back} />
       <Block strong className="center">
         <Icon color="red" material="warning"></Icon>
         <p className="note">{state.labels.orderLimitHelp}</p>

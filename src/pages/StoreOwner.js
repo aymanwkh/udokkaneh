@@ -96,7 +96,7 @@ const StoreOwner = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.registerStoreOwnerTitle} backLink={state.labels.back} className="page-title" />
+      <Navbar title={state.labels.registerStoreOwnerTitle} backLink={state.labels.back} />
       <List form>
         <ListInput
           label={state.labels.name}

@@ -40,7 +40,7 @@ const Packs = props => {
   }
   return(
     <Page>
-      <Navbar title={category?.name ?? state.labels.allProducts} backLink={state.labels.back} className="page-title">
+      <Navbar title={category?.name ?? state.labels.allProducts} backLink={state.labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>

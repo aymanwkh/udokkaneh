@@ -13,7 +13,7 @@ const OrdersList = props => {
   }, [state.orders])
   return(
     <Page>
-      <Navbar title={state.labels.myOrders} backLink={state.labels.back} className="page-title" />
+      <Navbar title={state.labels.myOrders} backLink={state.labels.back} />
       <Block>
           <List mediaList>
             {orders.length === 0 ? 

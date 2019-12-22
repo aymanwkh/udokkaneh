@@ -15,7 +15,7 @@ const ActiveOrders = props => {
   
   return(
     <Page>
-      <Navbar title="Orders" backLink={state.labels.back} className="page-title" />
+      <Navbar title="Orders" backLink={state.labels.back} />
       <Block>
           <List mediaList>
             {orders.length === 0 ? 

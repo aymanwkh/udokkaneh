@@ -65,7 +65,7 @@ const Basket = props => {
   }
   return(
     <Page>
-    <Navbar title={state.labels.basket} backLink={state.labels.back} className="page-title" />
+    <Navbar title={state.labels.basket} backLink={state.labels.back} />
     <Block>
       <List mediaList>
         {packs && packs.map(p => {

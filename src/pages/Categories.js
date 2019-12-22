@@ -13,7 +13,7 @@ const Categories = props => {
   let i = 0
   return(
     <Page>
-      <Navbar title={section.name} backLink={state.labels.back} className="page-title" />
+      <Navbar title={section.name} backLink={state.labels.back} />
       <Block>
         {categories && categories.map(c => {
           return (

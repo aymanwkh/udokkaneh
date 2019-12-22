@@ -6,7 +6,7 @@ const ContactUs = props => {
   const { state } = useContext(StoreContext)
   return(
     <Page>
-      <Navbar title={state.labels.contactUsTitle} backLink={state.labels.back} className="page-title" />
+      <Navbar title={state.labels.contactUsTitle} backLink={state.labels.back} />
       <Block>
         <h3 className="center">
           {state.labels.contactUsText} <br/>
