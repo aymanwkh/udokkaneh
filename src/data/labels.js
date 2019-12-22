@@ -9,7 +9,7 @@ const labels = {
   location: 'المنطقة',
   register: 'تسجيل',
   error: 'خطأ',
-  not_found: 'ﻻ يوجد بيانات',
+  noData: 'ﻻ يوجد بيانات',
   search: 'بحث',
   open_order_found: 'هناك طلبية سابقة لم يتم استلامها',
   auth_user_not_found: 'الرجاء التأكد من رقم الموبايل وكلمة المرور',

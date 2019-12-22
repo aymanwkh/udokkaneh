@@ -25,21 +25,19 @@ const OtherOffers = props => {
                 link={`/pack/${p.id}`}
                 title={productInfo.name}
                 after={(p.price / 1000).toFixed(3)}
-                subtitle={p.name}
-                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
                 key={p.id}
+                className= "list-title"
               >
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 {state.customer.storeId && state.storePacks.find(pa => pa.storeId === state.customer.storeId) ? 
-                  <Badge 
-                    slot="footer" 
-                    color='green'
-                  > 
+                  <Badge slot="footer" color='green'> 
                     {state.labels.myPrice} {(state.storePacks.find(pa => pa.storeId === state.customer.storeId).price / 1000).toFixed(3)} 
                   </Badge> 
                 : ''}
+                <div className="list-line1">{p.name}</div>
+                <div className="list-line2">{`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}</div>
               </ListItem>
             )
           })}

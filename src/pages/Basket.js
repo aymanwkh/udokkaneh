@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Badge, Button } from 'framework7-react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { showError, getMessage, quantityText } from '../data/Actions'
 
@@ -75,11 +75,9 @@ const Basket = props => {
           return (
             <ListItem
               title={productInfo.name}
-              subtitle={packInfo.name}
-              text={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
               key={p.packId}
+              className= "list-title"
             >
-              <Badge slot="title" color="green">{quantityText(p.quantity)}</Badge>
               <div slot="media" className="relative">
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
                 {packInfo.offerQuantity > 1 ? <span slot="media" className="offer-quantity-list">{`× ${packInfo.offerQuantity}`}</span> : ''}
@@ -90,6 +88,9 @@ const Basket = props => {
                   </div>
                 : ''}
               </div>
+              <div className="list-line1">{packInfo.name}</div>
+              <div className="list-line2">{`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}</div>
+              <div className="list-line3">{`${state.labels.quantity}: ${quantityText(p.quantity)}`}</div>
               <Stepper 
                 slot="after" 
                 fill

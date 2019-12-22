@@ -17,15 +17,19 @@ const Ratings = props => {
       <Navbar title={state.labels.ratings} backLink={state.labels.back} className="page-title" />
       <Block>
         <List mediaList>
-          {ratings.map(r => 
-            <ListItem
-              title={`${r.userName}: ${state.ratingValues.find(v => v.id === r.value).name}`}
-              after={moment(r.time.toDate()).fromNow()}
-              text={r.comment}
-              key={r.id}
-            />
-          )}
-          {ratings.length === 0 ? <ListItem title={state.labels.not_found} /> : ''}
+          {ratings.length === 0 ? 
+            <ListItem title={state.labels.noData} /> 
+          : ratings.map(r => 
+              <ListItem
+                title={`${r.userName}: ${state.ratingValues.find(v => v.id === r.value).name}`}
+                after={moment(r.time.toDate()).fromNow()}
+                key={r.id}
+                className= "list-title"
+              >
+                <div className="list-line1">{r.comment}</div>
+              </ListItem>
+            )
+          }
         </List>
       </Block>
       <Toolbar bottom>

@@ -1,9 +1,9 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Badge, FabButton, FabButtons } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, FabButton, FabButtons } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store'
-import { cancelOrder, cancelOrderRequest, showMessage, showError, getMessage, quantityText, addQuantity } from '../data/Actions'
+import { cancelOrder, cancelOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/Actions'
 
 
 const OrderDetails = props => {
@@ -55,40 +55,26 @@ const OrderDetails = props => {
       <Navbar title={state.labels.orderDetails} backLink={state.labels.back} className="page-title" />
       <Block>
         <List mediaList>
-          {order.basket && order.basket.map(p => {
+          {order.basket.map(p => {
             const packInfo = state.packs.find(pa => pa.id === p.packId)
             const productInfo = state.products.find(pr => pr.id === packInfo.productId)
-            const remaining = p.status === 'n' || p.status === 'p' ? p.quantity - p.purchased : 0
-            if (['f', 'u', 'p', 'd'].includes(order.status)) {
-              const storeName = p.storeId ? (p.storeId === 'm' ? state.labels.multipleStores : state.stores.find(s => s.id === p.storeId).name) : ''
-              const changePriceNote = p.actual && p.actual !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''
-              const unAvailableNote = p.status === 'u' || p.status === 'pu' ? `${state.labels.unAvailableNote} ${p.overPriced ? state.labels.overPricedNote : ''}` : ''
-              return (
-                <ListItem 
-                  key={p.packId} 
-                  title={productInfo.name}
-                  subtitle={packInfo.name}
-                  text={storeName}
-                  footer={`${changePriceNote} ${unAvailableNote}`}
-                  after={(p.gross / 1000).toFixed(3)}
-                >
-                  {addQuantity(p.purchased, -1 * (p.returned ?? 0)) > 0 ? <Badge slot="title" color="green">{quantityText(addQuantity(p.purchased, -1 * (p.returned ?? 0)), addQuantity(p.weight, -1 * (p.returned ?? 0)))}</Badge> : ''}
-                </ListItem>
-              )
-            } else {
-              return (
-                <ListItem 
-                  key={p.packId} 
-                  title={productInfo.name}
-                  subtitle={packInfo.name}
-                  footer={p.actual && p.actual !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''}
-                  text={`${remaining > 0 ? state.labels.remain + ': ' + String(remaining) : ''}`}
-                  after={(p.gross / 1000).toFixed(3)}
-                >
-                  <Badge slot="title" color={['f', 'u', 'pu'].includes(p.status) ? 'green' : 'red'}>{quantityText(p.quantity, p.weight)}</Badge>
-                </ListItem>
-              )
-            }
+            const storeName = p.storeId ? (p.storeId === 'm' ? state.labels.multipleStores : state.stores.find(s => s.id === p.storeId).name) : ''
+            const changePriceNote = p.actual && p.actual !== p.price ? `${state.labels.orderPrice}: ${(p.price / 1000).toFixed(3)}` : ''
+            const statusNote = `${state.orderPackStatus.find(s => s.id === p.status).name} ${p.overPriced ? state.labels.overPricedNote : ''}`
+            return (
+              <ListItem 
+                key={p.packId} 
+                title={productInfo.name}
+                after={(p.gross / 1000).toFixed(3)}
+                className= "list-title"
+              >
+                <div className="list-line1">{packInfo.name}</div>
+                {storeName ? <div className="list-line2">{`${state.labels.storeName}: ${storeName}`}</div> : ''}
+                {changePriceNote ? <div className="list-line3">{changePriceNote}</div> : ''}
+                <div className="list-line4">{`${state.labels.status}: ${statusNote}`}</div>
+                <div className="list-line5">{quantityDetails(p)}</div>
+              </ListItem>
+            )
           })}
           <ListItem 
             title={state.labels.total} 

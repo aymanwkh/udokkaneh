@@ -42,6 +42,20 @@ export const addQuantity = (q1, q2, q3 = 0) => {
   }
 }
 
+export const quantityDetails = basketPack => {
+  let text = `${labels.requested}: ${quantityText(basketPack.quantity)}`
+  if (basketPack.purchased > 0) {
+    text += `, ${labels.purchased}: ${quantityText(basketPack.purchased)}`
+    if (basketPack.weight && basketPack.weight !== basketPack.purchased) {
+      text += `, ${labels.weight}: ${quantityText(basketPack.weight)}`
+    }
+  }
+  if (basketPack.returned > 0) {
+    text += `, ${labels.returned}: ${quantityText(basketPack.returned)}`
+  }
+  return text
+}
+
 export const rateProduct = (productId, value, comment) => {
   const rating = {
     productId,

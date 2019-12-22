@@ -18,17 +18,20 @@ const ActiveOrders = props => {
       <Navbar title="Orders" backLink={state.labels.back} className="page-title" />
       <Block>
           <List mediaList>
-            {orders.map(o =>
-              <ListItem
-                link={`/order/${o.id}`}
-                title={o.userId}
-                after={o.total}
-                text={moment(o.time.toDate()).fromNow()}
-                key={o.id}
-              />
-            )}
-            {orders.length === 0 ? <ListItem title={state.labels.not_found} /> : ''}
-
+            {orders.length === 0 ? 
+              <ListItem title={state.labels.noData} /> 
+            : orders.map(o =>
+                <ListItem
+                  link={`/order/${o.id}`}
+                  title={o.userId}
+                  after={o.total}
+                  key={o.id}
+                  className= "list-title"
+                >
+                  <div className="list-line1">{moment(o.time.toDate()).fromNow()}</div>
+                </ListItem>
+              )
+            }
           </List>
       </Block>
       <Toolbar bottom>
