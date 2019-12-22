@@ -26,7 +26,6 @@ const OtherOffers = props => {
                 title={productInfo.name}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
-                className= "list-title"
               >
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}

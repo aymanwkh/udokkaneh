@@ -68,7 +68,7 @@ const Packs = props => {
       </Popover>
       <Block>
         <List className="searchbar-not-found">
-          <ListItem title={state.labels.not_found} />
+          <ListItem title={state.labels.noData} />
         </List>
         <List mediaList className="search-list searchbar-found">
           <ListItem 
@@ -77,7 +77,7 @@ const Packs = props => {
             title={state.labels.orderBy} 
             after={state.orderByList.find(o => o.id === orderBy).name}
           />
-          {categoryPacks && categoryPacks.map(p => {
+          {categoryPacks.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)
             const storePackInfo = state.customer.storeId ? state.storePacks.find(pa => pa.storeId === state.customer.storeId && pa.packId === p.id) : ''
             const bonusProduct = p.bonusPackId ? state.products.find(pr => pr.id === state.packs.find(pa => pa.id === p.bonusPackId).productId) : ''
@@ -85,9 +85,9 @@ const Packs = props => {
               <ListItem
                 link={`/pack/${p.id}`}
                 title={productInfo.name}
+                subtitle={p.name}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
-                className= "list-title"
               >
                 <div slot="media" className="relative">
                   <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
@@ -102,8 +102,7 @@ const Packs = props => {
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 {storePackInfo ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}
-                <div className="list-line1">{p.name}</div>
-                <div className="list-line2">{`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}</div>
+                <div className="list-line1">{`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}</div>
               </ListItem>
             )
           })}

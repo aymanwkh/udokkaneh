@@ -24,7 +24,6 @@ const OrdersList = props => {
                   title={moment(o.time.toDate()).fromNow()}
                   after={(o.total / 1000).toFixed(3)}
                   key={o.id}
-                  className= "list-title"
                 >
                   <div className="list-line1">{state.orderStatus.find(s => s.id === o.status).name}</div>
                 </ListItem>

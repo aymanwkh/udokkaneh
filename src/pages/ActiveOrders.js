@@ -26,7 +26,6 @@ const ActiveOrders = props => {
                   title={o.userId}
                   after={o.total}
                   key={o.id}
-                  className= "list-title"
                 >
                   <div className="list-line1">{moment(o.time.toDate()).fromNow()}</div>
                 </ListItem>

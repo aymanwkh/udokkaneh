@@ -24,7 +24,6 @@ const Ratings = props => {
                 title={`${r.userName}: ${state.ratingValues.find(v => v.id === r.value).name}`}
                 after={moment(r.time.toDate()).fromNow()}
                 key={r.id}
-                className= "list-title"
               >
                 <div className="list-line1">{r.comment}</div>
               </ListItem>

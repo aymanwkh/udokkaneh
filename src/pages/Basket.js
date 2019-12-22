@@ -76,7 +76,6 @@ const Basket = props => {
             <ListItem
               title={productInfo.name}
               key={p.packId}
-              className= "list-title"
             >
               <div slot="media" className="relative">
                 <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />

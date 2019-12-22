@@ -189,3 +189,32 @@
   font-size: 1rem;
   color: blue;
 }
+
+.list-line1 {
+  font-size: 0.8rem;
+  color:blue;
+}
+
+.list-line2 {
+  font-size: 0.8rem;
+  color: green;
+}
+
+.list-line3 {
+  font-size: 0.8rem;
+  color:purple;
+}
+
+.list-line4 {
+  font-size: 0.8rem;
+  color:deeppink;
+}
+
+.item-subtitle {
+  font-size: 0.8rem !important;
+  color:red !important;
+}
+
+.item-title-row {
+  font-size: 1rem;
+}
