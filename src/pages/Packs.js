@@ -2,6 +2,7 @@ import React, { useContext, useState, useMemo } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Popover } from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
+import PackImage from './PackImage'
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
@@ -80,7 +81,6 @@ const Packs = props => {
           {categoryPacks.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)
             const storePackInfo = state.customer.storeId ? state.storePacks.find(pa => pa.storeId === state.customer.storeId && pa.packId === p.id) : ''
-            const bonusProduct = p.bonusPackId ? state.products.find(pr => pr.id === state.packs.find(pa => pa.id === p.bonusPackId).productId) : ''
             return (
               <ListItem
                 link={`/pack/${p.id}`}
@@ -90,16 +90,7 @@ const Packs = props => {
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
-                <div slot="media" className="relative">
-                  <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
-                  {p.offerQuantity > 1 ? <span slot="media" className="offer-quantity-list">{`× ${p.offerQuantity}`}</span> : ''}
-                  {p.bonusPackId ? 
-                    <div>
-                      <img slot="media" src={bonusProduct.imageUrl} className="bonus-img-list" alt={bonusProduct.name} />
-                      {p.bonusQuantity > 1 ? <span slot="media" className="bonus-quantity-list">{`× ${p.bonusQuantity}`}</span> : ''}
-                    </div>
-                  : ''}
-                </div>
+                <PackImage slot="media" pack={p} type="list" />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 {storePackInfo ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}

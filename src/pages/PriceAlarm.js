@@ -3,7 +3,7 @@ import { Page, Navbar, List, ListInput, Fab, Icon, Card, CardContent, CardHeader
 import { StoreContext } from '../data/Store';
 import { addPriceAlarm, showMessage, showError, getMessage } from '../data/Actions'
 import ReLogin from './ReLogin'
-
+import PackImage from './PackImage'
 
 const PriceAlarm = props => {
   const { state, user } = useContext(StoreContext)
@@ -117,7 +117,7 @@ const PriceAlarm = props => {
           <p>{(pack.price / 1000).toFixed(3)}</p>
         </CardHeader>
         <CardContent>
-          <img src={product.imageUrl} className="img-card" alt={product.name} />
+          <PackImage pack={pack} type="card" />
         </CardContent>
       </Card>
       <List form>

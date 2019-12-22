@@ -4,6 +4,7 @@ import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 import moment from 'moment'
 import 'moment/locale/ar'
+import PackImage from './PackImage'
 
 const OwnerPacks = props => {
   const { state } = useContext(StoreContext)
@@ -47,7 +48,7 @@ const OwnerPacks = props => {
                   after={(p.price / 1000).toFixed(3)}
                   key={p.id}
                 >
-                  <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
+                  <PackImage slot="media" pack={packInfo} type="list" />
                   {productInfo.isNew ? <Badge slot="title" color='red'>{state.labels.new}</Badge> : ''}
                   {packInfo.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                   <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.price / 1000).toFixed(3)} </Badge>

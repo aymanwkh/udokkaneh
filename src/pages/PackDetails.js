@@ -4,6 +4,7 @@ import BottomToolbar from './BottomToolbar'
 import RatingStars from './RatingStars'
 import { StoreContext } from '../data/Store'
 import { addPriceAlarm, showMessage, showError, getMessage } from '../data/Actions'
+import PackImage from './PackImage'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -12,8 +13,6 @@ const PackDetails = props => {
   , [state.packs, props.id])
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
-  const bonusProduct = useMemo(() => pack.bonusPackId ? state.products.find(p => p.id === state.packs.find(pa => pa.id === pack.bonusPackId).productId) : ''
-  , [pack, state.products, state.packs])
   const hasOtherOffers = useMemo(() => {
     let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.categoryId === product.categoryId) && (p.isOffer || p.hasOffer))
     offers = offers.filter(p => p.id !== pack.id && p.price > 0)
@@ -96,16 +95,7 @@ const PackDetails = props => {
         </CardHeader>
         <CardContent>
           <div className="card-title">{pack.name}</div>
-          <div className="relative">
-            <img src={product.imageUrl} className="img-card" alt={product.name} />
-            {pack.offerQuantity > 1 ? <span className="offer-quantity-card">{`× ${pack.offerQuantity}`}</span> : ''}
-            {pack.bonusPackId ? 
-              <div>
-                <img src={bonusProduct.imageUrl} className="bonus-img-card" alt={bonusProduct.name} />
-                {pack.bonusQuantity > 1 ? <span className="bonus-quantity-card">{`× ${pack.bonusQuantity}`}</span> : ''}
-              </div>
-            : ''}
-          </div>
+          <PackImage pack={pack} type="card" />
         </CardContent>
         <CardFooter>
           <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>

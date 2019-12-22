@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Badge } from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
+import PackImage from './PackImage'
 
 const OtherOffers = props => {
   const { state } = useContext(StoreContext)
@@ -29,7 +30,7 @@ const OtherOffers = props => {
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
-                <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
+                <PackImage slot="media" pack={p} type="list" />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 {state.customer.storeId && state.storePacks.find(pa => pa.storeId === state.customer.storeId) ? 

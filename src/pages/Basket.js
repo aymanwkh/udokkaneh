@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Button } from 'framework7-react'
 import { StoreContext } from '../data/Store';
 import { showError, getMessage, quantityText } from '../data/Actions'
+import PackImage from './PackImage'
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
@@ -68,28 +69,17 @@ const Basket = props => {
     <Navbar title={state.labels.basket} backLink={state.labels.back} />
     <Block>
       <List mediaList>
-        {packs && packs.map(p => {
+        {packs.map(p => {
           const packInfo = state.packs.find(pa => pa.id === p.packId)
-          const productInfo = state.products.find(pr => pr.id === packInfo.productId)
-          const bonusProduct = packInfo.bonusPackId ? state.products.find(pr => pr.id === state.packs.find(pa => pa.id === packInfo.bonusPackId).productId) : ''
           return (
             <ListItem
-              title={productInfo.name}
+              title={state.products.find(pr => pr.id === packInfo.productId).name}
               subtitle={packInfo.name}
               text={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
               footer={`${state.labels.quantity}: ${quantityText(p.quantity)}`}
               key={p.packId}
             >
-              <div slot="media" className="relative">
-                <img slot="media" src={productInfo.imageUrl} className="img-list" alt={productInfo.name} />
-                {packInfo.offerQuantity > 1 ? <span slot="media" className="offer-quantity-list">{`× ${packInfo.offerQuantity}`}</span> : ''}
-                {packInfo.bonusPackId ? 
-                  <div>
-                    <img slot="media" src={bonusProduct.imageUrl} className="bonus-img-list" alt={bonusProduct.name} />
-                    {packInfo.bonusQuantity > 1 ? <span slot="media" className="bonus-quantity-list">{`× ${packInfo.bonusQuantity}`}</span> : ''}
-                  </div>
-                : ''}
-              </div>
+              <PackImage slot="media" pack={packInfo} type="list" />
               <Stepper 
                 slot="after" 
                 fill
