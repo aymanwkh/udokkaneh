@@ -75,6 +75,9 @@ const Basket = props => {
           return (
             <ListItem
               title={productInfo.name}
+              subtitle={packInfo.name}
+              text={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
+              footer={`${state.labels.quantity}: ${quantityText(p.quantity)}`}
               key={p.packId}
             >
               <div slot="media" className="relative">
@@ -87,9 +90,6 @@ const Basket = props => {
                   </div>
                 : ''}
               </div>
-              <div className="list-line1">{packInfo.name}</div>
-              <div className="list-line2">{`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}</div>
-              <div className="list-line3">{`${state.labels.quantity}: ${quantityText(p.quantity)}`}</div>
               <Stepper 
                 slot="after" 
                 fill

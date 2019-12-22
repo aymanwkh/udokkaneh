@@ -22,11 +22,10 @@ const Ratings = props => {
           : ratings.map(r => 
               <ListItem
                 title={`${r.userName}: ${state.ratingValues.find(v => v.id === r.value).name}`}
+                subtitle={r.comment}
                 after={moment(r.time.toDate()).fromNow()}
                 key={r.id}
-              >
-                <div className="list-line1">{r.comment}</div>
-              </ListItem>
+              />
             )
           }
         </List>

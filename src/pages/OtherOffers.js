@@ -24,6 +24,8 @@ const OtherOffers = props => {
               <ListItem
                 link={`/pack/${p.id}`}
                 title={productInfo.name}
+                subtitle={p.name}
+                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
@@ -35,8 +37,6 @@ const OtherOffers = props => {
                     {state.labels.myPrice} {(state.storePacks.find(pa => pa.storeId === state.customer.storeId).price / 1000).toFixed(3)} 
                   </Badge> 
                 : ''}
-                <div className="list-line1">{p.name}</div>
-                <div className="list-line2">{`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}</div>
               </ListItem>
             )
           })}

@@ -22,11 +22,10 @@ const OrdersList = props => {
                 <ListItem
                   link={`/order/${o.id}`}
                   title={moment(o.time.toDate()).fromNow()}
+                  subtitle={state.orderStatus.find(s => s.id === o.status).name}
                   after={(o.total / 1000).toFixed(3)}
                   key={o.id}
-                >
-                  <div className="list-line1">{state.orderStatus.find(s => s.id === o.status).name}</div>
-                </ListItem>
+                />
               )
             }
           </List>

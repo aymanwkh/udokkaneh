@@ -42,6 +42,8 @@ const OwnerPacks = props => {
                 <ListItem
                   link={`/pack/${p.id}`}
                   title={productInfo.name}
+                  subtitle={packInfo.name}
+                  test={moment(p.time.toDate()).fromNow()}
                   after={(p.price / 1000).toFixed(3)}
                   key={p.id}
                 >
@@ -49,8 +51,6 @@ const OwnerPacks = props => {
                   {productInfo.isNew ? <Badge slot="title" color='red'>{state.labels.new}</Badge> : ''}
                   {packInfo.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                   <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.price / 1000).toFixed(3)} </Badge>
-                  <div className="list-line1">{packInfo.name}</div>
-                  <div className="list-line2">{moment(p.time.toDate()).fromNow()}</div>
                 </ListItem>
               )
             })

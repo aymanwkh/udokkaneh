@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar} from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
 import BottomToolbar from './BottomToolbar';
 import moment from 'moment'
 import 'moment/locale/ar'
@@ -24,11 +24,10 @@ const ActiveOrders = props => {
                 <ListItem
                   link={`/order/${o.id}`}
                   title={o.userId}
+                  subtitle={moment(o.time.toDate()).fromNow()}
                   after={o.total}
                   key={o.id}
-                >
-                  <div className="list-line1">{moment(o.time.toDate()).fromNow()}</div>
-                </ListItem>
+                />
               )
             }
           </List>

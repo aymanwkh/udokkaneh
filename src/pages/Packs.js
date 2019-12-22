@@ -86,6 +86,7 @@ const Packs = props => {
                 link={`/pack/${p.id}`}
                 title={productInfo.name}
                 subtitle={p.name}
+                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
@@ -102,7 +103,6 @@ const Packs = props => {
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
                 {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 {storePackInfo ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}
-                <div className="list-line1">{`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}</div>
               </ListItem>
             )
           })}
