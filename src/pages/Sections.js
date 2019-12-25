@@ -12,7 +12,7 @@ const Sections = props => {
       {sections.map(s => {
         return (
           <Button 
-            href={`/section/${s.id}`} key={s.id}
+            href={`/sectionCategories/${s.id}`} key={s.id}
             large 
             fill 
             className="sections" 

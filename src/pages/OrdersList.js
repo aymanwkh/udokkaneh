@@ -20,7 +20,7 @@ const OrdersList = props => {
               <ListItem title={state.labels.noData} /> 
             : orders.map(o =>
                 <ListItem
-                  link={`/order/${o.id}`}
+                  link={`/orderDetails/${o.id}`}
                   title={moment(o.time.toDate()).fromNow()}
                   subtitle={state.orderStatus.find(s => s.id === o.status).name}
                   after={(o.total / 1000).toFixed(3)}

@@ -1,7 +1,7 @@
-import HomePage from './pages/HomePage';
+import Home from './pages/Home';
 import NotFoundPage from './pages/NotFoundPage';
-import Categories from './pages/Categories'
-import PanelPage from './pages/PanelPage'
+import SectionCategories from './pages/SectionCategories'
+import Panel from './pages/Panel'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Packs from './pages/Packs'
@@ -25,16 +25,15 @@ import Help from './pages/Help';
 export default [
   {
     path: '/',
-    component: HomePage,
+    component: Home,
   },
   {
-    name: 'home',
     path: '/home/',
-    component: HomePage,
+    component: Home,
   },
   {
     path: '/panel/',
-    component: PanelPage
+    component: Panel
   },
   {
     path: '/login/',
@@ -71,8 +70,8 @@ export default [
     component: InviteFriend
   },
   {
-    path: '/section/:id',
-    component: Categories,
+    path: '/sectionCategories/:id',
+    component: SectionCategories,
   },
   {
     path: '/category/:id',
@@ -103,7 +102,7 @@ export default [
     component: OrdersList,
   },
   {
-    path: '/order/:id',
+    path: '/orderDetails/:id',
     component: OrderDetails,
   },
   {

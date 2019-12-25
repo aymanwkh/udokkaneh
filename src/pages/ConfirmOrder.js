@@ -103,7 +103,7 @@ const ConfirmOrder = props => {
       <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />
       <Block>
         <List>
-          {basket && basket.map(p => {
+          {basket.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)
             return(
               <ListItem

@@ -4,7 +4,7 @@ import { StoreContext } from '../data/Store';
 import BottomToolbar from './BottomToolbar';
 
 
-const Categories = props => {
+const SectionCategories = props => {
   const { state } = useContext(StoreContext)
   const section = useMemo(() => state.sections.find(s => s.id === props.id)
   , [state.sections, props.id])
@@ -31,4 +31,4 @@ const Categories = props => {
 }
 
 
-export default Categories
+export default SectionCategories
