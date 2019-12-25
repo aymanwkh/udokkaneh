@@ -193,7 +193,7 @@ const PriceAlarm = props => {
         : ''}
       </List>
       {!price || (isOffer && !offerDays) || (!state.customer.storeId && (!storeName || !locationId)) || priceErrorMessage || storeNameErrorMessage ? '' :
-        <Fab position="left-top" slot="fixed" color="green" onClick={() => handleSubmit()}>
+        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>
       }
