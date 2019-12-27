@@ -25,7 +25,7 @@ const labels = {
   orderDetails: 'تفاصيل الطلب',
   addToBasket: 'شراء',
   submit: 'موافق',
-  banner: 'تنافس + تشارك = توفير',
+  banner: 'تنافس + تشارك = توفير مضمون',
   lessPrice: 'الابلاغ عن سعر أقل',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',
@@ -44,7 +44,9 @@ const labels = {
   namePlaceholder: 'من 4-50 حرف',
   invalidName: 'اﻻسم غير صحيح',
   fixedFees: 2.5,
-  maxDiscount: 500,
+  maxDiscount: 250,
+  firstOrderDiscount: 300,
+  profit: 10,
   total: 'المجموع',
   fixedFeesTitle: 'رسوم الخدمة',
   discount: 'الخصم',
@@ -131,7 +133,15 @@ const labels = {
   changePriceNote: 'تغير السعر',
   unAvailableNote: 'لم يعد متوفر',
   ExceedPackLimitActiveOrders: 'لا يمكنك طلب كمية اكبر من هذا المنتج الى حين استلام طلبات سابقة لك',
-  overPricedNote: 'بسبب ارتفاع الاسعار'
+  overPricedNote: 'بسبب ارتفاع الاسعار',
+  fullPurchase: 'شراء كل العرض',
+  partialPurchase: 'شراء جزء من العرض',
+  status: 'الحالة',
+  requested: 'الكمية المطلوبة',
+  purchased: 'ما تم شراؤه',
+  weight: 'الوزن',
+  returned: 'المرتجع',
+  currentPrice: 'السعر الحالي'
 }
 
 export default labels

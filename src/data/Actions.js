@@ -30,8 +30,8 @@ export const showError = (props, messageText) => {
   message.open();
 }
 
-export const quantityText = (quantity, weight) => {
-  return `${quantity < 1 ? quantity * 1000 + ' ' + labels.gram : quantity} ${weight && weight !== quantity ? '(' + (weight < 1 ? weight * 1000 + ' ' + labels.gram : weight) + ')' : ''}`
+export const quantityText = quantity => {
+  return `${quantity < 1 ? quantity * 1000 + ' ' + labels.gram : quantity}`
 }
 
 export const addQuantity = (q1, q2, q3 = 0) => {

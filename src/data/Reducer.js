@@ -14,6 +14,8 @@ const Reducer = (state, action) => {
         isDivided: action.pack.isDivided,
         byWeight: action.pack.byWeight,
         orderLimit: action.pack.orderLimit,
+        maxQuantity: action.pack.maxQuantity,
+        offerId: action.pack.offerId,
         time: new Date()
       }
       newBasket = [...state.basket, pack]
@@ -26,6 +28,8 @@ const Reducer = (state, action) => {
         nextQuantity = increment.filter(i => i > pack.quantity)
         nextQuantity = Math.min(...nextQuantity)
         nextQuantity = nextQuantity === Infinity ? pack.quantity : nextQuantity
+      } else if (pack.maxQuantity && pack.quantity >= pack.maxQuantity) {
+        nextQuantity = pack.quantity
       } else {
         nextQuantity = pack.quantity + 1
       }

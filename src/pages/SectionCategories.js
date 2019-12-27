@@ -15,7 +15,7 @@ const SectionCategories = props => {
     <Page>
       <Navbar title={section.name} backLink={state.labels.back} />
       <Block>
-        {categories && categories.map(c => {
+        {categories.map(c => {
           return (
             <Button large fill className="sections" color={state.randomColors[i++ % 10].name} href={`/category/${c.id}`} key={c.id}>
               <span className="button-label">{c.name}</span>

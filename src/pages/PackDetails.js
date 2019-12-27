@@ -9,6 +9,7 @@ import PackImage from './PackImage'
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
+  const [toolbarVisible, setToolbarVisible] = useState(true)
   const pack = useMemo(() => state.packs.find(p => p.id === props.id)
   , [state.packs, props.id])
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
@@ -38,28 +39,46 @@ const PackDetails = props => {
       setError('')
     }
   }, [error, props])
-
-  const handleAddPack = () => {
+  const addToBasket = packId => {
     try{
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
-      if (state.basket.find(p => p.packId === pack.id)) {
+      if (state.basket.find(p => p.packId === packId)) {
         throw new Error('alreadyInBasket')
+      }
+      let purchasedPack = pack
+      let price, maxQuantity
+      if (packId !== pack.id) {
+        purchasedPack = state.packs.find(p => p.id === packId)
+        if (packId === pack.subPackId) {
+          price = parseInt((pack.price / pack.subQuantity) * (pack.subPercent / 100))
+          maxQuantity = pack.subQuantity - 1
+          if (pack.bonusPackId) maxQuantity++
+        } else  {
+          price = parseInt((pack.price / pack.bonusQuantity) * (pack.bonusPercent / 100))
+          maxQuantity = pack.bonusQuantity
+        }
+        purchasedPack = {
+          ...purchasedPack,
+          price,
+          maxQuantity,
+          offerId: pack.id
+        }
       }
       if (state.customer){
         const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
         const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
-        if (activeOrdersTotal + pack.price > state.customer.orderLimit) {
+        if (activeOrdersTotal + purchasedPack.price > state.customer.orderLimit) {
           throw new Error('limitOverFlow')
         }
-        const packInActiveOrders = activeOrders.filter(o => o.basket.find(p => p.packId === pack.id))
-        const quantityInActiveOrders = packInActiveOrders.reduce((sum, o) => sum + o.basket.find(p => p.packId === pack.id).quantity, 0)
-        if (pack.orderLimit && pack.orderLimit <= quantityInActiveOrders){
+        const packInActiveOrders = activeOrders.filter(o => o.basket.find(p => p.packId === packId))
+        const quantityInActiveOrders = packInActiveOrders.reduce((sum, o) => sum + o.basket.find(p => p.packId === purchasedPack.id).quantity, 0)
+        if (purchasedPack.orderLimit && purchasedPack.orderLimit <= quantityInActiveOrders){
           throw new Error('ExceedPackLimitActiveOrders')
         }
       }
-      dispatch({type: 'ADD_TO_BASKET', pack})
+      dispatch({type: 'ADD_TO_BASKET', pack: purchasedPack})
       showMessage(props, state.labels.addToBasketSuccess)
       props.f7router.back()  
 		} catch (err){
@@ -84,7 +103,13 @@ const PackDetails = props => {
       }
     })
   }
-
+  const handlePartialPurchase = () => {
+    if (pack.bonusPackId) {
+      props.f7router.app.popover.open('.pack-list', '.partial-purchase')
+    } else {
+      addToBasket(pack.subPackId)
+    }
+  }
   return (
     <Page>
       <Navbar title={product.name} backLink={state.labels.back} />
@@ -102,9 +127,26 @@ const PackDetails = props => {
           <p><Link popoverOpen=".popover-list" iconMaterial="more_vert" /></p>
         </CardFooter>
       </Card>
-      <Fab position="center-bottom" slot="fixed" text={state.labels.addToBasket} color="green" onClick={() => handleAddPack()}>
-        <Icon material="add"></Icon>
-      </Fab>  
+      {pack.isOffer ? 
+        <Fab 
+          position="center-bottom" 
+          slot="fixed" 
+          text={state.labels.addToBasket} 
+          morphTo=".toolbar.fab-morph-target" 
+          onClick={() => setToolbarVisible(false)}
+        >
+          <Icon material="add"></Icon>
+        </Fab>
+      : <Fab 
+          position="center-bottom" 
+          slot="fixed" 
+          text={state.labels.addToBasket} 
+          color="green" 
+          onClick={() => addToBasket(pack.id)}
+        >
+          <Icon material="add"></Icon>
+        </Fab>
+      }  
       {!user || !product.trademarkId || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' :
         <Fab position="left-top" slot="fixed" color="blue" className="top-fab">
           <Icon material="favorite_border"></Icon>
@@ -119,6 +161,7 @@ const PackDetails = props => {
           </FabButtons>
         </Fab>
       }
+
       <Popover className="popover-list">
         <List>
           {hasOtherOffers > 0 ? <ListItem link={`/otherOffers/${props.id}`} popoverClose title={state.labels.otherOffers} /> : ''}
@@ -134,11 +177,34 @@ const PackDetails = props => {
           : ''}
         </List>
       </Popover>
-
-      <Toolbar bottom>
-        <BottomToolbar/>
-      </Toolbar>
-
+      <Popover className="pack-list">
+        <List>
+          <ListItem 
+            link="#" 
+            popoverClose 
+            title={state.packs.find(p => p.id === pack.subPackId)?.name} 
+            onClick={() => addToBasket(pack.subPackId)}
+          />
+          <ListItem 
+            link="#" 
+            popoverClose 
+            title={state.packs.find(p => p.id === pack.bonusPackId)?.name} 
+            onClick={() => addToBasket(pack.bonusPackId)}
+          />
+        </List>
+      </Popover>
+      {pack.isOffer ?
+        <Toolbar bottom className="fab-morph-target">
+          <Link onClick={() => addToBasket(pack.id)}>{state.labels.fullPurchase}</Link>
+          <Link className="partial-purchase" onClick={() => handlePartialPurchase()}>{state.labels.partialPurchase}</Link>
+        </Toolbar>
+      : ''
+      }
+      {toolbarVisible ? 
+        <Toolbar bottom>
+          <BottomToolbar/>
+        </Toolbar>
+      : ''}
     </Page>
   )
 }

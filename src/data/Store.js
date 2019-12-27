@@ -34,7 +34,7 @@ const Store = props => {
     {id: 'e', name: 'قيد التجهيز'},
     {id: 'f', name: 'مكتمل'},
     {id: 'p', name: 'جاهز'},
-    {id: 'd', name: 'تم اﻻستلام'},
+    {id: 'd', name: 'مستلم'},
     {id: 'c', name: 'ملغي'},
     {id: 'u', name: 'غير متوفر'},
     {id: 'i', name: 'استيداع'}

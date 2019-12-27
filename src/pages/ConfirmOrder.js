@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Badge, Fab, Icon, Toggle } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
 import { StoreContext } from '../data/Store';
@@ -16,33 +16,43 @@ const ConfirmOrder = props => {
   const [error, setError] = useState('')
   const basket = useMemo(() => state.basket.map(p => {
     const packInfo = state.packs.find(pa => pa.id === p.packId)
+    let price = packInfo.price
+    if (p.offerId) {
+      const offerInfo = state.packs.find(pa => pa.id === p.offerId)
+      if (offerInfo.subPackId === p.packId) {
+        price = parseInt((offerInfo.price / offerInfo.subQuantity) * (offerInfo.subPercent / 100))
+      } else {
+        price = parseInt((offerInfo.price / offerInfo.bonusQuantity) * (offerInfo.bonusPercent / 100))
+      }
+    }
     return {
       ...p,
-      price: packInfo.price,
+      price,
       oldPrice: p.price,
       name: packInfo.name,
       productId: packInfo.productId,
       byWeight: packInfo.byWeight
     }
   }), [state.packs, state.basket])
-  const total = useMemo(() => basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
+  const total = useMemo(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0)
   , [basket])
-  const fixedFees = useMemo(() => Math.ceil(((urgent ? 1.5 : 1) * state.labels.fixedFees / 100 * total) / 50) * 50
-  , [total, urgent, state.labels])
+  const fixedFees = useMemo(() => {
+    const offersTotal = basket.reduce((sum, p) => sum + p.offerId ? p.price * p.quantity : 0, 0)
+    const fees = Math.ceil(((urgent ? 1.5 : 1) * (state.labels.fixedFees * (total - offersTotal) + state.labels.fixedFees * 2 * offersTotal) / 100) / 50) * 50
+    const fraction = total - Math.floor(total / 50) * 50
+    return fees - fraction
+  }, [basket, total, urgent, state.labels])
   const discount = useMemo(() => {
-    let discount = {value: 0, type: ''}
     const orders = state.orders.filter(o => o.status !== 'c')
+    let discount = 0
     if (orders.length === 0) {
-      discount.type = 'f'
-      discount.value = fixedFees
+      discount = state.labels.firstOrderDiscount
     } else if (state.customer.discounts > 0) {
-      discount.type = 'p'
-      discount.value = Math.min(state.customer.discounts, fixedFees, state.labels.maxDiscount)
+      discount = Math.min(state.customer.discounts, state.labels.maxDiscount)
     }
     return discount
-  }, [state.orders, state.customer, fixedFees, state.labels.maxDiscount]) 
-  const fraction = total - Math.floor(total / 50) * 50
-  discount.value = discount.value + fraction
+  }, [state.orders, state.customer, state.labels.maxDiscount, state.labels.firstOrderDiscount]) 
+  
   const weightedPacks = useMemo(() => basket.filter(p => p.byWeight)
   , [basket])
   useEffect(() => {
@@ -59,7 +69,7 @@ const ConfirmOrder = props => {
     }
   }, [error, props])
 
-  const handleOrder = async () => {
+  const handleConfirm = async () => {
     try{
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
@@ -76,6 +86,7 @@ const ConfirmOrder = props => {
           price: p.price,
           quantity: p.quantity,
           gross: parseInt(p.price * p.quantity),
+          offerId: p.offerId ?? '',
           purchased: 0,
           status: 'n'
         }
@@ -102,19 +113,17 @@ const ConfirmOrder = props => {
     <Page>
       <Navbar title={state.labels.confirmOrder} backLink={state.labels.back} />
       <Block>
-        <List>
+        <List mediaList>
           {basket.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)
             return(
               <ListItem
                 key={p.packId}
                 title={productInfo.name}
+                subtitle={`${state.labels.quantity}: ${quantityText(p.quantity)}`}
+                text={p.price === p.oldPrice ? '' : p.price === 0 ? state.labels.unAvailableNote : state.labels.changePriceNote}
                 after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.byWeight ? '*' : ''}`}
-                footer={p.name}
-              >
-                <Badge slot="title" color="green">{quantityText(p.quantity)}</Badge>
-                {p.price === p.oldPrice ? '' : <Badge slot="after" color="red">{p.price === 0 ? state.labels.unAvailableNote : state.labels.changePriceNote}</Badge>}
-              </ListItem>
+              />
             )
           })}
           <ListItem 
@@ -134,18 +143,20 @@ const ConfirmOrder = props => {
               after={(deliveryFees / 1000).toFixed(3)} 
             /> 
           : ''}
-          {discount.value + fraction > 0 ? 
+          {discount > 0 ? 
             <ListItem 
               title={state.labels.discount}
               className="discount" 
-              after={((discount.value + fraction)/ 1000).toFixed(3)} 
+              after={(discount / 1000).toFixed(3)} 
             /> 
           : ''}
           <ListItem 
             title={state.labels.net} 
             className="net" 
-            after={((total + fixedFees + deliveryFees - discount.value - fraction) / 1000).toFixed(3)} 
+            after={((total + fixedFees + deliveryFees - discount) / 1000).toFixed(3)} 
           />
+          </List>
+          <List form>
           <ListItem>
             <span>{state.labels.withDelivery}</span>
             <Toggle 
@@ -169,7 +180,7 @@ const ConfirmOrder = props => {
         <p className="note">{weightedPacks.length > 0 ? state.labels.weightedPricesNote : ''}</p>
         <p className="note">{withDelivery ? (urgent ? state.labels.withUrgentDeliveryNote : state.labels.withDeliveryNote) : (urgent ? state.labels.urgentNoDeliveryNote : state.labels.noDeliveryNote)}</p>
       </Block>
-      <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleOrder()}>
+      <Fab position="center-bottom" slot="fixed" text={state.labels.confirm} color="green" onClick={() => handleConfirm()}>
         <Icon material="done"></Icon>
       </Fab>
       <Toolbar bottom>
