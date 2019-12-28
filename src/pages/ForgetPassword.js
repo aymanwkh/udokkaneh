@@ -23,10 +23,10 @@ const ForgetPassword = props => {
   }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
 
   const handleForgetPassword = async () => {
     try{
@@ -34,7 +34,7 @@ const ForgetPassword = props => {
         throw new Error('duplicateForgetPassword')
       }
       await forgetPassword(mobile)
-      showMessage(props, state.labels.sendSuccess)
+      showMessage(state.labels.sendSuccess)
       props.f7router.app.views.main.router.navigate('/home/')
       props.f7router.app.panel.close('right')
     } catch (err){

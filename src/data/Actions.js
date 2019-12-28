@@ -1,5 +1,6 @@
 import firebase from './firebase'
 import labels from './labels'
+import { f7 } from 'framework7-react'
 
 export const getMessage = (props, error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -14,16 +15,16 @@ export const getMessage = (props, error) => {
   return labels[errorCode] ? labels[errorCode] : labels['unknownError']
 }
 
-export const showMessage = (props, messageText) => {
-  const message = props.f7router.app.toast.create({
+export const showMessage = messageText => {
+  const message = f7.toast.create({
     text: `<span class="success">${messageText}<span>`,
     closeTimeout: 3000,
   });
   message.open();
 }
 
-export const showError = (props, messageText) => {
-  const message = props.f7router.app.toast.create({
+export const showError = messageText => {
+  const message = f7.toast.create({
     text: `<span class="error">${messageText}<span>`,
     closeTimeout: 3000,
   });
@@ -167,9 +168,19 @@ export const inviteFriend = (mobile, name) => {
     userId: firebase.auth().currentUser.uid,
     friendName: name,
     friendMobile: mobile,
+    status: 'n',
     time: new Date()
   })
 }
 
+export const newProduct = (name, productId) => {
+  return firebase.firestore().collection('newProducts').add({
+    userId: firebase.auth().currentUser.uid,
+    name,
+    productId,
+    status: 'n',
+    time: new Date()
+  })
+}
 
 

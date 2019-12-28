@@ -21,6 +21,7 @@ import ContactUs from './pages/ContactUs';
 import RateProduct from './pages/RateProduct';
 import Ratings from './pages/Ratings';
 import Help from './pages/Help';
+import NewProduct from './pages/NewProduct'
 
 export default [
   {
@@ -128,6 +129,10 @@ export default [
   {
     path: '/help/:id',
     component: Help
+  },
+  {
+    path: '/newProduct/',
+    component: NewProduct
   },
   {
     path: '(.*)',

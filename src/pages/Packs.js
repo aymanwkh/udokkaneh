@@ -3,6 +3,7 @@ import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link
 import BottomToolbar from './BottomToolbar';
 import { StoreContext } from '../data/Store';
 import PackImage from './PackImage'
+import moment from 'moment'
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
@@ -87,12 +88,13 @@ const Packs = props => {
                 title={productInfo.name}
                 subtitle={p.name}
                 text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
+                footer={p.offerEnd ? `${state.labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
                 <PackImage slot="media" pack={p} type="list" />
                 {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
-                {p.isOffer || p.hasOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
+                {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
                 {storePackInfo ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )

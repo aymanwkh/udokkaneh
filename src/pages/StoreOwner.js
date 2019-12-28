@@ -59,10 +59,10 @@ const StoreOwner = props => {
   }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -86,7 +86,7 @@ const StoreOwner = props => {
         locationId
       }
       await registerStoreOwner(owner, password, state.randomColors)
-      showMessage(props, state.labels.registerSuccess)
+      showMessage(state.labels.registerSuccess)
       props.f7router.navigate('/home/')
       props.f7router.app.panel.close('right') 
     } catch (err){

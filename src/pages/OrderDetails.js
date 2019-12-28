@@ -11,12 +11,20 @@ const OrderDetails = props => {
   const [error, setError] = useState('')
   const order = useMemo(() => state.orders.find(order => order.id === props.id)
   , [state.orders, props.id])
+  const fractionFromProfit = useMemo(() => {
+    let fraction = 0
+    if (order.fixedFees === 0) {
+      const profit = order.basket.reduce((sum, p) => sum + ['p', 'f', 'pu'].includes(p.status) ? parseInt((p.actual - p.cost) * (p.weight || p.purchased)) : 0, 0)
+      fraction = profit - order.profit
+    }
+    return fraction
+  }, [order])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
 
   const handleEdit = async () => {
     try{
@@ -31,17 +39,17 @@ const OrderDetails = props => {
     }
   }
   const handleDelete = () => {
-    props.f7router.app.dialog.confirm(state.labels.confirmationText, state.labels.confirmationTitle, async () => {
+    f7.dialog.confirm(state.labels.confirmationText, state.labels.confirmationTitle, async () => {
       try{
         if (order.status === 'n') {
           await cancelOrder(order)
-          showMessage(props, state.labels.deleteSuccess)
+          showMessage(state.labels.deleteSuccess)
         } else {
           if (state.cancelOrders.find(o => o.order.id === order.id && o.status === 'n')){
             throw new Error('duplicateOrderCancel')
           }
           await cancelOrderRequest(order)
-          showMessage(props, state.labels.sendSuccess)
+          showMessage(state.labels.sendSuccess)
         }
         props.f7router.back()
       } catch(err) {
@@ -102,7 +110,7 @@ const OrderDetails = props => {
           <ListItem 
             title={state.labels.net} 
             className="net" 
-            after={((order.total + order.fixedFees + order.deliveryFees - order.discount) / 1000).toFixed(3)} 
+            after={((order.total + order.fixedFees + (order.deliveryFees || 0) - (order.discount || 0) - fractionFromProfit) / 1000).toFixed(3)} 
           />
         </List>
       </Block>

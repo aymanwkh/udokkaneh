@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
+import { f7 } from 'framework7-react'
 import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Popover, List, ListItem } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import RatingStars from './RatingStars'
@@ -15,7 +16,7 @@ const PackDetails = props => {
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
   const hasOtherOffers = useMemo(() => {
-    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.categoryId === product.categoryId) && (p.isOffer || p.hasOffer))
+    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.categoryId === product.categoryId) && (p.isOffer || p.offerEnd))
     offers = offers.filter(p => p.id !== pack.id && p.price > 0)
     return offers.length
   }, [state.packs, pack, product, state.products]) 
@@ -35,10 +36,10 @@ const PackDetails = props => {
   }, [pack, state.labels, state.customer, state.storePacks])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
   const addToBasket = packId => {
     try{
       if (state.customer.isBlocked) {
@@ -79,14 +80,14 @@ const PackDetails = props => {
         }
       }
       dispatch({type: 'ADD_TO_BASKET', pack: purchasedPack})
-      showMessage(props, state.labels.addToBasketSuccess)
+      showMessage(state.labels.addToBasketSuccess)
       props.f7router.back()  
 		} catch (err){
       setError(getMessage(props, err))
     }
   }
   const handleFinishedPack = () => {
-    props.f7router.app.dialog.confirm(state.labels.confirmationText, state.labels.confirmationTitle, async () => {
+    f7.dialog.confirm(state.labels.confirmationText, state.labels.confirmationTitle, async () => {
       try{
         if (state.customer.isBlocked) {
           throw new Error('blockedUser')
@@ -96,7 +97,7 @@ const PackDetails = props => {
           price: 0
         }
         await addPriceAlarm(priceAlarm)
-        showMessage(props, state.labels.sendSuccess)
+        showMessage(state.labels.sendSuccess)
         props.f7router.back()
       } catch(err) {
         setError(getMessage(props, err))

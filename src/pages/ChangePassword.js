@@ -38,15 +38,15 @@ const ChangePassword = props => {
   }, [newPassword, state.labels])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
 
   const handleSubmit = async () => {
     try{
       await changePassword(oldPassword, newPassword, state.randomColors)
-      showMessage(props, state.labels.changePasswordSuccess)
+      showMessage(state.labels.changePasswordSuccess)
       props.f7router.back()
     } catch (err){
       setError(getMessage(props, err))

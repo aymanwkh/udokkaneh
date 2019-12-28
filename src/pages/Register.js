@@ -58,15 +58,15 @@ const Register = props => {
   }, [mobile, state.labels])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
 
   const handleRegister = async () => {
     try{
       await registerUser(mobile, password, name, locationId, state.randomColors)
-      showMessage(props, state.labels.registerSuccess)
+      showMessage(state.labels.registerSuccess)
       props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){

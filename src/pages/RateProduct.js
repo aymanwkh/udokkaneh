@@ -11,10 +11,10 @@ const RateProduct = props => {
 
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
 
   const handleRate = async () => {
     try{
@@ -22,7 +22,7 @@ const RateProduct = props => {
         throw new Error('blockedUser')
       }
       await rateProduct(props.productId, Number(props.value), comment)
-      showMessage(props, state.labels.ratingSuccess)
+      showMessage(state.labels.ratingSuccess)
       props.f7router.back()
     } catch(err) {
       setError(getMessage(props, err))

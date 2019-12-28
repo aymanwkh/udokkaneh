@@ -12,7 +12,7 @@ const ConfirmOrder = props => {
   const [urgent, setUrgent] = useState(false)
   const customerLocation = useMemo(() => state.customer.locationId ? state.locations.find(l => l.id === state.customer.locationId) : ''
   , [state.locations, state.customer])
-  const [deliveryFees, setDeliveryFees] = useState(customerLocation ? customerLocation.deliveryFees : '')
+  const [deliveryFees, setDeliveryFees] = useState('')
   const [error, setError] = useState('')
   const basket = useMemo(() => state.basket.map(p => {
     const packInfo = state.packs.find(pa => pa.id === p.packId)
@@ -57,17 +57,17 @@ const ConfirmOrder = props => {
   , [basket])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees(customerLocation ? (urgent ? 1.5 : 1) * customerLocation.deliveryFees : '')
+      setDeliveryFees((state.customer.deliveryFees ?? (customerLocation?.deliveryFees || '')) * (urgent ? 1.5 : 1))
     } else {
       setDeliveryFees('')
     }
-  }, [withDelivery, urgent, customerLocation])
+  }, [withDelivery, urgent, customerLocation, state.customer])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
 
   const handleConfirm = async () => {
     try{
@@ -86,7 +86,7 @@ const ConfirmOrder = props => {
           price: p.price,
           quantity: p.quantity,
           gross: parseInt(p.price * p.quantity),
-          offerId: p.offerId ?? '',
+          offerId: p.offerId || '',
           purchased: 0,
           status: 'n'
         }
@@ -101,7 +101,7 @@ const ConfirmOrder = props => {
         total
       }
       await confirmOrder(order)
-      showMessage(props, state.labels.confirmSuccess)
+      showMessage(state.labels.confirmSuccess)
       props.f7router.navigate('/home/', {reloadAll: true})
       dispatch({ type: 'CLEAR_BASKET' })
     } catch (err){

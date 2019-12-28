@@ -41,7 +41,7 @@ const Panel = props => {
         {user ? <ListItem link="/changePassword/" title={state.labels.changePassword} /> : ''}
         {user ? <ListItem link="/ordersList/" title={state.labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/inviteFriend/" title={state.labels.inviteFriend} view="#main-view" panelClose /> : ''}
-        {user ? <ListItem link="/sendSuggestion/" title={state.labels.sendSuggestion} view="#main-view" panelClose /> : ''}
+        {user ? <ListItem link="/newProduct/" title={state.labels.newProduct} view="#main-view" panelClose /> : ''}
         {state.customer.storeId ? <ListItem link={`/ownerPacks/${state.customer.storeId}`} title={state.labels.ownerPacks} view="#main-view" panelClose /> : ''}
         {user ? '' : <ListItem link="/storeOwner/" title={state.labels.registerStoreOwner} view="#main-view" panelClose />}
         <ListItem link="/contactUs/" title={state.labels.contactUsTitle} view="#main-view" panelClose />

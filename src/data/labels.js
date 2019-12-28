@@ -141,7 +141,9 @@ const labels = {
   purchased: 'ما تم شراؤه',
   weight: 'الوزن',
   returned: 'المرتجع',
-  currentPrice: 'السعر الحالي'
+  currentPrice: 'السعر الحالي',
+  offerUpTo: 'عرض حتى تاريخ',
+  newProduct: 'طلب منتج'
 }
 
 export default labels

@@ -36,10 +36,10 @@ const Basket = props => {
   }, [state.customer, customerOrdersTotals, totalPrice])
   useEffect(() => {
     if (error) {
-      showError(props, error)
+      showError(error)
       setError('')
     }
-  }, [error, props])
+  }, [error])
 
   const handleConfirm = () => {
     try{
