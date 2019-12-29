@@ -1,11 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
-import { StoreContext } from '../data/store'
 import { changePassword, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
 const ChangePassword = props => {
-  const { state } = useContext(StoreContext)
   const [oldPassword, setOldPassword] = useState('')
   const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -46,7 +44,7 @@ const ChangePassword = props => {
 
   const handleSubmit = async () => {
     try{
-      await changePassword(oldPassword, newPassword, state.randomColors)
+      await changePassword(oldPassword, newPassword)
       showMessage(labels.changePasswordSuccess)
       props.f7router.back()
     } catch (err){

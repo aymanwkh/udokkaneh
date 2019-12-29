@@ -5,6 +5,7 @@ import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
+import { ratingValues } from '../data/config'
 
 const Ratings = props => {
   const { state } = useContext(StoreContext)
@@ -22,7 +23,7 @@ const Ratings = props => {
             <ListItem title={labels.noData} /> 
           : ratings.map(r => 
               <ListItem
-                title={`${r.userName}: ${state.ratingValues.find(v => v.id === r.value).name}`}
+                title={`${r.userName}: ${ratingValues.find(v => v.id === r.value).name}`}
                 subtitle={r.comment}
                 after={moment(r.time.toDate()).fromNow()}
                 key={r.id}

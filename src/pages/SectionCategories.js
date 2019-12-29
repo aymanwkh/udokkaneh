@@ -3,7 +3,7 @@ import { Button, Block, Page, Navbar, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './BottomToolbar'
 import labels from '../data/labels'
-
+import { randomColors } from '../data/config'
 
 const SectionCategories = props => {
   const { state } = useContext(StoreContext)
@@ -18,7 +18,7 @@ const SectionCategories = props => {
       <Block>
         {categories.map(c => {
           return (
-            <Button large fill className="sections" color={state.randomColors[i++ % 10].name} href={`/category/${c.id}`} key={c.id}>
+            <Button large fill className="sections" color={randomColors[i++ % 10].name} href={`/category/${c.id}`} key={c.id}>
               <span className="button-label">{c.name}</span>
             </Button>
           )

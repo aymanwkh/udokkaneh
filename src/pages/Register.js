@@ -66,7 +66,7 @@ const Register = props => {
 
   const handleRegister = async () => {
     try{
-      await registerUser(mobile, password, name, locationId, state.randomColors)
+      await registerUser(mobile, password, name, locationId)
       showMessage(labels.registerSuccess)
       props.f7router.back()
       props.f7router.app.panel.close('right') 

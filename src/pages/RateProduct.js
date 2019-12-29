@@ -4,6 +4,7 @@ import { StoreContext } from '../data/store'
 import { rateProduct, showMessage, showError, getMessage } from '../data/actions'
 import BottomToolbar from './BottomToolbar'
 import labels from '../data/labels'
+import { ratingValues } from '../data/config'
 
 const RateProduct = props => {
   const { state } = useContext(StoreContext)
@@ -36,7 +37,7 @@ const RateProduct = props => {
       <List form>
         <ListItem
           title={labels.ratingValue}
-          after={state.ratingValues.find(v => v.id === Number(props.value)).name}
+          after={ratingValues.find(v => v.id === Number(props.value)).name}
         />
         <ListInput
           label={labels.comment}

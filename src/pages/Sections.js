@@ -1,6 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import { Button, Block } from 'framework7-react'
 import { StoreContext } from '../data/store'
+import { randomColors } from '../data/config'
 
 const Sections = props => {
   const { state } = useContext(StoreContext)
@@ -16,7 +17,7 @@ const Sections = props => {
             large 
             fill 
             className="sections" 
-            color={state.randomColors[i++ % 10].name} 
+            color={randomColors[i++ % 10].name} 
           >
             <span className="button-label">{s.name}</span>
           </Button>

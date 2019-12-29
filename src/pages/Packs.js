@@ -5,6 +5,7 @@ import { StoreContext } from '../data/store'
 import PackImage from './PackImage'
 import moment from 'moment'
 import labels from '../data/labels'
+import { orderByList } from '../data/config'
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
@@ -15,8 +16,6 @@ const Packs = props => {
   const [categoryPacks, setCategoryPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
-  const orderByList = useMemo(() => state.orderByList.filter(o => o.id !== orderBy)
-  , [state.orderByList, orderBy]) 
   const handleOrdering = orderByValue => {
     setOrderBy(orderByValue)
     switch(orderByValue){
@@ -59,13 +58,14 @@ const Packs = props => {
       <Popover className="popover-menu">
         <List>
         {orderByList.map(o => 
-          <ListItem 
-            link="#" 
-            popoverClose 
-            key={o.id} 
-            title={o.name} 
-            onClick={() => handleOrdering(o.id)}
-          />
+          o.id === orderBy ? ''
+          : <ListItem 
+              link="#" 
+              popoverClose 
+              key={o.id} 
+              title={o.name} 
+              onClick={() => handleOrdering(o.id)}
+            />
         )}
         </List>
       </Popover>
@@ -78,7 +78,7 @@ const Packs = props => {
             link="#"
             popoverOpen=".popover-menu"
             title={labels.orderBy} 
-            after={state.orderByList.find(o => o.id === orderBy).name}
+            after={orderByList.find(o => o.id === orderBy).name}
           />
           {categoryPacks.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)

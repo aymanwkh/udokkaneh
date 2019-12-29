@@ -1,5 +1,6 @@
 import firebase from './firebase'
 import labels from './labels'
+import { randomColors } from './config'
 import { f7 } from 'framework7-react'
 
 export const getMessage = (props, error) => {
@@ -110,7 +111,7 @@ export const cancelOrderRequest = order => {
   })
 }
 
-export const registerUser = async (mobile, password, name, locationId, randomColors) => {
+export const registerUser = async (mobile, password, name, locationId) => {
   await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
   let colors = []
   for (var i = 0; i < 4; i++){
@@ -125,7 +126,7 @@ export const registerUser = async (mobile, password, name, locationId, randomCol
   })
 }
 
-export const changePassword = async (oldPassword, newPassword, randomColors) => {
+export const changePassword = async (oldPassword, newPassword) => {
   let user = firebase.auth().currentUser
   const mobile = user.email.substring(0, 10)
   await firebase.auth().signInWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + oldPassword)
@@ -140,7 +141,7 @@ export const changePassword = async (oldPassword, newPassword, randomColors) => 
   })
 }
 
-export const registerStoreOwner = async (owner, password, randomColors) => {
+export const registerStoreOwner = async (owner, password) => {
   await firebase.auth().createUserWithEmailAndPassword(owner.mobile + '@gmail.com', owner.mobile.substring(9, 2) + password)
   let colors = []
   for (var i = 0; i < 4; i++){

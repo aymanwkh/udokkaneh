@@ -5,6 +5,7 @@ import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
+import { orderStatus } from '../data/config'
 
 const OrdersList = props => {
   const { state } = useContext(StoreContext)
@@ -23,7 +24,7 @@ const OrdersList = props => {
                 <ListItem
                   link={`/orderDetails/${o.id}`}
                   title={moment(o.time.toDate()).fromNow()}
-                  subtitle={state.orderStatus.find(s => s.id === o.status).name}
+                  subtitle={orderStatus.find(s => s.id === o.status).name}
                   after={(o.total / 1000).toFixed(3)}
                   key={o.id}
                 />
