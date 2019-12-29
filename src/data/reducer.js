@@ -19,7 +19,7 @@ const Reducer = (state, action) => {
         time: new Date()
       }
       newBasket = [...state.basket, pack]
-      localStorage.setItem('basket', JSON.stringify(newBasket));
+      localStorage.setItem('basket', JSON.stringify(newBasket))
       return {...state, basket: newBasket}
     case 'INCREASE_QUANTITY':
       pack = state.basket.find(p => p.packId === action.pack.packId)
@@ -38,7 +38,7 @@ const Reducer = (state, action) => {
         quantity: nextQuantity
       }
       newBasket = [...otherPacks, pack]
-      localStorage.setItem('basket', JSON.stringify(newBasket));
+      localStorage.setItem('basket', JSON.stringify(newBasket))
       return {...state, basket: newBasket}
     case 'DECREASE_QUANTITY':
       pack = state.basket.find(p => p.packId === action.pack.packId)
@@ -63,13 +63,13 @@ const Reducer = (state, action) => {
         }
         newBasket = [...otherPacks, pack]
       }
-      localStorage.setItem('basket', JSON.stringify(newBasket));
+      localStorage.setItem('basket', JSON.stringify(newBasket))
       return {...state, basket: newBasket}
     case 'CLEAR_BASKET':
-      localStorage.setItem('basket', JSON.stringify([]));
+      localStorage.setItem('basket', JSON.stringify([]))
       return {...state, basket: []}
     case 'LOAD_BASKET':
-      localStorage.setItem('basket', JSON.stringify(action.basket));
+      localStorage.setItem('basket', JSON.stringify(action.basket))
       return {...state, basket: action.basket}
     case 'SET_BASKET':
       return {...state, basket: action.basket}

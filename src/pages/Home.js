@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge } from 'framework7-react'
 import Sections from './Sections'
-import BottomToolbar from './BottomToolbar';
-import { StoreContext } from '../data/Store';
+import BottomToolbar from './BottomToolbar'
+import { StoreContext } from '../data/store'
 
 
 const Home = props => {

@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { Button, Block } from 'framework7-react'
-import { StoreContext } from '../data/Store';
+import { StoreContext } from '../data/store'
 
 const Sections = props => {
   const { state } = useContext(StoreContext)

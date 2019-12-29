@@ -1,9 +1,10 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react'
+import { f7 } from 'framework7-react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, FabButton, FabButtons } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import ReLogin from './ReLogin'
-import { StoreContext } from '../data/Store'
-import { cancelOrder, cancelOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { cancelOrder, cancelOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 
 
 const OrderDetails = props => {

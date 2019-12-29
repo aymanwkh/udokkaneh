@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
 import { Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
-import { StoreContext } from '../data/Store';
-import { registerStoreOwner, showMessage, showError, getMessage } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { registerStoreOwner, showMessage, showError, getMessage } from '../data/actions'
 
 const StoreOwner = props => {
   const { state } = useContext(StoreContext)

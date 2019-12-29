@@ -1,8 +1,8 @@
-import React from 'react';
-import { App, Panel, View } from 'framework7-react';
+import React from 'react'
+import { App, Panel, View } from 'framework7-react'
 
-import routes from './routes';
-import Store from './data/Store';
+import routes from './routes'
+import Store from './data/store'
 
 export default function (props) {
 
@@ -11,7 +11,7 @@ export default function (props) {
     name: 'دكانة نت', 
     theme: 'ios',
     routes,
-  };
+  }
 
   return (
     <Store>
@@ -22,5 +22,5 @@ export default function (props) {
         <View id="main-view" url="/" main className="safe-areas"/>
       </App>
     </Store>
-  );
-};
+  )
+}

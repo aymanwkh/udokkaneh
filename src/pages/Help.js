@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { Page, Navbar, Block, Icon } from 'framework7-react';
-import { StoreContext } from '../data/Store';
+import React, { useContext } from 'react'
+import { Page, Navbar, Block, Icon } from 'framework7-react'
+import { StoreContext } from '../data/store'
 
 const Help = props => {
   const { state } = useContext(StoreContext)

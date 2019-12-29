@@ -1,5 +1,5 @@
-import React, { createContext, useReducer, useEffect, useState } from 'react';
-import Reducer from './Reducer'
+import React, { createContext, useReducer, useEffect, useState } from 'react'
+import Reducer from './reducer'
 import firebase from './firebase'
 import labels from './labels'
 
@@ -53,7 +53,7 @@ const Store = props => {
     {id: 'pr', name: 'مرتجع جزئي'}
   ]
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null)
   const initState = {
     sections: [], 
     randomColors, 
@@ -158,7 +158,7 @@ const Store = props => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
       if (user){
-        const localData = localStorage.getItem('basket');
+        const localData = localStorage.getItem('basket')
         const basket = localData ? JSON.parse(localData) : []
         if (basket) dispatch({type: 'SET_BASKET', basket})  
         const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
@@ -233,14 +233,14 @@ const Store = props => {
         })  
 
       }
-    });
-  }, []);
+    })
+  }, [])
   return (
     <StoreContext.Provider value={{state, user, dispatch}}>
       {props.children}
     </StoreContext.Provider>
-  );
+  )
 }
  
-export default Store;
+export default Store
 

@@ -3,8 +3,8 @@ import { f7 } from 'framework7-react'
 import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Popover, List, ListItem } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import RatingStars from './RatingStars'
-import { StoreContext } from '../data/Store'
-import { addPriceAlarm, showMessage, showError, getMessage } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { addPriceAlarm, showMessage, showError, getMessage } from '../data/actions'
 import PackImage from './PackImage'
 
 const PackDetails = props => {

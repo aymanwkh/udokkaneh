@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button, Toolbar, ListItem } from 'framework7-react'
-import { StoreContext } from '../data/Store';
-import { rateProduct, showMessage, showError, getMessage } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { rateProduct, showMessage, showError, getMessage } from '../data/actions'
 import BottomToolbar from './BottomToolbar'
 
 const RateProduct = props => {

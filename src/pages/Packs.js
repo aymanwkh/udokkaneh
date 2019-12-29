@@ -1,7 +1,7 @@
 import React, { useContext, useState, useMemo } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Popover } from 'framework7-react'
-import BottomToolbar from './BottomToolbar';
-import { StoreContext } from '../data/Store';
+import BottomToolbar from './BottomToolbar'
+import { StoreContext } from '../data/store'
 import PackImage from './PackImage'
 import moment from 'moment'
 

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react'
-import { Page, Navbar, List, ListInput, Fab, Icon, Card, CardContent, CardHeader, Toggle, ListItem } from 'framework7-react';
-import { StoreContext } from '../data/Store';
-import { addPriceAlarm, showMessage, showError, getMessage } from '../data/Actions'
+import { Page, Navbar, List, ListInput, Fab, Icon, Card, CardContent, CardHeader, Toggle, ListItem } from 'framework7-react'
+import { StoreContext } from '../data/store'
+import { addPriceAlarm, showMessage, showError, getMessage } from '../data/actions'
 import ReLogin from './ReLogin'
 import PackImage from './PackImage'
 

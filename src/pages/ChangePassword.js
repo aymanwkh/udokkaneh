@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
-import { StoreContext } from '../data/Store';
-import { changePassword, showMessage, showError, getMessage } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { changePassword, showMessage, showError, getMessage } from '../data/actions'
+import labels from '../data/labels'
 
 const ChangePassword = props => {
   const { state } = useContext(StoreContext)
@@ -18,11 +19,11 @@ const ChangePassword = props => {
       if (patterns.password.test(value)){
         setOldPasswordErrorMessage('')
       } else {
-        setOldPasswordErrorMessage(state.labels.invalidPassword)
+        setOldPasswordErrorMessage(labels.invalidPassword)
       }
     }
     if (oldPassword) validatePassword(oldPassword)
-  }, [oldPassword, state.labels])
+  }, [oldPassword, labels])
   useEffect(() => {
     const patterns = {
       password: /^.{4}$/,
@@ -31,11 +32,11 @@ const ChangePassword = props => {
       if (patterns.password.test(value)){
         setNewPasswordErrorMessage('')
       } else {
-        setNewPasswordErrorMessage(state.labels.invalidPassword)
+        setNewPasswordErrorMessage(labels.invalidPassword)
       }
     }
     if (newPassword) validatePassword(newPassword)
-  }, [newPassword, state.labels])
+  }, [newPassword, labels])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -46,7 +47,7 @@ const ChangePassword = props => {
   const handleSubmit = async () => {
     try{
       await changePassword(oldPassword, newPassword, state.randomColors)
-      showMessage(state.labels.changePasswordSuccess)
+      showMessage(labels.changePasswordSuccess)
       props.f7router.back()
     } catch (err){
       setError(getMessage(props, err))

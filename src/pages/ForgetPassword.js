@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
-import { StoreContext } from '../data/Store';
-import { forgetPassword, showMessage, showError, getMessage } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { forgetPassword, showMessage, showError, getMessage } from '../data/actions'
 
 const ForgetPassword = props => {
   const { state } = useContext(StoreContext)

@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Button } from 'framework7-react'
-import { StoreContext } from '../data/Store';
-import { showError, getMessage, quantityText } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { showError, getMessage, quantityText } from '../data/actions'
 import PackImage from './PackImage'
+import labels from '../data/labels'
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
@@ -66,7 +67,7 @@ const Basket = props => {
   }
   return(
     <Page>
-    <Navbar title={state.labels.basket} backLink={state.labels.back} />
+    <Navbar title={labels.basket} backLink={labels.back} />
     <Block>
       <List mediaList>
         {packs.map(p => {
@@ -75,8 +76,8 @@ const Basket = props => {
             <ListItem
               title={state.products.find(pr => pr.id === packInfo.productId).name}
               subtitle={packInfo.name}
-              text={`${state.labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
-              footer={`${state.labels.quantity}: ${quantityText(p.quantity)}`}
+              text={`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
+              footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
               key={p.packId}
             >
               <PackImage slot="media" pack={packInfo} type="list" />
@@ -92,13 +93,13 @@ const Basket = props => {
           )
         })}
       </List>
-      <p className="note">{weightedPacks.length > 0 ? state.labels.weightedPricesNote : ''}</p>
+      <p className="note">{weightedPacks.length > 0 ? labels.weightedPricesNote : ''}</p>
     </Block>
     {submitVisible ? 
-      <Fab position="center-bottom" slot="fixed" text={`${state.labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
+      <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
         <Icon material="done"></Icon>
       </Fab>
-    : <Fab position="center-bottom" slot="fixed" text={state.labels.limitOverFlowNote} color="red" href="/help/orderLimit">
+    : <Fab position="center-bottom" slot="fixed" text={labels.limitOverFlowNote} color="red" href="/help/orderLimit">
         <Icon material="report_problem"></Icon>
       </Fab>
     }

@@ -1,27 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
-import { StoreContext } from '../data/Store';
-import { newProduct, showMessage, showError, getMessage } from '../data/Actions'
+import { StoreContext } from '../data/store'
+import { newProduct, showMessage, showError, getMessage } from '../data/actions'
 
 const NewProduct = props => {
   const { state } = useContext(StoreContext)
   const [name, setName] = useState('')
-  const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    const patterns = {
-      name: /^.{4,50}$/,
-    }
-    const validateName = (value) => {
-      if (patterns.name.test(value)){
-        setNameErrorMessage('')
-      } else {
-        setNameErrorMessage(state.labels.invalidName)
-      }
-    }  
-    if (name) validateName(name)
-  }, [name, state.labels])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -53,15 +39,13 @@ const NewProduct = props => {
           name="name"
           clearButton
           value={name}
-          errorMessage={nameErrorMessage}
-          errorMessageForce
           onChange={e => setName(e.target.value)}
           onInputClear={() => setName('')}
         />
-        {!name || nameErrorMessage ? '' : 
-          <Button onClick={() => handleSend()}>{state.labels.send}</Button>
-        }
       </List>
+      {!name ? '' : 
+        <Button large onClick={() => handleSend()}>{state.labels.send}</Button>
+      }
     </Page>
   )
 }

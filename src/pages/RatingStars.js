@@ -15,7 +15,7 @@ const RatingStars = props => {
       case 4:
       case 5:
         color = 'green'
-        break;
+        break
       default:
         color = 'yellow'
     }
