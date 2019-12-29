@@ -4,6 +4,7 @@ import BottomToolbar from './BottomToolbar'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/store'
+import labels from '../data/labels'
 
 const OrdersList = props => {
   const { state } = useContext(StoreContext)
@@ -13,11 +14,11 @@ const OrdersList = props => {
   }, [state.orders])
   return(
     <Page>
-      <Navbar title={state.labels.myOrders} backLink={state.labels.back} />
+      <Navbar title={labels.myOrders} backLink={labels.back} />
       <Block>
           <List mediaList>
             {orders.length === 0 ? 
-              <ListItem title={state.labels.noData} /> 
+              <ListItem title={labels.noData} /> 
             : orders.map(o =>
                 <ListItem
                   link={`/orderDetails/${o.id}`}

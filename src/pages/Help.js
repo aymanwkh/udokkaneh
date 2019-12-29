@@ -1,15 +1,14 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Page, Navbar, Block, Icon } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import labels from '../data/labels'
 
 const Help = props => {
-  const { state } = useContext(StoreContext)
   return (
     <Page>
-      <Navbar title={state.labels.helpPageTitle} backLink={state.labels.back} />
+      <Navbar title={labels.helpPageTitle} backLink={labels.back} />
       <Block strong className="center">
         <Icon color="red" material="warning"></Icon>
-        <p className="note">{state.labels.orderLimitHelp}</p>
+        <p className="note">{labels.orderLimitHelp}</p>
       </Block>
     </Page>
   )

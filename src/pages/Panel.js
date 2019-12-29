@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { Page, Navbar, List, ListItem, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { logout } from '../data/actions'
+import labels from '../data/labels'
 
 const Panel = props => {
   const { user, state, dispatch } = useContext(StoreContext)
@@ -14,37 +15,37 @@ const Panel = props => {
   }
   return(
     <Page>
-      <Navbar title={state.labels.mainPanelTitle} />
+      <Navbar title={labels.mainPanelTitle} />
       <List>
         {user ?
           <ListItem 
             link="#" 
-            title={state.labels.logout} 
+            title={labels.logout} 
             onClick={() => handleLogout()} 
           />
         : 
           <ListItem 
             link="/panelLogin/" 
-            title={state.labels.loginTitle} 
+            title={labels.loginTitle} 
           />
         }
         {user ? 
           <ListItem 
             link="/basket/"
             view="#main-view"
-            title={state.labels.basket} 
+            title={labels.basket} 
             panelClose
           >
             {state.basket.length > 0 ? <Badge color="red">{state.basket.length}</Badge> : ''}
           </ListItem>
         : ''}
-        {user ? <ListItem link="/changePassword/" title={state.labels.changePassword} /> : ''}
-        {user ? <ListItem link="/ordersList/" title={state.labels.myOrders} view="#main-view" panelClose /> : ''}
-        {user ? <ListItem link="/inviteFriend/" title={state.labels.inviteFriend} view="#main-view" panelClose /> : ''}
-        {user ? <ListItem link="/newProduct/" title={state.labels.newProduct} view="#main-view" panelClose /> : ''}
-        {state.customer.storeId ? <ListItem link={`/ownerPacks/${state.customer.storeId}`} title={state.labels.ownerPacks} view="#main-view" panelClose /> : ''}
-        {user ? '' : <ListItem link="/storeOwner/" title={state.labels.registerStoreOwner} view="#main-view" panelClose />}
-        <ListItem link="/contactUs/" title={state.labels.contactUsTitle} view="#main-view" panelClose />
+        {user ? <ListItem link="/changePassword/" title={labels.changePassword} /> : ''}
+        {user ? <ListItem link="/ordersList/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
+        {user ? <ListItem link="/inviteFriend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
+        {user ? <ListItem link="/newProduct/" title={labels.newProduct} view="#main-view" panelClose /> : ''}
+        {state.customer.storeId ? <ListItem link={`/ownerPacks/${state.customer.storeId}`} title={labels.ownerPacks} view="#main-view" panelClose /> : ''}
+        {user ? '' : <ListItem link="/storeOwner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
+        <ListItem link="/contactUs/" title={labels.contactUsTitle} view="#main-view" panelClose />
       </List>
     </Page>
   )

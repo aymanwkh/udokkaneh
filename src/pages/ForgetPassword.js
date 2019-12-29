@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { forgetPassword, showMessage, showError, getMessage } from '../data/actions'
+import labels from '../data/labels'
 
 const ForgetPassword = props => {
   const { state } = useContext(StoreContext)
@@ -16,11 +17,11 @@ const ForgetPassword = props => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
-        setMobileErrorMessage(state.labels.invalidMobile)
+        setMobileErrorMessage(labels.invalidMobile)
       }
     }
     if (mobile) validateMobile(mobile)
-  }, [mobile, state.labels])
+  }, [mobile])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -34,7 +35,7 @@ const ForgetPassword = props => {
         throw new Error('duplicateForgetPassword')
       }
       await forgetPassword(mobile)
-      showMessage(state.labels.sendSuccess)
+      showMessage(labels.sendSuccess)
       props.f7router.app.views.main.router.navigate('/home/')
       props.f7router.app.panel.close('right')
     } catch (err){
@@ -44,12 +45,12 @@ const ForgetPassword = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.forgetPasswordTitle} backLink={state.labels.back} />
+      <Navbar title={labels.forgetPasswordTitle} backLink={labels.back} />
       <List form>
         <ListInput
-          label={state.labels.mobile}
+          label={labels.mobile}
           type="number"
-          placeholder={state.labels.mobilePlaceholder}
+          placeholder={labels.mobilePlaceholder}
           name="mobile"
           clearButton
           value={mobile}
@@ -61,7 +62,7 @@ const ForgetPassword = props => {
       </List>
       <List>
       {!mobile || mobileErrorMessage ? '' : 
-        <Button large onClick={() => handleForgetPassword()}>{state.labels.send}</Button>
+        <Button large onClick={() => handleForgetPassword()}>{labels.send}</Button>
       }
       </List>
     </Page>

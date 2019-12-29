@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useMemo } from 'react'
 import { Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
+import labels from '../data/labels'
 
 const Register = props => {
   const { state } = useContext(StoreContext)
@@ -25,11 +26,11 @@ const Register = props => {
         if (patterns.name.test(value)){
           setNameErrorMessage('')
         } else {
-          setNameErrorMessage(state.labels.invalidName)
+          setNameErrorMessage(labels.invalidName)
         }
     }  
     if (name !== '') validateName(name)
-  }, [name, state.labels])
+  }, [name])
   useEffect(() => {
     const patterns = {
       password: /^.{4}$/,
@@ -38,11 +39,11 @@ const Register = props => {
       if (patterns.password.test(value)){
         setPasswordErrorMessage('')
       } else {
-        setPasswordErrorMessage(state.labels.invalidPassword)
+        setPasswordErrorMessage(labels.invalidPassword)
       }
     }
     if (password) validatePassword(password)
-  }, [password, state.labels])
+  }, [password])
   useEffect(() => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
@@ -51,11 +52,11 @@ const Register = props => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
-        setMobileErrorMessage(state.labels.invalidMobile)
+        setMobileErrorMessage(labels.invalidMobile)
       }
     }
     if (mobile) validateMobile(mobile)
-  }, [mobile, state.labels])
+  }, [mobile])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -66,7 +67,7 @@ const Register = props => {
   const handleRegister = async () => {
     try{
       await registerUser(mobile, password, name, locationId, state.randomColors)
-      showMessage(state.labels.registerSuccess)
+      showMessage(labels.registerSuccess)
       props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){
@@ -76,12 +77,12 @@ const Register = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.registerTitle} backLink={state.labels.back} />
+      <Navbar title={labels.registerTitle} backLink={labels.back} />
       <List form>
         <ListInput
-          label={state.labels.name}
+          label={labels.name}
           type="text"
-          placeholder={state.labels.namePlaceholder}
+          placeholder={labels.namePlaceholder}
           name="name"
           clearButton
           value={name}
@@ -91,9 +92,9 @@ const Register = props => {
           onInputClear={() => setName('')}
         />
         <ListInput
-          label={state.labels.mobile}
+          label={labels.mobile}
           type="number"
-          placeholder={state.labels.mobilePlaceholder}
+          placeholder={labels.mobilePlaceholder}
           name="mobile"
           clearButton
           value={mobile}
@@ -103,9 +104,9 @@ const Register = props => {
           onInputClear={() => setMobile('')}
         />
         <ListInput
-          label={state.labels.password}
+          label={labels.password}
           type="number"
-          placeholder={state.labels.passwordPlaceholder}
+          placeholder={labels.passwordPlaceholder}
           name="password"
           clearButton
           value={password}
@@ -115,14 +116,14 @@ const Register = props => {
           onInputClear={() => setPassword('')}
         />
         <ListItem
-          title={state.labels.location}
+          title={labels.location}
           smartSelect
           smartSelectParams={{
             openIn: "popup", 
             closeOnSelect: true, 
             searchbar: true, 
-            searchbarPlaceholder: state.labels.search,
-            popupCloseLinkText: state.labels.close
+            searchbarPlaceholder: labels.search,
+            popupCloseLinkText: labels.close
           }}
         >
           <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
@@ -140,7 +141,7 @@ const Register = props => {
           large 
           onClick={() => handleRegister()}
         >
-          {state.labels.register}
+          {labels.register}
         </Button>
       }
     </Page>

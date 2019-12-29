@@ -23,7 +23,7 @@ const ChangePassword = props => {
       }
     }
     if (oldPassword) validatePassword(oldPassword)
-  }, [oldPassword, labels])
+  }, [oldPassword])
   useEffect(() => {
     const patterns = {
       password: /^.{4}$/,
@@ -36,7 +36,7 @@ const ChangePassword = props => {
       }
     }
     if (newPassword) validatePassword(newPassword)
-  }, [newPassword, labels])
+  }, [newPassword])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -56,12 +56,12 @@ const ChangePassword = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.changePassword} backLink={state.labels.back} />
+      <Navbar title={labels.changePassword} backLink={labels.back} />
       <List form>
         <ListInput
-          label={state.labels.oldPassword}
+          label={labels.oldPassword}
           type="number"
-          placeholder={state.labels.passwordPlaceholder}
+          placeholder={labels.passwordPlaceholder}
           name="oldPassword"
           clearButton
           errorMessage={oldPasswordErrorMessage}
@@ -70,9 +70,9 @@ const ChangePassword = props => {
           onInputClear={() => setOldPassword('')}
         />
         <ListInput
-          label={state.labels.newPassword}
+          label={labels.newPassword}
           type="number"
-          placeholder={state.labels.passwordPlaceholder}
+          placeholder={labels.passwordPlaceholder}
           name="newPassword"
           clearButton
           errorMessage={newPasswordErrorMessage}
@@ -82,7 +82,7 @@ const ChangePassword = props => {
         />
       </List>
       {!oldPassword || !newPassword || oldPassword === newPassword || oldPasswordErrorMessage || newPasswordErrorMessage ? '' :
-        <Button large onClick={() => handleSubmit()}>{state.labels.submit}</Button>
+        <Button large onClick={() => handleSubmit()}>{labels.submit}</Button>
       }
     </Page>
   )

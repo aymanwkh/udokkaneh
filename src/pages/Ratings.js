@@ -4,6 +4,7 @@ import BottomToolbar from './BottomToolbar'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/store'
+import labels from '../data/labels'
 
 const Ratings = props => {
   const { state } = useContext(StoreContext)
@@ -14,11 +15,11 @@ const Ratings = props => {
 
   return(
     <Page>
-      <Navbar title={state.labels.ratings} backLink={state.labels.back} />
+      <Navbar title={labels.ratings} backLink={labels.back} />
       <Block>
         <List mediaList>
           {ratings.length === 0 ? 
-            <ListItem title={state.labels.noData} /> 
+            <ListItem title={labels.noData} /> 
           : ratings.map(r => 
               <ListItem
                 title={`${r.userName}: ${state.ratingValues.find(v => v.id === r.value).name}`}

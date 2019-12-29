@@ -5,6 +5,7 @@ import { StoreContext } from '../data/store'
 import moment from 'moment'
 import 'moment/locale/ar'
 import PackImage from './PackImage'
+import labels from '../data/labels'
 
 const OwnerPacks = props => {
   const { state } = useContext(StoreContext)
@@ -16,7 +17,7 @@ const OwnerPacks = props => {
   , [state.stores, props.id])
   return(
     <Page>
-      <Navbar title={`${store.name}`} backLink={state.labels.back}>
+      <Navbar title={`${store.name}`} backLink={labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>
@@ -26,16 +27,16 @@ const OwnerPacks = props => {
           searchIn=".item-title, .item-subtitle"
           clearButton
           expandable
-          placeholder={state.labels.search}
+          placeholder={labels.search}
         ></Searchbar>
       </Navbar>
       <Block>
         <List className="searchbar-not-found">
-          <ListItem title={state.labels.noData} />
+          <ListItem title={labels.noData} />
         </List>
         <List mediaList className="search-list searchbar-found">
           {ownerPacks.length === 0 ? 
-            <ListItem title={state.labels.noData} /> 
+            <ListItem title={labels.noData} /> 
           : ownerPacks.map(p => {
               const packInfo = state.packs.find(pa => pa.id === p.packId)
               const productInfo = state.products.find(pr => pr.id === packInfo.productId)
@@ -49,9 +50,9 @@ const OwnerPacks = props => {
                   key={p.id}
                 >
                   <PackImage slot="media" pack={packInfo} type="list" />
-                  {productInfo.isNew ? <Badge slot="title" color='red'>{state.labels.new}</Badge> : ''}
-                  {packInfo.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                  <Badge slot="footer" color='green'> {state.labels.myPrice} {(p.price / 1000).toFixed(3)} </Badge>
+                  {productInfo.isNew ? <Badge slot="title" color='red'>{labels.new}</Badge> : ''}
+                  {packInfo.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
+                  <Badge slot="footer" color='green'> {labels.myPrice} {(p.price / 1000).toFixed(3)} </Badge>
                 </ListItem>
               )
             })

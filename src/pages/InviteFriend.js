@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { inviteFriend, showMessage, showError, getMessage } from '../data/actions'
+import labels from '../data/labels'
 
 const InviteFriend = props => {
   const { state } = useContext(StoreContext)
@@ -19,11 +20,11 @@ const InviteFriend = props => {
       if (patterns.name.test(value)){
         setNameErrorMessage('')
       } else {
-        setNameErrorMessage(state.labels.invalidName)
+        setNameErrorMessage(labels.invalidName)
       }
     }  
     if (name) validateName(name)
-  }, [name, state.labels])
+  }, [name])
   useEffect(() => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
@@ -32,11 +33,11 @@ const InviteFriend = props => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
-        setMobileErrorMessage(state.labels.invalidMobile)
+        setMobileErrorMessage(labels.invalidMobile)
       }
     }
     if (mobile) validateMobile(mobile)
-  }, [mobile, state.labels])
+  }, [mobile])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -50,7 +51,7 @@ const InviteFriend = props => {
         throw new Error('blockedUser')
       }
       await inviteFriend(mobile, name)
-      showMessage(state.labels.sendSuccess)
+      showMessage(labels.sendSuccess)
       props.f7router.navigate('/home/')
     } catch (err){
       setError(getMessage(props, err))
@@ -59,12 +60,12 @@ const InviteFriend = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.inviteFriend} backLink={state.labels.back} />
+      <Navbar title={labels.inviteFriend} backLink={labels.back} />
       <List form>
         <ListInput
-          label={state.labels.name}
+          label={labels.name}
           type="text"
-          placeholder={state.labels.namePlaceholder}
+          placeholder={labels.namePlaceholder}
           name="name"
           clearButton
           value={name}
@@ -74,9 +75,9 @@ const InviteFriend = props => {
           onInputClear={() => setName('')}
         />
         <ListInput
-          label={state.labels.mobile}
+          label={labels.mobile}
           type="number"
-          placeholder={state.labels.mobilePlaceholder}
+          placeholder={labels.mobilePlaceholder}
           name="mobile"
           clearButton
           value={mobile}
@@ -88,7 +89,7 @@ const InviteFriend = props => {
       </List>
       <List>
       {!name || !mobile || nameErrorMessage || mobileErrorMessage ? '' : 
-        <Button onClick={() => handleSend()}>{state.labels.send}</Button>
+        <Button onClick={() => handleSend()}>{labels.send}</Button>
       }
       </List>
     </Page>

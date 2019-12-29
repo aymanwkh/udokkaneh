@@ -3,6 +3,7 @@ import { Page, Navbar, List, ListInput, Button, Toolbar, ListItem } from 'framew
 import { StoreContext } from '../data/store'
 import { rateProduct, showMessage, showError, getMessage } from '../data/actions'
 import BottomToolbar from './BottomToolbar'
+import labels from '../data/labels'
 
 const RateProduct = props => {
   const { state } = useContext(StoreContext)
@@ -22,7 +23,7 @@ const RateProduct = props => {
         throw new Error('blockedUser')
       }
       await rateProduct(props.productId, Number(props.value), comment)
-      showMessage(state.labels.ratingSuccess)
+      showMessage(labels.ratingSuccess)
       props.f7router.back()
     } catch(err) {
       setError(getMessage(props, err))
@@ -31,16 +32,16 @@ const RateProduct = props => {
 
   return(
     <Page>
-      <Navbar title={state.labels.ratingTitle} backLink={state.labels.back} />
+      <Navbar title={labels.ratingTitle} backLink={labels.back} />
       <List form>
         <ListItem
-          title={state.labels.ratingValue}
+          title={labels.ratingValue}
           after={state.ratingValues.find(v => v.id === Number(props.value)).name}
         />
         <ListInput
-          label={state.labels.comment}
+          label={labels.comment}
           type="textarea"
-          placeholder={state.labels.commentPlaceholder}
+          placeholder={labels.commentPlaceholder}
           name="comment"
           clearButton
           onChange={e => setComment(e.target.value)}
@@ -52,11 +53,11 @@ const RateProduct = props => {
           large 
           onClick={() => handleRate()}
         >
-          {state.labels.send}
+          {labels.send}
         </Button>
       }
       <h3 className="center">
-        {state.labels.commentNote}
+        {labels.commentNote}
       </h3>
       <Toolbar bottom>
         <BottomToolbar/>

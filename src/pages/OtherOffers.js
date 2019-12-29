@@ -4,6 +4,7 @@ import BottomToolbar from './BottomToolbar'
 import { StoreContext } from '../data/store'
 import PackImage from './PackImage'
 import moment from 'moment'
+import labels from '../data/labels'
 
 const OtherOffers = props => {
   const { state } = useContext(StoreContext)
@@ -17,7 +18,7 @@ const OtherOffers = props => {
   }, [state.packs, pack, state.products]) 
   return(
     <Page>
-      <Navbar title={state.labels.offers} backLink={state.labels.back} />
+      <Navbar title={labels.offers} backLink={labels.back} />
       <Block>
         <List mediaList>
           {offers.map(p => {
@@ -27,17 +28,17 @@ const OtherOffers = props => {
                 link={`/pack/${p.id}`}
                 title={productInfo.name}
                 subtitle={p.name}
-                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
-                footer={p.offerEnd ? `${state.labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
+                text={`${labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
+                footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
                 <PackImage slot="media" pack={p} type="list" />
-                {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
-                {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
+                {productInfo.isNew ? <Badge slot="title" color="red">{labels.new}</Badge> : ''}
+                {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
                 {state.customer.storeId && state.storePacks.find(pa => pa.storeId === state.customer.storeId) ? 
                   <Badge slot="footer" color='green'> 
-                    {state.labels.myPrice} {(state.storePacks.find(pa => pa.storeId === state.customer.storeId).price / 1000).toFixed(3)} 
+                    {labels.myPrice} {(state.storePacks.find(pa => pa.storeId === state.customer.storeId).price / 1000).toFixed(3)} 
                   </Badge> 
                 : ''}
               </ListItem>

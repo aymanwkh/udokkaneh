@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { newProduct, showMessage, showError, getMessage } from '../data/actions'
+import labels from '../data/labels'
 
 const NewProduct = props => {
   const { state } = useContext(StoreContext)
@@ -21,7 +22,7 @@ const NewProduct = props => {
         throw new Error('blockedUser')
       }
       await newProduct(name)
-      showMessage(state.labels.sendSuccess)
+      showMessage(labels.sendSuccess)
       props.f7router.navigate('/home/')
     } catch (err){
       setError(getMessage(props, err))
@@ -30,12 +31,12 @@ const NewProduct = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.newProduct} backLink={state.labels.back} />
+      <Navbar title={labels.newProduct} backLink={labels.back} />
       <List form>
         <ListInput
-          label={state.labels.name}
+          label={labels.name}
           type="text"
-          placeholder={state.labels.namePlaceholder}
+          placeholder={labels.namePlaceholder}
           name="name"
           clearButton
           value={name}
@@ -44,7 +45,7 @@ const NewProduct = props => {
         />
       </List>
       {!name ? '' : 
-        <Button large onClick={() => handleSend()}>{state.labels.send}</Button>
+        <Button large onClick={() => handleSend()}>{labels.send}</Button>
       }
     </Page>
   )

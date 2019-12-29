@@ -4,6 +4,7 @@ import BottomToolbar from './BottomToolbar'
 import { StoreContext } from '../data/store'
 import PackImage from './PackImage'
 import moment from 'moment'
+import labels from '../data/labels'
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
@@ -42,7 +43,7 @@ const Packs = props => {
   }
   return(
     <Page>
-      <Navbar title={category?.name || state.labels.allProducts} backLink={state.labels.back}>
+      <Navbar title={category?.name || labels.allProducts} backLink={labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>
@@ -52,7 +53,7 @@ const Packs = props => {
           searchIn=".item-title, .item-subtitle"
           clearButton
           expandable
-          placeholder={state.labels.search}
+          placeholder={labels.search}
         />
       </Navbar>
       <Popover className="popover-menu">
@@ -70,13 +71,13 @@ const Packs = props => {
       </Popover>
       <Block>
         <List className="searchbar-not-found">
-          <ListItem title={state.labels.noData} />
+          <ListItem title={labels.noData} />
         </List>
         <List mediaList className="search-list searchbar-found">
           <ListItem 
             link="#"
             popoverOpen=".popover-menu"
-            title={state.labels.orderBy} 
+            title={labels.orderBy} 
             after={state.orderByList.find(o => o.id === orderBy).name}
           />
           {categoryPacks.map(p => {
@@ -87,15 +88,15 @@ const Packs = props => {
                 link={`/pack/${p.id}`}
                 title={productInfo.name}
                 subtitle={p.name}
-                text={`${state.labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
-                footer={p.offerEnd ? `${state.labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
+                text={`${labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
+                footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
                 <PackImage slot="media" pack={p} type="list" />
-                {productInfo.isNew ? <Badge slot="title" color="red">{state.labels.new}</Badge> : ''}
-                {p.isOffer ? <Badge slot="title" color='green'>{state.labels.offer}</Badge> : ''}
-                {storePackInfo ? <Badge slot="footer" color='green'> {state.labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}
+                {productInfo.isNew ? <Badge slot="title" color="red">{labels.new}</Badge> : ''}
+                {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
+                {storePackInfo ? <Badge slot="footer" color='green'> {labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )
           })}

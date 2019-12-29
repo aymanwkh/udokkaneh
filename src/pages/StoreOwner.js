@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useMemo } from 'react'
 import { Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { registerStoreOwner, showMessage, showError, getMessage } from '../data/actions'
+import labels from '../data/labels'
 
 const StoreOwner = props => {
   const { state } = useContext(StoreContext)
@@ -26,11 +27,11 @@ const StoreOwner = props => {
       if (patterns.name.test(value)){
         setNameErrorMessage('')
       } else {
-        setNameErrorMessage(state.labels.invalidName)
+        setNameErrorMessage(labels.invalidName)
       }
     }  
     if (name) validateName(name)
-  }, [name, state.labels])
+  }, [name])
   useEffect(() => {
     const patterns = {
       password: /^.{4}$/,
@@ -39,11 +40,11 @@ const StoreOwner = props => {
       if (patterns.password.test(value)){
         setPasswordErrorMessage('')
       } else {
-        setPasswordErrorMessage(state.labels.invalidPassword)
+        setPasswordErrorMessage(labels.invalidPassword)
       }
     }
     if (password) validatePassword(password)
-  }, [password, state.labels])
+  }, [password])
   useEffect(() => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
@@ -52,11 +53,11 @@ const StoreOwner = props => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
-        setMobileErrorMessage(state.labels.invalidMobile)
+        setMobileErrorMessage(labels.invalidMobile)
       }
     }
     if (mobile) validateMobile(mobile)
-  }, [mobile, state.labels])
+  }, [mobile])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -71,11 +72,11 @@ const StoreOwner = props => {
       if (patterns.name.test(value)){
         setStoreNameErrorMessage('')
       } else {
-        setStoreNameErrorMessage(state.labels.invalidName)
+        setStoreNameErrorMessage(labels.invalidName)
       }
     }  
     if (storeName) validateStoreName(storeName)
-  }, [storeName, state.labels])
+  }, [storeName])
 
   const handleRegister = async () => {
     try{
@@ -86,7 +87,7 @@ const StoreOwner = props => {
         locationId
       }
       await registerStoreOwner(owner, password, state.randomColors)
-      showMessage(state.labels.registerSuccess)
+      showMessage(labels.registerSuccess)
       props.f7router.navigate('/home/')
       props.f7router.app.panel.close('right') 
     } catch (err){
@@ -96,12 +97,12 @@ const StoreOwner = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.registerStoreOwnerTitle} backLink={state.labels.back} />
+      <Navbar title={labels.registerStoreOwnerTitle} backLink={labels.back} />
       <List form>
         <ListInput
-          label={state.labels.name}
+          label={labels.name}
           type="text"
-          placeholder={state.labels.namePlaceholder}
+          placeholder={labels.namePlaceholder}
           name="name"
           clearButton
           value={name}
@@ -111,9 +112,9 @@ const StoreOwner = props => {
           onInputClear={() => setName('')}
         />
         <ListInput
-          label={state.labels.mobile}
+          label={labels.mobile}
           type="number"
-          placeholder={state.labels.mobilePlaceholder}
+          placeholder={labels.mobilePlaceholder}
           name="mobile"
           clearButton
           value={mobile}
@@ -123,9 +124,9 @@ const StoreOwner = props => {
           onInputClear={() => setMobile('')}
         />
         <ListInput
-          label={state.labels.password}
+          label={labels.password}
           type="number"
-          placeholder={state.labels.passwordPlaceholder}
+          placeholder={labels.passwordPlaceholder}
           name="password"
           clearButton
           value={password}
@@ -135,9 +136,9 @@ const StoreOwner = props => {
           onInputClear={() => setPassword('')}
         />
         <ListInput
-          label={state.labels.storeName}
+          label={labels.storeName}
           type="text"
-          placeholder={state.labels.namePlaceholder}
+          placeholder={labels.namePlaceholder}
           name="storeName"
           clearButton
           value={storeName}
@@ -147,14 +148,14 @@ const StoreOwner = props => {
           onInputClear={() => setStoreName('')}
         />
         <ListItem
-          title={state.labels.location}
+          title={labels.location}
           smartSelect
           smartSelectParams={{
             openIn: "popup", 
             closeOnSelect: true, 
             searchbar: true, 
-            searchbarPlaceholder: state.labels.search,
-            popupCloseLinkText: state.labels.close
+            searchbarPlaceholder: labels.search,
+            popupCloseLinkText: labels.close
           }}
         >
           <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
@@ -169,7 +170,7 @@ const StoreOwner = props => {
       <List>
       {!name || !mobile || !password || !storeName || !locationId || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
         <Button large onClick={() => handleRegister()}>
-          {state.labels.register}
+          {labels.register}
         </Button>
       }
       </List>

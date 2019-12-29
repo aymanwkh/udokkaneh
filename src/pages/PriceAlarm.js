@@ -4,6 +4,7 @@ import { StoreContext } from '../data/store'
 import { addPriceAlarm, showMessage, showError, getMessage } from '../data/actions'
 import ReLogin from './ReLogin'
 import PackImage from './PackImage'
+import labels from '../data/labels'
 
 const PriceAlarm = props => {
   const { state, user } = useContext(StoreContext)
@@ -25,14 +26,14 @@ const PriceAlarm = props => {
   const priceAlarmText = useMemo(() => {
     if (state.customer.storeId) {
       if (state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)) {
-        return state.labels.changePrice
+        return labels.changePrice
       } else {
-       return state.labels.havePack
+       return labels.havePack
       }
     } else {
-      return state.labels.lessPrice
+      return labels.lessPrice
     }
-  }, [pack, state.customer, state.labels, state.storePacks])
+  }, [pack, state.customer, state.storePacks])
 
   useEffect(() => {
     const validatePrice = (value) => {
@@ -40,18 +41,18 @@ const PriceAlarm = props => {
         if (Number(value) > 0) {
           setPriceErrorMessage('')
         } else {
-          setPriceErrorMessage(state.labels.invalidPrice)
+          setPriceErrorMessage(labels.invalidPrice)
         }  
       } else {
         if (Number(value) > 0 && Number(value * 1000) < pack.price) {
           setPriceErrorMessage('')
         } else {
-          setPriceErrorMessage(state.labels.invalidPrice)
+          setPriceErrorMessage(labels.invalidPrice)
         }  
       }
     }
     if (price !== '') validatePrice(price)
-  }, [price, pack, state.customer, state.labels])
+  }, [price, pack, state.customer])
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -60,11 +61,11 @@ const PriceAlarm = props => {
       if (patterns.name.test(value)){
         setStoreNameErrorMessage('')
       } else {
-        setStoreNameErrorMessage(state.labels.invalidName)
+        setStoreNameErrorMessage(labels.invalidName)
       }
     }  
     if (storeName) validateStoreName(storeName)
-  }, [storeName, state.labels])
+  }, [storeName])
 
   useEffect(() => {
     if (error) {
@@ -100,7 +101,7 @@ const PriceAlarm = props => {
         offerEnd
       }
       await addPriceAlarm(priceAlarm)
-      showMessage(state.labels.sendSuccess)
+      showMessage(labels.sendSuccess)
       props.f7router.back()
     } catch (err) {
       setError(getMessage(props, err))
@@ -110,7 +111,7 @@ const PriceAlarm = props => {
   if (!user) return <ReLogin />
   return (
     <Page>
-      <Navbar title={priceAlarmText} backLink={state.labels.back} />
+      <Navbar title={priceAlarmText} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <p>{`${product.name} ${pack.name}`}</p>
@@ -123,8 +124,8 @@ const PriceAlarm = props => {
       <List form>
         <ListInput 
           name="price" 
-          label={state.labels.price}
-          placeholder={state.customer.storeId ? state.labels.pricePlaceholder : state.labels.lessPricePlaceholder}
+          label={labels.price}
+          placeholder={state.customer.storeId ? labels.pricePlaceholder : labels.lessPricePlaceholder}
           clearButton 
           type="number" 
           value={price} 
@@ -137,8 +138,8 @@ const PriceAlarm = props => {
         {state.customer.storeId ? '' :
           <ListInput 
             name="storeName" 
-            label={state.labels.storeName}
-            placeholder={state.labels.namePlaceholder}
+            label={labels.storeName}
+            placeholder={labels.namePlaceholder}
             clearButton 
             type="text" 
             value={storeName} 
@@ -150,14 +151,14 @@ const PriceAlarm = props => {
         }
         {state.customer.storeId ? '' :
           <ListItem
-            title={state.labels.location}
+            title={labels.location}
             smartSelect
             smartSelectParams={{
               openIn: "popup", 
               closeOnSelect: true, 
               searchbar: true, 
-              searchbarPlaceholder: state.labels.search,
-              popupCloseLinkText: state.labels.close
+              searchbarPlaceholder: labels.search,
+              popupCloseLinkText: labels.close
             }}
           >
             <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
@@ -170,7 +171,7 @@ const PriceAlarm = props => {
         }
         {state.customer.storeId ? 
           <ListItem>
-            <span>{state.labels.isOffer}</span>
+            <span>{labels.isOffer}</span>
             <Toggle 
               name="isOffer" 
               color="green" 
@@ -182,7 +183,7 @@ const PriceAlarm = props => {
         {isOffer ? 
           <ListInput 
             name="offerDays" 
-            label={state.labels.offerDays}
+            label={labels.offerDays}
             value={offerDays}
             clearButton 
             floatingLabel 

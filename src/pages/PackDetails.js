@@ -1,11 +1,11 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
-import { f7 } from 'framework7-react'
-import { Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Popover, List, ListItem } from 'framework7-react'
+import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Popover, List, ListItem } from 'framework7-react'
 import BottomToolbar from './BottomToolbar'
 import RatingStars from './RatingStars'
 import { StoreContext } from '../data/store'
 import { addPriceAlarm, showMessage, showError, getMessage } from '../data/actions'
 import PackImage from './PackImage'
+import labels from '../data/labels'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -29,11 +29,11 @@ const PackDetails = props => {
   const priceAlarmText = useMemo(() => {
     if (state.customer.storeId) {
       const found = state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)
-      return found ? state.labels.changePrice : state.labels.havePack
+      return found ? labels.changePrice : labels.havePack
     } else {
-      return state.labels.lessPrice
+      return labels.lessPrice
     }
-  }, [pack, state.labels, state.customer, state.storePacks])
+  }, [pack, state.customer, state.storePacks])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -80,14 +80,14 @@ const PackDetails = props => {
         }
       }
       dispatch({type: 'ADD_TO_BASKET', pack: purchasedPack})
-      showMessage(state.labels.addToBasketSuccess)
+      showMessage(labels.addToBasketSuccess)
       props.f7router.back()  
 		} catch (err){
       setError(getMessage(props, err))
     }
   }
   const handleFinishedPack = () => {
-    f7.dialog.confirm(state.labels.confirmationText, state.labels.confirmationTitle, async () => {
+    f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
       try{
         if (state.customer.isBlocked) {
           throw new Error('blockedUser')
@@ -97,7 +97,7 @@ const PackDetails = props => {
           price: 0
         }
         await addPriceAlarm(priceAlarm)
-        showMessage(state.labels.sendSuccess)
+        showMessage(labels.sendSuccess)
         props.f7router.back()
       } catch(err) {
         setError(getMessage(props, err))
@@ -113,7 +113,7 @@ const PackDetails = props => {
   }
   return (
     <Page>
-      <Navbar title={product.name} backLink={state.labels.back} />
+      <Navbar title={product.name} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <p className="price">{(pack.price / 1000).toFixed(3)}</p>
@@ -124,7 +124,7 @@ const PackDetails = props => {
           <PackImage pack={pack} type="card" />
         </CardContent>
         <CardFooter>
-          <p>{`${state.labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>
+          <p>{`${labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>
           <p><Link popoverOpen=".popover-list" iconMaterial="more_vert" /></p>
         </CardFooter>
       </Card>
@@ -132,7 +132,7 @@ const PackDetails = props => {
         <Fab 
           position="center-bottom" 
           slot="fixed" 
-          text={state.labels.addToBasket} 
+          text={labels.addToBasket} 
           morphTo=".toolbar.fab-morph-target" 
           onClick={() => setToolbarVisible(false)}
         >
@@ -141,7 +141,7 @@ const PackDetails = props => {
       : <Fab 
           position="center-bottom" 
           slot="fixed" 
-          text={state.labels.addToBasket} 
+          text={labels.addToBasket} 
           color="green" 
           onClick={() => addToBasket(pack.id)}
         >
@@ -165,14 +165,14 @@ const PackDetails = props => {
 
       <Popover className="popover-list">
         <List>
-          {hasOtherOffers > 0 ? <ListItem link={`/otherOffers/${props.id}`} popoverClose title={state.labels.otherOffers} /> : ''}
-          {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={state.labels.ratings} /> : ''}
+          {hasOtherOffers > 0 ? <ListItem link={`/otherOffers/${props.id}`} popoverClose title={labels.otherOffers} /> : ''}
+          {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={labels.ratings} /> : ''}
           <ListItem link={`/priceAlarm/${props.id}`} popoverClose title={priceAlarmText} />
           {state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? 
             <ListItem 
               link="#" 
               popoverClose 
-              title={state.labels.haveNoPacks} 
+              title={labels.haveNoPacks} 
               onClick={() => handleFinishedPack()}
             /> 
           : ''}
@@ -196,8 +196,8 @@ const PackDetails = props => {
       </Popover>
       {pack.isOffer ?
         <Toolbar bottom className="fab-morph-target">
-          <Link onClick={() => addToBasket(pack.id)}>{state.labels.fullPurchase}</Link>
-          <Link className="partial-purchase" onClick={() => handlePartialPurchase()}>{state.labels.partialPurchase}</Link>
+          <Link onClick={() => addToBasket(pack.id)}>{labels.fullPurchase}</Link>
+          <Link className="partial-purchase" onClick={() => handlePartialPurchase()}>{labels.partialPurchase}</Link>
         </Toolbar>
       : ''
       }

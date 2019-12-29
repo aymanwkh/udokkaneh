@@ -1,10 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7-react'
-import { StoreContext } from '../data/store'
 import { login, showMessage, showError, getMessage } from '../data/actions'
+import labels from '../data/labels'
 
 const Login = props => {
-  const { state } = useContext(StoreContext)
   const [password, setPassword] = useState('')
   const [mobile, setMobile] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
@@ -18,11 +17,11 @@ const Login = props => {
       if (patterns.password.test(value)){
         setPasswordErrorMessage('')
       } else {
-        setPasswordErrorMessage(state.labels.invalidPassword)
+        setPasswordErrorMessage(labels.invalidPassword)
       }
     }
     if (password) validatePassword(password)
-  }, [password, state.labels])
+  }, [password])
   useEffect(() => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
@@ -31,11 +30,11 @@ const Login = props => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
-        setMobileErrorMessage(state.labels.invalidMobile)
+        setMobileErrorMessage(labels.invalidMobile)
       }
     }
     if (mobile) validateMobile(mobile)
-  }, [mobile, state.labels])
+  }, [mobile])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -46,7 +45,7 @@ const Login = props => {
   const handleLogin = async () => {
     try{
       await login(mobile, password)
-      showMessage(state.labels.loginSuccess)
+      showMessage(labels.loginSuccess)
       props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){
@@ -56,12 +55,12 @@ const Login = props => {
 
   return (
     <Page>
-      <Navbar title={state.labels.loginTitle} backLink={state.labels.back} />
+      <Navbar title={labels.loginTitle} backLink={labels.back} />
       <List form>
         <ListInput
-          label={state.labels.mobile}
+          label={labels.mobile}
           type="number"
-          placeholder={state.labels.mobilePlaceholder}
+          placeholder={labels.mobilePlaceholder}
           name="mobile"
           clearButton
           errorMessage={mobileErrorMessage}
@@ -70,9 +69,9 @@ const Login = props => {
           onInputClear={() => setMobile('')}
         />
         <ListInput
-          label={state.labels.password}
+          label={labels.password}
           type="number"
-          placeholder={state.labels.passwordPlaceholder}
+          placeholder={labels.passwordPlaceholder}
           name="password"
           clearButton
           errorMessage={passwordErrorMessage}
@@ -82,11 +81,11 @@ const Login = props => {
         />
       </List>
       {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : 
-        <Button large onClick={() => handleLogin()}>{state.labels.login}</Button>
+        <Button large onClick={() => handleLogin()}>{labels.login}</Button>
       }
       <Toolbar bottom>
-        <Link href="/register/">{state.labels.newUser}</Link>
-        <Link href="/forgetPassword/">{state.labels.forgetPassword}</Link>
+        <Link href="/register/">{labels.newUser}</Link>
+        <Link href="/forgetPassword/">{labels.forgetPassword}</Link>
       </Toolbar>
     </Page>
   )

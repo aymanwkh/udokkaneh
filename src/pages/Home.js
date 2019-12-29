@@ -1,13 +1,11 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge } from 'framework7-react'
 import Sections from './Sections'
 import BottomToolbar from './BottomToolbar'
-import { StoreContext } from '../data/store'
+import labels from '../data/labels'
 
 
 const Home = props => {
-  const { state } = useContext(StoreContext)
-
   return (
     <Page>
       <Navbar large>
@@ -16,11 +14,11 @@ const Home = props => {
         </NavLeft>
         <NavTitle sliding>
           <img src="/dokaneh_logo.png" alt="logo" className="logo" />
-          <span className='banner'>{state.labels.banner}</span>
+          <span className='banner'>{labels.banner}</span>
         </NavTitle>
         <NavTitleLarge>
           <img src="/dokaneh_logo.png" alt="logo" className="logo" />
-          <span className='banner'>{state.labels.banner}</span>
+          <span className='banner'>{labels.banner}</span>
         </NavTitleLarge>
       </Navbar>
       <Sections/>
