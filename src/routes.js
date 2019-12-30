@@ -10,7 +10,7 @@ import Basket from './pages/Basket'
 import ConfirmOrder from './pages/ConfirmOrder'
 import OrdersList from './pages/OrdersList'
 import OrderDetails from './pages/OrderDetails'
-import PriceAlarm from './pages/PriceAlarm'
+import AddAlarm from './pages/AddAlarm'
 import ForgetPassword from './pages/ForgetPassword'
 import InviteFriend from './pages/InviteFriend'
 import StoreOwner from './pages/StoreOwner'
@@ -82,8 +82,8 @@ export default [
     component: PackDetails,
   },
   {
-    path: '/priceAlarm/:id',
-    component: PriceAlarm,
+    path: '/addAlarm/:packId/type/:alarmType',
+    component: AddAlarm,
   },
   {
     path: '/basket/',

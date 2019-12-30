@@ -1,3 +1,11 @@
+export const setup = {
+  fixedFees: 2.5,
+  maxDiscount: 250,
+  firstOrderDiscount: 300,
+  profit: 10,
+  orderLimit: 50000,
+}
+
 export const randomColors = [
   {id: 0, name: 'red'},
   {id: 1, name: 'green'},
@@ -49,11 +57,14 @@ export const orderPackStatus = [
   {id: 'pr', name: 'مرتجع جزئي'}
 ]
 
-export const setup = {
-  fixedFees: 2.5,
-  maxDiscount: 250,
-  firstOrderDiscount: 300,
-  profit: 10,
-  orderLimit: 50000,
-
-}
+export const alarmTypes = [
+  {id: '1', name: 'الابلاغ عن سعر أقل', actor: 'c'},
+  {id: '2', name: 'الابلاغ عن تغيير السعر', actor: 'o', isAvailable: true},
+  {id: '3', name: 'الابلاغ عن توفر هذا المنتج/العرض', actor: 'o', isAvailable: false},
+  {id: '4', name: 'الابلاغ عن عدم توفر هذا المنتج/العرض', actor: 'o', isAvailable: true},
+  {id: '5', name: 'الابلاغ عن توفر منتج بديل', actor: 'a'},
+  {id: '6', name: 'الابلاغ غن توفر عبوة جديدة للمنتج', actor: 'a'},
+  {id: '7', name: 'الابلاغ عن تخفيض للسعر لفترة محدودة', actor: 'o', isAvailable: true},
+  {id: '8', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', actor: 'o', isAvailable: true},
+  {id: '9', name: 'الابلاغ عن عرض على شكل مجموعة', actor: 'o', isAvailable: true},
+]

@@ -68,14 +68,9 @@
   font-size: 1.1rem;
 }
 
-.less-price {
-  font-size: 0.8rem;
-}
-
 .price {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: blue;
-  margin-right: 0.2rem;
 }
 
 .card-header p {
@@ -111,11 +106,9 @@
   margin-right: auto;
 }
 
-
 .top-fab{
   top: 0px !important;
 }
-
 
 .offer-quantity-card {
   background-color: rgba(0,0,0,.6);
@@ -220,5 +213,9 @@
 }
 
 .toolbar-inner .link {
+  font-size: 0.8rem;
+}
+
+.alarm-list {
   font-size: 0.8rem;
 }

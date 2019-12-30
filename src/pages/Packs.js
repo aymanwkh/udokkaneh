@@ -94,9 +94,9 @@ const Packs = props => {
                 key={p.id}
               >
                 <PackImage slot="media" pack={p} type="list" />
+                {storePackInfo ? <div className="list-subtext1">{labels.myPrice}: {(storePackInfo.price / 1000).toFixed(3)}</div> : ''}
                 {productInfo.isNew ? <Badge slot="title" color="red">{labels.new}</Badge> : ''}
                 {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
-                {storePackInfo ? <Badge slot="footer" color='green'> {labels.myPrice} {(storePackInfo.price / 1000).toFixed(3)} </Badge> : ''}
               </ListItem>
             )
           })}

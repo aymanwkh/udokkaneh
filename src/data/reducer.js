@@ -138,10 +138,10 @@ const Reducer = (state, action) => {
         ...state,
         storePacks: action.storePacks
       }
-    case 'SET_PRICE_ALARMS':
+    case 'SET_ALARMS':
       return {
         ...state,
-        priceAlarms: action.priceAlarms
+        alarms: action.alarms
       }    
     case 'SET_CANCEL_ORDERS':
       return {

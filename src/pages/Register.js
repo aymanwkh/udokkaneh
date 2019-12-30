@@ -14,7 +14,7 @@ const Register = props => {
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [locationId, setLocationId] = useState('')
   const [error, setError] = useState('')
-  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.sorting - l2.sorting)
+  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.ordering - l2.ordering)
   , [state.locations])
   useEffect(() => {
     const patterns = {

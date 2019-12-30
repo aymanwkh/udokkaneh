@@ -26,7 +26,6 @@ const labels = {
   addToBasket: 'شراء',
   submit: 'موافق',
   banner: 'تنافس + تشارك = توفير مضمون',
-  lessPrice: 'الابلاغ عن سعر أقل',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',
   price: 'السعر',
@@ -72,13 +71,10 @@ const labels = {
   registerStoreOwner: 'انا صاحب محل، أود الاشتراك',
   registerStoreOwnerTitle: 'تسجيل صاحب محل',
   address: 'العنوان',
-  havePack: 'الابلاغ عن توفر هذا المنتج',
   notFoundPageTitle: 'الصفحة غير موجودة',
   notFoundPageError: 'حدث خطأ ... الصفحة غير موجودة',
   back: 'رجوع',
   myPrice: 'سعري',
-  changePrice: 'الابلاغ عن تغيير سعر',
-  haveNoPacks: 'الابلاغ عن عدم توفر هذا المنتج',
   ownerPacks: 'منتجاتي',
   invalidOfferEnd: 'الرجاء التأكد من تاريخ انتهاء العرض',
   limitOverFlow: 'لقد تجاوزت الحد المسموح به للطلبات التي هي قيد التسليم',
@@ -141,6 +137,9 @@ const labels = {
   offerUpTo: 'عرض حتى تاريخ',
   newProduct: 'طلب اضافة منتج',
   category: 'الصنف',
+  productName: 'اسم المنتج',
+  packName: 'العبوة',
+  storeLocation: 'موقع المحل'
 
 }
 

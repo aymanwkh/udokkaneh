@@ -1,17 +1,19 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react'
-import { Page, Navbar, List, ListInput, Fab, Icon, Card, CardContent, CardHeader, Toggle, ListItem } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { addPriceAlarm, showMessage, showError, getMessage } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import ReLogin from './ReLogin'
-import PackImage from './PackImage'
 import labels from '../data/labels'
+import { alarmTypes } from '../data/config'
 
-const PriceAlarm = props => {
+const AddAlarm = props => {
   const { state, user } = useContext(StoreContext)
-  const pack = useMemo(() => state.packs.find(p => p.id === props.id)
-  , [state.packs, props.id])
+  const pack = useMemo(() => state.packs.find(p => p.id === props.packId)
+  , [state.packs, props.packId])
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
+  const alarmType = useMemo(() => alarmTypes.find(t => t.id === props.alarmType)
+  , [props.alarmType])
   const [price, setPrice] = useState('')
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
@@ -20,20 +22,8 @@ const PriceAlarm = props => {
   const [isOffer, setIsOffer] = useState(false)
   const [locationId, setLocationId] = useState('')
   const [error, setError] = useState('')
-  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.sorting - l2.sorting)
+  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.ordering - l2.ordering)
   , [state.locations])
-
-  const priceAlarmText = useMemo(() => {
-    if (state.customer.storeId) {
-      if (state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)) {
-        return labels.changePrice
-      } else {
-       return labels.havePack
-      }
-    } else {
-      return labels.lessPrice
-    }
-  }, [pack, state.customer, state.storePacks])
 
   useEffect(() => {
     const validatePrice = (value) => {
@@ -82,9 +72,6 @@ const PriceAlarm = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
-      if (state.priceAlarms.find(a => a.priceAlarm.packId === pack.id && a.status === 'n')){
-        throw new Error('duplicatePriceAlarms')
-      }
       if (offerDays && Number(offerDays) <= 0) {
         throw new Error('invalidPeriod')
       }
@@ -93,14 +80,15 @@ const PriceAlarm = props => {
         offerEnd = new Date()
         offerEnd.setDate(offerEnd.getDate() + Number(offerDays))
       }
-      const priceAlarm = {
+      const alarm = {
         packId: pack.id,
+        alarmType: props.alarmType,
         price: price * 1000,
         storeName,
         locationId,
         offerEnd
       }
-      await addPriceAlarm(priceAlarm)
+      await addAlarm(alarm)
       showMessage(labels.sendSuccess)
       props.f7router.back()
     } catch (err) {
@@ -111,17 +99,29 @@ const PriceAlarm = props => {
   if (!user) return <ReLogin />
   return (
     <Page>
-      <Navbar title={priceAlarmText} backLink={labels.back} />
-      <Card>
-        <CardHeader className="card-header">
-          <p>{`${product.name} ${pack.name}`}</p>
-          <p>{(pack.price / 1000).toFixed(3)}</p>
-        </CardHeader>
-        <CardContent>
-          <PackImage pack={pack} type="card" />
-        </CardContent>
-      </Card>
+      <Navbar title={alarmType.name} backLink={labels.back} />
       <List form>
+        <ListInput 
+          name="productName" 
+          label={labels.productName}
+          value={product.name}
+          type="text" 
+          readonly
+        />
+        <ListInput 
+          name="packName" 
+          label={labels.packName}
+          value={pack.name}
+          type="text" 
+          readonly
+        />
+        <ListInput 
+          name="currentPrice" 
+          label={labels.currentPrice}
+          value={(pack.price / 1000).toFixed(3)}
+          type="number" 
+          readonly
+        />
         <ListInput 
           name="price" 
           label={labels.price}
@@ -151,7 +151,7 @@ const PriceAlarm = props => {
         }
         {state.customer.storeId ? '' :
           <ListItem
-            title={labels.location}
+            title={labels.storeLocation}
             smartSelect
             smartSelectParams={{
               openIn: "popup", 
@@ -201,4 +201,4 @@ const PriceAlarm = props => {
     </Page>
   )
 }
-export default PriceAlarm
+export default AddAlarm

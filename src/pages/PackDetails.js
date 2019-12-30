@@ -3,10 +3,11 @@ import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, 
 import BottomToolbar from './BottomToolbar'
 import RatingStars from './RatingStars'
 import { StoreContext } from '../data/store'
-import { addPriceAlarm, showMessage, showError, getMessage } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import PackImage from './PackImage'
 import labels from '../data/labels'
-import { setup } from '../data/config'
+import { setup, alarmTypes } from '../data/config'
+import moment from 'moment'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -27,14 +28,8 @@ const PackDetails = props => {
     const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => state.packs.find(pa => pa.id === p.packId).productId === product.id))
     return deliveredOrders.length
   }, [state.orders, state.packs, product])
-  const priceAlarmText = useMemo(() => {
-    if (state.customer.storeId) {
-      const found = state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id)
-      return found ? labels.changePrice : labels.havePack
-    } else {
-      return labels.lessPrice
-    }
-  }, [pack, state.customer, state.storePacks])
+  const isAvailable = useMemo(() => state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? true : false
+  , [state.customer, state.storePacks, pack])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -87,23 +82,37 @@ const PackDetails = props => {
       setError(getMessage(props, err))
     }
   }
-  const handleFinishedPack = () => {
-    f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
-      try{
+  const handleAddAlarm = alarmTypeId => {
+    try {
+      if (alarmTypeId === '4') {
+        f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
+          try{
+            if (state.customer.isBlocked) {
+              throw new Error('blockedUser')
+            }
+            const alarm = {
+              packId: pack.id,
+              alarmType: alarmTypeId 
+            }
+            await addAlarm(alarm)
+            showMessage(labels.sendSuccess)
+            props.f7router.back()
+          } catch(err) {
+            setError(getMessage(props, err))
+          }
+        })  
+      } else {
         if (state.customer.isBlocked) {
           throw new Error('blockedUser')
         }
-        const priceAlarm = {
-          packId: pack.id,
-          price: 0
-        }
-        await addPriceAlarm(priceAlarm)
-        showMessage(labels.sendSuccess)
-        props.f7router.back()
-      } catch(err) {
-        setError(getMessage(props, err))
-      }
-    })
+        if (state.alarms.find(a => a.packId === pack.id && a.status === 'n')){
+          throw new Error('duplicatePriceAlarms')
+        }  
+        props.f7router.navigate(`/addAlarm/${pack.id}/type/${alarmTypeId}`)
+      }  
+    } catch(err) {
+      setError(getMessage(props, err))
+    }
   }
   const handlePartialPurchase = () => {
     if (pack.bonusPackId) {
@@ -117,7 +126,10 @@ const PackDetails = props => {
       <Navbar title={product.name} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
-          <p className="price">{(pack.price / 1000).toFixed(3)}</p>
+          <p className="price">
+            {(pack.price / 1000).toFixed(3)} <br />
+            <span className="list-subtext1">{pack.offerEnd ? `${labels.offerUpTo}: ${moment(pack.offerEnd.toDate()).format('Y/M/D')}` : ''}</span>
+          </p>
           {product.trademarkId ? <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p> : ''}
         </CardHeader>
         <CardContent>
@@ -126,7 +138,7 @@ const PackDetails = props => {
         </CardContent>
         <CardFooter>
           <p>{`${labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>
-          <p><Link popoverOpen=".popover-list" iconMaterial="more_vert" /></p>
+          {user ? <p><Link popoverOpen=".popover-list" iconMaterial="more_vert" /></p> : ''}
         </CardFooter>
       </Card>
       {pack.isOffer ? 
@@ -168,15 +180,18 @@ const PackDetails = props => {
         <List>
           {hasOtherOffers > 0 ? <ListItem link={`/otherOffers/${props.id}`} popoverClose title={labels.otherOffers} /> : ''}
           {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={labels.ratings} /> : ''}
-          <ListItem link={`/priceAlarm/${props.id}`} popoverClose title={priceAlarmText} />
-          {state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? 
-            <ListItem 
-              link="#" 
-              popoverClose 
-              title={labels.haveNoPacks} 
-              onClick={() => handleFinishedPack()}
-            /> 
-          : ''}
+          {alarmTypes.map(p => 
+            p.actor === 'a' || (p.actor === 'c' && !state.customer.storeId) || (p.actor === 'o' && state.customer.storeId && p.isAvailable === isAvailable) ?
+              <ListItem 
+                link="#" 
+                popoverClose 
+                title={p.name} 
+                className="alarm-list"
+                onClick={() => handleAddAlarm(p.id)}
+                key={p.id}
+              /> 
+            : ''
+          )}
         </List>
       </Popover>
       <Popover className="pack-list">

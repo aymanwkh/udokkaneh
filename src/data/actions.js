@@ -154,14 +154,14 @@ export const registerStoreOwner = async (owner, password) => {
   })
 }
 
-export const addPriceAlarm = priceAlarm => {
-  const newPriceAlarm = {
-    ...priceAlarm,
+export const addAlarm = alarm => {
+  const newAlarm = {
+    ...alarm,
     userId: firebase.auth().currentUser.uid,
     status: 'n',
     time: new Date()
   }
-  return firebase.firestore().collection("priceAlarms").add(newPriceAlarm)
+  return firebase.firestore().collection("alarms").add(newAlarm)
 }
 
 export const inviteFriend = (mobile, name) => {
