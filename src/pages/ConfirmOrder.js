@@ -5,7 +5,7 @@ import ReLogin from './ReLogin'
 import { StoreContext } from '../data/store'
 import { confirmOrder, showMessage, showError, getMessage, quantityText } from '../data/actions'
 import labels from '../data/labels'
-
+import { setup } from '../data/config'
 
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -39,7 +39,7 @@ const ConfirmOrder = props => {
   , [basket])
   const fixedFees = useMemo(() => {
     const offersTotal = basket.reduce((sum, p) => sum + p.offerId ? p.price * p.quantity : 0, 0)
-    const fees = Math.ceil(((urgent ? 1.5 : 1) * (labels.fixedFees * (total - offersTotal) + labels.fixedFees * 2 * offersTotal) / 100) / 50) * 50
+    const fees = Math.ceil(((urgent ? 1.5 : 1) * (setup.fixedFees * (total - offersTotal) + labels.fixedFees * 2 * offersTotal) / 100) / 50) * 50
     const fraction = total - Math.floor(total / 50) * 50
     return fees - fraction
   }, [basket, total, urgent])
@@ -47,9 +47,9 @@ const ConfirmOrder = props => {
     const orders = state.orders.filter(o => o.status !== 'c')
     let discount = 0
     if (orders.length === 0) {
-      discount = labels.firstOrderDiscount
+      discount = setup.firstOrderDiscount
     } else if (state.customer.discounts > 0) {
-      discount = Math.min(state.customer.discounts, labels.maxDiscount)
+      discount = Math.min(state.customer.discounts, setup.maxDiscount)
     }
     return discount
   }, [state.orders, state.customer]) 
@@ -77,7 +77,7 @@ const ConfirmOrder = props => {
       }
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
-      if (totalOrders + total > state.customer.orderLimit) {
+      if (totalOrders + total > state.customer.orderLimit || setup.orderLimit) {
         throw new Error('limitOverFlow')
       }
       let packs = basket.filter(p => p.price > 0)
@@ -133,7 +133,7 @@ const ConfirmOrder = props => {
             after={(total / 1000).toFixed(3)} 
           />
           <ListItem 
-            title={labels.fixedFeesTitle} 
+            title={labels.fixedFees} 
             className="fees" 
             after={(fixedFees / 1000).toFixed(3)} 
           />

@@ -6,6 +6,7 @@ import { StoreContext } from '../data/store'
 import { addPriceAlarm, showMessage, showError, getMessage } from '../data/actions'
 import PackImage from './PackImage'
 import labels from '../data/labels'
+import { setup } from '../data/config'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -70,7 +71,7 @@ const PackDetails = props => {
       if (state.customer){
         const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
         const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
-        if (activeOrdersTotal + purchasedPack.price > state.customer.orderLimit) {
+        if (activeOrdersTotal + purchasedPack.price > state.customer.orderLimit || setup.orderLimit) {
           throw new Error('limitOverFlow')
         }
         const packInActiveOrders = activeOrders.filter(o => o.basket.find(p => p.packId === packId))

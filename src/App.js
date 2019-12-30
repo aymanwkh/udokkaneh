@@ -1,6 +1,5 @@
 import React from 'react'
 import { App, Panel, View } from 'framework7-react'
-
 import routes from './routes'
 import Store from './data/store'
 

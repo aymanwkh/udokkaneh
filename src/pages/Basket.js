@@ -4,6 +4,7 @@ import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText } from '../data/actions'
 import PackImage from './PackImage'
 import labels from '../data/labels'
+import { setup } from '../data/config'
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
@@ -28,7 +29,7 @@ const Basket = props => {
   }, [state.basket, props])
   useEffect(() => {
     if (state.customer){
-      if (customerOrdersTotals + totalPrice > state.customer.orderLimit){
+      if (customerOrdersTotals + totalPrice > state.customer.orderLimit || setup.orderLimit){
         setSubmitVisible(false)
       } else {
         setSubmitVisible(true)
@@ -58,7 +59,7 @@ const Basket = props => {
         throw new Error('ExceedPackLimit')
       }
       dispatch({type: 'INCREASE_QUANTITY', pack})
-      if (customerOrdersTotals + totalPrice > state.customer.orderLimit){
+      if (customerOrdersTotals + totalPrice > state.customer.orderLimit || setup.orderLimit){
         throw new Error('limitOverFlow')
       }  
     } catch(err) {

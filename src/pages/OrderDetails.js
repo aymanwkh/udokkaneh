@@ -90,7 +90,7 @@ const OrderDetails = props => {
             after={(order.total / 1000).toFixed(3)} 
           />
           <ListItem 
-            title={labels.fixedFeesTitle} 
+            title={labels.fixedFees} 
             className="fees" 
             after={(order.fixedFees / 1000).toFixed(3)} 
           />

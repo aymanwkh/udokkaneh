@@ -174,14 +174,19 @@ export const inviteFriend = (mobile, name) => {
   })
 }
 
-export const newProduct = (name, productId) => {
-  return firebase.firestore().collection('newProducts').add({
+export const newProduct = (name, categoryId, productId) => {
+  const request = {
     userId: firebase.auth().currentUser.uid,
     name,
-    productId,
     status: 'n',
     time: new Date()
-  })
+  }
+  if (productId) {
+    request['productId'] = productId
+  } else {
+    request['categoryId'] = categoryId
+  }
+  return firebase.firestore().collection('newPackRequests').add(request)
 }
 
 

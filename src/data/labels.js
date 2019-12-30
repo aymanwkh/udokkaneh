@@ -43,12 +43,8 @@ const labels = {
   enterName: 'الرجاء ادخال اﻻسم',
   namePlaceholder: 'من 4-50 حرف',
   invalidName: 'اﻻسم غير صحيح',
-  fixedFees: 2.5,
-  maxDiscount: 250,
-  firstOrderDiscount: 300,
-  profit: 10,
   total: 'المجموع',
-  fixedFeesTitle: 'رسوم الخدمة',
+  fixedFees: 'رسوم الخدمة',
   discount: 'الخصم',
   net: 'الصافي',
   withDelivery: 'خدمة التوصيل',
@@ -126,7 +122,7 @@ const labels = {
   withUrgentDeliveryNote: 'التوصيل خلال 6-12 ساعة',
   urgentNoDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 6-12 ساعة',
   limitOverFlowNote: 'تجاوز لسقف الطلبات',
-  orderLimitHelp: 'سقف الطلبات هو القيمة القصوى لمجموع الطلبات الفعالة، وهذه القيمة تزداد بعد استلام كل طلب بمقدار عشرة دنانير الى ان تصل مائة دينار',
+  orderLimitHelp: 'سقف الطلبات هو القيمة القصوى لمجموع الطلبات الفعالة وهي خمسون دينارا، ويمكنك طلب رفع هذه القيمة بالتواصل معنا',
   helpPageTitle: 'توضيح',
   close: 'اغلاق',
   remain: 'المتبقي',
@@ -143,7 +139,9 @@ const labels = {
   returned: 'المرتجع',
   currentPrice: 'السعر الحالي',
   offerUpTo: 'عرض حتى تاريخ',
-  newProduct: 'طلب منتج'
+  newProduct: 'طلب اضافة منتج',
+  category: 'الصنف',
+
 }
 
 export default labels

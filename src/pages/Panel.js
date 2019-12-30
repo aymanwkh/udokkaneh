@@ -42,7 +42,6 @@ const Panel = props => {
         {user ? <ListItem link="/changePassword/" title={labels.changePassword} /> : ''}
         {user ? <ListItem link="/ordersList/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/inviteFriend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
-        {user ? <ListItem link="/newProduct/" title={labels.newProduct} view="#main-view" panelClose /> : ''}
         {state.customer.storeId ? <ListItem link={`/ownerPacks/${state.customer.storeId}`} title={labels.ownerPacks} view="#main-view" panelClose /> : ''}
         {user ? '' : <ListItem link="/storeOwner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
         <ListItem link="/contactUs/" title={labels.contactUsTitle} view="#main-view" panelClose />
