@@ -1,10 +1,10 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Popover, List, ListItem } from 'framework7-react'
-import BottomToolbar from './BottomToolbar'
-import RatingStars from './RatingStars'
+import BottomToolbar from './bottom-toolbar'
+import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
-import PackImage from './PackImage'
+import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
 import moment from 'moment'
@@ -108,7 +108,7 @@ const PackDetails = props => {
         if (state.alarms.find(a => a.packId === pack.id && a.status === 'n')){
           throw new Error('duplicatePriceAlarms')
         }  
-        props.f7router.navigate(`/addAlarm/${pack.id}/type/${alarmTypeId}`)
+        props.f7router.navigate(`/add-alarm/${pack.id}/type/${alarmTypeId}`)
       }  
     } catch(err) {
       setError(getMessage(props, err))
@@ -166,10 +166,10 @@ const PackDetails = props => {
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
-            <FabButton color="green" onClick={() => props.f7router.navigate(`/rateProduct/${product.id}/value/1`)}>
+            <FabButton color="green" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/1`)}>
               <Icon material="thumb_up"></Icon>
             </FabButton>
-            <FabButton color="red" onClick={() => props.f7router.navigate(`/rateProduct/${product.id}/value/-1`)}>
+            <FabButton color="red" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/-1`)}>
             <Icon material="thumb_down"></Icon>
             </FabButton>
           </FabButtons>
@@ -178,7 +178,7 @@ const PackDetails = props => {
 
       <Popover className="popover-list">
         <List>
-          {hasOtherOffers > 0 ? <ListItem link={`/otherOffers/${props.id}`} popoverClose title={labels.otherOffers} /> : ''}
+          {hasOtherOffers > 0 ? <ListItem link={`/other-offers/${props.id}`} popoverClose title={labels.otherOffers} /> : ''}
           {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={labels.ratings} /> : ''}
           {alarmTypes.map(p => 
             p.actor === 'a' || (p.actor === 'c' && !state.customer.storeId) || (p.actor === 'o' && state.customer.storeId && p.isAvailable === isAvailable) ?

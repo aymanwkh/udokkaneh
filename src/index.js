@@ -9,7 +9,7 @@ import Framework7 from 'framework7/framework7-lite.esm.bundle'
 import Framework7React from 'framework7-react'
 
 // Import main App component
-import App from './App'
+import App from './app'
 
 
 // Framework7 styles

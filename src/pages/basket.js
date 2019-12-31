@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText } from '../data/actions'
-import PackImage from './PackImage'
+import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup } from '../data/config'
 
@@ -48,7 +48,7 @@ const Basket = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
-      props.f7router.navigate('/confirmOrder/')
+      props.f7router.navigate('/confirm-order/')
     } catch(err) {
 			setError(getMessage(props, err))
 		}

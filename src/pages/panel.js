@@ -25,7 +25,7 @@ const Panel = props => {
           />
         : 
           <ListItem 
-            link="/panelLogin/" 
+            link="/panel-login/" 
             title={labels.loginTitle} 
           />
         }
@@ -39,12 +39,12 @@ const Panel = props => {
             {state.basket.length > 0 ? <Badge color="red">{state.basket.length}</Badge> : ''}
           </ListItem>
         : ''}
-        {user ? <ListItem link="/changePassword/" title={labels.changePassword} /> : ''}
-        {user ? <ListItem link="/ordersList/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
-        {user ? <ListItem link="/inviteFriend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
-        {state.customer.storeId ? <ListItem link={`/ownerPacks/${state.customer.storeId}`} title={labels.ownerPacks} view="#main-view" panelClose /> : ''}
-        {user ? '' : <ListItem link="/storeOwner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
-        <ListItem link="/contactUs/" title={labels.contactUsTitle} view="#main-view" panelClose />
+        {user ? <ListItem link="/change-password/" title={labels.changePassword} /> : ''}
+        {user ? <ListItem link="/orders-list/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
+        {user ? <ListItem link="/invite-friend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
+        {state.customer.storeId ? <ListItem link={`/owner-packs/${state.customer.storeId}`} title={labels.ownerPacks} view="#main-view" panelClose /> : ''}
+        {user ? '' : <ListItem link="/store-owner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
+        <ListItem link="/contact-us/" title={labels.contactUsTitle} view="#main-view" panelClose />
       </List>
     </Page>
   )

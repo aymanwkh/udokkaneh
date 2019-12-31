@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar} from 'framework7-react'
-import BottomToolbar from './BottomToolbar'
+import BottomToolbar from './bottom-toolbar'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/store'
@@ -22,7 +22,7 @@ const OrdersList = props => {
               <ListItem title={labels.noData} /> 
             : orders.map(o =>
                 <ListItem
-                  link={`/orderDetails/${o.id}`}
+                  link={`/order-details/${o.id}`}
                   title={moment(o.time.toDate()).fromNow()}
                   subtitle={orderStatus.find(s => s.id === o.status).name}
                   after={(o.total / 1000).toFixed(3)}

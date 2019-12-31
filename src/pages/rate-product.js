@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Page, Navbar, List, ListInput, Button, Toolbar, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { rateProduct, showMessage, showError, getMessage } from '../data/actions'
-import BottomToolbar from './BottomToolbar'
+import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 import { ratingValues } from '../data/config'
 

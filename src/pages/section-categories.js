@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import { Button, Block, Page, Navbar, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import BottomToolbar from './BottomToolbar'
+import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 import { randomColors } from '../data/config'
 

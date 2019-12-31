@@ -1,26 +1,26 @@
-import Home from './pages/Home'
-import NotFoundPage from './pages/NotFoundPage'
-import SectionCategories from './pages/SectionCategories'
-import Panel from './pages/Panel'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Packs from './pages/Packs'
-import PackDetails from './pages/PackDetails'
-import Basket from './pages/Basket'
-import ConfirmOrder from './pages/ConfirmOrder'
-import OrdersList from './pages/OrdersList'
-import OrderDetails from './pages/OrderDetails'
-import AddAlarm from './pages/AddAlarm'
-import ForgetPassword from './pages/ForgetPassword'
-import InviteFriend from './pages/InviteFriend'
-import StoreOwner from './pages/StoreOwner'
-import OwnerPacks from './pages/OwnerPacks'
-import ChangePassword from './pages/ChangePassword'
-import OtherOffers from './pages/OtherOffers'
-import ContactUs from './pages/ContactUs'
-import RateProduct from './pages/RateProduct'
-import Ratings from './pages/Ratings'
-import Help from './pages/Help'
+import Home from './pages/home'
+import NotFoundPage from './pages/not-found-page'
+import SectionCategories from './pages/section-categories'
+import Panel from './pages/panel'
+import Login from './pages/login'
+import Register from './pages/register'
+import Packs from './pages/packs'
+import PackDetails from './pages/pack-details'
+import Basket from './pages/basket'
+import ConfirmOrder from './pages/confirm-order'
+import OrdersList from './pages/orders-list'
+import OrderDetails from './pages/order-details'
+import AddAlarm from './pages/add-alarm'
+import ForgetPassword from './pages/forget-password'
+import InviteFriend from './pages/invite-friend'
+import StoreOwner from './pages/store-owner'
+import OwnerPacks from './pages/owner-packs'
+import ChangePassword from './pages/change-password'
+import OtherOffers from './pages/other-offers'
+import ContactUs from './pages/contact-us'
+import RateProduct from './pages/rate-product'
+import Ratings from './pages/ratings'
+import Help from './pages/help'
 
 export default [
   {
@@ -43,15 +43,15 @@ export default [
     },
   },
   {
-    path: '/panelLogin/',
+    path: '/panel-login/',
     component: Login,
   },
   {
-    path: '/forgetPassword/',
+    path: '/forget-password/',
     component: ForgetPassword
   },
   {
-    path: '/changePassword/',
+    path: '/change-password/',
     component: ChangePassword
   },
   {
@@ -62,15 +62,15 @@ export default [
     },
   },
   {
-    path: '/storeOwner/',
+    path: '/store-owner/',
     component: StoreOwner
   },
   {
-    path: '/inviteFriend/',
+    path: '/invite-friend/',
     component: InviteFriend
   },
   {
-    path: '/sectionCategories/:id',
+    path: '/section-categories/:id',
     component: SectionCategories,
   },
   {
@@ -82,7 +82,7 @@ export default [
     component: PackDetails,
   },
   {
-    path: '/addAlarm/:packId/type/:alarmType',
+    path: '/add-alarm/:packId/type/:alarmType',
     component: AddAlarm,
   },
   {
@@ -90,7 +90,7 @@ export default [
     component: Basket,
   },
   {
-    path: '/confirmOrder/',
+    path: '/confirm-order/',
     component: ConfirmOrder,
   },
   {
@@ -98,27 +98,27 @@ export default [
     component: Packs,
   },
   {
-    path: '/ordersList/',
+    path: '/orders-list/',
     component: OrdersList,
   },
   {
-    path: '/orderDetails/:id',
+    path: '/order-details/:id',
     component: OrderDetails,
   },
   {
-    path: '/ownerPacks/:id',
+    path: '/owner-packs/:id',
     component: OwnerPacks,
   },
   {
-    path: '/otherOffers/:id',
+    path: '/other-offers/:id',
     component: OtherOffers
   },
   {
-    path: '/contactUs/',
+    path: '/contact-us/',
     component: ContactUs
   },
   {
-    path: '/rateProduct/:productId/value/:value',
+    path: '/rate-product/:productId/value/:value',
     component: RateProduct
   },
   {

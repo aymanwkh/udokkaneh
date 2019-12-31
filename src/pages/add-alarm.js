@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, useMemo } from 'react'
 import { Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
-import ReLogin from './ReLogin'
+import ReLogin from './relogin'
 import labels from '../data/labels'
 import { alarmTypes } from '../data/config'
 

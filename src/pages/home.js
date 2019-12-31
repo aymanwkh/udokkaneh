@@ -1,7 +1,7 @@
 import React from 'react'
 import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge } from 'framework7-react'
-import Sections from './Sections'
-import BottomToolbar from './BottomToolbar'
+import Sections from './sections'
+import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 
 
