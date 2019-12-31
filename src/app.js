@@ -3,15 +3,13 @@ import { App, Panel, View } from 'framework7-react'
 import routes from './routes'
 import Store from './data/store'
 
-export default function (props) {
-
+const app = props => {
   const f7params = {
     id: 'io.framework7.dokaneh', 
     name: 'دكانة نت', 
     theme: 'ios',
     routes,
   }
-
   return (
     <Store>
       <App params={f7params}>
@@ -23,3 +21,5 @@ export default function (props) {
     </Store>
   )
 }
+
+export default app
