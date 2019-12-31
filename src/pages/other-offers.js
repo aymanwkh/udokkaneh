@@ -26,7 +26,7 @@ const OtherOffers = props => {
             return (
               <ListItem
                 link={`/pack/${p.id}`}
-                title={productInfo.name}
+                title={productInfo.name || productInfo.engName}
                 subtitle={p.name}
                 text={`${labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
                 footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
@@ -34,7 +34,6 @@ const OtherOffers = props => {
                 key={p.id}
               >
                 <PackImage slot="media" pack={p} type="list" />
-                {productInfo.isNew ? <Badge slot="title" color="red">{labels.new}</Badge> : ''}
                 {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
                 {state.customer.storeId && state.storePacks.find(pa => pa.storeId === state.customer.storeId) ? 
                   <Badge slot="footer" color='green'> 

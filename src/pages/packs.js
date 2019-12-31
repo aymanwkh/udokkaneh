@@ -13,29 +13,26 @@ const Packs = props => {
     let packs = state.packs.filter(p => p.price > 0 && (props.id ? state.products.find(pr => pr.id === p.productId).categoryId === props.id : true))
     return packs.sort((p1, p2) => p1.price - p2.price)
   }, [state.packs, state.products, props.id]) 
-  const [categoryPacks, setCategoryPacks] = useState(packs)
+  const [orderedPacks, setOrderedPacks] = useState(packs)
   const category = state.categories.find(category => category.id === props.id)
   const [orderBy, setOrderBy] = useState('p')
   const handleOrdering = orderByValue => {
     setOrderBy(orderByValue)
     switch(orderByValue){
       case 'p':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => p1.price - p2.price))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => p1.price - p2.price))
         break
       case 's':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).sales - state.products.find(p => p.id === p1.productId).sales))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).sales - state.products.find(p => p.id === p1.productId).sales))
         break
       case 'r':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).rating - state.products.find(p => p.id === p1.productId).rating))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).rating - state.products.find(p => p.id === p1.productId).rating))
         break
       case 'o':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => p2.isOffer - p1.isOffer))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.isOffer - p1.isOffer))
         break
       case 'v':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => p1.weightedPrice - p2.weightedPrice))
-        break
-      case 't':
-        setCategoryPacks([...categoryPacks].sort((p1, p2) => state.products.find(p => p.id === p1.productId).name > state.products.find(p => p.id === p2.productId).name ? 1 : -1))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => p1.weightedPrice - p2.weightedPrice))
         break
       default:
     }
@@ -80,13 +77,13 @@ const Packs = props => {
             title={labels.orderBy} 
             after={orderByList.find(o => o.id === orderBy).name}
           />
-          {categoryPacks.map(p => {
+          {orderedPacks.map(p => {
             const productInfo = state.products.find(pr => pr.id === p.productId)
             const storePackInfo = state.customer.storeId ? state.storePacks.find(pa => pa.storeId === state.customer.storeId && pa.packId === p.id) : ''
             return (
               <ListItem
                 link={`/pack/${p.id}`}
-                title={productInfo.name}
+                title={productInfo.name || productInfo.engName}
                 subtitle={p.name}
                 text={`${labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
                 footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
@@ -95,7 +92,6 @@ const Packs = props => {
               >
                 <PackImage slot="media" pack={p} type="list" />
                 {storePackInfo ? <div className="list-subtext1">{labels.myPrice}: {(storePackInfo.price / 1000).toFixed(3)}</div> : ''}
-                {productInfo.isNew ? <Badge slot="title" color="red">{labels.new}</Badge> : ''}
                 {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
               </ListItem>
             )

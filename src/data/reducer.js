@@ -98,11 +98,6 @@ const Reducer = (state, action) => {
         ...state,
         ratings: action.ratings
       }    
-    case 'SET_SECTIONS':
-      return {
-        ...state,
-        sections: action.sections
-      }
     case 'SET_CATEGORIES':
       return {
         ...state,
@@ -143,10 +138,10 @@ const Reducer = (state, action) => {
         ...state,
         alarms: action.alarms
       }    
-    case 'SET_CANCEL_ORDERS':
+    case 'SET_CANCEL_REQUESTS':
       return {
         ...state,
-        cancelOrders: action.cancelOrders
+        cancelRequests: action.cancelRequests
       }    
     case 'SET_FORGET_PASSWORDS':
       return {

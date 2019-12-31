@@ -3,23 +3,26 @@ import { Button, Block } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { randomColors } from '../data/config'
 
-const Sections = props => {
+const MainCategories = props => {
   const { state } = useContext(StoreContext)
-  const sections = useMemo(() => [...state.sections].sort((s1, s2) => s1.name > s2.name ? 1 : -1)
-  , [state.sections])
+  const categories = useMemo(() => {
+    const categories = state.categories.filter(c => c.parentId === '0')
+    return categories.sort((c1, c2) => c1.ordering - c2.ordering)
+  }, [state.categories])
   let i = 0
   return (
     <Block>
-      {sections.map(s => {
+      {categories.map(c => {
         return (
           <Button 
-            href={`/section-categories/${s.id}`} key={s.id}
+            href={`/categories/${c.id}`} 
             large 
             fill 
             className="sections" 
             color={randomColors[i++ % 10].name} 
+            key={c.id}
           >
-            <span className="button-label">{s.name}</span>
+            {c.name}
           </Button>
         )
       })}
@@ -27,4 +30,4 @@ const Sections = props => {
   )
 
 }
-export default Sections
+export default MainCategories

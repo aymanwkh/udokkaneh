@@ -7,7 +7,6 @@ export const StoreContext = createContext()
 const Store = props => {
   const [user, setUser] = useState(null)
   const initState = {
-    sections: [], 
     categories: [], 
     countries: [], 
     basket: [], 
@@ -28,15 +27,6 @@ const Store = props => {
   const [state, dispatch] = useReducer(Reducer, initState)
 
   useEffect(() => {
-    const unsubscribeSections = firebase.firestore().collection('sections').onSnapshot(docs => {
-      let sections = []
-      docs.forEach(doc => {
-        sections.push({...doc.data(), id:doc.id})
-      })
-      dispatch({type: 'SET_SECTIONS', sections})
-    }, err => {
-      unsubscribeSections()
-    })  
     const unsubscribeCategories = firebase.firestore().collection('categories').onSnapshot(docs => {
       let categories = []
       docs.forEach(doc => {
@@ -82,7 +72,7 @@ const Store = props => {
     }, err => {
       unsubscribePacks()
     })
-    const unsubscribeForgetPasswords = firebase.firestore().collection('forgetPasswords').onSnapshot(docs => {
+    const unsubscribeForgetPasswords = firebase.firestore().collection('forget-passwords').onSnapshot(docs => {
       let forgetPasswords = []
       docs.forEach(doc => {
         forgetPasswords.push({...doc.data(), id: doc.id})
@@ -150,7 +140,7 @@ const Store = props => {
         }, err => {
           unsubscribeStores()
         }) 
-        const unsubscribeStorePacks = firebase.firestore().collection('storePacks').onSnapshot(docs => {
+        const unsubscribeStorePacks = firebase.firestore().collection('store-packs').onSnapshot(docs => {
           let storePacks = []
           docs.forEach(doc => {
             storePacks.push({...doc.data(), id:doc.id})
@@ -168,14 +158,14 @@ const Store = props => {
         }, err => {
           unsubscribeAlarms()
         })  
-        const unsubscribeCancelOrders = firebase.firestore().collection('cancelOrders').where('order.userId', '==', user.uid).onSnapshot(docs => {
-          let cancelOrders = []
+        const unsubscribeCancelRequests = firebase.firestore().collection('cancel-requests').where('order.userId', '==', user.uid).onSnapshot(docs => {
+          let cancelRequests = []
           docs.forEach(doc => {
-            cancelOrders.push({...doc.data(), id:doc.id})
+            cancelRequests.push({...doc.data(), id:doc.id})
           })
-          dispatch({type: 'SET_CANCEL_ORDERS', cancelOrders})
+          dispatch({type: 'SET_CANCEL_REQUESTS', cancelRequests})
         }, err => {
-          unsubscribeCancelOrders()
+          unsubscribeCancelRequests()
         })  
 
       }

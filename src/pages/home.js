@@ -1,8 +1,8 @@
 import React from 'react'
 import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge } from 'framework7-react'
-import Sections from './sections'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
+import MainCategories from './main-categories'
 
 
 const Home = props => {
@@ -21,7 +21,7 @@ const Home = props => {
           <span className='banner'>{labels.banner}</span>
         </NavTitleLarge>
       </Navbar>
-      <Sections/>
+      <MainCategories/>
       <Toolbar bottom>
         <BottomToolbar isHome="1"/>
       </Toolbar>

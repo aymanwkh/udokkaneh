@@ -39,7 +39,7 @@ const ConfirmOrder = props => {
   , [basket])
   const fixedFees = useMemo(() => {
     const offersTotal = basket.reduce((sum, p) => sum + p.offerId ? p.price * p.quantity : 0, 0)
-    const fees = Math.ceil(((urgent ? 1.5 : 1) * (setup.fixedFees * (total - offersTotal) + labels.fixedFees * 2 * offersTotal) / 100) / 50) * 50
+    const fees = Math.ceil(((urgent ? 1.5 : 1) * (setup.fixedFees * (total - offersTotal) + setup.fixedFees * 2 * offersTotal) / 100) / 50) * 50
     const fraction = total - Math.floor(total / 50) * 50
     return fees - fraction
   }, [basket, total, urgent])
@@ -77,7 +77,7 @@ const ConfirmOrder = props => {
       }
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
-      if (totalOrders + total > state.customer.orderLimit || setup.orderLimit) {
+      if (totalOrders + total > (state.customer.orderLimit || setup.orderLimit)) {
         throw new Error('limitOverFlow')
       }
       let packs = basket.filter(p => p.price > 0)
@@ -120,7 +120,7 @@ const ConfirmOrder = props => {
             return(
               <ListItem
                 key={p.packId}
-                title={productInfo.name}
+                title={productInfo.name || productInfo.engName}
                 subtitle={`${labels.quantity}: ${quantityText(p.quantity)}`}
                 text={p.price === p.oldPrice ? '' : p.price === 0 ? labels.unAvailableNote : labels.changePriceNote}
                 after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.byWeight ? '*' : ''}`}

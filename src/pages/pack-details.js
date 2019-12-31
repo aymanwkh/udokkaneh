@@ -63,10 +63,10 @@ const PackDetails = props => {
           offerId: pack.id
         }
       }
-      if (state.customer){
+      if (state.customer.orderLimit){
         const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
         const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
-        if (activeOrdersTotal + purchasedPack.price > state.customer.orderLimit || setup.orderLimit) {
+        if (activeOrdersTotal + purchasedPack.price > (state.customer.orderLimit || setup.orderLimit)) {
           throw new Error('limitOverFlow')
         }
         const packInActiveOrders = activeOrders.filter(o => o.basket.find(p => p.packId === packId))
@@ -123,7 +123,7 @@ const PackDetails = props => {
   }
   return (
     <Page>
-      <Navbar title={product.name} backLink={labels.back} />
+      <Navbar title={product.name || product.engName} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <p className="price">
@@ -138,7 +138,7 @@ const PackDetails = props => {
         </CardContent>
         <CardFooter>
           <p>{`${labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>
-          {user ? <p><Link popoverOpen=".popover-list" iconMaterial="more_vert" /></p> : ''}
+          {user ? <p><Link popoverOpen=".popover-list" iconMaterial="add_alert" /></p> : ''}
         </CardFooter>
       </Card>
       {pack.isOffer ? 

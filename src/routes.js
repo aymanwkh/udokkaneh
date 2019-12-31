@@ -1,6 +1,6 @@
 import Home from './pages/home'
 import NotFoundPage from './pages/not-found-page'
-import SectionCategories from './pages/section-categories'
+import Categories from './pages/categories'
 import Panel from './pages/panel'
 import Login from './pages/login'
 import Register from './pages/register'
@@ -70,11 +70,11 @@ export default [
     component: InviteFriend
   },
   {
-    path: '/section-categories/:id',
-    component: SectionCategories,
+    path: '/categories/:id',
+    component: Categories,
   },
   {
-    path: '/category/:id',
+    path: '/packs/:id',
     component: Packs,
   },
   {

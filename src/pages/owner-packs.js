@@ -43,14 +43,13 @@ const OwnerPacks = props => {
               return (
                 <ListItem
                   link={`/pack/${p.id}`}
-                  title={productInfo.name}
+                  title={productInfo.name || productInfo.engName}
                   subtitle={packInfo.name}
                   test={moment(p.time.toDate()).fromNow()}
                   after={(p.price / 1000).toFixed(3)}
                   key={p.id}
                 >
                   <PackImage slot="media" pack={packInfo} type="list" />
-                  {productInfo.isNew ? <Badge slot="title" color='red'>{labels.new}</Badge> : ''}
                   {packInfo.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
                   <Badge slot="footer" color='green'> {labels.myPrice} {(p.price / 1000).toFixed(3)} </Badge>
                 </ListItem>

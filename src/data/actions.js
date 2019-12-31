@@ -79,7 +79,7 @@ export const logout = () => {
 }
 
 export const forgetPassword = mobile => {
-  return firebase.firestore().collection('forgetPasswords').add({
+  return firebase.firestore().collection('forget-passwords').add({
     mobile,
     status: 'n',
     time: new Date(),
@@ -104,7 +104,7 @@ export const cancelOrder = order => {
 }
 
 export const cancelOrderRequest = order => {
-  return firebase.firestore().collection('cancelOrders').add({
+  return firebase.firestore().collection('cancel-requests').add({
     order,
     status: 'n',
     time: new Date()
@@ -174,19 +174,5 @@ export const inviteFriend = (mobile, name) => {
   })
 }
 
-export const newProduct = (name, categoryId, productId) => {
-  const request = {
-    userId: firebase.auth().currentUser.uid,
-    name,
-    status: 'n',
-    time: new Date()
-  }
-  if (productId) {
-    request['productId'] = productId
-  } else {
-    request['categoryId'] = categoryId
-  }
-  return firebase.firestore().collection('newPackRequests').add(request)
-}
 
 

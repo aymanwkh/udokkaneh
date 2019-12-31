@@ -28,12 +28,14 @@ const Basket = props => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
   }, [state.basket, props])
   useEffect(() => {
-    if (state.customer){
-      if (customerOrdersTotals + totalPrice > state.customer.orderLimit || setup.orderLimit){
+    if (state.customer.orderLimit){
+      if (customerOrdersTotals + totalPrice > (state.customer.orderLimit || setup.orderLimit)){
         setSubmitVisible(false)
       } else {
         setSubmitVisible(true)
       }
+    } else {
+      setSubmitVisible(true)
     }
   }, [state.customer, customerOrdersTotals, totalPrice])
   useEffect(() => {
@@ -73,9 +75,10 @@ const Basket = props => {
       <List mediaList>
         {packs.map(p => {
           const packInfo = state.packs.find(pa => pa.id === p.packId)
+          const productInfo = state.products.find(pr => pr.id === packInfo.productId)
           return (
             <ListItem
-              title={state.products.find(pr => pr.id === packInfo.productId).name}
+              title={productInfo.name || productInfo.engName}
               subtitle={packInfo.name}
               text={`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
               footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
