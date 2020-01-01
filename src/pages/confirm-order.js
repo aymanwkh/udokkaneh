@@ -58,7 +58,7 @@ const ConfirmOrder = props => {
   , [basket])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees((state.customer.deliveryFees ?? (customerLocation?.deliveryFees || '')) * (urgent ? 1.5 : 1))
+      setDeliveryFees((state.customer.deliveryFees || (customerLocation?.deliveryFees || '')) * (urgent ? 1.5 : 1))
     } else {
       setDeliveryFees('')
     }
@@ -74,6 +74,9 @@ const ConfirmOrder = props => {
     try{
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
+      }
+      if (state.orders.filter(o => o.status === 'n')) {
+        throw new Error('unapproveOrder')
       }
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
@@ -120,7 +123,7 @@ const ConfirmOrder = props => {
             return(
               <ListItem
                 key={p.packId}
-                title={productInfo.name || productInfo.engName}
+                title={productInfo.name}
                 subtitle={`${labels.quantity}: ${quantityText(p.quantity)}`}
                 text={p.price === p.oldPrice ? '' : p.price === 0 ? labels.unAvailableNote : labels.changePriceNote}
                 after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.byWeight ? '*' : ''}`}

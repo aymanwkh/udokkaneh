@@ -123,7 +123,7 @@ const PackDetails = props => {
   }
   return (
     <Page>
-      <Navbar title={product.name || product.engName} backLink={labels.back} />
+      <Navbar title={product.name} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <p className="price">

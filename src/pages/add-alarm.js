@@ -104,7 +104,7 @@ const AddAlarm = props => {
         <ListInput 
           name="productName" 
           label={labels.productName}
-          value={product.name || product.engName}
+          value={product.name}
           type="text" 
           readonly
         />

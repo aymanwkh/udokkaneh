@@ -139,8 +139,8 @@ const labels = {
   category: 'الصنف',
   productName: 'اسم المنتج',
   packName: 'العبوة',
-  storeLocation: 'موقع المحل'
-
+  storeLocation: 'موقع المحل',
+  unapproveOrder: 'يوجد طلب سابق لم يتم اعتماده بعد، يمكنك تعديله'
 }
 
 export default labels

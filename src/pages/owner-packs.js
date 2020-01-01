@@ -43,7 +43,7 @@ const OwnerPacks = props => {
               return (
                 <ListItem
                   link={`/pack/${p.id}`}
-                  title={productInfo.name || productInfo.engName}
+                  title={productInfo.name}
                   subtitle={packInfo.name}
                   test={moment(p.time.toDate()).fromNow()}
                   after={(p.price / 1000).toFixed(3)}
