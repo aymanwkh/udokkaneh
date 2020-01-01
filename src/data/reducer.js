@@ -143,10 +143,10 @@ const Reducer = (state, action) => {
         ...state,
         cancelRequests: action.cancelRequests
       }    
-    case 'SET_FORGET_PASSWORDS':
+    case 'SET_PASSWORD_REQUESTS':
       return {
         ...state,
-        forgetPasswords: action.forgetPasswords
+        passwordRequests: action.passwordRequests
       }    
     default:
       return state

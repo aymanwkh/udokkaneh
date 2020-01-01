@@ -50,6 +50,9 @@ const InviteFriend = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
+      if (state.invitations.find(i => i.friendMobile === mobile)) {
+        throw new Error('duplicateInvitation')
+      }
       await inviteFriend(mobile, name)
       showMessage(labels.sendSuccess)
       props.f7router.navigate('/home/')

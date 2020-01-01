@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { forgetPassword, showMessage, showError, getMessage } from '../data/actions'
+import { addPasswordRequest, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
-const ForgetPassword = props => {
+const PasswordRequest = props => {
   const { state } = useContext(StoreContext)
   const [mobile, setMobile] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
@@ -29,15 +29,15 @@ const ForgetPassword = props => {
     }
   }, [error])
 
-  const handleForgetPassword = async () => {
+  const handlePasswordRequest = async () => {
     try{
-      if (state.forgetPasswords.find(p => p.mobile === mobile && p.status === 'n')) {
-        throw new Error('duplicateForgetPassword')
+      if (state.passwordRequests.find(p => p.mobile === mobile && p.status === 'n')) {
+        throw new Error('duplicatePasswordRequest')
       }
-      await forgetPassword(mobile)
+      await addPasswordRequest(mobile)
       showMessage(labels.sendSuccess)
-      props.f7router.app.views.main.router.navigate('/home/')
-      props.f7router.app.panel.close('right')
+      f7.views.main.router.navigate('/home/')
+      f7.panel.close('right')
     } catch (err){
       setError(getMessage(props, err))
     }
@@ -45,7 +45,7 @@ const ForgetPassword = props => {
 
   return (
     <Page>
-      <Navbar title={labels.forgetPasswordTitle} backLink={labels.back} />
+      <Navbar title={labels.passwordRequest} backLink={labels.back} />
       <List form>
         <ListInput
           label={labels.mobile}
@@ -62,10 +62,10 @@ const ForgetPassword = props => {
       </List>
       <List>
       {!mobile || mobileErrorMessage ? '' : 
-        <Button large onClick={() => handleForgetPassword()}>{labels.send}</Button>
+        <Button large onClick={() => handlePasswordRequest()}>{labels.send}</Button>
       }
       </List>
     </Page>
   )
 }
-export default ForgetPassword
+export default PasswordRequest

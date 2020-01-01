@@ -11,7 +11,7 @@ import ConfirmOrder from './pages/confirm-order'
 import OrdersList from './pages/orders-list'
 import OrderDetails from './pages/order-details'
 import AddAlarm from './pages/add-alarm'
-import ForgetPassword from './pages/forget-password'
+import PasswordRequest from './pages/password-request'
 import InviteFriend from './pages/invite-friend'
 import StoreOwner from './pages/store-owner'
 import OwnerPacks from './pages/owner-packs'
@@ -47,8 +47,8 @@ export default [
     component: Login,
   },
   {
-    path: '/forget-password/',
-    component: ForgetPassword
+    path: '/password-request/',
+    component: PasswordRequest
   },
   {
     path: '/change-password/',

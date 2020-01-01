@@ -85,7 +85,7 @@ const Login = props => {
       }
       <Toolbar bottom>
         <Link href="/register/">{labels.newUser}</Link>
-        <Link href="/forget-password/">{labels.forgetPassword}</Link>
+        <Link href="/password-request/">{labels.forgetPassword}</Link>
       </Toolbar>
     </Page>
   )

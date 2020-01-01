@@ -53,7 +53,7 @@ const labels = {
   enterPrice: 'الرجاء ادخال السعر',
   enterStore: 'الرجاء ادخال اسم المحل',
   invalidPrice: 'الرجاء التأكد من السعر المدخل',
-  forgetPasswordTitle: 'طلب كلمة سر جديدة',
+  passwordRequest: 'طلب كلمة السر',
   send: 'ارسال',
   sendMessage: 'تم ارسال طلبك بنجاح',
   allProducts: 'كل المنتجات',
@@ -109,7 +109,7 @@ const labels = {
   duplicatePriceAlarms: 'لقد ارسلت ابلاغا سابقا لنفس هذا المنتج ولم يعتمد بعد',
   duplicateOrderCancel: 'لقد ارسلت طلبا بإلغاء هذا الطلب سابقا ولم يعتمد بعد',
   deleteSuccess: 'تم الحذف بنجاح',
-  duplicateForgetPassword: 'لقد ارسلت طلبا سابق بنسيان كلمة السر ولم يعالج بعد',
+  duplicatePasswordRequest: 'لقد ارسلت طلبا سابق بنسيان كلمة السر ولم يعالج بعد',
   quantity: 'الكمية',
   gram: 'غ',
   weightedPricesNote: '*هذا سعر تقديري، السعر يتحدد حسب الوزن الفعلي',
@@ -140,7 +140,8 @@ const labels = {
   productName: 'اسم المنتج',
   packName: 'العبوة',
   storeLocation: 'موقع المحل',
-  unapproveOrder: 'يوجد طلب سابق لم يتم اعتماده بعد، يمكنك تعديله'
+  unapproveOrder: 'يوجد طلب سابق لم يتم اعتماده بعد، يمكنك تعديله',
+  duplicateInvitation: 'يوجد دعوة سابقة لهذا الرقم'
 }
 
 export default labels

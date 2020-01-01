@@ -78,8 +78,8 @@ export const logout = () => {
   return firebase.auth().signOut()
 }
 
-export const forgetPassword = mobile => {
-  return firebase.firestore().collection('forget-passwords').add({
+export const addPasswordRequest = mobile => {
+  return firebase.firestore().collection('password-requests').add({
     mobile,
     status: 'n',
     time: new Date(),

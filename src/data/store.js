@@ -21,8 +21,8 @@ const Store = props => {
     locations: [],
     storePacks: [],
     alarms: [],
-    cancelOrders: [],
-    forgetPasswords: []
+    cancelRequests: [],
+    passwordRequests: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -72,14 +72,14 @@ const Store = props => {
     }, err => {
       unsubscribePacks()
     })
-    const unsubscribeForgetPasswords = firebase.firestore().collection('forget-passwords').onSnapshot(docs => {
-      let forgetPasswords = []
+    const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
+      let passwordRequests = []
       docs.forEach(doc => {
-        forgetPasswords.push({...doc.data(), id: doc.id})
+        passwordRequests.push({...doc.data(), id: doc.id})
       })
-      dispatch({type: 'SET_FORGET_PASSWORDS', forgetPasswords})
+      dispatch({type: 'SET_PASSWORD_REQUESTS', passwordRequests})
     }, err => {
-      unsubscribeForgetPasswords()
+      unsubscribePasswordRequests()
     })
     const unsubscribeLocations = firebase.firestore().collection('locations').onSnapshot(docs => {
       let locations = []
