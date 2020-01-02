@@ -11,7 +11,7 @@ const Ratings = props => {
   const { state } = useContext(StoreContext)
   const ratings = useMemo(() => {
     let ratings = state.ratings.filter(r => r.productId === props.id && r.status === 'a')
-    ratings = ratins.map(r => {
+    ratings = ratings.map(r => {
       const ratingValueInfo = ratingValues.find(v => v.id === r.value)
       return {
         ...r,
