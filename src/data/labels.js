@@ -48,7 +48,7 @@ const labels = {
   net: 'الصافي',
   withDelivery: 'خدمة التوصيل',
   deliveryFees: 'رسوم التوصيل',
-  noDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 24-48 ساعة',
+  withNoDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 24-48 ساعة',
   withDeliveryNote: 'التوصيل خلال جولات محددة حسب المنطقة خلال 24-48 ساعة',
   enterPrice: 'الرجاء ادخال السعر',
   enterStore: 'الرجاء ادخال اسم المحل',
@@ -106,7 +106,7 @@ const labels = {
   confirmationTitle: 'تأكيد العملية',
   isOffer: 'عرض؟',
   orderPrice: 'السعر عند الطلب',
-  duplicatePriceAlarms: 'لقد ارسلت ابلاغا سابقا لنفس هذا المنتج ولم يعتمد بعد',
+  duplicateAlarms: 'لقد ارسلت بلاغا سابقا لنفس هذا المنتج ولم يعتمد بعد',
   duplicateOrderCancel: 'لقد ارسلت طلبا بإلغاء هذا الطلب سابقا ولم يعتمد بعد',
   deleteSuccess: 'تم الحذف بنجاح',
   duplicatePasswordRequest: 'لقد ارسلت طلبا سابق بنسيان كلمة السر ولم يعالج بعد',
@@ -135,13 +135,17 @@ const labels = {
   returned: 'المرتجع',
   currentPrice: 'السعر الحالي',
   offerUpTo: 'عرض حتى تاريخ',
-  newProduct: 'طلب اضافة منتج',
+  newProduct: 'اسم المنتج الجديد',
   category: 'الصنف',
   productName: 'اسم المنتج',
   packName: 'العبوة',
   storeLocation: 'موقع المحل',
   unapproveOrder: 'يوجد طلب سابق لم يتم اعتماده بعد، يمكنك تعديله',
-  duplicateInvitation: 'يوجد دعوة سابقة لهذا الرقم'
+  duplicateInvitation: 'يوجد دعوة سابقة لهذا الرقم',
+  quantityPlaceholder: 'ادخل رقم اكبر من واحد',
+  invalidQuantity: 'الرجاء التأكد من الكمية المدخلة',
+  newPack: 'اسم العبوة الجديدة',
+  noDelivery: 'خدمة التوصيل غير متوفرة لمنطقتك حاليا'
 }
 
 export default labels

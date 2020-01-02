@@ -10,14 +10,23 @@ import labels from '../data/labels'
 const OwnerPacks = props => {
   const { state } = useContext(StoreContext)
   let ownerPacks = useMemo(() => {
-    let ownerPacks = state.storePacks.filter(p => p.storeId === props.id)
-    return ownerPacks.sort((p1, p2) => p1.price - p2.price)
-  }, [state.storePacks, props.id])
+    let packs = state.storePacks.filter(p => p.storeId === state.customer.storeId)
+    packs = packs.map(p => {
+      const packInfo = state.packs.find(pa => pa.id === p.packId)
+      const productInfo = state.products.find(pr => pr.id === packInfo.productId)
+      return {
+        ...p,
+        packInfo,
+        productInfo
+      }
+    })
+    return packs.sort((p1, p2) => p1.price - p2.price)
+  }, [state.storePacks, state.customer, state.packs, state.products])
   const store = useMemo(() => state.stores.find(s => s.id === props.id)
   , [state.stores, props.id])
   return(
     <Page>
-      <Navbar title={`${store.name}`} backLink={labels.back}>
+      <Navbar title={store.name} backLink={labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>
@@ -37,24 +46,20 @@ const OwnerPacks = props => {
         <List mediaList className="search-list searchbar-found">
           {ownerPacks.length === 0 ? 
             <ListItem title={labels.noData} /> 
-          : ownerPacks.map(p => {
-              const packInfo = state.packs.find(pa => pa.id === p.packId)
-              const productInfo = state.products.find(pr => pr.id === packInfo.productId)
-              return (
-                <ListItem
-                  link={`/pack/${p.id}`}
-                  title={productInfo.name}
-                  subtitle={packInfo.name}
-                  test={moment(p.time.toDate()).fromNow()}
-                  after={(p.price / 1000).toFixed(3)}
-                  key={p.id}
-                >
-                  <PackImage slot="media" pack={packInfo} type="list" />
-                  {packInfo.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
-                  <Badge slot="footer" color='green'> {labels.myPrice} {(p.price / 1000).toFixed(3)} </Badge>
-                </ListItem>
-              )
-            })
+          : ownerPacks.map(p => 
+              <ListItem
+                link={`/pack/${p.id}`}
+                title={p.productInfo.name}
+                subtitle={p.packInfo.name}
+                test={moment(p.time.toDate()).fromNow()}
+                after={(p.price / 1000).toFixed(3)}
+                key={p.id}
+              >
+                <PackImage slot="media" pack={p.packInfo} type="list" />
+                {p.packInfo.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
+                <Badge slot="footer" color='green'> {labels.myPrice} {(p.price / 1000).toFixed(3)} </Badge>
+              </ListItem>
+            )
           }
         </List>
       </Block>

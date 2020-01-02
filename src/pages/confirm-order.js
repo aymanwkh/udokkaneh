@@ -17,6 +17,7 @@ const ConfirmOrder = props => {
   const [error, setError] = useState('')
   const basket = useMemo(() => state.basket.map(p => {
     const packInfo = state.packs.find(pa => pa.id === p.packId)
+    const productInfo = state.products.find(pr => pr.id === packInfo.productId)
     let price = packInfo.price
     if (p.offerId) {
       const offerInfo = state.packs.find(pa => pa.id === p.offerId)
@@ -28,13 +29,12 @@ const ConfirmOrder = props => {
     }
     return {
       ...p,
+      packInfo,
+      productInfo,
       price,
-      oldPrice: p.price,
-      name: packInfo.name,
-      productId: packInfo.productId,
-      byWeight: packInfo.byWeight
+      oldPrice: p.price
     }
-  }), [state.packs, state.basket])
+  }), [state.basket, state.packs, state.products])
   const total = useMemo(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0)
   , [basket])
   const fixedFees = useMemo(() => {
@@ -95,6 +95,10 @@ const ConfirmOrder = props => {
           status: 'n'
         }
       })
+      let specialDiscount = 0
+      if (withDelivery && state.customer.deliveryFees && state.customer.deliveryFees < customerLocation?.deliveryFees) {
+        specialDiscount = customerLocation?.deliveryFees - state.customer.deliveryFees
+      }
       const order = {
         basket: packs,
         fixedFees,
@@ -102,7 +106,8 @@ const ConfirmOrder = props => {
         discount,
         withDelivery,
         urgent,
-        total
+        total,
+        specialDiscount
       }
       await confirmOrder(order)
       showMessage(labels.confirmSuccess)
@@ -118,18 +123,15 @@ const ConfirmOrder = props => {
       <Navbar title={labels.confirmOrder} backLink={labels.back} />
       <Block>
         <List mediaList>
-          {basket.map(p => {
-            const productInfo = state.products.find(pr => pr.id === p.productId)
-            return(
-              <ListItem
-                key={p.packId}
-                title={productInfo.name}
-                subtitle={`${labels.quantity}: ${quantityText(p.quantity)}`}
-                text={p.price === p.oldPrice ? '' : p.price === 0 ? labels.unAvailableNote : labels.changePriceNote}
-                after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.byWeight ? '*' : ''}`}
-              />
-            )
-          })}
+          {basket.map(p => 
+            <ListItem
+              key={p.packId}
+              title={p.productInfo.name}
+              subtitle={`${labels.quantity}: ${quantityText(p.quantity)}`}
+              text={p.price === p.oldPrice ? '' : p.price === 0 ? labels.unAvailableNote : labels.changePriceNote}
+              after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}
+            />
+          )}
           <ListItem 
             title={labels.total} 
             className="total" 
@@ -162,14 +164,15 @@ const ConfirmOrder = props => {
           </List>
           <List form>
           <ListItem>
-            <span>{labels.withDelivery}</span>
-            <Toggle 
-              name="withDelivery" 
-              color="green" 
-              checked={withDelivery} 
-              onToggleChange={() => setWithDelivery(!withDelivery)}
-              disabled={customerLocation ? !customerLocation.hasDelivery : false}
-            />
+            <span>{customerLocation?.hasDelivery ? labels.withDelivery : labels.noDelivery}</span>
+            {customerLocation?.hasDelivery ?
+              <Toggle 
+                name="withDelivery" 
+                color="green" 
+                checked={withDelivery} 
+                onToggleChange={() => setWithDelivery(!withDelivery)}
+              />
+            : ''}
           </ListItem>
           <ListItem>
             <span>{labels.urgent}</span>
@@ -182,7 +185,7 @@ const ConfirmOrder = props => {
           </ListItem>
         </List>
         <p className="note">{weightedPacks.length > 0 ? labels.weightedPricesNote : ''}</p>
-        <p className="note">{withDelivery ? (urgent ? labels.withUrgentDeliveryNote : labels.withDeliveryNote) : (urgent ? labels.urgentNoDeliveryNote : labels.noDeliveryNote)}</p>
+        <p className="note">{withDelivery ? (urgent ? labels.withUrgentDeliveryNote : labels.withDeliveryNote) : (urgent ? labels.urgentNoDeliveryNote : labels.withNoDeliveryNote)}</p>
       </Block>
       <Fab position="center-bottom" slot="fixed" text={labels.confirm} color="green" onClick={() => handleConfirm()}>
         <Icon material="done"></Icon>

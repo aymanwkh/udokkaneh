@@ -114,7 +114,7 @@ const Store = props => {
           dispatch({type: 'SET_INVITATIONS', invitations})
         }, err => {
           unsubscribeInvitations()
-        })  
+        })
         const unsubscribeCustomers = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
           if (doc.exists){
             dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
@@ -148,7 +148,7 @@ const Store = props => {
           dispatch({type: 'SET_STORE_PACKS', storePacks})
         }, err => {
           unsubscribeStorePacks()
-        })  
+        })
         const unsubscribeAlarms = firebase.firestore().collection('alarms').where('userId', '==', user.uid).onSnapshot(docs => {
           let alarms = []
           docs.forEach(doc => {
@@ -167,7 +167,6 @@ const Store = props => {
         }, err => {
           unsubscribeCancelRequests()
         })  
-
       }
     })
   }, [])

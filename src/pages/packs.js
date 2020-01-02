@@ -11,11 +11,23 @@ const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
     let packs = state.packs.filter(p => p.price > 0 && (props.id ? state.products.find(pr => pr.id === p.productId).categoryId === props.id : true))
-    return packs.sort((p1, p2) => p1.price - p2.price)
-  }, [state.packs, state.products, props.id]) 
+    packs = packs.map(p => {
+      const productInfo = state.products.find(pr => pr.id === p.productId)
+      const countryInfo = state.countries.find(c => c.id === productInfo.countryId)
+      const storePackInfo = state.customer.storeId ? state.storePacks.find(pa => pa.storeId === state.customer.storeId && pa.packId === p.id) : ''
+      return {
+        ...p,
+        productInfo,
+        countryInfo,
+        storePackInfo
+      }
+    })
+    return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
+  }, [state.packs, state.products, state.customer, state.storePacks, state.countries, props.id]) 
   const [orderedPacks, setOrderedPacks] = useState(packs)
-  const category = state.categories.find(category => category.id === props.id)
-  const [orderBy, setOrderBy] = useState('p')
+  const category = useMemo(() => state.categories.find(category => category.id === props.id)
+  , [state.categories, props.id])
+  const [orderBy, setOrderBy] = useState('v')
   const handleOrdering = orderByValue => {
     setOrderBy(orderByValue)
     switch(orderByValue){
@@ -23,10 +35,10 @@ const Packs = props => {
         setOrderedPacks([...orderedPacks].sort((p1, p2) => p1.price - p2.price))
         break
       case 's':
-        setOrderedPacks([...orderedPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).sales - state.products.find(p => p.id === p1.productId).sales))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.productInfo.sales - p1.productInfo.sales))
         break
       case 'r':
-        setOrderedPacks([...orderedPacks].sort((p1, p2) => state.products.find(p => p.id === p2.productId).rating - state.products.find(p => p.id === p1.productId).rating))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.productInfo.rating - p1.productInfo.rating))
         break
       case 'o':
         setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.isOffer - p1.isOffer))
@@ -77,25 +89,21 @@ const Packs = props => {
             title={labels.orderBy} 
             after={orderByList.find(o => o.id === orderBy).name}
           />
-          {orderedPacks.map(p => {
-            const productInfo = state.products.find(pr => pr.id === p.productId)
-            const storePackInfo = state.customer.storeId ? state.storePacks.find(pa => pa.storeId === state.customer.storeId && pa.packId === p.id) : ''
-            return (
-              <ListItem
-                link={`/pack/${p.id}`}
-                title={productInfo.name}
-                subtitle={p.name}
-                text={`${labels.productOf} ${state.countries.find(c => c.id === productInfo.countryId).name}`}
-                footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
-                after={(p.price / 1000).toFixed(3)}
-                key={p.id}
-              >
-                <PackImage slot="media" pack={p} type="list" />
-                {storePackInfo ? <div className="list-subtext1">{labels.myPrice}: {(storePackInfo.price / 1000).toFixed(3)}</div> : ''}
-                {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
-              </ListItem>
-            )
-          })}
+          {orderedPacks.map(p => 
+            <ListItem
+              link={`/pack/${p.id}`}
+              title={p.productInfo.name}
+              subtitle={p.name}
+              text={`${labels.productOf} ${p.countryInfo.name}`}
+              footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
+              after={(p.price / 1000).toFixed(3)}
+              key={p.id}
+            >
+              <PackImage slot="media" pack={p} type="list" />
+              {p.storePackInfo ? <div className="list-subtext1">{labels.myPrice}: {(p.storePackInfo.price / 1000).toFixed(3)}</div> : ''}
+              {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
+            </ListItem>
+          )}
         </List>
       </Block>
       <Toolbar bottom>

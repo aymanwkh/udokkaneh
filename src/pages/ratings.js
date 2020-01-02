@@ -10,7 +10,14 @@ import { ratingValues } from '../data/config'
 const Ratings = props => {
   const { state } = useContext(StoreContext)
   const ratings = useMemo(() => {
-    const ratings = state.ratings.filter(r => r.productId === props.id && r.status === 'a')
+    let ratings = state.ratings.filter(r => r.productId === props.id && r.status === 'a')
+    ratings = ratins.map(r => {
+      const ratingValueInfo = ratingValues.find(v => v.id === r.value)
+      return {
+        ...r,
+        ratingValueInfo
+      }
+    })
     return ratings.sort((r1, r2) => r2.time.seconds - r1.time.seconds)
   }, [state.ratings, props.id])
 
@@ -23,7 +30,7 @@ const Ratings = props => {
             <ListItem title={labels.noData} /> 
           : ratings.map(r => 
               <ListItem
-                title={`${r.userName}: ${ratingValues.find(v => v.id === r.value).name}`}
+                title={`${r.userName}: ${r.ratingValueInfo.name}`}
                 subtitle={r.comment}
                 after={moment(r.time.toDate()).fromNow()}
                 key={r.id}

@@ -29,7 +29,7 @@ const PackDetails = props => {
     return deliveredOrders.length
   }, [state.orders, state.packs, product])
   const isAvailable = useMemo(() => state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? true : false
-  , [state.customer, state.storePacks, pack])
+  , [state.storePacks, state.customer, pack])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -106,7 +106,7 @@ const PackDetails = props => {
           throw new Error('blockedUser')
         }
         if (state.alarms.find(a => a.packId === pack.id && a.status === 'n')){
-          throw new Error('duplicatePriceAlarms')
+          throw new Error('duplicateAlarms')
         }  
         props.f7router.navigate(`/add-alarm/${pack.id}/type/${alarmTypeId}`)
       }  

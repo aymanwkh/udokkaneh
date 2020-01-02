@@ -10,7 +10,14 @@ import { orderStatus } from '../data/config'
 const OrdersList = props => {
   const { state } = useContext(StoreContext)
   const orders = useMemo(() => {
-    const orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd'].includes(o.status))
+    let orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd'].includes(o.status))
+    orders = orders.map(o => {
+      const orderStatusInfo = orderStatus.find(s => s.id === o.status)
+      return {
+        ...o,
+        orderStatusInfo
+      }
+    })
     return orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
   }, [state.orders])
   return(
@@ -24,7 +31,7 @@ const OrdersList = props => {
                 <ListItem
                   link={`/order-details/${o.id}`}
                   title={moment(o.time.toDate()).fromNow()}
-                  subtitle={orderStatus.find(s => s.id === o.status).name}
+                  subtitle={o.orderStatusInfo.name}
                   after={(o.total / 1000).toFixed(3)}
                   key={o.id}
                 />

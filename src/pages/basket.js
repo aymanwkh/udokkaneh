@@ -12,8 +12,18 @@ const Basket = props => {
   const [submitVisible, setSubmitVisible] = useState(true)
   const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
   , [state.basket])
-  const packs = useMemo(() => [...state.basket].sort((p1, p2) => p1.time > p2.time ? 1 : -1)
-  , [state.basket])
+  const packs = useMemo(() => {
+    const packs = state.basket.map(p => {
+      const packInfo = state.packs.find(pa => pa.id === p.packId)
+      const productInfo = state.products.find(pr => pr.id === packInfo.productId)
+      return {
+        ...p,
+        packInfo,
+        productInfo
+      }
+    })
+    return packs.sort((p1, p2) => p1.time > p2.time ? 1 : -1)
+  }, [state.basket, state.packs, state.products])
   const weightedPacks = useMemo(() => state.basket.filter(p => p.byWeight)
   , [state.basket])
   const customerOrdersTotals = useMemo(() => {
@@ -73,29 +83,25 @@ const Basket = props => {
     <Navbar title={labels.basket} backLink={labels.back} />
     <Block>
       <List mediaList>
-        {packs.map(p => {
-          const packInfo = state.packs.find(pa => pa.id === p.packId)
-          const productInfo = state.products.find(pr => pr.id === packInfo.productId)
-          return (
-            <ListItem
-              title={productInfo.name}
-              subtitle={packInfo.name}
-              text={`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${packInfo.byWeight ? '*' : ''}`}
-              footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
-              key={p.packId}
-            >
-              <PackImage slot="media" pack={packInfo} type="list" />
-              <Stepper 
-                slot="after" 
-                fill
-                buttonsOnly
-                onStepperPlusClick={() => handleIncrease(p)}
-                onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
-              />
-              <Button slot="footer">test</Button>
-            </ListItem>
-          )
-        })}
+        {packs.map(p => 
+          <ListItem
+            title={p.productInfo.name}
+            subtitle={p.packInfo.name}
+            text={`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}
+            footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
+            key={p.packId}
+          >
+            <PackImage slot="media" pack={p.packInfo} type="list" />
+            <Stepper 
+              slot="after" 
+              fill
+              buttonsOnly
+              onStepperPlusClick={() => handleIncrease(p)}
+              onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
+            />
+            <Button slot="footer">test</Button>
+          </ListItem>
+        )}
       </List>
       <p className="note">{weightedPacks.length > 0 ? labels.weightedPricesNote : ''}</p>
     </Block>

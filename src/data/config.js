@@ -63,7 +63,6 @@ export const alarmTypes = [
   {id: '4', name: 'الابلاغ عن عدم توفر هذا المنتج/العرض', actor: 'o', isAvailable: true},
   {id: '5', name: 'الابلاغ عن توفر منتج بديل', actor: 'a'},
   {id: '6', name: 'الابلاغ غن توفر عبوة جديدة للمنتج', actor: 'a'},
-  {id: '7', name: 'الابلاغ عن تخفيض للسعر لفترة محدودة', actor: 'o', isAvailable: true},
-  {id: '8', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', actor: 'o', isAvailable: true},
-  {id: '9', name: 'الابلاغ عن عرض على شكل مجموعة', actor: 'o', isAvailable: true},
+  {id: '7', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', actor: 'o', isAvailable: true},
+  {id: '8', name: 'الابلاغ عن عرض على شكل مجموعة', actor: 'o', isAvailable: true},
 ]
