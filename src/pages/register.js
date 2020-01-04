@@ -1,21 +1,16 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import React, { useState, useEffect } from 'react'
+import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
 const Register = props => {
-  const { state } = useContext(StoreContext)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
   const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
-  const [locationId, setLocationId] = useState('')
   const [error, setError] = useState('')
-  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.ordering - l2.ordering)
-  , [state.locations])
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -66,7 +61,7 @@ const Register = props => {
 
   const handleRegister = async () => {
     try{
-      await registerUser(mobile, password, name, locationId)
+      await registerUser(mobile, password, name)
       showMessage(labels.registerSuccess)
       props.f7router.back()
       props.f7router.app.panel.close('right') 
@@ -115,32 +110,9 @@ const Register = props => {
           onChange={e => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
-        <ListItem
-          title={labels.location}
-          smartSelect
-          smartSelectParams={{
-            openIn: "popup", 
-            closeOnSelect: true, 
-            searchbar: true, 
-            searchbarPlaceholder: labels.search,
-            popupCloseLinkText: labels.close
-          }}
-        >
-          <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
-            <option value=""></option>
-            {locations.map(l => 
-              <option key={l.id} value={l.id}>{l.name}</option>
-            )}
-          </select>
-        </ListItem>
-
       </List>
-      {!name || !mobile || !password || !locationId || nameErrorMessage || mobileErrorMessage || passwordErrorMessage ? '' :
-        <Button 
-          href="#" 
-          large 
-          onClick={() => handleRegister()}
-        >
+      {!name || !mobile || !password || nameErrorMessage || mobileErrorMessage || passwordErrorMessage ? '' :
+        <Button href="#" large onClick={() => handleRegister()}>
           {labels.register}
         </Button>
       }

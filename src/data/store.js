@@ -8,9 +8,7 @@ const Store = props => {
   const [user, setUser] = useState(null)
   const initState = {
     categories: [], 
-    countries: [], 
     basket: [], 
-    trademarks: [], 
     stores: [], 
     ratings: [],
     customer: {},
@@ -22,7 +20,8 @@ const Store = props => {
     storePacks: [],
     alarms: [],
     cancelRequests: [],
-    passwordRequests: []
+    passwordRequests: [],
+    notifications: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -36,25 +35,7 @@ const Store = props => {
     }, err => {
       unsubscribeCategories()
     })  
-    const unsubscribeTrademarks = firebase.firestore().collection('trademarks').onSnapshot(docs => {
-      let trademarks = []
-      docs.forEach(doc => {
-        trademarks.push({...doc.data(), id:doc.id})
-      })
-      dispatch({type: 'SET_TRADEMARKS', trademarks})
-    }, err => {
-      unsubscribeTrademarks()
-    })  
-    const unsubscribeCountries = firebase.firestore().collection('countries').onSnapshot(docs => {
-      let countries = []
-      docs.forEach(doc => {
-        countries.push({...doc.data(), id:doc.id})
-      })
-      dispatch({type: 'SET_COUNTRIES', countries})
-    }, err => {
-      unsubscribeCountries()
-    })  
-    const unsubscribeProducts = firebase.firestore().collection('products').onSnapshot(docs => {
+    const unsubscribeProducts = firebase.firestore().collection('products').where('isActive', '==', true).onSnapshot(docs => {
       let products = []
       docs.forEach(doc => {
         products.push({...doc.data(), id: doc.id})
@@ -63,7 +44,7 @@ const Store = props => {
     }, err => {
       unsubscribeProducts()
     })
-    const unsubscribePacks = firebase.firestore().collection('packs').onSnapshot(docs => {
+    const unsubscribePacks = firebase.firestore().collection('packs').where('isActive', '==', true).onSnapshot(docs => {
       let packs = []
       docs.forEach(doc => {
         packs.push({...doc.data(), id: doc.id})
@@ -72,7 +53,7 @@ const Store = props => {
     }, err => {
       unsubscribePacks()
     })
-    const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
+    const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').where('status', '==', 'n').onSnapshot(docs => {
       let passwordRequests = []
       docs.forEach(doc => {
         passwordRequests.push({...doc.data(), id: doc.id})
@@ -122,7 +103,7 @@ const Store = props => {
         }, err => {
           unsubscribeCustomers()
         })  
-        const unsubscribeRating = firebase.firestore().collection('ratings').onSnapshot(docs => {
+        const unsubscribeRating = firebase.firestore().collection('ratings').where('status', '==', 'a').onSnapshot(docs => {
           let ratings = []
           docs.forEach(doc => {
             ratings.push({...doc.data(), id:doc.id})
@@ -166,6 +147,15 @@ const Store = props => {
           dispatch({type: 'SET_CANCEL_REQUESTS', cancelRequests})
         }, err => {
           unsubscribeCancelRequests()
+        })  
+        const unsubscribeNotifications = firebase.firestore().collection('notifications').where('toUserId', 'in', ['0', user.uid]).onSnapshot(docs => {
+          let notifications = []
+          docs.forEach(doc => {
+            notifications.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_NOTIFICATIONS', notifications})
+        }, err => {
+          unsubscribeNotifications()
         })  
       }
     })

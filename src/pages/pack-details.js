@@ -18,9 +18,8 @@ const PackDetails = props => {
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
   const hasOtherOffers = useMemo(() => {
-    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.categoryId === product.categoryId) && (p.isOffer || p.offerEnd))
-    offers = offers.filter(p => p.id !== pack.id && p.price > 0)
-    return offers.length
+    const offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.tagId === product.tagId) && (p.isOffer || p.offerEnd))
+    return offers.filter(p => p.id !== pack.id).length
   }, [state.packs, pack, product, state.products]) 
   const ratings = useMemo(() => state.ratings.filter(r => r.productId === product.id && r.status === 'a')
   , [state.ratings, product])
@@ -130,15 +129,15 @@ const PackDetails = props => {
             {(pack.price / 1000).toFixed(3)} <br />
             <span className="list-subtext1">{pack.offerEnd ? `${labels.offerUpTo}: ${moment(pack.offerEnd.toDate()).format('Y/M/D')}` : ''}</span>
           </p>
-          {product.trademarkId ? <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p> : ''}
+          {product.trademark ? <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p> : ''}
         </CardHeader>
         <CardContent>
           <div className="card-title">{pack.name}</div>
           <PackImage pack={pack} type="card" />
         </CardContent>
         <CardFooter>
-          <p>{`${labels.productOf} ${state.countries.find(c => c.id === product.countryId).name}`}</p>
-          {user ? <p><Link popoverOpen=".popover-list" iconMaterial="add_alert" /></p> : ''}
+          <p>{`${labels.productOf} ${product.trademark ? labels.company + ' ' + product.trademark + '-' : ''}${product.country}`}</p>
+          {user ? <p><Link popoverOpen=".pack-details-menu" iconMaterial="add_alert" /></p> : ''}
         </CardFooter>
       </Card>
       {pack.isOffer ? 
@@ -176,7 +175,7 @@ const PackDetails = props => {
         </Fab>
       }
 
-      <Popover className="popover-list">
+      <Popover className="pack-details-menu">
         <List>
           {hasOtherOffers > 0 ? <ListItem link={`/other-offers/${props.id}`} popoverClose title={labels.otherOffers} /> : ''}
           {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={labels.ratings} /> : ''}

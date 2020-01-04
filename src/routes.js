@@ -78,7 +78,7 @@ export default [
     component: Packs,
   },
   {
-    path: '/pack/:id',
+    path: '/pack-details/:id',
     component: PackDetails,
   },
   {

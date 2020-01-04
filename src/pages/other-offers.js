@@ -12,21 +12,19 @@ const OtherOffers = props => {
   , [state.packs, props.id])
   const offers = useMemo(() => {
     const productPack = state.products.find(p => p.id === pack.productId)
-    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.categoryId === productPack.categoryId) && (p.isOffer || p.offerEnd))
-    offers = offers.filter(p => p.id !== pack.id && p.price > 0)
+    let offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.tagId === productPack.tagId) && (p.isOffer || p.offerEnd))
+    offers = offers.filter(p => p.id !== pack.id)
     offers = offers.map(o => {
       const productInfo = state.products.find(pr => pr.id === o.productId)
-      const countryInfo = state.countries.find(c => c.id === productInfo.countryId)
       const storePackInfo = state.customer.storeId ? state.storePacks.find(pa => pa.storeId === state.customer.storeId && pa.packId === o.id) : ''
       return {
         ...o,
         productInfo,
-        countryInfo,
         storePackInfo
       }
     })
     return offers.sort((p1, p2) => p1.price - p2.price)
-  }, [pack, state.packs, state.products, state.storePacks, state.customer, state.countries]) 
+  }, [pack, state.packs, state.products, state.storePacks, state.customer]) 
   return(
     <Page>
       <Navbar title={labels.offers} backLink={labels.back} />
@@ -35,10 +33,10 @@ const OtherOffers = props => {
           {offers.map(p => {
             return (
               <ListItem
-                link={`/pack/${p.id}`}
+                link={`/pack-details/${p.id}`}
                 title={p.productInfo.name}
                 subtitle={p.name}
-                text={`${labels.productOf} ${p.countryInfo.name}`}
+                text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
                 footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}

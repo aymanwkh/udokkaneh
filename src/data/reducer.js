@@ -148,6 +148,11 @@ const Reducer = (state, action) => {
         ...state,
         passwordRequests: action.passwordRequests
       }    
+    case 'SET_NOTIFICATIONS':
+      return {
+        ...state,
+        notifications: action.notifications
+      }    
     default:
       return state
   }

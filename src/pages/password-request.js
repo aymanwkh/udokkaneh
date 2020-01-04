@@ -31,7 +31,7 @@ const PasswordRequest = props => {
 
   const handlePasswordRequest = async () => {
     try{
-      if (state.passwordRequests.find(p => p.mobile === mobile && p.status === 'n')) {
+      if (state.passwordRequests.find(p => p.mobile === mobile)) {
         throw new Error('duplicatePasswordRequest')
       }
       await addPasswordRequest(mobile)

@@ -48,10 +48,11 @@ const OwnerPacks = props => {
             <ListItem title={labels.noData} /> 
           : ownerPacks.map(p => 
               <ListItem
-                link={`/pack/${p.id}`}
+                link={`/pack-details/${p.id}`}
                 title={p.productInfo.name}
                 subtitle={p.packInfo.name}
-                test={moment(p.time.toDate()).fromNow()}
+                text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
+                footer={moment(p.time.toDate()).fromNow()}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >

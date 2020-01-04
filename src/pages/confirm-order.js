@@ -72,11 +72,16 @@ const ConfirmOrder = props => {
 
   const handleConfirm = async () => {
     try{
+      const globalNotification = state.notifications.find(n => n.toUserId === '0')
+      if (globalNotification) {
+        showMessage(globalNotification.text)
+        return
+      }
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
-      if (state.orders.filter(o => o.status === 'n')) {
-        throw new Error('unapproveOrder')
+      if (state.orders.filter(o => o.status === 'n').length > 0) {
+        throw new Error('unapprovedOrder')
       }
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
