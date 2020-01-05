@@ -146,7 +146,11 @@ const labels = {
   invalidQuantity: 'الرجاء التأكد من الكمية المدخلة',
   newPack: 'اسم العبوة الجديدة',
   noDelivery: 'خدمة التوصيل غير متوفرة لمنطقتك حاليا',
-  company: 'شركة'
+  company: 'شركة',
+  globalNotification: 'تنبيه عام',
+  specialNotification: 'تنبيه خاص',
+  notificationDetails: 'نص التنبيه',
+  notifications: 'التنبيهات',
 }
 
 export default labels

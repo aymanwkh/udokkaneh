@@ -8,6 +8,7 @@ import { alarmTypes } from '../data/config'
 
 const AddAlarm = props => {
   const { state, user } = useContext(StoreContext)
+  const [error, setError] = useState('')
   const pack = useMemo(() => state.packs.find(p => p.id === props.packId)
   , [state.packs, props.packId])
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
@@ -26,7 +27,6 @@ const AddAlarm = props => {
   const [offerDays, setOfferDays] = useState('')
   const [isOffer, setIsOffer] = useState(false)
   const [locationId, setLocationId] = useState('')
-  const [error, setError] = useState('')
   const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.ordering - l2.ordering)
   , [state.locations])
   const currentPrice = useMemo(() => {

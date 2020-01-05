@@ -174,5 +174,9 @@ export const inviteFriend = (mobile, name) => {
   })
 }
 
-
+export const readNotification = notification => {
+  return firebase.firestore().collection('notifications').doc(notification.id).update({
+    status: 'r'
+  })
+}
 

@@ -58,7 +58,7 @@ const ConfirmOrder = props => {
   , [basket])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees((state.customer.deliveryFees || (customerLocation?.deliveryFees || '')) * (urgent ? 1.5 : 1))
+      setDeliveryFees((customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - state.customer.deliveryDiscount)
     } else {
       setDeliveryFees('')
     }
@@ -72,9 +72,9 @@ const ConfirmOrder = props => {
 
   const handleConfirm = async () => {
     try{
-      const globalNotification = state.notifications.find(n => n.toUserId === '0')
+      const globalNotification = state.notifications.find(n => n.toCustomerId === '0')
       if (globalNotification) {
-        showMessage(globalNotification.text)
+        showMessage(globalNotification.message)
         return
       }
       if (state.customer.isBlocked) {
@@ -100,10 +100,6 @@ const ConfirmOrder = props => {
           status: 'n'
         }
       })
-      let specialDiscount = 0
-      if (withDelivery && state.customer.deliveryFees && state.customer.deliveryFees < customerLocation?.deliveryFees) {
-        specialDiscount = customerLocation?.deliveryFees - state.customer.deliveryFees
-      }
       const order = {
         basket: packs,
         fixedFees,
@@ -112,7 +108,7 @@ const ConfirmOrder = props => {
         withDelivery,
         urgent,
         total,
-        specialDiscount
+        deliveryDiscount: withDelivery ? state.customer.deliveryDiscount : 0
       }
       await confirmOrder(order)
       showMessage(labels.confirmSuccess)

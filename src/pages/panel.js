@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { f7, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { logout } from '../data/actions'
@@ -6,6 +6,8 @@ import labels from '../data/labels'
 
 const Panel = props => {
   const { user, state, dispatch } = useContext(StoreContext)
+  const notifications = useMemo(() => state.notifications.filter(n => n.toCustomerId === '0' || n.status === 'n')
+  , [state.notifications])
   const handleLogout = () => {
     logout().then(() => {
       f7.views.main.router.navigate('/home/', {reloadAll: true})
@@ -40,6 +42,11 @@ const Panel = props => {
           </ListItem>
         : ''}
         {user ? <ListItem link="/change-password/" title={labels.changePassword} /> : ''}
+        {user ? 
+          <ListItem link="/notifications/" title={labels.notifications} view="#main-view" panelClose >
+            {notifications.length > 0 ? <Badge color="red">{notifications.length}</Badge> : ''}
+          </ListItem> 
+        : ''}
         {user ? <ListItem link="/orders-list/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/invite-friend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
         {state.customer.storeId ? <ListItem link={`/owner-packs/${state.customer.storeId}`} title={labels.ownerPacks} view="#main-view" panelClose /> : ''}

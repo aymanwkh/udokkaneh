@@ -21,6 +21,8 @@ import ContactUs from './pages/contact-us'
 import RateProduct from './pages/rate-product'
 import Ratings from './pages/ratings'
 import Help from './pages/help'
+import Notifications from './pages/notifications'
+import NotificationDetails from './pages/notification-details'
 
 export default [
   {
@@ -129,6 +131,15 @@ export default [
     path: '/help/:id',
     component: Help
   },
+  {
+    path: '/notifications/',
+    component: Notifications
+  },
+  {
+    path: '/notification-details/:id',
+    component: NotificationDetails
+  },
+
   {
     path: '(.*)',
     component: NotFoundPage,

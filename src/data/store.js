@@ -148,7 +148,7 @@ const Store = props => {
         }, err => {
           unsubscribeCancelRequests()
         })  
-        const unsubscribeNotifications = firebase.firestore().collection('notifications').where('toUserId', 'in', ['0', user.uid]).onSnapshot(docs => {
+        const unsubscribeNotifications = firebase.firestore().collection('notifications').where('toCustomerId', 'in', ['0', user.uid]).onSnapshot(docs => {
           let notifications = []
           docs.forEach(doc => {
             notifications.push({...doc.data(), id:doc.id})
