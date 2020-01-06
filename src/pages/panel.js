@@ -49,7 +49,7 @@ const Panel = props => {
         : ''}
         {user ? <ListItem link="/orders-list/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/invite-friend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
-        {state.customer.storeId ? <ListItem link={`/owner-packs/${state.customer.storeId}`} title={labels.ownerPacks} view="#main-view" panelClose /> : ''}
+        {state.customer.storeId ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
         {user ? '' : <ListItem link="/store-owner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
         <ListItem link="/contact-us/" title={labels.contactUsTitle} view="#main-view" panelClose />
       </List>

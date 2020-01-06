@@ -75,7 +75,7 @@ const labels = {
   notFoundPageError: 'حدث خطأ ... الصفحة غير موجودة',
   back: 'رجوع',
   myPrice: 'سعري',
-  ownerPacks: 'منتجاتي',
+  myPacks: 'منتجاتي',
   invalidOfferEnd: 'الرجاء التأكد من تاريخ انتهاء العرض',
   limitOverFlow: 'لقد تجاوزت الحد المسموح به للطلبات التي هي قيد التسليم',
   changePasswordSuccess: 'تم تغيير كلمة السر',

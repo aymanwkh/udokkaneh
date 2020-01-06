@@ -79,26 +79,31 @@ const Packs = props => {
           <ListItem title={labels.noData} />
         </List>
         <List mediaList className="search-list searchbar-found">
-          <ListItem 
-            link="#"
-            popoverOpen=".ordering-menu"
-            title={labels.orderBy} 
-            after={orderByList.find(o => o.id === orderBy).name}
-          />
-          {orderedPacks.map(p => 
-            <ListItem
-              link={`/pack-details/${p.id}`}
-              title={p.productInfo.name}
-              subtitle={p.name}
-              text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
-              footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
-              after={(p.price / 1000).toFixed(3)}
-              key={p.id}
-            >
-              <PackImage slot="media" pack={p} type="list" />
-              {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
-            </ListItem>
-          )}
+          {orderedPacks.length > 0 ?
+            <ListItem 
+              link="#"
+              popoverOpen=".ordering-menu"
+              title={labels.orderBy} 
+              after={orderByList.find(o => o.id === orderBy).name}
+            />
+          : ''}
+          {orderedPacks.length === 0 ?
+            <ListItem title={labels.noData} />
+          : orderedPacks.map(p => 
+              <ListItem
+                link={`/pack-details/${p.id}`}
+                title={p.productInfo.name}
+                subtitle={p.name}
+                text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
+                footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
+                after={(p.price / 1000).toFixed(3)}
+                key={p.id}
+              >
+                <PackImage slot="media" pack={p} type="list" />
+                {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
+              </ListItem>
+            )
+          }
         </List>
       </Block>
       <Toolbar bottom>

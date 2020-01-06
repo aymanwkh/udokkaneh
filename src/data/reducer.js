@@ -131,7 +131,8 @@ const Reducer = (state, action) => {
     case 'SET_STORE_PACKS':
       return {
         ...state,
-        storePacks: action.storePacks
+        storePacks: action.storePacks,
+        lastRetreive: new Date()
       }
     case 'SET_ALARMS':
       return {
@@ -152,7 +153,7 @@ const Reducer = (state, action) => {
       return {
         ...state,
         notifications: action.notifications
-      }    
+      }
     default:
       return state
   }

@@ -67,3 +67,10 @@ export const alarmTypes = [
   {id: '7', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', actor: 'o', isAvailable: true},
   {id: '8', name: 'الابلاغ عن عرض على شكل مجموعة', actor: 'o', isAvailable: true},
 ]
+
+export const storeSummary = [
+  {id: 'a', name: 'كل المنتجات'},
+  {id: 'o', name: 'منتجات اعلى من السوق'},
+  {id: 'n', name: 'منتجات مساوية للسوق'},
+  {id: 'l', name: 'منتجات أقل سعر في السوق'}
+]

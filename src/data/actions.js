@@ -98,9 +98,9 @@ export const confirmOrder = order => {
 }
 
 export const cancelOrder = order => {
-  return firebase.firestore().collection("orders").doc(order.id).update({
+  return firebase.firestore().collection('orders').doc(order.id).update({
     status: 'c',
-    statusTime: new Date()
+    lastUpdate: new Date()
   })
 }
 
@@ -161,7 +161,7 @@ export const addAlarm = alarm => {
     status: 'n',
     time: new Date()
   }
-  return firebase.firestore().collection("alarms").add(newAlarm)
+  return firebase.firestore().collection('alarms').add(newAlarm)
 }
 
 export const inviteFriend = (mobile, name) => {
@@ -178,5 +178,15 @@ export const readNotification = notification => {
   return firebase.firestore().collection('notifications').doc(notification.id).update({
     status: 'r'
   })
+}
+
+export const getStorePacks = async customer => {
+  let storePacks = []
+  await firebase.firestore().collection('store-packs').where('storeId', '==', customer.storeId).get().then(docs => {
+    docs.forEach(doc => {
+      storePacks.push({...doc.data(), id:doc.id})
+    })
+  })
+  return storePacks
 }
 

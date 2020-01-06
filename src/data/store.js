@@ -121,15 +121,6 @@ const Store = props => {
         }, err => {
           unsubscribeStores()
         }) 
-        const unsubscribeStorePacks = firebase.firestore().collection('store-packs').onSnapshot(docs => {
-          let storePacks = []
-          docs.forEach(doc => {
-            storePacks.push({...doc.data(), id:doc.id})
-          })
-          dispatch({type: 'SET_STORE_PACKS', storePacks})
-        }, err => {
-          unsubscribeStorePacks()
-        })
         const unsubscribeAlarms = firebase.firestore().collection('alarms').where('userId', '==', user.uid).onSnapshot(docs => {
           let alarms = []
           docs.forEach(doc => {

@@ -14,7 +14,8 @@ import AddAlarm from './pages/add-alarm'
 import PasswordRequest from './pages/password-request'
 import InviteFriend from './pages/invite-friend'
 import StoreOwner from './pages/store-owner'
-import OwnerPacks from './pages/owner-packs'
+import StoreSummary from './pages/store-summary'
+import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
 import OtherOffers from './pages/other-offers'
 import ContactUs from './pages/contact-us'
@@ -108,8 +109,12 @@ export default [
     component: OrderDetails,
   },
   {
-    path: '/owner-packs/:id',
-    component: OwnerPacks,
+    path: '/store-summary/',
+    component: StoreSummary,
+  },
+  {
+    path: '/store-packs/:type',
+    component: StorePacks,
   },
   {
     path: '/other-offers/:id',
