@@ -14,14 +14,7 @@ const MainCategories = props => {
     <Block>
       {categories.map(c => {
         return (
-          <Button 
-            href={`/categories/${c.id}`} 
-            large 
-            fill 
-            className="sections" 
-            color={randomColors[i++ % 10].name} 
-            key={c.id}
-          >
+          <Button href={`/categories/${c.id}`} large fill className="sections" color={randomColors[i++ % 10].name} key={c.id}>
             {c.name}
           </Button>
         )

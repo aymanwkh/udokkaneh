@@ -1,9 +1,9 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
-import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, CardFooter, Popover, List, ListItem } from 'framework7-react'
+import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, Popover, List, ListItem, Actions, ActionsButton, Row } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
-import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage, addFavorite, removeFavorite } from '../data/actions'
 import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
@@ -17,10 +17,6 @@ const PackDetails = props => {
   , [state.packs, props.id])
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
-  const hasOtherOffers = useMemo(() => {
-    const offers = state.packs.filter(p => state.products.find(pr => pr.id === p.productId && pr.tagId === product.tagId) && (p.isOffer || p.offerEnd))
-    return offers.filter(p => p.id !== pack.id).length
-  }, [state.packs, pack, product, state.products]) 
   const ratings = useMemo(() => state.ratings.filter(r => r.productId === product.id && r.status === 'a')
   , [state.ratings, product])
   const hasPurchased = useMemo(() => {
@@ -120,25 +116,47 @@ const PackDetails = props => {
       addToBasket(pack.subPackId)
     }
   }
+  const handleFavorite = async () => {
+    try{
+      const found = state.favorites.find(f => f.userId === user.uid && f.packId === pack.id)
+      if (found) {
+        await removeFavorite(found)
+        showMessage(labels.removeFavoriteSuccess)
+      } else {
+        await addFavorite({
+          userId : user.uid,
+          packId: pack.id
+        })
+        showMessage(labels.addFavoriteSuccess)
+      }
+        
+		} catch (err){
+      setError(getMessage(props, err))
+    }
+  }
   return (
     <Page>
       <Navbar title={product.name} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
-          <p className="price">
-            {(pack.price / 1000).toFixed(3)} <br />
+          <div>
+            <Row>
+              <div className="price">
+                {(pack.price / 1000).toFixed(3)}
+              </div>
+              <div>
+                <Link iconMaterial="warning" iconColor="red" onClick={() => f7.actions.open('#pack-actions')} />
+              </div>
+            </Row>
             <span className="list-subtext1">{pack.offerEnd ? `${labels.offerUpTo}: ${moment(pack.offerEnd.toDate()).format('Y/M/D')}` : ''}</span>
-          </p>
-          {product.trademark ? <p><RatingStars rating={product.rating} count={product.ratingCount} /> </p> : ''}
+          </div>
+          {product.trademark ? <div className="rating-stars"><RatingStars rating={product.rating} count={product.ratingCount} /> </div> : ''}
         </CardHeader>
         <CardContent>
           <div className="card-title">{pack.name}</div>
           <PackImage pack={pack} type="card" />
+          <div>{`${labels.productOf} ${product.trademark ? labels.company + ' ' + product.trademark + '-' : ''}${product.country}`}</div>
         </CardContent>
-        <CardFooter>
-          <p>{`${labels.productOf} ${product.trademark ? labels.company + ' ' + product.trademark + '-' : ''}${product.country}`}</p>
-          {user ? <p><Link popoverOpen=".pack-details-menu" iconMaterial="add_alert" /></p> : ''}
-        </CardFooter>
       </Card>
       {pack.isOffer ? 
         <Fab 
@@ -160,39 +178,44 @@ const PackDetails = props => {
           <Icon material="add"></Icon>
         </Fab>
       }  
-      {!user || !product.trademarkId || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' :
+      {!user ? '' :
         <Fab position="left-top" slot="fixed" color="blue" className="top-fab">
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
-            <FabButton color="green" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/1`)}>
-              <Icon material="thumb_up"></Icon>
-            </FabButton>
-            <FabButton color="red" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/-1`)}>
-            <Icon material="thumb_down"></Icon>
-            </FabButton>
+            {!product.trademarkId || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' : 
+              <FabButton color="green" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/1`)}>
+                <Icon material="thumb_up"></Icon>
+              </FabButton>
+            }
+            {!product.trademarkId || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' : 
+              <FabButton color="red" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/-1`)}>
+                <Icon material="thumb_down"></Icon>
+              </FabButton>
+            }
+            {props.type === 'c' && ratings.length > 0 ? 
+              <FabButton color="blue" onClick={() => props.f7router.navigate(`/ratings/${product.id}`)}>
+                <Icon material="comment"></Icon>
+              </FabButton>
+            : ''}
+            {state.favorites.find(f => f.userId === user.uid && f.packId === pack.id) ? 
+              <FabButton color="pink" onClick={() => handleFavorite()}>
+                <Icon material="flash_off"></Icon>
+              </FabButton>
+            : <FabButton color="pink" onClick={() => handleFavorite()}>
+                <Icon material="flash_on"></Icon>
+              </FabButton>
+            }
           </FabButtons>
         </Fab>
       }
-
-      <Popover className="pack-details-menu">
-        <List>
-          {hasOtherOffers > 0 ? <ListItem link={`/other-offers/${props.id}`} popoverClose title={labels.otherOffers} /> : ''}
-          {ratings.length > 0 ? <ListItem link={`/ratings/${product.id}`} popoverClose title={labels.ratings} /> : ''}
-          {alarmTypes.map(p => 
-            p.actor === 'a' || (p.actor === 'c' && !state.customer.storeId) || (p.actor === 'o' && state.customer.storeId && p.isAvailable === isAvailable) ?
-              <ListItem 
-                link="#" 
-                popoverClose 
-                title={p.name} 
-                className="alarm-list"
-                onClick={() => handleAddAlarm(p.id)}
-                key={p.id}
-              /> 
-            : ''
-          )}
-        </List>
-      </Popover>
+      <Actions id="pack-actions">
+        {alarmTypes.map(p =>
+          p.actor === 'a' || (props.type === 'c' && p.actor === 'c') || (props.type === 's' && p.actor === 'o' && p.isAvailable === isAvailable) ?
+            <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>{p.name}</ActionsButton>
+          : ''
+        )}
+      </Actions>
       <Popover className="pack-list">
         <List>
           <ListItem 

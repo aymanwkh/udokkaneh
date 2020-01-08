@@ -35,7 +35,7 @@ const StorePacks = props => {
             <ListItem title={labels.noData} /> 
           : storePacks.map(p => 
               <ListItem
-                link={`/pack-details/${p.packId}`}
+                link={`/pack-details/${p.packId}/type/s`}
                 title={p.productInfo.name}
                 subtitle={p.packInfo.name}
                 text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}

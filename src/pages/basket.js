@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Button } from 'framework7-react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Popover } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText } from '../data/actions'
 import PackImage from './pack-image'
@@ -10,16 +10,23 @@ const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [submitVisible, setSubmitVisible] = useState(true)
+  const [currentPack, setCurrentPack] = useState('')
   const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
   , [state.basket])
   const packs = useMemo(() => {
     const packs = state.basket.map(p => {
       const packInfo = state.packs.find(pa => pa.id === p.packId)
       const productInfo = state.products.find(pr => pr.id === packInfo.productId)
+      const otherProducts = state.products.filter(pr => pr.tagId === productInfo.tagId && (pr.sales > productInfo.sales || pr.rating > productInfo.rating))
+      const otherOffers = state.packs.filter(pa => pa.productId === productInfo.id && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
+      const otherPacks = state.packs.filter(pa => pa.productId === productInfo.id && pa.weightedPrice < packInfo.weightedPrice)
       return {
         ...p,
         packInfo,
-        productInfo
+        productInfo,
+        otherProducts: otherProducts.length,
+        otherOffers: otherOffers.length,
+        otherPacks: otherPacks.length
       }
     })
     return packs.sort((p1, p2) => p1.time > p2.time ? 1 : -1)
@@ -99,7 +106,9 @@ const Basket = props => {
               onStepperPlusClick={() => handleIncrease(p)}
               onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
             />
-            <Button slot="footer">test</Button>
+            {p.otherProducts + p.otherOffers + p.otherPacks === 0 ? '' : 
+              <Link className="hints" slot="footer" popoverOpen=".basket-hints" iconMaterial="warning" iconColor="red" onClick={()=> setCurrentPack(p)}/>
+            }
           </ListItem>
         )}
       </List>
@@ -113,6 +122,31 @@ const Basket = props => {
         <Icon material="report_problem"></Icon>
       </Fab>
     }
+    <Popover className="basket-hints">
+      <List>
+        {currentPack.otherProducts === 0 ? '' :
+          <ListItem 
+            link={`/hints/${currentPack.packId}/type/p`}
+            popoverClose 
+            title={labels.otherProducts} 
+          />
+        }
+        {currentPack.otherOffers === 0 ? '' :
+          <ListItem 
+            link={`/hints/${currentPack.packId}/type/o`}
+            popoverClose 
+            title={labels.otherOffers}
+          />
+        }
+        {currentPack.otherPacks === 0 ? '' :
+          <ListItem 
+            link={`/hints/${currentPack.packId}/type/w`}
+            popoverClose 
+            title={labels.otherPacks}
+          />
+        }
+      </List>
+    </Popover>
     <Toolbar bottom>
       <Link href="/home/" iconMaterial="home" />
       <Link href="#" iconMaterial="delete" onClick={() => dispatch({type: 'CLEAR_BASKET'})} />

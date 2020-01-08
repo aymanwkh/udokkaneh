@@ -1,5 +1,5 @@
 import React, { useContext, useState, useMemo } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Popover } from 'framework7-react'
+import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import PackImage from './pack-image'
@@ -10,7 +10,7 @@ import { orderByList } from '../data/config'
 const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
-    let packs = state.packs.filter(p => props.id ? state.products.find(pr => pr.id === p.productId).categoryId === props.id : true)
+    let packs = state.packs.filter(p => props.id ? (props.id === 'f' ? state.favorites.find(f => f.packId === p.id) : state.products.find(pr => pr.id === p.productId).categoryId === props.id) : true)
     packs = packs.map(p => {
       const productInfo = state.products.find(pr => pr.id === p.productId)
       return {
@@ -19,7 +19,7 @@ const Packs = props => {
       }
     })
     return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
-  }, [state.packs, state.products, props.id]) 
+  }, [state.packs, state.products, state.favorites, props.id]) 
   const [orderedPacks, setOrderedPacks] = useState(packs)
   const category = useMemo(() => state.categories.find(category => category.id === props.id)
   , [state.categories, props.id])
@@ -47,7 +47,7 @@ const Packs = props => {
   }
   return(
     <Page>
-      <Navbar title={category?.name || labels.allProducts} backLink={labels.back}>
+      <Navbar title={category?.name || (props.id === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>
@@ -60,20 +60,7 @@ const Packs = props => {
           placeholder={labels.search}
         />
       </Navbar>
-      <Popover className="ordering-menu">
-        <List>
-        {orderByList.map(o => 
-          o.id === orderBy ? ''
-          : <ListItem 
-              link="#" 
-              popoverClose 
-              key={o.id} 
-              title={o.name} 
-              onClick={() => handleOrdering(o.id)}
-            />
-        )}
-        </List>
-      </Popover>
+
       <Block>
         <List className="searchbar-not-found">
           <ListItem title={labels.noData} />
@@ -82,16 +69,16 @@ const Packs = props => {
           {orderedPacks.length > 0 ?
             <ListItem 
               link="#"
-              popoverOpen=".ordering-menu"
               title={labels.orderBy} 
               after={orderByList.find(o => o.id === orderBy).name}
+              onClick={() => f7.actions.open('#actions')}
             />
           : ''}
           {orderedPacks.length === 0 ?
             <ListItem title={labels.noData} />
           : orderedPacks.map(p => 
               <ListItem
-                link={`/pack-details/${p.id}`}
+                link={`/pack-details/${p.id}/type/c`}
                 title={p.productInfo.name}
                 subtitle={p.name}
                 text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
@@ -106,6 +93,13 @@ const Packs = props => {
           }
         </List>
       </Block>
+      <Actions id="actions">
+        <ActionsLabel>{labels.orderBy}</ActionsLabel>
+        {orderByList.map(o => 
+          o.id === orderBy ? ''
+          : <ActionsButton key={o.id} onClick={() => handleOrdering(o.id)}>{o.name}</ActionsButton>
+        )}
+      </Actions>
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>

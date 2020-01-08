@@ -17,13 +17,14 @@ import StoreOwner from './pages/store-owner'
 import StoreSummary from './pages/store-summary'
 import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
-import OtherOffers from './pages/other-offers'
+import Hints from './pages/hints'
 import ContactUs from './pages/contact-us'
 import RateProduct from './pages/rate-product'
 import Ratings from './pages/ratings'
 import Help from './pages/help'
 import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
+import PurchasedPacks from './pages/purchased-packs'
 
 export default [
   {
@@ -81,7 +82,7 @@ export default [
     component: Packs,
   },
   {
-    path: '/pack-details/:id',
+    path: '/pack-details/:id/type/:type',
     component: PackDetails,
   },
   {
@@ -117,8 +118,8 @@ export default [
     component: StorePacks,
   },
   {
-    path: '/other-offers/:id',
-    component: OtherOffers
+    path: '/hints/:id/type/:type',
+    component: Hints
   },
   {
     path: '/contact-us/',
@@ -144,7 +145,10 @@ export default [
     path: '/notification-details/:id',
     component: NotificationDetails
   },
-
+  {
+    path: '/purchased-packs/',
+    component: PurchasedPacks
+  },
   {
     path: '(.*)',
     component: NotFoundPage,

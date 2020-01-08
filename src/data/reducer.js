@@ -154,6 +154,11 @@ const Reducer = (state, action) => {
         ...state,
         notifications: action.notifications
       }
+    case 'SET_FAVORITES':
+      return {
+        ...state,
+        favorites: action.favorites
+      }
     default:
       return state
   }

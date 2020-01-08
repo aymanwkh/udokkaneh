@@ -21,11 +21,11 @@ export const randomColors = [
 ]
 
 export const orderByList = [
-  {id: 'p', name: 'السعر'},
-  {id: 's', name: 'المبيعات'},
-  {id: 'r', name: 'التقييم'},
-  {id: 'o', name: 'العروض'},
-  {id: 'v', name: 'القيمة'},
+  {id: 'p', name: 'اﻷقل سعرا'},
+  {id: 's', name: 'اﻷكثر مبيعا'},
+  {id: 'r', name: 'اﻷفضل في التقييم'},
+  {id: 'o', name: 'العروض أولا'},
+  {id: 'v', name: 'اﻷفضل قيمة (السعر/الكمية)'},
 ]
 
 export const orderStatus = [

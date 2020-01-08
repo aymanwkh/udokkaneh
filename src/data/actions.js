@@ -190,3 +190,10 @@ export const getStorePacks = async customer => {
   return storePacks
 }
 
+export const addFavorite = favorite => {
+  return firebase.firestore().collection('favorites').add(favorite)
+}
+
+export const removeFavorite = favorite => {
+  return firebase.firestore().collection('favorites').doc(favorite.id).delete()
+}

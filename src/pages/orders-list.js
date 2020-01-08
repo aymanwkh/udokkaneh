@@ -24,20 +24,20 @@ const OrdersList = props => {
     <Page>
       <Navbar title={labels.myOrders} backLink={labels.back} />
       <Block>
-          <List mediaList>
-            {orders.length === 0 ? 
-              <ListItem title={labels.noData} /> 
-            : orders.map(o =>
-                <ListItem
-                  link={`/order-details/${o.id}`}
-                  title={moment(o.time.toDate()).fromNow()}
-                  subtitle={o.orderStatusInfo.name}
-                  after={(o.total / 1000).toFixed(3)}
-                  key={o.id}
-                />
-              )
-            }
-          </List>
+        <List mediaList>
+          {orders.length === 0 ? 
+            <ListItem title={labels.noData} /> 
+          : orders.map(o =>
+              <ListItem
+                link={`/order-details/${o.id}`}
+                title={moment(o.time.toDate()).fromNow()}
+                subtitle={o.orderStatusInfo.name}
+                after={(o.total / 1000).toFixed(3)}
+                key={o.id}
+              />
+            )
+          }
+        </List>
       </Block>
       <Toolbar bottom>
         <BottomToolbar/>

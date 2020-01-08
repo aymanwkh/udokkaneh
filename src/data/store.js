@@ -21,7 +21,8 @@ const Store = props => {
     alarms: [],
     cancelRequests: [],
     passwordRequests: [],
-    notifications: []
+    notifications: [],
+    favorites: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -147,6 +148,15 @@ const Store = props => {
           dispatch({type: 'SET_NOTIFICATIONS', notifications})
         }, err => {
           unsubscribeNotifications()
+        })  
+        const unsubscribeFavorites = firebase.firestore().collection('favorites').where('userId', '==', user.uid).onSnapshot(docs => {
+          let favorites = []
+          docs.forEach(doc => {
+            favorites.push({...doc.data(), id:doc.id})
+          })
+          dispatch({type: 'SET_FAVORITES', favorites})
+        }, err => {
+          unsubscribeFavorites()
         })  
       }
     })
