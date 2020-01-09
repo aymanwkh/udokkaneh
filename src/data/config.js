@@ -42,11 +42,6 @@ export const orderStatus = [
   {id: 'i', name: 'استيداع'}
 ]  
 
-export const ratingValues = [
-  {id: 0, name: 'ﻻ أنصح به'},
-  {id: 1, name: 'أنصح به'}
-]
-
 export const orderPackStatus = [
   {id: 'n', name: 'جديد'},
   {id: 'p', name: 'شراء جزئي'},

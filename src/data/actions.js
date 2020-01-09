@@ -58,12 +58,11 @@ export const quantityDetails = basketPack => {
   return text
 }
 
-export const rateProduct = (productId, value, comment) => {
+export const rateProduct = (productId, value) => {
   const rating = {
     productId,
     userId: firebase.auth().currentUser.uid,
     value,
-    comment,
     status: 'n',
     time: new Date()
   }

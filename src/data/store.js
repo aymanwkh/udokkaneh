@@ -36,7 +36,7 @@ const Store = props => {
     }, err => {
       unsubscribeCategories()
     })  
-    const unsubscribeProducts = firebase.firestore().collection('products').where('isActive', '==', true).onSnapshot(docs => {
+    const unsubscribeProducts = firebase.firestore().collection('products').onSnapshot(docs => {
       let products = []
       docs.forEach(doc => {
         products.push({...doc.data(), id: doc.id})
@@ -104,7 +104,7 @@ const Store = props => {
         }, err => {
           unsubscribeCustomers()
         })  
-        const unsubscribeRating = firebase.firestore().collection('ratings').where('status', '==', 'a').onSnapshot(docs => {
+        const unsubscribeRating = firebase.firestore().collection('ratings').where('userId', '==', user.uid).onSnapshot(docs => {
           let ratings = []
           docs.forEach(doc => {
             ratings.push({...doc.data(), id:doc.id})

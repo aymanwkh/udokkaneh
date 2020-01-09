@@ -3,7 +3,7 @@ import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, 
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
-import { addAlarm, showMessage, showError, getMessage, addFavorite, removeFavorite } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage, addFavorite, removeFavorite, rateProduct } from '../data/actions'
 import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
@@ -17,12 +17,12 @@ const PackDetails = props => {
   , [state.packs, props.id])
   const product = useMemo(() => state.products.find(p => p.id === pack.productId)
   , [state.products, pack])
-  const ratings = useMemo(() => state.ratings.filter(r => r.productId === product.id && r.status === 'a')
-  , [state.ratings, product])
+  const ratings = useMemo(() => state.ratings.filter(r => r.productId === pack.productId)
+  , [state.ratings, pack])
   const hasPurchased = useMemo(() => {
-    const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => state.packs.find(pa => pa.id === p.packId).productId === product.id))
+    const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => state.packs.find(pa => pa.id === p.packId).productId === pack.productId))
     return deliveredOrders.length
-  }, [state.orders, state.packs, product])
+  }, [state.orders, state.packs, pack])
   const isAvailable = useMemo(() => state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? true : false
   , [state.storePacks, state.customer, pack])
   useEffect(() => {
@@ -134,6 +134,18 @@ const PackDetails = props => {
       setError(getMessage(props, err))
     }
   }
+  const handleRate = async value => {
+    try{
+      if (state.customer.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      await rateProduct(pack.productId, Number(value))
+      showMessage(labels.ratingSuccess)
+    } catch(err) {
+      setError(getMessage(props, err))
+    }
+  }
+
   return (
     <Page>
       <Navbar title={product.name} backLink={labels.back} />
@@ -183,21 +195,16 @@ const PackDetails = props => {
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
-            {!product.trademarkId || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' : 
-              <FabButton color="green" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/1`)}>
+            {!product.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
+              <FabButton color="green" onClick={() => handleRate(1)}>
                 <Icon material="thumb_up"></Icon>
               </FabButton>
             }
-            {!product.trademarkId || hasPurchased === 0 || state.ratings.find(r => r.userId === user.uid && r.productId === product.id) ? '' : 
-              <FabButton color="red" onClick={() => props.f7router.navigate(`/rate-product/${product.id}/value/-1`)}>
+            {!product.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
+              <FabButton color="red" onClick={() => handleRate(0)}>
                 <Icon material="thumb_down"></Icon>
               </FabButton>
             }
-            {props.type === 'c' && ratings.length > 0 ? 
-              <FabButton color="blue" onClick={() => props.f7router.navigate(`/ratings/${product.id}`)}>
-                <Icon material="comment"></Icon>
-              </FabButton>
-            : ''}
             {state.favorites.find(f => f.userId === user.uid && f.packId === pack.id) ? 
               <FabButton color="pink" onClick={() => handleFavorite()}>
                 <Icon material="flash_off"></Icon>

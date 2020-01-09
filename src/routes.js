@@ -19,8 +19,6 @@ import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
 import Hints from './pages/hints'
 import ContactUs from './pages/contact-us'
-import RateProduct from './pages/rate-product'
-import Ratings from './pages/ratings'
 import Help from './pages/help'
 import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
@@ -124,14 +122,6 @@ export default [
   {
     path: '/contact-us/',
     component: ContactUs
-  },
-  {
-    path: '/rate-product/:productId/value/:value',
-    component: RateProduct
-  },
-  {
-    path: '/ratings/:id',
-    component: Ratings
   },
   {
     path: '/help/:id',
