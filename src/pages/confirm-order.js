@@ -17,7 +17,6 @@ const ConfirmOrder = props => {
   const [error, setError] = useState('')
   const basket = useMemo(() => state.basket.map(p => {
     const packInfo = state.packs.find(pa => pa.id === p.packId)
-    const productInfo = state.products.find(pr => pr.id === packInfo.productId)
     let price = packInfo.price
     if (p.offerId) {
       const offerInfo = state.packs.find(pa => pa.id === p.offerId)
@@ -30,11 +29,10 @@ const ConfirmOrder = props => {
     return {
       ...p,
       packInfo,
-      productInfo,
       price,
       oldPrice: p.price
     }
-  }), [state.basket, state.packs, state.products])
+  }), [state.basket, state.packs])
   const total = useMemo(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0)
   , [basket])
   const fixedFees = useMemo(() => {
@@ -127,7 +125,7 @@ const ConfirmOrder = props => {
           {basket.map(p => 
             <ListItem
               key={p.packId}
-              title={p.productInfo.name}
+              title={p.packInfo.productName}
               subtitle={`${labels.quantity}: ${quantityText(p.quantity)}`}
               text={p.price === p.oldPrice ? '' : p.price === 0 ? labels.unAvailableNote : labels.changePriceNote}
               after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}

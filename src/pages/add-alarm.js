@@ -11,8 +11,6 @@ const AddAlarm = props => {
   const [error, setError] = useState('')
   const pack = useMemo(() => state.packs.find(p => p.id === props.packId)
   , [state.packs, props.packId])
-  const product = useMemo(() => state.products.find(p => p.id === pack.productId)
-  , [state.products, pack])
   const alarmType = useMemo(() => alarmTypes.find(t => t.id === props.alarmType)
   , [props.alarmType])
   const [price, setPrice] = useState('')
@@ -150,7 +148,7 @@ const AddAlarm = props => {
           <ListInput 
             name="productName" 
             label={labels.productName}
-            value={product.name}
+            value={pack.productName}
             type="text" 
             readonly
           />

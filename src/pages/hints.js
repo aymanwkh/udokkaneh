@@ -10,23 +10,14 @@ const Hints = props => {
   const { state } = useContext(StoreContext)
   const pack = useMemo(() => state.packs.find(p => p.id === props.id)
   , [state.packs, props.id])
-  const product = useMemo(() => state.products.find(p => p.id === pack.productId)
-  , [state.products, pack])
   const packs = useMemo(() => {
-    let packs = state.packs.filter(p => 
-      (props.type === 'p' && state.products.find(pr => pr.id === p.productId && pr.tagId === product.tagId && (pr.sales > product.sales || pr.rating > product.rating))) ||
-      (props.type === 'o' && p.productId === product.id && p.id !== pack.id && (p.isOffer || p.endOffer)) ||
-      (props.type === 'w' && p.productId === product.id && p.weightedPrice < pack.weightedPrice)
+    const packs = state.packs.filter(p => 
+      (props.type === 'p' && p.tagId === pack.tagId && (p.sales > pack.sales || p.rating > pack.rating)) ||
+      (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.endOffer)) ||
+      (props.type === 'w' && p.productId === pack.productId && p.weightedPrice < pack.weightedPrice)
     )
-    packs = packs.map(p => {
-      const productInfo = state.products.find(pr => pr.id === p.productId)
-      return {
-        ...p,
-        productInfo,
-      }
-    })
     return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
-  }, [pack, product, props.type, state.packs, state.products]) 
+  }, [pack, props.type, state.packs]) 
   return(
     <Page>
       <Navbar title={props.type === 'p' ? labels.otherProducts : (props.type === 'o' ? labels.otherOffers : labels.otherPacks)} backLink={labels.back} />
@@ -38,9 +29,9 @@ const Hints = props => {
               return (
                 <ListItem
                   link={`/pack-details/${p.id}`}
-                  title={p.productInfo.name}
+                  title={p.productName}
                   subtitle={p.name}
-                  text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
+                  text={`${labels.productOf} ${p.trademark ? labels.company + ' ' + p.trademark + '-' : ''}${p.country}`}
                   footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                   after={(p.price / 1000).toFixed(3)}
                   key={p.id}

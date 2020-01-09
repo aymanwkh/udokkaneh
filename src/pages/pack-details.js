@@ -15,8 +15,6 @@ const PackDetails = props => {
   const [toolbarVisible, setToolbarVisible] = useState(true)
   const pack = useMemo(() => state.packs.find(p => p.id === props.id)
   , [state.packs, props.id])
-  const product = useMemo(() => state.products.find(p => p.id === pack.productId)
-  , [state.products, pack])
   const ratings = useMemo(() => state.ratings.filter(r => r.productId === pack.productId)
   , [state.ratings, pack])
   const hasPurchased = useMemo(() => {
@@ -148,7 +146,7 @@ const PackDetails = props => {
 
   return (
     <Page>
-      <Navbar title={product.name} backLink={labels.back} />
+      <Navbar title={pack.productName} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <div>
@@ -162,12 +160,12 @@ const PackDetails = props => {
             </Row>
             <span className="list-subtext1">{pack.offerEnd ? `${labels.offerUpTo}: ${moment(pack.offerEnd.toDate()).format('Y/M/D')}` : ''}</span>
           </div>
-          {product.trademark ? <div className="rating-stars"><RatingStars rating={product.rating} count={product.ratingCount} /> </div> : ''}
+          {pack.trademark ? <div className="rating-stars"><RatingStars rating={pack.rating} count={pack.ratingCount} /> </div> : ''}
         </CardHeader>
         <CardContent>
           <div className="card-title">{pack.name}</div>
           <PackImage pack={pack} type="card" />
-          <div>{`${labels.productOf} ${product.trademark ? labels.company + ' ' + product.trademark + '-' : ''}${product.country}`}</div>
+          <div>{`${labels.productOf} ${pack.trademark ? labels.company + ' ' + pack.trademark + '-' : ''}${pack.country}`}</div>
         </CardContent>
       </Card>
       {pack.isOffer ? 
@@ -195,12 +193,12 @@ const PackDetails = props => {
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
-            {!product.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
+            {!pack.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
               <FabButton color="green" onClick={() => handleRate(1)}>
                 <Icon material="thumb_up"></Icon>
               </FabButton>
             }
-            {!product.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
+            {!pack.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
               <FabButton color="red" onClick={() => handleRate(0)}>
                 <Icon material="thumb_down"></Icon>
               </FabButton>

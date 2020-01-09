@@ -22,7 +22,6 @@ const PurchasedPacks = props => {
 		deliveredOrders.forEach(o => {
 			o.basket.forEach(p => {
         const packInfo = state.packs.find(pa => pa.id === p.packId)
-        const productInfo = state.products.find(pr => pr.id === packInfo.productId)
         const found = packsArray.find(pa => pa.packId === p.packId)
 				if (found) {
           packsArray = packsArray.filter(pa => pa.packId !== found.packId)
@@ -38,7 +37,6 @@ const PurchasedPacks = props => {
           packsArray.push({
             packId: p.packId,
             packInfo,
-            productInfo,
             bestPrice: p.actual,
             lastPrice: p.actual,
             quantity: p.purchased,
@@ -59,7 +57,7 @@ const PurchasedPacks = props => {
 						<ListItem title={labels.noData} /> 
 					: purchasedPacks.map(p => 
 							<ListItem
-								title={`${p.productInfo.name} ${p.packInfo.name}`}
+								title={`${p.packInfo.productName} ${p.packInfo.name}`}
 								subtitle={`${labels.bestPrice}: ${(p.bestPrice / 1000).toFixed(3)}`}
                 text={`${labels.lastPrice}: ${(p.lastPrice / 1000).toFixed(3)}`}
                 footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}

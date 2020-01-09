@@ -5,7 +5,7 @@ import { logout } from '../data/actions'
 import labels from '../data/labels'
 
 const Panel = props => {
-  const { user, state, dispatch } = useContext(StoreContext)
+  const { state, user, dispatch } = useContext(StoreContext)
   const notifications = useMemo(() => state.notifications.filter(n => n.toCustomerId === '0' || n.status === 'n')
   , [state.notifications])
   const handleLogout = () => {
@@ -51,7 +51,7 @@ const Panel = props => {
         {user ? <ListItem link="/orders-list/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/purchased-packs/" title={labels.purchasedPacks} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/invite-friend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
-        {state.customer.storeId ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
+        {user && state.customer.storeId ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
         {user ? '' : <ListItem link="/store-owner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
         <ListItem link="/contact-us/" title={labels.contactUsTitle} view="#main-view" panelClose />
       </List>

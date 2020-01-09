@@ -16,21 +16,19 @@ const Basket = props => {
   const packs = useMemo(() => {
     const packs = state.basket.map(p => {
       const packInfo = state.packs.find(pa => pa.id === p.packId)
-      const productInfo = state.products.find(pr => pr.id === packInfo.productId)
-      const otherProducts = state.products.filter(pr => pr.tagId === productInfo.tagId && (pr.sales > productInfo.sales || pr.rating > productInfo.rating))
-      const otherOffers = state.packs.filter(pa => pa.productId === productInfo.id && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
-      const otherPacks = state.packs.filter(pa => pa.productId === productInfo.id && pa.weightedPrice < packInfo.weightedPrice)
+      const otherProducts = state.packs.filter(pa => pa.tagId === packInfo.tagId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
+      const otherOffers = state.packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
+      const otherPacks = state.packs.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
       return {
         ...p,
         packInfo,
-        productInfo,
         otherProducts: otherProducts.length,
         otherOffers: otherOffers.length,
         otherPacks: otherPacks.length
       }
     })
     return packs.sort((p1, p2) => p1.time > p2.time ? 1 : -1)
-  }, [state.basket, state.packs, state.products])
+  }, [state.basket, state.packs])
   const weightedPacks = useMemo(() => state.basket.filter(p => p.byWeight)
   , [state.basket])
   const customerOrdersTotals = useMemo(() => {
@@ -92,7 +90,7 @@ const Basket = props => {
       <List mediaList>
         {packs.map(p => 
           <ListItem
-            title={p.productInfo.name}
+            title={p.packInfo.productName}
             subtitle={p.packInfo.name}
             text={`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}
             footer={`${labels.quantity}: ${quantityText(p.quantity)}`}

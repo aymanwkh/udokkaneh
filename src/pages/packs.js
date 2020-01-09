@@ -10,16 +10,9 @@ import { orderByList } from '../data/config'
 const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
-    let packs = state.packs.filter(p => props.id ? (props.id === 'f' ? state.favorites.find(f => f.packId === p.id) : state.products.find(pr => pr.id === p.productId).categoryId === props.id) : true)
-    packs = packs.map(p => {
-      const productInfo = state.products.find(pr => pr.id === p.productId)
-      return {
-        ...p,
-        productInfo,
-      }
-    })
+    const packs = state.packs.filter(p => props.id ? (props.id === 'f' ? state.favorites.find(f => f.packId === p.id) : p.categoryId === props.id) : true)
     return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
-  }, [state.packs, state.products, state.favorites, props.id]) 
+  }, [state.packs, state.favorites, props.id]) 
   const [orderedPacks, setOrderedPacks] = useState(packs)
   const category = useMemo(() => state.categories.find(category => category.id === props.id)
   , [state.categories, props.id])
@@ -31,10 +24,10 @@ const Packs = props => {
         setOrderedPacks([...orderedPacks].sort((p1, p2) => p1.price - p2.price))
         break
       case 's':
-        setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.productInfo.sales - p1.productInfo.sales))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.sales - p1.sales))
         break
       case 'r':
-        setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.productInfo.rating - p1.productInfo.rating))
+        setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.rating - p1.rating))
         break
       case 'o':
         setOrderedPacks([...orderedPacks].sort((p1, p2) => p2.isOffer - p1.isOffer))
@@ -79,9 +72,9 @@ const Packs = props => {
           : orderedPacks.map(p => 
               <ListItem
                 link={`/pack-details/${p.id}/type/c`}
-                title={p.productInfo.name}
+                title={p.productName}
                 subtitle={p.name}
-                text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
+                text={`${labels.productOf} ${p.trademark ? labels.company + ' ' + p.trademark + '-' : ''}${p.country}`}
                 footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}

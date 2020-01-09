@@ -13,18 +13,16 @@ const StorePacks = props => {
   const storePacks = useMemo(() => {
     const packs = state.storePacks.map(p => {
       const packInfo = state.packs.find(pa => pa.id === p.packId)
-      const productInfo = state.products.find(p => p.id === packInfo.productId)
       return {
         ...p,
-        packInfo,
-        productInfo
+        packInfo
       }
     })
     return packs.filter(p => (props.type === 'a')
                           || (props.type === 'o' && p.price > p.packInfo.price) 
                           || (props.type === 'n' && p.price === p.packInfo.price && p.storeId !== p.packInfo.minStoreId)
                           || (props.type === 'l' && p.price === p.packInfo.price && p.storeId === p.packInfo.minStoreId))
-  }, [state.storePacks, state.packs, state.products, props.type])
+  }, [state.storePacks, state.packs, props.type])
 
   return(
     <Page>
@@ -36,9 +34,9 @@ const StorePacks = props => {
           : storePacks.map(p => 
               <ListItem
                 link={`/pack-details/${p.packId}/type/s`}
-                title={p.productInfo.name}
+                title={p.packInfo.productName}
                 subtitle={p.packInfo.name}
-                text={`${labels.productOf} ${p.productInfo.trademark ? labels.company + ' ' + p.productInfo.trademark + '-' : ''}${p.productInfo.country}`}
+                text={`${labels.productOf} ${p.packInfo.trademark ? labels.company + ' ' + p.packInfo.trademark + '-' : ''}${p.packInfo.country}`}
                 footer={moment(p.time.toDate()).fromNow()}
                 after={(p.packInfo.price / 1000).toFixed(3)}
                 key={p.id}
