@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { registerStoreOwner, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
@@ -13,6 +13,7 @@ const StoreOwner = props => {
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -58,6 +59,14 @@ const StoreOwner = props => {
       setError('')
     }
   }, [error])
+    useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
+
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -79,11 +88,14 @@ const StoreOwner = props => {
         name,
         storeName
       }
+      setInprocess(true)
       await registerStoreOwner(owner, password)
+      setInprocess(false)
       showMessage(labels.registerSuccess)
       props.f7router.navigate('/home/')
       props.f7router.app.panel.close('right') 
     } catch (err){
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

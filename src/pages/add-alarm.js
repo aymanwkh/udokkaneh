@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react'
-import { Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import ReLogin from './relogin'
@@ -9,6 +9,7 @@ import { alarmTypes } from '../data/config'
 const AddAlarm = props => {
   const { state, user } = useContext(StoreContext)
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   const pack = useMemo(() => state.packs.find(p => p.id === props.packId)
   , [state.packs, props.packId])
   const alarmType = useMemo(() => alarmTypes.find(t => t.id === props.alarmType)
@@ -88,6 +89,14 @@ const AddAlarm = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
+
   const buttonVisible = useMemo(() => {
     if (!price) return false
     if (isOffer && !offerDays) return false
@@ -131,10 +140,13 @@ const AddAlarm = props => {
         locationId,
         offerEnd
       }
+      setInprocess(true)
       await addAlarm(alarm)
+      setInprocess(false)
       showMessage(labels.sendSuccess)
       props.f7router.back()
     } catch (err) {
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

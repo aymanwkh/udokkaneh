@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
-import { Block, Page, Navbar, Toolbar, Button } from 'framework7-react'
+import { f7, Block, Page, Navbar, Toolbar, Button } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
@@ -9,14 +9,18 @@ import { randomColors, storeSummary } from '../data/config'
 const StoreSummary = props => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   const store = useMemo(() => state.stores.find(s => s.id === state.customer.storeId)
   , [state.stores, state.customer])
   useEffect(() => {
     const retreiveStorePacks = async () => {
       try{
+        setInprocess(true)
         const storePacks = await getStorePacks(state.customer)
+        setInprocess(false)
         dispatch({type: 'SET_STORE_PACKS', storePacks})
       } catch(err) {
+        setInprocess(false)
         setError(getMessage(props, err))
       }
     }
@@ -50,6 +54,13 @@ const StoreSummary = props => {
       setError('')
     }
   }, [error])
+    useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
   let i = 0
   return(
     <Page>

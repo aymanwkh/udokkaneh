@@ -9,6 +9,7 @@ const PasswordRequest = props => {
   const [mobile, setMobile] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   useEffect(() => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
@@ -28,17 +29,27 @@ const PasswordRequest = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
 
   const handlePasswordRequest = async () => {
     try{
       if (state.passwordRequests.find(p => p.mobile === mobile)) {
         throw new Error('duplicatePasswordRequest')
       }
+      setInprocess(true)
       await addPasswordRequest(mobile)
+      setInprocess(false)
       showMessage(labels.sendSuccess)
       f7.views.main.router.navigate('/home/')
       f7.panel.close('right')
     } catch (err){
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

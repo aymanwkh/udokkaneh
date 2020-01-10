@@ -9,6 +9,7 @@ import { orderPackStatus } from '../data/config'
 const OrderDetails = props => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   const order = useMemo(() => state.orders.find(order => order.id === props.id)
   , [state.orders, props.id])
   const orderBasket = useMemo(() => order.basket.map(p => {
@@ -38,16 +39,26 @@ const OrderDetails = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
 
   const handleEdit = async () => {
     try{
       if (state.basket.length > 0) {
         throw new Error('basketIsNotEmpty')
       }
+      setInprocess(true)
       await cancelOrder(order)
+      setInprocess(false)
       dispatch({type: 'LOAD_BASKET', basket: order.basket})
       props.f7router.navigate('/basket/')
 		} catch (err){
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }
@@ -55,17 +66,22 @@ const OrderDetails = props => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
       try{
         if (order.status === 'n') {
+          setInprocess(true)
           await cancelOrder(order)
+          setInprocess(false)
           showMessage(labels.deleteSuccess)
         } else {
           if (state.cancelOrders.find(o => o.order.id === order.id && o.status === 'n')){
             throw new Error('duplicateOrderCancel')
           }
+          setInprocess(true)
           await cancelOrderRequest(order)
+          setInprocess(false)
           showMessage(labels.sendSuccess)
         }
         props.f7router.back()
       } catch(err) {
+        setInprocess(false)
         setError(getMessage(props, err))
       }
     })    

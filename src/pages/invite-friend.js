@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { inviteFriend, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
@@ -11,7 +11,7 @@ const InviteFriend = props => {
   const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
-
+  const [inprocess, setInprocess] = useState(false)
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -44,6 +44,13 @@ const InviteFriend = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
 
   const handleSend = async () => {
     try{
@@ -53,10 +60,13 @@ const InviteFriend = props => {
       if (state.invitations.find(i => i.friendMobile === mobile)) {
         throw new Error('duplicateInvitation')
       }
+      setInprocess(true)
       await inviteFriend(mobile, name)
+      setInprocess(false)
       showMessage(labels.sendSuccess)
       props.f7router.navigate('/home/')
     } catch (err){
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

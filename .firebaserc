@@ -1,14 +1,5 @@
 {
   "projects": {
-    "default": "dokaneh-6870f"
-  },
-  "targets": {
-    "dokaneh-6870f": {
-      "hosting": {
-        "app": [
-          "dokaneh"
-        ]
-      }
-    }
+    "default": "dokanehnet"
   }
 }

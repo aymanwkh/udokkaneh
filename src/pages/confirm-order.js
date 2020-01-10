@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Toggle } from 'framework7-react'
+import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import ReLogin from './relogin'
 import { StoreContext } from '../data/store'
@@ -15,6 +15,7 @@ const ConfirmOrder = props => {
   , [state.locations, state.customer])
   const [deliveryFees, setDeliveryFees] = useState('')
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   const basket = useMemo(() => state.basket.map(p => {
     const packInfo = state.packs.find(pa => pa.id === p.packId)
     let price = packInfo.price
@@ -67,6 +68,13 @@ const ConfirmOrder = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
 
   const handleConfirm = async () => {
     try{
@@ -108,11 +116,14 @@ const ConfirmOrder = props => {
         total,
         deliveryDiscount: withDelivery ? state.customer.deliveryDiscount : 0
       }
+      setInprocess(true)
       await confirmOrder(order)
+      setInprocess(false)
       showMessage(labels.confirmSuccess)
       props.f7router.navigate('/home/', {reloadAll: true})
       dispatch({ type: 'CLEAR_BASKET' })
     } catch (err){
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

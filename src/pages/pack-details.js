@@ -12,6 +12,7 @@ import moment from 'moment'
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   const [toolbarVisible, setToolbarVisible] = useState(true)
   const pack = useMemo(() => state.packs.find(p => p.id === props.id)
   , [state.packs, props.id])
@@ -29,6 +30,14 @@ const PackDetails = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
+
   const addToBasket = packId => {
     try{
       if (state.customer.isBlocked) {
@@ -87,10 +96,13 @@ const PackDetails = props => {
               packId: pack.id,
               alarmType: alarmTypeId 
             }
+            setInprocess(true)
             await addAlarm(alarm)
+            setInprocess(false)
             showMessage(labels.sendSuccess)
             props.f7router.back()
           } catch(err) {
+            setInprocess(false)
             setError(getMessage(props, err))
           }
         })  
@@ -118,17 +130,22 @@ const PackDetails = props => {
     try{
       const found = state.favorites.find(f => f.userId === user.uid && f.packId === pack.id)
       if (found) {
+        setInprocess(true)
         await removeFavorite(found)
+        setInprocess(false)
         showMessage(labels.removeFavoriteSuccess)
       } else {
+        setInprocess(true)
         await addFavorite({
           userId : user.uid,
           packId: pack.id
         })
+        setInprocess(false)
         showMessage(labels.addFavoriteSuccess)
       }
         
 		} catch (err){
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }
@@ -137,9 +154,12 @@ const PackDetails = props => {
       if (state.customer.isBlocked) {
         throw new Error('blockedUser')
       }
+      setInprocess(true)
       await rateProduct(pack.productId, Number(value))
+      setInprocess(false)
       showMessage(labels.ratingSuccess)
     } catch(err) {
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

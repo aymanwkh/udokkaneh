@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
@@ -11,6 +11,7 @@ const Register = props => {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -58,14 +59,24 @@ const Register = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
 
   const handleRegister = async () => {
     try{
+      setInprocess(true)
       await registerUser(mobile, password, name)
+      setInprocess(false)
       showMessage(labels.registerSuccess)
       props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){
+      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

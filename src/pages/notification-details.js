@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
-import { Page, Navbar, List, ListInput, Toolbar } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
@@ -10,13 +10,17 @@ import 'moment/locale/ar'
 const NotificationDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   const notification = useMemo(() => state.notifications.find(c => c.id === props.id)
   , [state.notifications, props.id])
   useEffect(() => {
     const updateNotification = async () => {
       try{
+        setInprocess(true)
         await readNotification(notification)
+        setInprocess(false)
       } catch(err) {
+        setInprocess(false)
 			  setError(getMessage(props, err))
 		  }
     }
@@ -28,6 +32,14 @@ const NotificationDetails = props => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    if (inprocess) {
+      f7.dialog.preloader(labels.inprocess)
+    } else {
+      f7.dialog.close()
+    }
+  }, [inprocess])
+
   return (
     <Page>
       <Navbar title={labels.notificationDetails} backLink={labels.back} />
