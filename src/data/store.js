@@ -21,7 +21,8 @@ const Store = props => {
     cancelRequests: [],
     passwordRequests: [],
     notifications: [],
-    favorites: []
+    favorites: [],
+    adverts: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -61,6 +62,15 @@ const Store = props => {
       dispatch({type: 'SET_LOCATIONS', locations})
     }, err => {
       unsubscribeLocations()
+    })  
+    const unsubscribeAdverts = firebase.firestore().collection('adverts').where('isActive', '==', true).onSnapshot(docs => {
+      let adverts = []
+      docs.forEach(doc => {
+        adverts.push({...doc.data(), id:doc.id})
+      })
+      dispatch({type: 'SET_ADVERTS', adverts})
+    }, err => {
+      unsubscribeAdverts()
     })  
 
     firebase.auth().onAuthStateChanged(user => {

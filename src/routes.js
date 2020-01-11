@@ -23,6 +23,7 @@ import Help from './pages/help'
 import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
 import PurchasedPacks from './pages/purchased-packs'
+import Advert from './pages/advert'
 
 export default [
   {
@@ -138,6 +139,10 @@ export default [
   {
     path: '/purchased-packs/',
     component: PurchasedPacks
+  },
+  {
+    path: '/advert/',
+    component: Advert
   },
   {
     path: '(.*)',

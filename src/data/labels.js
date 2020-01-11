@@ -48,8 +48,6 @@ const labels = {
   net: 'الصافي',
   withDelivery: 'خدمة التوصيل',
   deliveryFees: 'رسوم التوصيل',
-  withNoDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 24-48 ساعة',
-  withDeliveryNote: 'التوصيل خلال جولات محددة حسب المنطقة خلال 24-48 ساعة',
   enterPrice: 'الرجاء ادخال السعر',
   enterStore: 'الرجاء ادخال اسم المحل',
   invalidPrice: 'الرجاء التأكد من السعر المدخل',
@@ -113,10 +111,7 @@ const labels = {
   weightedPricesNote: '*هذا سعر تقديري، السعر يتحدد حسب الوزن الفعلي',
   ExceedPackLimit: 'لا يمكنك طلب كمية اكبر من هذا المنتج في الطلب الواحد',
   urgent: 'مستعجل',
-  withUrgentDeliveryNote: 'التوصيل خلال 6-12 ساعة',
-  urgentNoDeliveryNote: 'اﻻستلام من مركز التوزيع بجانب اﻻستقلال مول خلال 6-12 ساعة',
   limitOverFlowNote: 'تجاوز لسقف الطلبات',
-  orderLimitHelp: 'سقف الطلبات هو القيمة القصوى لمجموع الطلبات الفعالة وهي خمسون دينارا، ويمكنك طلب رفع هذه القيمة بالتواصل معنا',
   helpPageTitle: 'توضيح',
   close: 'اغلاق',
   remain: 'المتبقي',
@@ -160,7 +155,11 @@ const labels = {
   suggestions: 'اقتراحات لبدائل',
   favorites: 'المفضلة',
   removeFavoriteSuccess: 'تم الحذف من المفضلة',
-  addFavoriteSuccess: 'تم الاضافة للمفضلة'
+  addFavoriteSuccess: 'تم الاضافة للمفضلة',
+  inprocess: 'تنفيذ العملية',
+  feesDeliveryHelp: 'لمزيد من المعلومات عن اﻻستلام والرسوم...',
+  clickHere: 'اضغط هنا',
+  advert: 'اعلان'
 }
 
 export default labels

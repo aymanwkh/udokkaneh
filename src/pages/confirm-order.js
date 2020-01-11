@@ -11,6 +11,7 @@ const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
   const [urgent, setUrgent] = useState(false)
+  const [helpParam, setHelpParam] = useState('r')
   const customerLocation = useMemo(() => state.customer.locationId ? state.locations.find(l => l.id === state.customer.locationId) : ''
   , [state.locations, state.customer])
   const [deliveryFees, setDeliveryFees] = useState('')
@@ -58,8 +59,10 @@ const ConfirmOrder = props => {
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees((customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - state.customer.deliveryDiscount)
+      setHelpParam(urgent ? 'ud' : 'd')
     } else {
       setDeliveryFees('')
+      setHelpParam(urgent ? 'ur' : 'r')
     }
   }, [withDelivery, urgent, customerLocation, state.customer])
   useEffect(() => {
@@ -120,7 +123,7 @@ const ConfirmOrder = props => {
       await confirmOrder(order)
       setInprocess(false)
       showMessage(labels.confirmSuccess)
-      props.f7router.navigate('/home/', {reloadAll: true})
+      f7.navigate('/home/', {reloadAll: true})
       dispatch({ type: 'CLEAR_BASKET' })
     } catch (err){
       setInprocess(false)
@@ -132,6 +135,29 @@ const ConfirmOrder = props => {
     <Page>
       <Navbar title={labels.confirmOrder} backLink={labels.back} />
       <Block>
+        <p className="note">{labels.feesDeliveryHelp} <a href={`/help/${helpParam}`}>{labels.clickHere}</a></p>
+        <List>
+          <ListItem>
+            <span>{customerLocation?.hasDelivery ? labels.withDelivery : labels.noDelivery}</span>
+            {customerLocation?.hasDelivery ?
+              <Toggle 
+                name="withDelivery" 
+                color="green" 
+                checked={withDelivery} 
+                onToggleChange={() => setWithDelivery(!withDelivery)}
+              />
+            : ''}
+          </ListItem>
+          <ListItem>
+            <span>{labels.urgent}</span>
+            <Toggle 
+              name="urgent" 
+              color="green" 
+              checked={urgent} 
+              onToggleChange={() => setUrgent(!urgent)}
+            />
+          </ListItem>
+        </List>
         <List mediaList>
           {basket.map(p => 
             <ListItem
@@ -157,7 +183,7 @@ const ConfirmOrder = props => {
               title={labels.deliveryFees} 
               className="fees" 
               after={(deliveryFees / 1000).toFixed(3)} 
-            /> 
+            />
           : ''}
           {discount > 0 ? 
             <ListItem 
@@ -172,30 +198,7 @@ const ConfirmOrder = props => {
             after={((total + fixedFees + deliveryFees - discount) / 1000).toFixed(3)} 
           />
           </List>
-          <List form>
-          <ListItem>
-            <span>{customerLocation?.hasDelivery ? labels.withDelivery : labels.noDelivery}</span>
-            {customerLocation?.hasDelivery ?
-              <Toggle 
-                name="withDelivery" 
-                color="green" 
-                checked={withDelivery} 
-                onToggleChange={() => setWithDelivery(!withDelivery)}
-              />
-            : ''}
-          </ListItem>
-          <ListItem>
-            <span>{labels.urgent}</span>
-            <Toggle 
-              name="urgent" 
-              color="green" 
-              checked={urgent} 
-              onToggleChange={() => setUrgent(!urgent)}
-            />
-          </ListItem>
-        </List>
         <p className="note">{weightedPacks.length > 0 ? labels.weightedPricesNote : ''}</p>
-        <p className="note">{withDelivery ? (urgent ? labels.withUrgentDeliveryNote : labels.withDeliveryNote) : (urgent ? labels.urgentNoDeliveryNote : labels.withNoDeliveryNote)}</p>
       </Block>
       <Fab position="center-bottom" slot="fixed" text={labels.confirm} color="green" onClick={() => handleConfirm()}>
         <Icon material="done"></Icon>
