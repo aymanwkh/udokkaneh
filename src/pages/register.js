@@ -123,9 +123,7 @@ const Register = props => {
         />
       </List>
       {!name || !mobile || !password || nameErrorMessage || mobileErrorMessage || passwordErrorMessage ? '' :
-        <Button href="#" large onClick={() => handleRegister()}>
-          {labels.register}
-        </Button>
+        <Button text={labels.register} href="#" large onClick={() => handleRegister()} />
       }
     </Page>
   )

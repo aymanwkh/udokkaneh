@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react'
-import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge } from 'framework7-react'
+import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge, Block, Button } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 import MainCategories from './main-categories'
@@ -25,8 +25,10 @@ const Home = props => {
           <span className='banner'>{labels.banner}</span>
         </NavTitleLarge>
       </Navbar>
-      {advert ? <div className="advert"><a href="/advert/">{advert.title}</a></div> : ''}
+      <Block>
+      {advert ? <Button href="/advert/" large outline text={advert.title} className="sections" /> : ''}
       <MainCategories/>
+      </Block>
       <Toolbar bottom>
         <BottomToolbar isHome="1"/>
       </Toolbar>

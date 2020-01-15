@@ -23,9 +23,9 @@ const ConfirmOrder = props => {
     if (p.offerId) {
       const offerInfo = state.packs.find(pa => pa.id === p.offerId)
       if (offerInfo.subPackId === p.packId) {
-        price = parseInt((offerInfo.price / offerInfo.subQuantity) * (offerInfo.subPercent / 100))
+        price = parseInt(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
       } else {
-        price = parseInt((offerInfo.price / offerInfo.bonusQuantity) * (offerInfo.bonusPercent / 100))
+        price = parseInt(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
       }
     }
     return {
@@ -38,11 +38,10 @@ const ConfirmOrder = props => {
   const total = useMemo(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0)
   , [basket])
   const fixedFees = useMemo(() => {
-    const offersTotal = basket.reduce((sum, p) => sum + p.offerId ? p.price * p.quantity : 0, 0)
-    const fees = Math.ceil(((urgent ? 1.5 : 1) * (setup.fixedFees * (total - offersTotal) + setup.fixedFees * 2 * offersTotal) / 100) / 50) * 50
     const fraction = total - Math.floor(total / 50) * 50
+    const fees = Math.ceil((urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50
     return fees - fraction
-  }, [basket, total, urgent])
+  }, [total, urgent])
   const discount = useMemo(() => {
     const orders = state.orders.filter(o => o.status !== 'c')
     let discount = 0
@@ -58,7 +57,7 @@ const ConfirmOrder = props => {
   , [basket])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees((customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - state.customer.deliveryDiscount)
+      setDeliveryFees((customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - (state.customer.deliveryDiscount || 0))
       setHelpParam(urgent ? 'ud' : 'd')
     } else {
       setDeliveryFees('')
@@ -123,7 +122,7 @@ const ConfirmOrder = props => {
       await confirmOrder(order)
       setInprocess(false)
       showMessage(labels.confirmSuccess)
-      f7.navigate('/home/', {reloadAll: true})
+      props.f7router.navigate('/home/', {reloadAll: true})
       dispatch({ type: 'CLEAR_BASKET' })
     } catch (err){
       setInprocess(false)

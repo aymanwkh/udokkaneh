@@ -124,11 +124,6 @@ const AddAlarm = props => {
       if (props.alarmType === '8' && Number(quantity) < 2){
         throw new Error('invalidQuantity')
       }
-      let offerEnd = ''
-      if (offerDays) {
-        offerEnd = new Date()
-        offerEnd.setDate(offerEnd.getDate() + Number(offerDays))
-      }
       const alarm = {
         packId: pack.id,
         alarmType: props.alarmType,
@@ -138,7 +133,7 @@ const AddAlarm = props => {
         newProduct,
         newPack,
         locationId,
-        offerEnd
+        offerDays: Number(offerDays)
       }
       setInprocess(true)
       await addAlarm(alarm)

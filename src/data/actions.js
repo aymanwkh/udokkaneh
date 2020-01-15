@@ -2,6 +2,7 @@ import firebase from './firebase'
 import labels from './labels'
 import { randomColors } from './config'
 import { f7 } from 'framework7-react'
+import { setup } from './config'
 
 export const getMessage = (props, error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -10,7 +11,7 @@ export const getMessage = (props, error) => {
       userId: firebase.auth().currentUser.uid,
       error,
       page: props.f7route.route.component.name,
-      time: new Date()
+      time: firebase.firestore.FieldValue.serverTimestamp()
     })
   }
   return labels[errorCode] ? labels[errorCode] : labels['unknownError']
@@ -64,7 +65,7 @@ export const rateProduct = (productId, value) => {
     userId: firebase.auth().currentUser.uid,
     value,
     status: 'n',
-    time: new Date()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   }
   return firebase.firestore().collection('ratings').add(rating)
 }
@@ -81,7 +82,7 @@ export const addPasswordRequest = mobile => {
   return firebase.firestore().collection('password-requests').add({
     mobile,
     status: 'n',
-    time: new Date(),
+    time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 
@@ -91,7 +92,7 @@ export const confirmOrder = order => {
     userId: firebase.auth().currentUser.uid,
     status: 'n',
     isArchived: false,
-    time: new Date()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   }
   return firebase.firestore().collection('orders').add(newOrder)
 }
@@ -99,15 +100,16 @@ export const confirmOrder = order => {
 export const cancelOrder = order => {
   return firebase.firestore().collection('orders').doc(order.id).update({
     status: 'c',
-    lastUpdate: new Date()
+    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 
-export const cancelOrderRequest = order => {
-  return firebase.firestore().collection('cancel-requests').add({
+export const addOrderRequest = (order, type) => {
+  return firebase.firestore().collection('order-requests').add({
     order,
+    type,
     status: 'n',
-    time: new Date()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 
@@ -121,7 +123,7 @@ export const registerUser = async (mobile, password, name) => {
     name,
     mobile,
     colors,
-    time: new Date()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 
@@ -149,7 +151,7 @@ export const registerStoreOwner = async (owner, password) => {
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     ...owner,
     colors,
-    time: new Date()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 
@@ -158,7 +160,7 @@ export const addAlarm = alarm => {
     ...alarm,
     userId: firebase.auth().currentUser.uid,
     status: 'n',
-    time: new Date()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   }
   return firebase.firestore().collection('alarms').add(newAlarm)
 }
@@ -169,7 +171,7 @@ export const inviteFriend = (mobile, name) => {
     friendName: name,
     friendMobile: mobile,
     status: 'n',
-    time: new Date()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 
@@ -195,4 +197,34 @@ export const addFavorite = favorite => {
 
 export const removeFavorite = favorite => {
   return firebase.firestore().collection('favorites').doc(favorite.id).delete()
+}
+
+export const editOrder = (order, newBasket, customer, locations) => {
+  if (order.status === 'n') {
+    const basket = newBasket.filter(p => p.quantity > 0)
+    const total = basket.reduce((sum, p) => sum + p.gross, 0)
+    const fraction = total - Math.floor(total / 50) * 50
+    const fixedFees = Math.ceil((order.urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50 - fraction
+    const customerLocation = customer.locationId ? locations.find(l => l.id === customer.locationId) : ''
+    const deliveryFees = order.withDelivery ? (customerLocation?.deliveryFees || setup.deliveryFees) * (order.urgent ? 1.5 : 1) - (customer.deliveryDiscount || 0) : 0
+    const orderStatus = basket.length === 0 ? 'c' : order.status
+    return firebase.firestore().collection('orders').doc(order.id).update({
+      basket,
+      total,
+      fixedFees,
+      withDelivery: order.withDelivery,
+      urgent: order.urgent,
+      deliveryFees,
+      status: orderStatus,
+      deliveryDiscount: order.withDelivery ? customer.deliveryDiscount : 0
+    })
+  } else {
+    return firebase.firestore().collection('order-requests').add({
+      order,
+      type: 'e',
+      basket: newBasket,
+      status: 'n',
+      time: firebase.firestore.FieldValue.serverTimestamp()
+    })
+  } 
 }

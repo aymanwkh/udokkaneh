@@ -92,7 +92,7 @@ const Login = props => {
         />
       </List>
       {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : 
-        <Button large onClick={() => handleLogin()}>{labels.login}</Button>
+        <Button text={labels.login} large onClick={() => handleLogin()} />
       }
       <Toolbar bottom>
         <Link href="/register/">{labels.newUser}</Link>

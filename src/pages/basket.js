@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Popover } from 'framework7-react'
+import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText } from '../data/actions'
 import PackImage from './pack-image'
@@ -83,6 +83,10 @@ const Basket = props => {
 			setError(getMessage(props, err))
 		}
   }
+  const handleHints = pack => {
+    setCurrentPack(pack)
+    f7.actions.open('#basket-hints')
+  }
   return(
     <Page>
     <Navbar title={labels.basket} backLink={labels.back} />
@@ -92,11 +96,12 @@ const Basket = props => {
           <ListItem
             title={p.packInfo.productName}
             subtitle={p.packInfo.name}
-            text={`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}
+            text={`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}
             footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
             key={p.packId}
           >
             <PackImage slot="media" pack={p.packInfo} type="list" />
+            <div className="list-subtext1">{`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}</div>
             <Stepper 
               slot="after" 
               fill
@@ -105,7 +110,7 @@ const Basket = props => {
               onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
             />
             {p.otherProducts + p.otherOffers + p.otherPacks === 0 ? '' : 
-              <Link className="hints" slot="footer" popoverOpen=".basket-hints" iconMaterial="warning" iconColor="red" onClick={()=> setCurrentPack(p)}/>
+              <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>
             }
           </ListItem>
         )}
@@ -120,31 +125,18 @@ const Basket = props => {
         <Icon material="report_problem"></Icon>
       </Fab>
     }
-    <Popover className="basket-hints">
-      <List>
-        {currentPack.otherProducts === 0 ? '' :
-          <ListItem 
-            link={`/hints/${currentPack.packId}/type/p`}
-            popoverClose 
-            title={labels.otherProducts} 
-          />
-        }
-        {currentPack.otherOffers === 0 ? '' :
-          <ListItem 
-            link={`/hints/${currentPack.packId}/type/o`}
-            popoverClose 
-            title={labels.otherOffers}
-          />
-        }
-        {currentPack.otherPacks === 0 ? '' :
-          <ListItem 
-            link={`/hints/${currentPack.packId}/type/w`}
-            popoverClose 
-            title={labels.otherPacks}
-          />
-        }
-      </List>
-    </Popover>
+    <Actions id="basket-hints">
+      {currentPack.otherProducts === 0 ? '' :
+        <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
+      }
+      {currentPack.otherOffers === 0 ? '' :
+        <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/o`)}>{labels.otherOffers}</ActionsButton>
+      }
+      {currentPack.otherPacks === 0 ? '' :
+        <ActionsButton onClick={() =>props.f7router.navigate(`/hints/${currentPack.packId}/type/w`)}>{labels.otherPacks}</ActionsButton>
+      }
+    </Actions>
+
     <Toolbar bottom>
       <Link href="/home/" iconMaterial="home" />
       <Link href="#" iconMaterial="delete" onClick={() => dispatch({type: 'CLEAR_BASKET'})} />

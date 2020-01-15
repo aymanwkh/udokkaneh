@@ -103,7 +103,6 @@ const labels = {
   isOffer: 'عرض؟',
   orderPrice: 'السعر عند الطلب',
   duplicateAlarms: 'لقد ارسلت بلاغا سابقا لنفس هذا المنتج ولم يعتمد بعد',
-  duplicateOrderCancel: 'لقد ارسلت طلبا بإلغاء هذا الطلب سابقا ولم يعتمد بعد',
   deleteSuccess: 'تم الحذف',
   duplicatePasswordRequest: 'لقد ارسلت طلبا سابق بنسيان كلمة السر ولم يعالج بعد',
   quantity: 'الكمية',
@@ -119,8 +118,7 @@ const labels = {
   unAvailableNote: 'لم يعد متوفر',
   ExceedPackLimitActiveOrders: 'لا يمكنك طلب كمية اكبر من هذا المنتج الى حين استلام طلبات سابقة لك',
   overPricedNote: 'بسبب ارتفاع الاسعار',
-  fullPurchase: 'شراء كل العرض',
-  partialPurchase: 'شراء جزء من العرض',
+  allOffer: 'كامل العرض',
   status: 'الحالة',
   requested: 'الكمية المطلوبة',
   purchased: 'ما تم شراؤه',
@@ -159,7 +157,19 @@ const labels = {
   inprocess: 'تنفيذ العملية',
   feesDeliveryHelp: 'لمزيد من المعلومات عن اﻻستلام والرسوم...',
   clickHere: 'اضغط هنا',
-  advert: 'اعلان'
+  advert: 'اعلان',
+  unitPrice: 'سعر الوحدة',
+  editSuccess: 'تم التعديل',
+  pendingOrderRequest: 'ارسلت سابقا طلب تعديل لطلب المشتريات هذا ولم يتم معالجته بعد',
+  merge: 'طلب دمج مع الطلب الذي قبله',
+  edit: 'تعديل',
+  editRequest: 'طلب تعديل',
+  cancel: 'الغاء',
+  cancelRequest : 'طلب الغاء',
+  samePackWithDiffPrice: 'لا يمكن الدمج لوجود نفس المنتج في الطلبين لكن بسعرين مختلفين',
+  samePackPurchasedByWeight: 'لا يمكن الدمج لوجود منتج تم شراؤه بالوزن في الطلب السابق',
+  diffInDelivery: 'لا يمكن الدمج لاختلاف طريقة التسليم بين الطلبين',
+  diffInUrgent: 'لا يمكن الدمج لاختلاف مؤشر الاستعجال بين الطلبين'
 }
 
 export default labels

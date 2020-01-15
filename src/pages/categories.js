@@ -19,15 +19,14 @@ const Categories = props => {
         {categories.map(c => {
           return (
             <Button 
+              text={c.name}
               large 
               fill 
               className="sections" 
               color={randomColors[i++ % 10].name} 
               href={c.isLeaf ? `/packs/${c.id}` : `/categories/${c.id}`} 
               key={c.id}
-            >
-              {c.name}
-            </Button>
+            />
           )
         })}
       </Block>

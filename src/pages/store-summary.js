@@ -67,9 +67,15 @@ const StoreSummary = props => {
       <Navbar title={store.name} backLink={labels.back} />
       <Block>
         {sections.map(s => 
-          <Button large fill className="sections" color={randomColors[i++ % 10].name} href={`/store-packs/${s.id}`} key={s.id}>
-            {`${s.name} (${s.count})`}
-          </Button>
+          <Button 
+            text={`${s.name} (${s.count})`} 
+            large 
+            fill 
+            className="sections" 
+            color={randomColors[i++ % 10].name} 
+            href={`/store-packs/${s.id}`} 
+            key={s.id}
+          /> 
         )}
       </Block>
       <Toolbar bottom>

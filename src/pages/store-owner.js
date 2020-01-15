@@ -155,9 +155,7 @@ const StoreOwner = props => {
       </List>
       <List>
       {!name || !mobile || !password || !storeName || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
-        <Button large onClick={() => handleRegister()}>
-          {labels.register}
-        </Button>
+        <Button text={labels.register} large onClick={() => handleRegister()} />
       }
       </List>
     </Page>

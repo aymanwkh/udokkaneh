@@ -18,7 +18,7 @@ const Store = props => {
     locations: [],
     storePacks: [],
     alarms: [],
-    cancelRequests: [],
+    orderRequests: [],
     passwordRequests: [],
     notifications: [],
     favorites: [],
@@ -131,14 +131,14 @@ const Store = props => {
         }, err => {
           unsubscribeAlarms()
         })  
-        const unsubscribeCancelRequests = firebase.firestore().collection('cancel-requests').where('order.userId', '==', user.uid).onSnapshot(docs => {
-          let cancelRequests = []
+        const unsubscribeOrderRequests = firebase.firestore().collection('order-requests').where('order.userId', '==', user.uid).onSnapshot(docs => {
+          let orderRequests = []
           docs.forEach(doc => {
-            cancelRequests.push({...doc.data(), id:doc.id})
+            orderRequests.push({...doc.data(), id:doc.id})
           })
-          dispatch({type: 'SET_CANCEL_REQUESTS', cancelRequests})
+          dispatch({type: 'SET_ORDER_REQUESTS', orderRequests})
         }, err => {
-          unsubscribeCancelRequests()
+          unsubscribeOrderRequests()
         })  
         const unsubscribeNotifications = firebase.firestore().collection('notifications').where('toCustomerId', 'in', ['0', user.uid]).onSnapshot(docs => {
           let notifications = []

@@ -68,11 +68,64 @@ const Reducer = (state, action) => {
     case 'CLEAR_BASKET':
       localStorage.setItem('basket', JSON.stringify([]))
       return {...state, basket: []}
-    case 'LOAD_BASKET':
-      localStorage.setItem('basket', JSON.stringify(action.basket))
-      return {...state, basket: action.basket}
     case 'SET_BASKET':
       return {...state, basket: action.basket}
+    case 'LOAD_ORDER_BASKET':
+      return {
+        ...state,
+        orderBasket: action.order.basket
+      }
+    case 'CLEAR_ORDER_BASKET':
+      return {
+        ...state,
+        orderBasket: []
+      }
+    case 'INCREASE_ORDER_QUANTITY':
+      pack = state.orderBasket.find(p => p.packId === action.pack.packId)
+      otherPacks = state.orderBasket.filter(p => p.packId !== action.pack.packId)
+      if (pack.isDivided) {
+        nextQuantity = increment.filter(i => i > pack.quantity)
+        nextQuantity = Math.min(...nextQuantity)
+        nextQuantity = nextQuantity === Infinity ? pack.quantity : nextQuantity
+      } else {
+        nextQuantity = pack.quantity + 1
+      }
+      pack = {
+        ...pack,
+        quantity: nextQuantity,
+        gross: parseInt(pack.price * nextQuantity)
+      }
+      return {...state, orderBasket: [...otherPacks, pack]}
+    case 'DECREASE_ORDER_QUANTITY':
+      pack = state.orderBasket.find(p => p.packId === action.pack.packId)
+      otherPacks = state.orderBasket.filter(p => p.packId !== action.pack.packId)
+      if (pack.weight) {
+        if (pack.isDivided) {
+          if (pack.quantity > pack.weight) {
+            nextQuantity = pack.weight
+          } else {
+            nextQuantity = 0
+          }  
+        } else {
+          if (pack.quantity > pack.purchased) {
+            nextQuantity = pack.purchased
+          } else {
+            nextQuantity = 0
+          }  
+        }
+      } else if (pack.isDivided) {
+        nextQuantity = increment.filter(i => i < pack.quantity)
+        nextQuantity = Math.max(...nextQuantity)
+        nextQuantity = nextQuantity === -Infinity ? 0 : nextQuantity
+      } else {
+        nextQuantity = pack.quantity - 1
+      }
+      pack = {
+        ...pack,
+        quantity: nextQuantity,
+        gross: parseInt(pack.price * nextQuantity)
+      }  
+      return {...state, orderBasket: [...otherPacks, pack]}
     case 'SET_CUSTOMER':
       return {
         ...state,
@@ -134,10 +187,10 @@ const Reducer = (state, action) => {
         ...state,
         alarms: action.alarms
       }    
-    case 'SET_CANCEL_REQUESTS':
+    case 'SET_ORDER_REQUESTS':
       return {
         ...state,
-        cancelRequests: action.cancelRequests
+        orderRequests: action.orderRequests
       }    
     case 'SET_PASSWORD_REQUESTS':
       return {

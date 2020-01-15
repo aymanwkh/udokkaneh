@@ -24,6 +24,7 @@ import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
 import PurchasedPacks from './pages/purchased-packs'
 import Advert from './pages/advert'
+import EditOrder from './pages/edit-order'
 
 export default [
   {
@@ -143,6 +144,10 @@ export default [
   {
     path: '/advert/',
     component: Advert
+  },
+  {
+    path: '/edit-order/:id',
+    component: EditOrder
   },
   {
     path: '(.*)',

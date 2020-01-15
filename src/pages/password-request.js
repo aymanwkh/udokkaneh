@@ -73,7 +73,7 @@ const PasswordRequest = props => {
       </List>
       <List>
       {!mobile || mobileErrorMessage ? '' : 
-        <Button large onClick={() => handlePasswordRequest()}>{labels.send}</Button>
+        <Button text={labels.send} large onClick={() => handlePasswordRequest()} />
       }
       </List>
     </Page>
