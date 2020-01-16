@@ -228,3 +228,7 @@ export const editOrder = (order, newBasket, customer, locations) => {
     })
   } 
 }
+
+export const deleteNotification = notification => {
+  return firebase.firestore().collection('notifications').doc(notification.id).delete()
+}

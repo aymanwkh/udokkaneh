@@ -39,7 +39,8 @@ export const orderStatus = [
   {id: 'd', name: 'مستلم'},
   {id: 'c', name: 'ملغي'},
   {id: 'u', name: 'غير متوفر'},
-  {id: 'i', name: 'استيداع'}
+  {id: 'i', name: 'استيداع'},
+  {id: 'm', name: 'مدمج'}
 ]  
 
 export const orderPackStatus = [

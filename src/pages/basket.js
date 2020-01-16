@@ -99,6 +99,7 @@ const Basket = props => {
             text={`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}
             footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
             key={p.packId}
+            className={currentPack && currentPack.packId === p.packId ? 'selected' : ''}
           >
             <PackImage slot="media" pack={p.packInfo} type="list" />
             <div className="list-subtext1">{`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}</div>

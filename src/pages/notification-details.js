@@ -1,9 +1,9 @@
 import React, { useContext, useMemo, useEffect, useState } from 'react'
-import { f7, Page, Navbar, List, ListInput, Toolbar } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
-import { readNotification, getMessage, showError } from '../data/actions'
+import { readNotification, deleteNotification, getMessage, showError, showMessage } from '../data/actions'
 import moment from 'moment'
 import 'moment/locale/ar'
 
@@ -24,7 +24,7 @@ const NotificationDetails = props => {
 			  setError(getMessage(props, err))
 		  }
     }
-    if (notification.toCustomerId !== '0') updateNotification()
+    if (notification && notification.toCustomerId !== '0') updateNotification()
   }, [notification, props])
   useEffect(() => {
     if (error) {
@@ -39,24 +39,40 @@ const NotificationDetails = props => {
       f7.dialog.close()
     }
   }, [inprocess])
-
+  const handleDelete = async () => {
+    try{
+      setInprocess(true)
+      await deleteNotification(notification)
+      setInprocess(false)
+      showMessage(labels.deleteSuccess)
+      props.f7router.back()
+    } catch(err) {
+      setInprocess(false)
+      setError(getMessage(props, err))
+    }
+  }
   return (
     <Page>
       <Navbar title={labels.notificationDetails} backLink={labels.back} />
       <List form>
         <ListInput 
           name="message" 
-          value={notification.message}
+          value={notification ? notification.message : ''}
           type="textarea" 
           readonly
         />
         <ListInput 
           name="time" 
-          value={moment(notification.time.toDate()).fromNow()}
+          value={notification ? moment(notification.time.toDate()).fromNow() : ''}
           type="text" 
           readonly
         />
       </List>
+      {notification && notification.toCustomerId === '0' ? '' :
+        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => handleDelete()}>
+          <Icon material="delete"></Icon>
+        </Fab>
+      }
       <Toolbar bottom>
         <BottomToolbar />
       </Toolbar>

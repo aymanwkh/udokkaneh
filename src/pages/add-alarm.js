@@ -111,7 +111,7 @@ const AddAlarm = props => {
     return true
   }, [props.alarmType, price, isOffer, offerDays, newProduct, newPack, quantity, state.customer, storeName, locationId, priceErrorMessage, storeNameErrorMessage, newProductErrorMessage, newPackErrorMessage])
   const formatPrice = value => {
-    return (Number(value) * 1000 / 1000).toFixed(3)
+    return Number(value).toFixed(3)
   } 
   const handleSubmit = async () => {
     try{

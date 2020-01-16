@@ -169,7 +169,9 @@ const labels = {
   samePackWithDiffPrice: 'لا يمكن الدمج لوجود نفس المنتج في الطلبين لكن بسعرين مختلفين',
   samePackPurchasedByWeight: 'لا يمكن الدمج لوجود منتج تم شراؤه بالوزن في الطلب السابق',
   diffInDelivery: 'لا يمكن الدمج لاختلاف طريقة التسليم بين الطلبين',
-  diffInUrgent: 'لا يمكن الدمج لاختلاف مؤشر الاستعجال بين الطلبين'
+  diffInUrgent: 'لا يمكن الدمج لاختلاف مؤشر الاستعجال بين الطلبين',
+  notRead: 'غير مقروء',
+  read: 'مقروء'
 }
 
 export default labels
