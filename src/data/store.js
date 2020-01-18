@@ -22,7 +22,9 @@ const Store = props => {
     passwordRequests: [],
     notifications: [],
     favorites: [],
-    adverts: []
+    adverts: [],
+    positionOrders: [],
+    customers: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -97,12 +99,12 @@ const Store = props => {
         }, err => {
           unsubscribeInvitations()
         })
-        const unsubscribeCustomers = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
+        const unsubscribeCustomer = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
           if (doc.exists){
             dispatch({type: 'SET_CUSTOMER', customer: doc.data()})
           }
         }, err => {
-          unsubscribeCustomers()
+          unsubscribeCustomer()
         })  
         const unsubscribeRating = firebase.firestore().collection('ratings').where('userId', '==', user.uid).onSnapshot(docs => {
           let ratings = []
@@ -157,7 +159,28 @@ const Store = props => {
           dispatch({type: 'SET_FAVORITES', favorites})
         }, err => {
           unsubscribeFavorites()
-        })  
+        })
+        if (user.displayName === 'c' || user.displayName === 'd') {
+          const unsubscribeCustomers = firebase.firestore().collection('customers').onSnapshot(docs => {
+            let customers = []
+            docs.forEach(doc => {
+              customers.push({...doc.data(), id:doc.id})
+            })
+            dispatch({type: 'SET_CUSTOMERS', customers})
+          }, err => {
+            unsubscribeCustomers()
+          })
+          const unsubscribeOrders = firebase.firestore().collection('orders').where('position', '==', user.displayName).onSnapshot(docs => {
+            let orders = []
+            docs.forEach(doc => {
+              orders.push({...doc.data(), id:doc.id})
+            })
+            dispatch({type: 'SET_POSITION_ORDERS', orders})
+          }, err => {
+            unsubscribeOrders()
+          })
+        
+        }
       }
     })
   }, [])

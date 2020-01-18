@@ -232,3 +232,55 @@ export const editOrder = (order, newBasket, customer, locations) => {
 export const deleteNotification = notification => {
   return firebase.firestore().collection('notifications').doc(notification.id).delete()
 }
+
+
+export const takeOrder = order => {
+  return firebase.firestore().collection('orders').doc(order.id).update({
+    status: 't',
+    lastUpdate: new Date()
+  })
+}
+
+export const returnOrderPacks = (order, pack, returned) => {
+  const batch = firebase.firestore().batch()
+  const orderPack = order.basket.find(p => p.packId === pack.id)
+  const otherPacks = order.basket.filter(p => p.packId !== pack.id)
+  let status, gross
+  if (returned === 0 && orderPack.returned > 0) {
+    if (pack.isDivided) {
+      status = parseInt(Math.abs(addQuantity(orderPack.quantity, -1 * orderPack.purchased)) / orderPack.quantity * 100) <= setup.weightErrorMargin ? 'f' : 'pu'
+    } else {
+      status = orderPack.quantity === orderPack.purchased ? 'f' : 'pu'
+    }
+    gross = parseInt(orderPack.actual * (orderPack.weight || orderPack.purchased))
+  } else {
+    if (returned === orderPack.purchased) {
+      status = 'r'
+      gross = 0
+    } else {
+      status = 'pr'
+      gross = parseInt(orderPack.actual * addQuantity(orderPack.weight || orderPack.purchased, -1 * returned))
+    }
+  }
+  const basket = [
+    ...otherPacks, 
+    {
+      ...orderPack, 
+      status,
+      gross,
+      returned: pack.isDivided || !pack.byWeight ? returned : orderPack.purchased,
+    }
+  ]
+  let profit = basket.reduce((sum, p) => sum + ['p', 'f', 'pu', 'pr'].includes(p.status) ? parseInt((p.actual - p.cost) * addQuantity(p.weight || p.purchased, -1 * (p.returned || 0))) : 0, 0)
+  const total = basket.reduce((sum, p) => sum + (p.gross || 0), 0)
+  const fraction = total - Math.floor(total / 50) * 50
+  const fixedFees = Math.ceil((order.urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50 - fraction
+  const orderRef = firebase.firestore().collection('orders').doc(order.id)
+  batch.update(orderRef, {
+    basket,
+    total,
+    profit,
+    fixedFees
+  })
+  return batch.commit()
+}

@@ -34,9 +34,10 @@ export const orderStatus = [
   {id: 's', name: 'معلق'},
   {id: 'r', name: 'مرفوض'},
   {id: 'e', name: 'قيد التجهيز'},
-  {id: 'f', name: 'مكتمل'},
+  {id: 'd', name: 'مكتمل'},
   {id: 'p', name: 'جاهز'},
-  {id: 'd', name: 'مستلم'},
+  {id: 't', name: 'مستلم'},
+  {id: 'f', name: 'منتهي'},
   {id: 'c', name: 'ملغي'},
   {id: 'u', name: 'غير متوفر'},
   {id: 'i', name: 'استيداع'},
@@ -69,4 +70,17 @@ export const storeSummary = [
   {id: 'o', name: 'منتجات اعلى من السوق'},
   {id: 'n', name: 'منتجات مساوية للسوق'},
   {id: 'l', name: 'منتجات أقل سعر في السوق'}
+]
+
+export const orderPositions = [
+  {id: 's', name: 'المستودع'},
+  {id: 'c', name: 'مركز التوزيع'},
+  {id: 'd', name: 'سيارة التوزيع'},
+]
+
+export const deliveryIntervals = [
+  {id: 'm', name: 'صباحا'},
+  {id: 'a', name: 'بعد الظهر'},
+  {id: 'n', name: 'مساءا'},
+  {id: 'u', name: 'اي وقت'}
 ]

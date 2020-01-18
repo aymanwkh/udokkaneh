@@ -212,6 +212,16 @@ const Reducer = (state, action) => {
         ...state,
         adverts: action.adverts
       }
+    case 'SET_POSITION_ORDERS':
+      return {
+        ...state,
+        positionOrders: action.orders
+      }
+    case 'SET_CUSTOMERS':
+      return {
+        ...state,
+        customers: action.customers
+      }
     default:
       return state
   }

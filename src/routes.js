@@ -25,6 +25,10 @@ import NotificationDetails from './pages/notification-details'
 import PurchasedPacks from './pages/purchased-packs'
 import Advert from './pages/advert'
 import EditOrder from './pages/edit-order'
+import FollowupOrdersList from './pages/followup-orders-list'
+import CustomerDetails from './pages/customer-details'
+import ReturnOrder from './pages/return-order'
+import ReturnOrderPack from './pages/return-order-pack'
 
 export default [
   {
@@ -106,7 +110,7 @@ export default [
     component: OrdersList,
   },
   {
-    path: '/order-details/:id',
+    path: '/order-details/:id/type/:type',
     component: OrderDetails,
   },
   {
@@ -149,6 +153,23 @@ export default [
     path: '/edit-order/:id',
     component: EditOrder
   },
+  {
+    path: '/followup-orders-list/:id',
+    component: FollowupOrdersList
+  },
+  {
+    path: '/customer-details/:id',
+    component: CustomerDetails
+  },
+  {
+    path: '/return-order/:id',
+    component: ReturnOrder
+  },
+  {
+    path: '/return-order-pack/:orderId/pack/:packId',
+    component: ReturnOrderPack
+  },
+
   {
     path: '(.*)',
     component: NotFoundPage,

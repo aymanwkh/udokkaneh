@@ -23,7 +23,7 @@ const ActiveOrders = props => {
               <ListItem title={labels.noData} /> 
             : orders.map(o =>
                 <ListItem
-                  link={`/order-details/${o.id}`}
+                  link={`/order-details/${o.id}/type/n`}
                   title={o.userId}
                   subtitle={moment(o.time.toDate()).fromNow()}
                   after={o.total}

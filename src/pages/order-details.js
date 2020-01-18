@@ -2,7 +2,7 @@ import React, { useContext, useState, useMemo, useEffect } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import { cancelOrder, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
+import { takeOrder, cancelOrder, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
 import { orderPackStatus } from '../data/config'
 
@@ -10,8 +10,8 @@ const OrderDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const order = useMemo(() => state.orders.find(order => order.id === props.id)
-  , [state.orders, props.id])
+  const order = useMemo(() => props.type === 'f' ? state.positionOrders.find(o => o.id === props.id) : state.orders.find(o => o.id === props.id)
+  , [state.orders, state.positionOrders, props.id, props.type])
   const orderBasket = useMemo(() => order.basket.map(p => {
     const packInfo = state.packs.find(pa => pa.id === p.packId)
     const storeName = p.storeId ? (p.storeId === 'm' ? labels.multipleStores : state.stores.find(s => s.id === p.storeId).name) : ''
@@ -106,6 +106,18 @@ const OrderDetails = props => {
       setError(getMessage(props, err))
     }
   }
+  const handleDelivery = async () => {
+    try{
+      setInprocess(true)
+      await takeOrder(order)
+      setInprocess(false)
+      showMessage(labels.editSuccess)
+      props.f7router.back()
+    } catch(err) {
+      setInprocess(false)
+			setError(getMessage(props, err))
+		}
+  }
   return(
     <Page>
       <Navbar title={labels.orderDetails} backLink={labels.back} />
@@ -160,13 +172,23 @@ const OrderDetails = props => {
           />
         </List>
       </Block>
-      <Actions id="order-actions">
-        <ActionsButton onClick={() => handleEdit()}>{order.status === 'n' ? labels.edit : labels.editRequest}</ActionsButton>
-        <ActionsButton onClick={() => handleDelete()}>{order.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
-        {order.status === 'n' && lastOrder ? 
-          <ActionsButton onClick={() => handleMerge()}>{labels.merge}</ActionsButton>
-        : ''}
-      </Actions>
+      {props.type === 'f' ?
+        <Actions id="order-actions">
+          <ActionsButton onClick={() => props.f7router.navigate(`/customer-details/${order.userId}`)}>{labels.customerInfo}</ActionsButton>
+          <ActionsButton onClick={() => props.f7router.navigate(`/return-order/${order.id}`)}>{labels.returnPacks}</ActionsButton>
+          {order.total === 0 || order.status === 't' ? '' :
+            <ActionsButton onClick={() => handleDelivery()}>{labels.deliver}</ActionsButton>
+          }
+        </Actions>
+      : 
+        <Actions id="order-actions">
+          <ActionsButton onClick={() => handleEdit()}>{order.status === 'n' ? labels.edit : labels.editRequest}</ActionsButton>
+          <ActionsButton onClick={() => handleDelete()}>{order.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
+          {order.status === 'n' && lastOrder ? 
+            <ActionsButton onClick={() => handleMerge()}>{labels.merge}</ActionsButton>
+          : ''}
+        </Actions>
+      }
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>

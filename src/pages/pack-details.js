@@ -41,6 +41,12 @@ const PackDetails = props => {
       return ''
     }
   }, [pack, state.packs])
+  const otherProducts = useMemo(() => state.packs.filter(pa => pa.tagId === pack.tagId && (pa.sales > pack.sales || pa.rating > pack.rating))
+  , [state.packs, pack])
+  const otherOffers = useMemo(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer))
+  , [state.packs, pack])
+  const otherPacks = useMemo(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice)
+  , [state.packs, pack])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -232,6 +238,15 @@ const PackDetails = props => {
         </Fab>
       }
       <Actions id="pack-actions">
+        {otherProducts.length === 0 ? '' :
+          <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
+        }
+        {otherOffers.length === 0 ? '' :
+          <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/o`)}>{labels.otherOffers}</ActionsButton>
+        }
+        {otherPacks.length === 0 ? '' :
+          <ActionsButton onClick={() =>props.f7router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
+        }
         {alarmTypes.map(p =>
           p.actor === 'a' || (props.type === 'c' && p.actor === 'c') || (props.type === 's' && p.actor === 'o' && p.isAvailable === isAvailable) ?
             <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>{p.name}</ActionsButton>

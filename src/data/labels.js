@@ -171,7 +171,13 @@ const labels = {
   diffInDelivery: 'لا يمكن الدمج لاختلاف طريقة التسليم بين الطلبين',
   diffInUrgent: 'لا يمكن الدمج لاختلاف مؤشر الاستعجال بين الطلبين',
   notRead: 'غير مقروء',
-  read: 'مقروء'
+  read: 'مقروء',
+  followupOrders: 'متابعة الطلبات',
+  customerInfo: 'معلومات العميل',
+  customerCalls: 'الاتصال بالعميل',
+  returnPacks: 'ارجاع مواد',
+  deliver: 'تسليم',
+
 }
 
 export default labels
