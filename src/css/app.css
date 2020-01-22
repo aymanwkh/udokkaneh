@@ -234,10 +234,15 @@
 }
 
 .hints {
-  right: 9rem;
+  position: absolute;
+  left: 0;
   margin-top: -0.5rem;
 }
 
 .selected {
   background-color: lightskyblue;
+}
+
+.item-footer {
+  position: relative;
 }

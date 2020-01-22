@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { f7, Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
@@ -11,20 +11,20 @@ const NotificationDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const notification = useMemo(() => state.notifications.find(c => c.id === props.id)
-  , [state.notifications, props.id])
+  const userInfo = useRef(state.userInfo)
+  const notification = userInfo.current.notifications.find(n => n.id === Number(props.id))
   useEffect(() => {
     const updateNotification = async () => {
       try{
         setInprocess(true)
-        await readNotification(notification)
+        await readNotification(userInfo.current, notification.id)
         setInprocess(false)
       } catch(err) {
         setInprocess(false)
 			  setError(getMessage(props, err))
 		  }
     }
-    if (notification && notification.toCustomerId !== '0') updateNotification()
+    if (notification.status === 'n') updateNotification()
   }, [notification, props])
   useEffect(() => {
     if (error) {
@@ -42,7 +42,7 @@ const NotificationDetails = props => {
   const handleDelete = async () => {
     try{
       setInprocess(true)
-      await deleteNotification(notification)
+      await deleteNotification(userInfo.current, notification.id)
       setInprocess(false)
       showMessage(labels.deleteSuccess)
       props.f7router.back()
@@ -53,26 +53,24 @@ const NotificationDetails = props => {
   }
   return (
     <Page>
-      <Navbar title={labels.notificationDetails} backLink={labels.back} />
+      <Navbar title={notification.title} backLink={labels.back} />
       <List form>
         <ListInput 
           name="message" 
-          value={notification ? notification.message : ''}
+          value={notification.message}
           type="textarea" 
           readonly
         />
         <ListInput 
           name="time" 
-          value={notification ? moment(notification.time.toDate()).fromNow() : ''}
+          value={moment(notification.time.toDate()).fromNow()}
           type="text" 
           readonly
         />
       </List>
-      {notification && notification.toCustomerId === '0' ? '' :
-        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => handleDelete()}>
-          <Icon material="delete"></Icon>
-        </Fab>
-      }
+      <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => handleDelete()}>
+        <Icon material="delete"></Icon>
+      </Fab>
       <Toolbar bottom>
         <BottomToolbar />
       </Toolbar>

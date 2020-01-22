@@ -13,7 +13,7 @@ const PurchasedPacks = props => {
 	const [purchasedPacks, setPurchasedPacks] = useState([])
 	const deliveredOrders = useMemo(() => {
     const deliveredOrders = state.orders.filter(o => o.status === 'd')
-    return deliveredOrders.sort((o1, o2) => o1.time.seconds - o2.time.seconds)
+    return deliveredOrders.sort((o1, o2) => o1.activeTime.seconds - o2.activeTime.seconds)
   }, [state.orders])
 	
 	let i = 0
@@ -31,7 +31,7 @@ const PurchasedPacks = props => {
             lastPrice: p.actual,
             quantity: addQuantity(found.quantity, p.purchased),
             lastQuantity: p.purchased,
-            lastTime: o.time
+            lastTime: o.activeTime
           })
 				} else {
           packsArray.push({
@@ -41,7 +41,7 @@ const PurchasedPacks = props => {
             lastPrice: p.actual,
             quantity: p.purchased,
             lastQuantity: p.purchased,
-            lastTime: o.time,
+            lastTime: o.activeTime
           })
         }
 			})

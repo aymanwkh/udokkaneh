@@ -3,7 +3,7 @@ import { StoreContext } from '../data/store'
 
 const PackImage = props => {
   const { state } = useContext(StoreContext)
-  const bonusPack = useMemo(() => props.pack.bonusPackId ? state.packs.find(p => p.id === props.pack.bonusPackId) : ''
+  const bonusPack = useMemo(() => state.packs.find(p => p.id === props.pack.bonusPackId) || ''
   , [state.packs, props.pack])
   return (
     <div className="relative">

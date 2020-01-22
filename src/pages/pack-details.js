@@ -1,9 +1,9 @@
-import React, { useContext, useMemo, useEffect, useState } from 'react'
+import React, { useContext, useMemo, useEffect, useState, useRef } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, Actions, ActionsButton, Row } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
-import { addAlarm, showMessage, showError, getMessage, addFavorite, removeFavorite, rateProduct } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage, updateFavorites, rateProduct } from '../data/actions'
 import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
@@ -13,40 +13,38 @@ const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const pack = useMemo(() => state.packs.find(p => p.id === props.id)
-  , [state.packs, props.id])
-  const ratings = useMemo(() => state.ratings.filter(r => r.productId === pack.productId)
-  , [state.ratings, pack])
+  const packs = useRef(state.packs)
+  const pack = packs.current.find(p => p.id === props.id)
   const hasPurchased = useMemo(() => {
-    const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => state.packs.find(pa => pa.id === p.packId).productId === pack.productId))
+    const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status) && o.basket.find(p => packs.current.find(pa => pa.id === p.packId).productId === pack.productId))
     return deliveredOrders.length
-  }, [state.orders, state.packs, pack])
-  const isAvailable = useMemo(() => state.customer.storeId && state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id) ? true : false
-  , [state.storePacks, state.customer, pack])
+  }, [state.orders, pack])
+  const isAvailable = useMemo(() => state.customerInfo.storeId && state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? true : false
+  , [state.storePacks, state.customerInfo, pack])
   const subPackInfo = useMemo(() => {
     if (pack.subPackId) {
-      const subPack =  state.packs.find(p => p.id === pack.subPackId)
+      const subPack =  packs.current.find(p => p.id === pack.subPackId)
       const price = parseInt(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
       return `${subPack.productName} ${subPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
     } else {
       return ''
     }
-  }, [pack, state.packs])
+  }, [pack])
   const bonusPackInfo = useMemo(() => {
     if (pack.bonusPackId) {
-      const bonusPack =  state.packs.find(p => p.id === pack.bonusPackId)
+      const bonusPack =  packs.current.find(p => p.id === pack.bonusPackId)
       const price = parseInt(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
       return `${bonusPack.productName} ${bonusPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
     } else {
       return ''
     }
-  }, [pack, state.packs])
-  const otherProducts = useMemo(() => state.packs.filter(pa => pa.tagId === pack.tagId && (pa.sales > pack.sales || pa.rating > pack.rating))
-  , [state.packs, pack])
-  const otherOffers = useMemo(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer))
-  , [state.packs, pack])
-  const otherPacks = useMemo(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice)
-  , [state.packs, pack])
+  }, [pack])
+  const otherProducts = useMemo(() => packs.current.filter(pa => pa.tagId === pack.tagId && (pa.sales > pack.sales || pa.rating > pack.rating))
+  , [pack])
+  const otherOffers = useMemo(() => packs.current.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer))
+  , [pack])
+  const otherPacks = useMemo(() => packs.current.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice)
+  , [pack])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -63,7 +61,7 @@ const PackDetails = props => {
 
   const addToBasket = packId => {
     try{
-      if (state.customer.isBlocked) {
+      if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
       if (state.basket.find(p => p.packId === packId)) {
@@ -72,7 +70,7 @@ const PackDetails = props => {
       let purchasedPack = pack
       let price, maxQuantity
       if (packId !== pack.id) {
-        purchasedPack = state.packs.find(p => p.id === packId)
+        purchasedPack = packs.current.find(p => p.id === packId)
         if (packId === pack.subPackId) {
           price = parseInt(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
           maxQuantity = pack.subQuantity - 1
@@ -88,8 +86,8 @@ const PackDetails = props => {
           offerId: pack.id
         }
       }
-      const orderLimit = state.customer.orderLimit || setup.orderLimit
-      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
+      const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
+      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'd', 'p'].includes(o.status))
       const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
       if (activeOrdersTotal + purchasedPack.price > orderLimit) {
         throw new Error('limitOverFlow')
@@ -111,11 +109,11 @@ const PackDetails = props => {
       if (alarmTypeId === '4') {
         f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
           try{
-            if (state.customer.isBlocked) {
+            if (state.customerInfo.isBlocked) {
               throw new Error('blockedUser')
             }
             const alarm = {
-              packId: pack.id,
+              packId: props.id,
               alarmType: alarmTypeId 
             }
             setInprocess(true)
@@ -129,13 +127,13 @@ const PackDetails = props => {
           }
         })  
       } else {
-        if (state.customer.isBlocked) {
+        if (state.customerInfo.isBlocked) {
           throw new Error('blockedUser')
         }
-        if (state.alarms.find(a => a.packId === pack.id && a.status === 'n')){
+        /*if (state.alarms.find(a => a.packId === props.id && a.status === 'n')){
           throw new Error('duplicateAlarms')
-        }  
-        props.f7router.navigate(`/add-alarm/${pack.id}/type/${alarmTypeId}`)
+        }  */
+        props.f7router.navigate(`/add-alarm/${props.id}/type/${alarmTypeId}`)
       }  
     } catch(err) {
       setError(getMessage(props, err))
@@ -143,21 +141,10 @@ const PackDetails = props => {
   }
   const handleFavorite = async () => {
     try{
-      const found = state.favorites.find(f => f.userId === user.uid && f.packId === pack.id)
-      if (found) {
-        setInprocess(true)
-        await removeFavorite(found)
-        setInprocess(false)
-        showMessage(labels.removeFavoriteSuccess)
-      } else {
-        setInprocess(true)
-        await addFavorite({
-          userId : user.uid,
-          packId: pack.id
-        })
-        setInprocess(false)
-        showMessage(labels.addFavoriteSuccess)
-      }
+      setInprocess(true)
+      await updateFavorites(state.userInfo, props.id)
+      setInprocess(false)
+      showMessage(state.userInfo?.favorites?.includes(props.id) ? labels.addFavoriteSuccess : labels.removeFavoriteSuccess)
 		} catch (err){
       setInprocess(false)
       setError(getMessage(props, err))
@@ -165,11 +152,11 @@ const PackDetails = props => {
   }
   const handleRate = async value => {
     try{
-      if (state.customer.isBlocked) {
+      if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
       setInprocess(true)
-      await rateProduct(pack.productId, Number(value))
+      await rateProduct(state.userInfo, pack.productId, value)
       setInprocess(false)
       showMessage(labels.ratingSuccess)
     } catch(err) {
@@ -216,17 +203,17 @@ const PackDetails = props => {
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
           <FabButtons position="bottom">
-            {!pack.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
+            {!pack.trademark || hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
               <FabButton color="green" onClick={() => handleRate(1)}>
                 <Icon material="thumb_up"></Icon>
               </FabButton>
             }
-            {!pack.trademark || hasPurchased === 0 || ratings.length > 0 ? '' : 
+            {!pack.trademark || hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
               <FabButton color="red" onClick={() => handleRate(0)}>
                 <Icon material="thumb_down"></Icon>
               </FabButton>
             }
-            {state.favorites.find(f => f.userId === user.uid && f.packId === pack.id) ? 
+            {state.userInfo.favorites?.includes(pack.id) ? 
               <FabButton color="pink" onClick={() => handleFavorite()}>
                 <Icon material="flash_off"></Icon>
               </FabButton>

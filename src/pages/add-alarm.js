@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect, useMemo } from 'react'
 import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
-import ReLogin from './relogin'
 import labels from '../data/labels'
 import { alarmTypes } from '../data/config'
 
@@ -19,25 +18,21 @@ const AddAlarm = props => {
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storeName, setStoreName] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
-  const [newProduct, setNewProduct] = useState('')
-  const [newProductErrorMessage, setNewProductErrorMessage] = useState('')
-  const [newPack, setNewPack] = useState('')
-  const [newPackErrorMessage, setNewPackErrorMessage] = useState('')
+  const [alternative, setAlternative] = useState('')
+  const [alternativeErrorMessage, setAlternativeErrorMessage] = useState('')
   const [offerDays, setOfferDays] = useState('')
   const [isOffer, setIsOffer] = useState(false)
-  const [locationId, setLocationId] = useState('')
-  const locations = useMemo(() => [...state.locations].sort((l1, l2) => l1.ordering - l2.ordering)
-  , [state.locations])
+  const [buttonVisible, setButtonVisisble] = useState(false)
   const currentPrice = useMemo(() => {
     if (props.alarmType === '2') {
-      return state.storePacks.find(p => p.storeId === state.customer.storeId && p.packId === pack.id).price
+      return state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id).price
     } else {
       return pack.price
     }
-  }, [state.storePacks, state.customer, pack, props.alarmType])
+  }, [state.storePacks, state.customerInfo, pack, props.alarmType])
   useEffect(() => {
     const validatePrice = (value) => {
-      if (props.alarmType === '1') {
+      if (!state.customerInfo.storeId) {
         if (Number(value) > 0 && Number(value * 1000) < pack.price) {
           setPriceErrorMessage('')
         } else {
@@ -52,7 +47,7 @@ const AddAlarm = props => {
       }
     }
     if (price) validatePrice(price)
-  }, [price, pack, props.alarmType, currentPrice])
+  }, [price, pack, props.alarmType, currentPrice, state.customerInfo])
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -64,24 +59,16 @@ const AddAlarm = props => {
         setStoreNameErrorMessage(labels.invalidName)
       }
     }  
-    const validateNewProduct = value => {
+    const validateAlternative = value => {
       if (patterns.name.test(value)){
-        setNewProductErrorMessage('')
+        setAlternativeErrorMessage('')
       } else {
-        setNewProductErrorMessage(labels.invalidName)
-      }
-    }  
-    const validateNewPack = value => {
-      if (patterns.name.test(value)){
-        setNewPackErrorMessage('')
-      } else {
-        setNewPackErrorMessage(labels.invalidName)
+        setAlternativeErrorMessage(labels.invalidName)
       }
     }  
     if (storeName) validateStoreName(storeName)
-    if (newProduct) validateNewProduct(newProduct)
-    if (newPack) validateNewPack(newPack)
-  }, [storeName, newProduct, newPack])
+    if (alternative) validateAlternative(alternative)
+  }, [storeName, alternative])
 
   useEffect(() => {
     if (error) {
@@ -97,46 +84,42 @@ const AddAlarm = props => {
     }
   }, [inprocess])
 
-  const buttonVisible = useMemo(() => {
-    if (!price) return false
-    if (isOffer && !offerDays) return false
-    if (props.alarmType === '5' && !newProduct) return false
-    if (props.alarmType === '6' && !newPack) return false
-    if (props.alarmType === '8' && !quantity) return false
-    if (!state.customer.storeId && (!storeName || !locationId)) return false
-    if (priceErrorMessage) return false
-    if (storeNameErrorMessage) return false
-    if (newProductErrorMessage) return false
-    if (newPackErrorMessage) return false
-    return true
-  }, [props.alarmType, price, isOffer, offerDays, newProduct, newPack, quantity, state.customer, storeName, locationId, priceErrorMessage, storeNameErrorMessage, newProductErrorMessage, newPackErrorMessage])
+  useEffect(() => {
+    if (!price
+    || (isOffer && !offerDays)
+    || (props.alarmType === '5' && !alternative)
+    || (props.alarmType === '7' && !quantity) 
+    || (!state.customerInfo.storeId && !storeName)
+    || priceErrorMessage
+    || storeNameErrorMessage
+    || alternativeErrorMessage) setButtonVisisble(false)
+    else setButtonVisisble(true)
+  }, [props.alarmType, price, isOffer, offerDays, alternative, quantity, state.customerInfo, storeName, priceErrorMessage, storeNameErrorMessage, alternativeErrorMessage])
   const formatPrice = value => {
     return Number(value).toFixed(3)
   } 
   const handleSubmit = async () => {
     try{
-      if (state.customer.isBlocked) {
+      if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
       if (offerDays && Number(offerDays) <= 0) {
         throw new Error('invalidPeriod')
       }
-      if (props.alarmType === '8' && Number(quantity) < 2){
+      if ((props.alarmType === '7' && Number(quantity) < 2) || (quantity && props.alarmType === '6' && Number(quantity) < 1)){
         throw new Error('invalidQuantity')
       }
       const alarm = {
         packId: pack.id,
-        alarmType: props.alarmType,
+        type: props.alarmType,
         price: price * 1000,
         quantity: Number(quantity),
         storeName,
-        newProduct,
-        newPack,
-        locationId,
+        alternative,
         offerDays: Number(offerDays)
       }
       setInprocess(true)
-      await addAlarm(alarm)
+      await addAlarm(state.userInfo, alarm)
       setInprocess(false)
       showMessage(labels.sendSuccess)
       props.f7router.back()
@@ -146,70 +129,50 @@ const AddAlarm = props => {
     }
   }
 
-  if (!user) return <ReLogin />
+  if (!user) return <Page><h3 className="center"><a href="/login/">{labels.relogin}</a></h3></Page>
   return (
     <Page>
       <Navbar title={alarmType.name} backLink={labels.back} />
       <List form>
-        {props.alarmType === '5' ? '' :
-          <ListInput 
-            name="productName" 
-            label={labels.productName}
-            value={pack.productName}
-            type="text" 
-            readonly
-          />
-        }
-        {props.alarmType === '5' || props.alarmType === '6' ? '' :
-          <ListInput 
-            name="packName" 
-            label={labels.packName}
-            value={pack.name}
-            type="text" 
-            readonly
-          />
-        }
-        {props.alarmType === '5' || props.alarmType === '6' ? '' :
-          <ListInput 
-            name="currentPrice" 
-            label={labels.currentPrice}
-            value={(currentPrice / 1000).toFixed(3)}
-            type="number" 
-            readonly
-          />
-        }
+        <ListInput 
+          name="productName" 
+          label={labels.productName}
+          value={pack.productName}
+          type="text" 
+          readonly
+        />
+        <ListInput 
+          name="packName" 
+          label={labels.packName}
+          value={pack.name}
+          type="text" 
+          readonly
+        />
+        <ListInput 
+          name="currentPrice" 
+          label={labels.currentPrice}
+          value={(currentPrice / 1000).toFixed(3)}
+          type="number" 
+          readonly
+        />
         {props.alarmType === '5' ?
           <ListInput 
-            name="newProduct" 
-            label={labels.newProduct}
+            name="alternative" 
+            label={labels.alternative}
             placeholder={labels.namePlaceholder}
             clearButton 
             type="text" 
-            value={newProduct} 
-            errorMessage={newProductErrorMessage}
+            value={alternative} 
+            errorMessage={alternativeErrorMessage}
             errorMessageForce  
-            onChange={e => setNewProduct(e.target.value)}
-            onInputClear={() => setNewProduct('')}
-          />
-        : ''}
-        {props.alarmType === '6' ?
-          <ListInput 
-            name="newPack" 
-            label={labels.newPack}
-            placeholder={labels.namePlaceholder}
-            clearButton 
-            type="text" 
-            value={newPack} 
-            errorMessage={newPackErrorMessage}
-            errorMessageForce  
-            onChange={e => setNewPack(e.target.value)}
-            onInputClear={() => setNewPack('')}
+            onChange={e => setAlternative(e.target.value)}
+            onInputClear={() => setAlternative('')}
           />
         : ''}
         <ListInput 
           name="price" 
           label={labels.price}
-          placeholder={props.alarmType === '1' ? labels.lessPricePlaceholder : labels.pricePlaceholder}
+          placeholder={!state.customerInfo.storeId ? labels.lessPricePlaceholder : labels.pricePlaceholder}
           clearButton 
           type="number" 
           value={price} 
@@ -219,7 +182,7 @@ const AddAlarm = props => {
           onInputClear={() => setPrice('')}
           onBlur={e => setPrice(formatPrice(e.target.value))}
         />
-        {props.alarmType === '8' ? 
+        {['6', '7'].includes(props.alarmType) ? 
           <ListInput 
             name="quantity" 
             label={labels.quantity}
@@ -231,7 +194,7 @@ const AddAlarm = props => {
             onInputClear={() => setQuantity('')}
           />
         : ''}
-        {state.customer.storeId ? '' :
+        {state.customerInfo.storeId ? '' :
           <ListInput 
             name="storeName" 
             label={labels.storeName}
@@ -245,27 +208,7 @@ const AddAlarm = props => {
             onInputClear={() => setStoreName('')}
           />
         }
-        {state.customer.storeId ? '' :
-          <ListItem
-            title={labels.storeLocation}
-            smartSelect
-            smartSelectParams={{
-              openIn: "popup", 
-              closeOnSelect: true, 
-              searchbar: true, 
-              searchbarPlaceholder: labels.search,
-              popupCloseLinkText: labels.close
-            }}
-          >
-            <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
-              <option value=""></option>
-              {locations.map(l => 
-                <option key={l.id} value={l.id}>{l.name}</option>
-              )}
-            </select>
-          </ListItem>
-        }
-        {state.customer.storeId ? 
+        {state.customerInfo.storeId ? 
           <ListItem>
             <span>{labels.isOffer}</span>
             <Toggle 

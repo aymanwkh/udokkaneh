@@ -10,9 +10,9 @@ import { orderByList } from '../data/config'
 const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
-    const packs = state.packs.filter(p => props.id ? (props.id === 'f' ? state.favorites.find(f => f.packId === p.id) : p.categoryId === props.id) : true)
+    const packs = state.packs.filter(p => props.id ? (props.id === 'f' ? state.userInfo.favorites?.includes(p.id) : p.categoryId === props.id) : true)
     return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
-  }, [state.packs, state.favorites, props.id]) 
+  }, [state.packs, state.userInfo, props.id]) 
   const [orderedPacks, setOrderedPacks] = useState(packs)
   const category = useMemo(() => state.categories.find(category => category.id === props.id)
   , [state.categories, props.id])

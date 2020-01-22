@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react'
 import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText } from '../data/actions'
-import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup } from '../data/config'
 
@@ -13,12 +12,13 @@ const Basket = props => {
   const [currentPack, setCurrentPack] = useState('')
   const totalPrice = useMemo(() => state.basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
   , [state.basket])
-  const packs = useMemo(() => {
-    const packs = state.basket.map(p => {
-      const packInfo = state.packs.find(pa => pa.id === p.packId)
-      const otherProducts = state.packs.filter(pa => pa.tagId === packInfo.tagId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
-      const otherOffers = state.packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
-      const otherPacks = state.packs.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
+  const packs = useRef(state.packs)
+  const basket = useMemo(() => {
+    const basket = state.basket.map(p => {
+      const packInfo = packs.current.find(pa => pa.id === p.packId) || ''
+      const otherProducts = packs.current.filter(pa => pa.tagId === packInfo.tagId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
+      const otherOffers = packs.current.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
+      const otherPacks = packs.current.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
       return {
         ...p,
         packInfo,
@@ -27,24 +27,24 @@ const Basket = props => {
         otherPacks: otherPacks.length
       }
     })
-    return packs.sort((p1, p2) => p1.time > p2.time ? 1 : -1)
-  }, [state.basket, state.packs])
+    return basket.sort((p1, p2) => p1.time > p2.time ? 1 : -1)
+  }, [state.basket])
   const weightedPacks = useMemo(() => state.basket.filter(p => p.byWeight)
   , [state.basket])
   const customerOrdersTotals = useMemo(() => {
-    if (state.customer){
+    if (state.customerInfo){
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       return activeOrders.reduce((sum, o) => sum + o.total, 0)
     } else {
       return 0
     }
-  }, [state.customer, state.orders])
+  }, [state.customerInfo, state.orders])
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
   }, [state.basket, props])
   useEffect(() => {
-    if (state.customer.orderLimit){
-      if (customerOrdersTotals + totalPrice > (state.customer.orderLimit || setup.orderLimit)){
+    if (state.customerInfo.orderLimit){
+      if (customerOrdersTotals + totalPrice > (state.customerInfo.orderLimit || setup.orderLimit)){
         setSubmitVisible(false)
       } else {
         setSubmitVisible(true)
@@ -52,7 +52,7 @@ const Basket = props => {
     } else {
       setSubmitVisible(true)
     }
-  }, [state.customer, customerOrdersTotals, totalPrice])
+  }, [state.customerInfo, customerOrdersTotals, totalPrice])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -62,7 +62,7 @@ const Basket = props => {
 
   const handleConfirm = () => {
     try{
-      if (state.customer.isBlocked) {
+      if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
       props.f7router.navigate('/confirm-order/')
@@ -76,7 +76,7 @@ const Basket = props => {
         throw new Error('ExceedPackLimit')
       }
       dispatch({type: 'INCREASE_QUANTITY', pack})
-      if (customerOrdersTotals + totalPrice > state.customer.orderLimit || setup.orderLimit){
+      if (customerOrdersTotals + totalPrice > state.customerInfo.orderLimit || setup.orderLimit){
         throw new Error('limitOverFlow')
       }  
     } catch(err) {
@@ -92,17 +92,16 @@ const Basket = props => {
     <Navbar title={labels.basket} backLink={labels.back} />
     <Block>
       <List mediaList>
-        {packs.map(p => 
+        {basket.map(p => 
           <ListItem
-            title={p.packInfo.productName}
-            subtitle={p.packInfo.name}
+            title={p.productName}
+            subtitle={p.name}
             text={`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}
             footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
             key={p.packId}
             className={currentPack && currentPack.packId === p.packId ? 'selected' : ''}
           >
-            <PackImage slot="media" pack={p.packInfo} type="list" />
-            <div className="list-subtext1">{`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}</div>
+            <div className="list-subtext1">{`${labels.price}: ${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo?.byWeight ? '*' : ''}`}</div>
             <Stepper 
               slot="after" 
               fill

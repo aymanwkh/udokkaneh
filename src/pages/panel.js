@@ -6,8 +6,8 @@ import labels from '../data/labels'
 
 const Panel = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const notifications = useMemo(() => state.notifications.filter(n => n.toCustomerId === '0' || n.status === 'n')
-  , [state.notifications])
+  const notifications = useMemo(() => state.userInfo.notifications?.filter(n => n.status === 'n') || []
+  , [state.userInfo])
   const handleLogout = () => {
     logout().then(() => {
       f7.views.main.router.navigate('/home/', {reloadAll: true})
@@ -20,27 +20,10 @@ const Panel = props => {
       <Navbar title={labels.mainPanelTitle} />
       <List>
         {user ?
-          <ListItem 
-            link="#" 
-            title={labels.logout} 
-            onClick={() => handleLogout()} 
-          />
+          <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
         : 
-          <ListItem 
-            link="/panel-login/" 
-            title={labels.loginTitle} 
-          />
+          <ListItem link="/panel-login/" title={labels.loginTitle} />
         }
-        {user ? 
-          <ListItem 
-            link="/basket/"
-            view="#main-view"
-            title={labels.basket} 
-            panelClose
-          >
-            {state.basket.length > 0 ? <Badge color="red">{state.basket.length}</Badge> : ''}
-          </ListItem>
-        : ''}
         {user ? <ListItem link="/change-password/" title={labels.changePassword} /> : ''}
         {user ? 
           <ListItem link="/notifications/" title={labels.notifications} view="#main-view" panelClose >
@@ -52,7 +35,7 @@ const Panel = props => {
         {user ? <ListItem link="/purchased-packs/" title={labels.purchasedPacks} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/invite-friend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
         {user && (user.displayName === 'c' || user.displayName === 'd') ? <ListItem link={`/followup-orders-list/${user.displayName}`} title={labels.followupOrders} view="#main-view" panelClose /> : ''}
-        {user && state.customer.storeId ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
+        {user && user.photoURL ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
         {user ? '' : <ListItem link="/store-owner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
         <ListItem link="/contact-us/" title={labels.contactUsTitle} view="#main-view" panelClose />
       </List>

@@ -9,6 +9,8 @@ const Reducer = (state, action) => {
       if (state.basket.find(p => p.packId === action.pack.id)) return state
       pack = {
         packId: action.pack.id,
+        productName: action.pack.productName,
+        name: action.pack.name,
         price: action.pack.price,
         quantity: 1,
         isDivided: action.pack.isDivided,
@@ -126,10 +128,15 @@ const Reducer = (state, action) => {
         gross: parseInt(pack.price * nextQuantity)
       }  
       return {...state, orderBasket: [...otherPacks, pack]}
-    case 'SET_CUSTOMER':
+    case 'SET_CUSTOMER_INFO':
       return {
         ...state,
-        customer: action.customer
+        customerInfo: action.customerInfo
+      }
+    case 'SET_USER_INFO':
+      return {
+        ...state,
+        userInfo: action.userInfo
       }
     case 'SET_ORDERS':
       return {
@@ -141,35 +148,10 @@ const Reducer = (state, action) => {
         ...state,
         packs: action.packs
       }
-    case 'SET_RATINGS':
-      return {
-        ...state,
-        ratings: action.ratings
-      }    
     case 'SET_CATEGORIES':
       return {
         ...state,
         categories: action.categories
-      }
-    case 'SET_TRADEMARKS':
-      return {
-        ...state,
-        trademarks: action.trademarks
-      }
-    case 'SET_COUNTRIES':
-      return {
-        ...state,
-        countries: action.countries
-      }
-    case 'SET_STORES':
-      return {
-        ...state,
-        stores: action.stores
-      }
-    case 'SET_INVITATIONS':
-      return {
-        ...state,
-        invitations: action.invitations
       }
     case 'SET_LOCATIONS':
       return {
@@ -179,8 +161,7 @@ const Reducer = (state, action) => {
     case 'SET_STORE_PACKS':
       return {
         ...state,
-        storePacks: action.storePacks,
-        lastRetreive: new Date()
+        storePacks: action.storePacks
       }
     case 'SET_ALARMS':
       return {
@@ -197,16 +178,6 @@ const Reducer = (state, action) => {
         ...state,
         passwordRequests: action.passwordRequests
       }    
-    case 'SET_NOTIFICATIONS':
-      return {
-        ...state,
-        notifications: action.notifications
-      }
-    case 'SET_FAVORITES':
-      return {
-        ...state,
-        favorites: action.favorites
-      }
     case 'SET_ADVERTS':
       return {
         ...state,

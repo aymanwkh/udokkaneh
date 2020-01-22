@@ -59,10 +59,9 @@ export const alarmTypes = [
   {id: '2', name: 'الابلاغ عن تغيير السعر', actor: 'o', isAvailable: true},
   {id: '3', name: 'الابلاغ عن توفر هذا المنتج/العرض', actor: 'o', isAvailable: false},
   {id: '4', name: 'الابلاغ عن عدم توفر هذا المنتج/العرض', actor: 'o', isAvailable: true},
-  {id: '5', name: 'الابلاغ عن توفر منتج بديل', actor: 'a'},
-  {id: '6', name: 'الابلاغ غن توفر عبوة جديدة للمنتج', actor: 'a'},
-  {id: '7', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', actor: 'o', isAvailable: true},
-  {id: '8', name: 'الابلاغ عن عرض على شكل مجموعة', actor: 'o', isAvailable: true},
+  {id: '5', name: 'الابلاغ عن توفر بديل', actor: 'a'},
+  {id: '6', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', actor: 'o', isAvailable: true},
+  {id: '7', name: 'الابلاغ عن عرض لمجموعة', actor: 'o', isAvailable: true},
 ]
 
 export const storeSummary = [

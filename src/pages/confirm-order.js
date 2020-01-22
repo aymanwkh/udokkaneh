@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
-import ReLogin from './relogin'
 import { StoreContext } from '../data/store'
 import { confirmOrder, showMessage, showError, getMessage, quantityText } from '../data/actions'
 import labels from '../data/labels'
@@ -9,16 +8,16 @@ import { setup } from '../data/config'
 
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const [withDelivery, setWithDelivery] = useState(state.customer.withDelivery || false)
+  const [withDelivery, setWithDelivery] = useState(state.customerInfo.withDelivery || false)
   const [urgent, setUrgent] = useState(false)
   const [helpParam, setHelpParam] = useState('r')
-  const customerLocation = useMemo(() => state.customer.locationId ? state.locations.find(l => l.id === state.customer.locationId) : ''
-  , [state.locations, state.customer])
+  const customerLocation = useMemo(() => state.customerInfo.locationId ? state.locations.find(l => l.id === state.customerInfo.locationId) : ''
+  , [state.locations, state.customerInfo])
   const [deliveryFees, setDeliveryFees] = useState('')
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
   const basket = useMemo(() => state.basket.map(p => {
-    const packInfo = state.packs.find(pa => pa.id === p.packId)
+    const packInfo = state.packs.find(pa => pa.id === p.packId) || ''
     let price = packInfo.price
     if (p.offerId) {
       const offerInfo = state.packs.find(pa => pa.id === p.offerId)
@@ -47,23 +46,23 @@ const ConfirmOrder = props => {
     let discount = 0
     if (orders.length === 0) {
       discount = setup.firstOrderDiscount
-    } else if (state.customer.discounts > 0) {
-      discount = Math.min(state.customer.discounts, setup.maxDiscount)
+    } else if (state.customerInfo.discounts > 0) {
+      discount = Math.min(state.customerInfo.discounts, setup.maxDiscount)
     }
     return discount
-  }, [state.orders, state.customer]) 
+  }, [state.orders, state.customerInfo]) 
   
   const weightedPacks = useMemo(() => basket.filter(p => p.byWeight)
   , [basket])
   useEffect(() => {
     if (withDelivery) {
-      setDeliveryFees((customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - (state.customer.deliveryDiscount || 0))
+      setDeliveryFees((customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - (state.customerInfo.deliveryDiscount || 0))
       setHelpParam(urgent ? 'ud' : 'd')
     } else {
       setDeliveryFees('')
       setHelpParam(urgent ? 'ur' : 'r')
     }
-  }, [withDelivery, urgent, customerLocation, state.customer])
+  }, [withDelivery, urgent, customerLocation, state.customerInfo])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -80,12 +79,12 @@ const ConfirmOrder = props => {
 
   const handleConfirm = async () => {
     try{
-      const globalNotification = state.notifications.find(n => n.toCustomerId === '0')
-      if (globalNotification) {
-        showMessage(globalNotification.message)
+      const notification = state.adverts ? state.adverts[0].type === 'n' : ''
+      if (notification) {
+        showMessage(state.adverts[0].message)
         return
       }
-      if (state.customer.isBlocked) {
+      if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
       if (state.orders.filter(o => o.status === 'n').length > 0) {
@@ -93,7 +92,7 @@ const ConfirmOrder = props => {
       }
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
-      if (totalOrders + total > (state.customer.orderLimit || setup.orderLimit)) {
+      if (totalOrders + total > (state.customerInfo.orderLimit || setup.orderLimit)) {
         throw new Error('limitOverFlow')
       }
       let packs = basket.filter(p => p.price > 0)
@@ -116,7 +115,7 @@ const ConfirmOrder = props => {
         withDelivery,
         urgent,
         total,
-        deliveryDiscount: withDelivery ? state.customer.deliveryDiscount : 0
+        deliveryDiscount: withDelivery ? state.customerInfo.deliveryDiscount : 0
       }
       setInprocess(true)
       await confirmOrder(order)
@@ -129,7 +128,7 @@ const ConfirmOrder = props => {
       setError(getMessage(props, err))
     }
   }
-  if (!user) return <ReLogin />
+  if (!user) return <Page><h3 className="center"><a href="/login/">{labels.relogin}</a></h3></Page>
   return (
     <Page>
       <Navbar title={labels.confirmOrder} backLink={labels.back} />

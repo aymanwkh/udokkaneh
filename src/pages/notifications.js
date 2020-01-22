@@ -9,8 +9,8 @@ import 'moment/locale/ar'
 
 const Notifications = props => {
   const { state } = useContext(StoreContext)
-  const notifications = useMemo(() => [...state.notifications].sort((n1, n2) => n2.time.seconds - n1.time.seconds)
-  , [state.notifications])
+  const notifications = useMemo(() => [...state.userInfo.notifications].sort((n1, n2) => n2.time.seconds - n1.time.seconds)
+  , [state.userInfo])
   return (
     <Page>
       <Navbar title={labels.notifications} backLink={labels.back} />
@@ -21,7 +21,7 @@ const Notifications = props => {
           : notifications.map(n =>
               <ListItem
                 link={`/notification-details/${n.id}`}
-                title={n.toCustomerId === '0' ? labels.globalNotification : labels.specialNotification}
+                title={n.title}
                 subtitle={n.status === 'n' ? labels.notRead : labels.read}
                 footer={moment(n.time.toDate()).fromNow()}
                 key={n.id}

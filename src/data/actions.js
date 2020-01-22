@@ -59,15 +59,16 @@ export const quantityDetails = basketPack => {
   return text
 }
 
-export const rateProduct = (productId, value) => {
-  const rating = {
+export const rateProduct = (user, productId, value) => {
+  const ratings = user.ratings?.slice() || []
+  ratings.push({
     productId,
-    userId: firebase.auth().currentUser.uid,
     value,
-    status: 'n',
-    time: firebase.firestore.FieldValue.serverTimestamp()
-  }
-  return firebase.firestore().collection('ratings').add(rating)
+    status: 'n'
+  })
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    ratings
+  })
 }
 
 export const login = (mobile, password) => {
@@ -92,7 +93,8 @@ export const confirmOrder = order => {
     userId: firebase.auth().currentUser.uid,
     status: 'n',
     isArchived: false,
-    time: firebase.firestore.FieldValue.serverTimestamp()
+    time: firebase.firestore.FieldValue.serverTimestamp(),
+    activeTime: firebase.firestore.FieldValue.serverTimestamp()
   }
   return firebase.firestore().collection('orders').add(newOrder)
 }
@@ -155,48 +157,54 @@ export const registerStoreOwner = async (owner, password) => {
   })
 }
 
-export const addAlarm = alarm => {
-  const newAlarm = {
+export const addAlarm = (user, alarm) => {
+  const alarms = user.alarms?.slice() || []
+  alarms.push({
     ...alarm,
-    userId: firebase.auth().currentUser.uid,
+    id: Math.random(),
     status: 'n',
-    time: firebase.firestore.FieldValue.serverTimestamp()
-  }
-  return firebase.firestore().collection('alarms').add(newAlarm)
-}
-
-export const inviteFriend = (mobile, name) => {
-  return firebase.firestore().collection('invitations').add({
-    userId: firebase.auth().currentUser.uid,
-    friendName: name,
-    friendMobile: mobile,
-    status: 'n',
-    time: firebase.firestore.FieldValue.serverTimestamp()
+    time: new Date()
+  })
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    alarms
   })
 }
 
-export const readNotification = notification => {
-  return firebase.firestore().collection('notifications').doc(notification.id).update({
+export const inviteFriend = (user, mobile, name) => {
+  const invitations = user.invitations?.slice() || []
+  invitations.push({
+    mobile,
+    name,
+    status: 'n'
+  })
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    invitations
+  })
+}
+
+export const readNotification = (user, notificationId) => {
+  const newNotifications = user.notifications.slice()
+  const notificationIndex = newNotifications.findIndex(n => n.id === notificationId)
+  newNotifications.splice(notificationIndex, 1, {
+    ...user.notifications[notificationIndex],
     status: 'r'
   })
-}
-
-export const getStorePacks = async customer => {
-  let storePacks = []
-  await firebase.firestore().collection('store-packs').where('storeId', '==', customer.storeId).get().then(docs => {
-    docs.forEach(doc => {
-      storePacks.push({...doc.data(), id:doc.id})
-    })
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    notifications: newNotifications
   })
-  return storePacks
 }
 
-export const addFavorite = favorite => {
-  return firebase.firestore().collection('favorites').add(favorite)
-}
-
-export const removeFavorite = favorite => {
-  return firebase.firestore().collection('favorites').doc(favorite.id).delete()
+export const updateFavorites = (user, packId) => {
+  const favorites = user.favorites?.slice() || []
+  const found = favorites.indexOf(packId)
+  if (found === -1) {
+    favorites.push(packId) 
+  } else {
+    favorites.splice(found, 1)
+  }
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    favorites
+  })
 }
 
 export const editOrder = (order, newBasket, customer, locations) => {
@@ -229,15 +237,19 @@ export const editOrder = (order, newBasket, customer, locations) => {
   } 
 }
 
-export const deleteNotification = notification => {
-  return firebase.firestore().collection('notifications').doc(notification.id).delete()
+export const deleteNotification = (user, notificationId) => {
+  const newNotifications = user.notifications.slice()
+  const notificationIndex = newNotifications.findIndex(n => n.id === notificationId)
+  newNotifications.splice(notificationIndex, 1)
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    notifications: newNotifications
+  })
 }
-
 
 export const takeOrder = order => {
   return firebase.firestore().collection('orders').doc(order.id).update({
     status: 't',
-    lastUpdate: new Date()
+    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 

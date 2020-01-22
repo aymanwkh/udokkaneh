@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react'
+import React, { useContext, useState, useMemo, useEffect, useRef } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -10,24 +10,21 @@ const OrderDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const order = useMemo(() => props.type === 'f' ? state.positionOrders.find(o => o.id === props.id) : state.orders.find(o => o.id === props.id)
-  , [state.orders, state.positionOrders, props.id, props.type])
-  const orderBasket = useMemo(() => order.basket.map(p => {
+  const order = useRef(props.type === 'f' ? state.positionOrders.find(o => o.id === props.id) : state.orders.find(o => o.id === props.id))
+  const orderBasket = useMemo(() => order.current.basket.map(p => {
     const packInfo = state.packs.find(pa => pa.id === p.packId)
-    const storeName = p.storeId ? (p.storeId === 'm' ? labels.multipleStores : state.stores.find(s => s.id === p.storeId).name) : ''
     const changePriceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : ''
     const statusNote = `${orderPackStatus.find(s => s.id === p.status).name} ${p.overPriced ? labels.overPricedNote : ''}`
     return {
       ...p,
       packInfo,
-      storeName,
       changePriceNote,
       statusNote
     }
-  }), [order, state.packs, state.stores])
+  }), [order, state.packs])
   const lastOrder = useMemo(() => {
-    const orders = state.orders.filter(o => o.id !== order.id)
-    orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
+    const orders = state.orders.filter(o => o.id !== order.current.id)
+    orders.sort((o1, o2) => o2.activeTime.seconds - o1.activeTime.seconds)
     return ['a', 'e'].includes(orders[0]?.status) ? orders[0] : ''
   }, [state.orders, order])
   useEffect(() => {
@@ -45,10 +42,10 @@ const OrderDetails = props => {
   }, [inprocess])
   const handleEdit = () => {
     try{
-      if (order.status !== 'n' && state.orderRequests.find(r => r.order.id === order.id && r.status === 'n')) {
+      if (order.current.status !== 'n' && state.orderRequests.find(r => r.order.id === order.current.id && r.status === 'n')) {
         throw new Error('pendingOrderRequest')
       }
-      props.f7router.navigate(`/edit-order/${order.id}`)
+      props.f7router.navigate(`/edit-order/${order.current.id}`)
     } catch(err) {
       setError(getMessage(props, err))
     }
@@ -56,18 +53,18 @@ const OrderDetails = props => {
   const handleDelete = () => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
       try{
-        if (order.status === 'n') {
+        if (order.current.status === 'n') {
           setInprocess(true)
-          await cancelOrder(order)
+          await cancelOrder(order.current)
           setInprocess(false)
           showMessage(labels.deleteSuccess)
           props.f7router.back()
         } else {
-          if (state.orderRequests.find(r => r.order.id === order.id && r.status === 'n')){
+          if (state.orderRequests.find(r => r.order.id === order.current.id && r.status === 'n')){
             throw new Error('pendingOrderRequest')
           }
           setInprocess(true)
-          await addOrderRequest(order, 'c')
+          await addOrderRequest(order.current, 'c')
           setInprocess(false)
           showMessage(labels.sendSuccess)
           props.f7router.back()
@@ -80,14 +77,14 @@ const OrderDetails = props => {
   }
   const handleMerge = async () => {
     try{
-      if (order.withDelivery !== lastOrder.withDelivery) {
+      if (order.current.withDelivery !== lastOrder.withDelivery) {
         throw new Error('diffInDelivery')
       }
-      if (order.urgent !== lastOrder.urgent) {
+      if (order.current.urgent !== lastOrder.urgent) {
         throw new Error('diffInUrgent')
       }
       let found
-      for (let p of order.basket) {
+      for (let p of order.current.basket) {
         found = lastOrder.basket.find(bp => bp.packId === p.packId)
         if (found && found.price !== p.price) {
           throw new Error('samePackWithDiffPrice')
@@ -97,7 +94,7 @@ const OrderDetails = props => {
         }
       }
       setInprocess(true)
-      await addOrderRequest(order, 'm')
+      await addOrderRequest(order.current, 'm')
       setInprocess(false)
       showMessage(labels.sendSuccess)
       props.f7router.back()
@@ -109,7 +106,7 @@ const OrderDetails = props => {
   const handleDelivery = async () => {
     try{
       setInprocess(true)
-      await takeOrder(order)
+      await takeOrder(order.current)
       setInprocess(false)
       showMessage(labels.editSuccess)
       props.f7router.back()
@@ -121,7 +118,7 @@ const OrderDetails = props => {
   return(
     <Page>
       <Navbar title={labels.orderDetails} backLink={labels.back} />
-      {order.status === 'd' ? '' :
+      {order.current.status === 'd' ? '' :
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => f7.actions.open('#order-actions')}>
           <Icon material="build"></Icon>
         </Fab>
@@ -144,47 +141,47 @@ const OrderDetails = props => {
           <ListItem 
             title={labels.total} 
             className="total"
-            after={(order.total / 1000).toFixed(3)} 
+            after={(order.current.total / 1000).toFixed(3)} 
           />
           <ListItem 
             title={labels.fixedFees} 
             className="fees" 
-            after={(order.fixedFees / 1000).toFixed(3)} 
+            after={(order.current.fixedFees / 1000).toFixed(3)} 
           />
-          {order.deliveryFees > 0 ? 
+          {order.current.deliveryFees > 0 ? 
             <ListItem 
               title={labels.deliveryFees} 
               className="fees" 
-              after={(order.deliveryFees / 1000).toFixed(3)} 
+              after={(order.current.deliveryFees / 1000).toFixed(3)} 
             /> 
           : ''}
-          {order.discount > 0 ? 
+          {order.current.discount > 0 ? 
             <ListItem 
               title={labels.discount} 
               className="discount" 
-              after={(order.discount / 1000).toFixed(3)} 
+              after={(order.current.discount / 1000).toFixed(3)} 
             /> 
           : ''}
           <ListItem 
             title={labels.net} 
             className="net" 
-            after={((order.total + order.fixedFees + (order.deliveryFees || 0) - (order.discount || 0)) / 1000).toFixed(3)} 
+            after={((order.current.total + order.current.fixedFees + (order.current.deliveryFees || 0) - (order.current.discount || 0)) / 1000).toFixed(3)} 
           />
         </List>
       </Block>
       {props.type === 'f' ?
         <Actions id="order-actions">
-          <ActionsButton onClick={() => props.f7router.navigate(`/customer-details/${order.userId}`)}>{labels.customerInfo}</ActionsButton>
-          <ActionsButton onClick={() => props.f7router.navigate(`/return-order/${order.id}`)}>{labels.returnPacks}</ActionsButton>
-          {order.total === 0 || order.status === 't' ? '' :
+          <ActionsButton onClick={() => props.f7router.navigate(`/customer-details/${order.current.userId}`)}>{labels.customerInfo}</ActionsButton>
+          <ActionsButton onClick={() => props.f7router.navigate(`/return-order/${order.current.id}`)}>{labels.returnPacks}</ActionsButton>
+          {order.current.total === 0 || order.current.status === 't' ? '' :
             <ActionsButton onClick={() => handleDelivery()}>{labels.deliver}</ActionsButton>
           }
         </Actions>
       : 
         <Actions id="order-actions">
-          <ActionsButton onClick={() => handleEdit()}>{order.status === 'n' ? labels.edit : labels.editRequest}</ActionsButton>
-          <ActionsButton onClick={() => handleDelete()}>{order.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
-          {order.status === 'n' && lastOrder ? 
+          <ActionsButton onClick={() => handleEdit()}>{order.current.status === 'n' ? labels.edit : labels.editRequest}</ActionsButton>
+          <ActionsButton onClick={() => handleDelete()}>{order.current.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
+          {order.current.status === 'n' && lastOrder ? 
             <ActionsButton onClick={() => handleMerge()}>{labels.merge}</ActionsButton>
           : ''}
         </Actions>
