@@ -130,9 +130,9 @@ const PackDetails = props => {
         if (state.customerInfo.isBlocked) {
           throw new Error('blockedUser')
         }
-        /*if (state.alarms.find(a => a.packId === props.id && a.status === 'n')){
+        if (state.userInfo.alarms?.find(a => a.packId === props.id && a.status === 'n')){
           throw new Error('duplicateAlarms')
-        }  */
+        }
         props.f7router.navigate(`/add-alarm/${props.id}/type/${alarmTypeId}`)
       }  
     } catch(err) {
@@ -142,9 +142,9 @@ const PackDetails = props => {
   const handleFavorite = async () => {
     try{
       setInprocess(true)
-      await updateFavorites(state.userInfo, props.id)
+      await updateFavorites(state.userInfo, pack.productId)
       setInprocess(false)
-      showMessage(state.userInfo?.favorites?.includes(props.id) ? labels.addFavoriteSuccess : labels.removeFavoriteSuccess)
+      showMessage(state.userInfo?.favorites?.includes(pack.productId) ? labels.addFavoriteSuccess : labels.removeFavoriteSuccess)
 		} catch (err){
       setInprocess(false)
       setError(getMessage(props, err))
@@ -198,7 +198,7 @@ const PackDetails = props => {
       >
         <Icon material="add"></Icon>
       </Fab>
-      {!user ? '' :
+      {user ?
         <Fab position="left-top" slot="fixed" color="blue" className="top-fab">
           <Icon material="favorite_border"></Icon>
           <Icon material="close"></Icon>
@@ -223,7 +223,7 @@ const PackDetails = props => {
             }
           </FabButtons>
         </Fab>
-      }
+      : ''}
       <Actions id="pack-actions">
         {otherProducts.length === 0 ? '' :
           <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>

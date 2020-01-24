@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react'
+import React, { useContext, useState, useEffect, useMemo, useRef } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -11,29 +11,37 @@ const ConfirmOrder = props => {
   const [withDelivery, setWithDelivery] = useState(state.customerInfo.withDelivery || false)
   const [urgent, setUrgent] = useState(false)
   const [helpParam, setHelpParam] = useState('r')
-  const customerLocation = useMemo(() => state.customerInfo.locationId ? state.locations.find(l => l.id === state.customerInfo.locationId) : ''
+  const customerLocation = useMemo(() => state.locations.find(l => l.id === state.customerInfo.locationId) || ''
   , [state.locations, state.customerInfo])
   const [deliveryFees, setDeliveryFees] = useState('')
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
+  const packs = useRef(state.packs)
   const basket = useMemo(() => state.basket.map(p => {
-    const packInfo = state.packs.find(pa => pa.id === p.packId) || ''
-    let price = packInfo.price
+    const packInfo = packs.current.find(pa => pa.id === p.packId) || ''
+    let lastPrice
     if (p.offerId) {
-      const offerInfo = state.packs.find(pa => pa.id === p.offerId)
-      if (offerInfo.subPackId === p.packId) {
-        price = parseInt(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
+      const offerInfo = packs.current.find(pa => pa.id === p.offerId)
+      if (!offerInfo) {
+        lastPrice = 0
+      } else if (offerInfo.subPackId === p.packId) {
+        lastPrice = parseInt(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
       } else {
-        price = parseInt(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
+        lastPrice = parseInt(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
       }
+    } else {
+      lastPrice = packInfo.price || 0
     }
+    const totalPriceText = `${(parseInt(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
+    const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
     return {
       ...p,
       packInfo,
-      price,
-      oldPrice: p.price
+      price: lastPrice,
+      priceText,
+      totalPriceText
     }
-  }), [state.basket, state.packs])
+  }), [state.basket])
   const total = useMemo(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0)
   , [basket])
   const fixedFees = useMemo(() => {
@@ -79,8 +87,7 @@ const ConfirmOrder = props => {
 
   const handleConfirm = async () => {
     try{
-      const notification = state.adverts ? state.adverts[0].type === 'n' : ''
-      if (notification) {
+      if (state.adverts[0]?.type === 'n') {
         showMessage(state.adverts[0].message)
         return
       }
@@ -99,6 +106,8 @@ const ConfirmOrder = props => {
       packs = packs.map(p => {
         return {
           packId: p.packId,
+          productName: p.productName,
+          packName: p.packName,
           price: p.price,
           quantity: p.quantity,
           gross: parseInt(p.price * p.quantity),
@@ -160,10 +169,11 @@ const ConfirmOrder = props => {
           {basket.map(p => 
             <ListItem
               key={p.packId}
-              title={p.packInfo.productName}
-              subtitle={`${labels.quantity}: ${quantityText(p.quantity)}`}
-              text={p.price === p.oldPrice ? '' : p.price === 0 ? labels.unAvailableNote : labels.changePriceNote}
-              after={`${(parseInt(p.price * p.quantity) / 1000).toFixed(3)} ${p.packInfo.byWeight ? '*' : ''}`}
+              title={p.productName}
+              subtitle={p.packName}
+              text={`${labels.quantity}: ${quantityText(p.quantity)}`}
+              footer={p.priceText}
+              after={p.totalPriceText}
             />
           )}
           <ListItem 

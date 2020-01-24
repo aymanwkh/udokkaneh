@@ -14,7 +14,7 @@ export const getMessage = (props, error) => {
       time: firebase.firestore.FieldValue.serverTimestamp()
     })
   }
-  return labels[errorCode] ? labels[errorCode] : labels['unknownError']
+  return labels[errorCode] || labels['unknownError']
 }
 
 export const showMessage = messageText => {
@@ -59,6 +59,19 @@ export const quantityDetails = basketPack => {
   return text
 }
 
+export const isSubCategory = (category1, category2, categories) => {
+  const parent = categories.find(c => c.id === category1).parentId
+  if (parent === '0') {
+    return false
+  } else if (parent === category2) {
+    return true
+  } else {
+    return isSubCategory(parent, category2, categories)
+  }
+
+}
+
+
 export const rateProduct = (user, productId, value) => {
   const ratings = user.ratings?.slice() || []
   ratings.push({
@@ -80,6 +93,7 @@ export const logout = () => {
 }
 
 export const addPasswordRequest = mobile => {
+  localStorage.setItem('password-request', mobile)
   return firebase.firestore().collection('password-requests').add({
     mobile,
     status: 'n',
@@ -194,11 +208,11 @@ export const readNotification = (user, notificationId) => {
   })
 }
 
-export const updateFavorites = (user, packId) => {
+export const updateFavorites = (user, productId) => {
   const favorites = user.favorites?.slice() || []
-  const found = favorites.indexOf(packId)
+  const found = favorites.indexOf(productId)
   if (found === -1) {
-    favorites.push(packId) 
+    favorites.push(productId) 
   } else {
     favorites.splice(found, 1)
   }
@@ -213,7 +227,7 @@ export const editOrder = (order, newBasket, customer, locations) => {
     const total = basket.reduce((sum, p) => sum + p.gross, 0)
     const fraction = total - Math.floor(total / 50) * 50
     const fixedFees = Math.ceil((order.urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50 - fraction
-    const customerLocation = customer.locationId ? locations.find(l => l.id === customer.locationId) : ''
+    const customerLocation = locations.find(l => l.id === customer.locationId) || ''
     const deliveryFees = order.withDelivery ? (customerLocation?.deliveryFees || setup.deliveryFees) * (order.urgent ? 1.5 : 1) - (customer.deliveryDiscount || 0) : 0
     const orderStatus = basket.length === 0 ? 'c' : order.status
     return firebase.firestore().collection('orders').doc(order.id).update({
@@ -283,7 +297,7 @@ export const returnOrderPacks = (order, pack, returned) => {
       returned: pack.isDivided || !pack.byWeight ? returned : orderPack.purchased,
     }
   ]
-  let profit = basket.reduce((sum, p) => sum + ['p', 'f', 'pu', 'pr'].includes(p.status) ? parseInt((p.actual - p.cost) * addQuantity(p.weight || p.purchased, -1 * (p.returned || 0))) : 0, 0)
+  let profit = basket.reduce((sum, p) => sum + (['p', 'f', 'pu', 'pr'].includes(p.status) ? parseInt((p.actual - p.cost) * addQuantity(p.weight || p.purchased, -1 * (p.returned || 0))) : 0), 0)
   const total = basket.reduce((sum, p) => sum + (p.gross || 0), 0)
   const fraction = total - Math.floor(total / 50) * 50
   const fixedFees = Math.ceil((order.urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50 - fraction

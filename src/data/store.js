@@ -9,15 +9,13 @@ const Store = props => {
   const initState = {
     categories: [], 
     basket: [], 
-    customerInfo: {},
     userInfo: {},
+    customerInfo: {},
     orders: [],
     packs: [],
-    invitations: [],
     locations: [],
     storePacks: [],
     orderRequests: [],
-    passwordRequests: [],
     adverts: [],
     positionOrders: [],
     customers: []
@@ -43,15 +41,6 @@ const Store = props => {
     }, err => {
       unsubscribePacks()
     })
-    const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').where('status', '==', 'n').onSnapshot(docs => {
-      let passwordRequests = []
-      docs.forEach(doc => {
-        passwordRequests.push({...doc.data(), id: doc.id})
-      })
-      dispatch({type: 'SET_PASSWORD_REQUESTS', passwordRequests})
-    }, err => {
-      unsubscribePasswordRequests()
-    })
     const unsubscribeAdverts = firebase.firestore().collection('adverts').where('isActive', '==', true).onSnapshot(docs => {
       let adverts = []
       docs.forEach(doc => {
@@ -68,19 +57,19 @@ const Store = props => {
         const localData = localStorage.getItem('basket')
         const basket = localData ? JSON.parse(localData) : []
         if (basket) dispatch({type: 'SET_BASKET', basket}) 
-        const unsubscribeCustomer = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
-          if (doc.exists){
-            dispatch({type: 'SET_CUSTOMER_INFO', customerInfo: doc.data()})
-          }
-        }, err => {
-          unsubscribeCustomer()
-        })  
         const unsubscribeUser = firebase.firestore().collection('users').doc(user.uid).onSnapshot(doc => {
           if (doc.exists){
             dispatch({type: 'SET_USER_INFO', userInfo: doc.data()})
           }
         }, err => {
           unsubscribeUser()
+        })  
+        const unsubscribeCustomer = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
+          if (doc.exists){
+            dispatch({type: 'SET_CUSTOMER_INFO', customerInfo: doc.data()})
+          }
+        }, err => {
+          unsubscribeCustomer()
         })  
         const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
           let orders = []

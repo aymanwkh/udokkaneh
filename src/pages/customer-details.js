@@ -7,48 +7,42 @@ import { deliveryIntervals } from '../data/config'
 
 const CustomerDetails = props => {
   const { state } = useContext(StoreContext)
-  const customer = useRef(state.customers.find(c => c.id === props.id))
+  const customers = useRef(state.customers)
+  const customer = customers.current.find(c => c.id === props.id)
 
   return (
     <Page>
       <Navbar title={labels.customerDetails} backLink={labels.back} />
       <List form>
         <ListInput 
-          name="fullName" 
-          label={labels.fullName}
-          value={customer.current.fullName}
+          name="name" 
+          label={labels.name}
+          value={customer.name}
           type="text" 
           readonly
         />
         <ListItem>
           <span>{labels.isOldAge}</span>
-          <Toggle color="blue" checked={customer.current.isOldAge} disabled />
+          <Toggle color="blue" checked={customer.isOldAge} disabled />
         </ListItem>
-        <ListInput 
-          name="locationName" 
-          label={labels.location}
-          value={state.locations.find(l => l.id === customer.current.locationId)?.name}
-          type="text"
-          readonly
-        />
         <ListInput 
           name="otherMobile" 
           label={labels.otherMobile}
-          value={customer.current.otherMobile}
+          value={customer.otherMobile}
           type="number"
           readonly
         />
         <ListInput 
           name="deliveryInterval" 
           label={labels.deliveryInterval}
-          value={customer.deliveryInterval ? deliveryIntervals.find(i => i.id === customer.current.deliveryInterval)?.name : ''}
+          value={deliveryIntervals.find(i => i.id === customer.deliveryInterval)?.name || ''}
           type="text"
           readonly
         />
         <ListInput 
           name="address" 
           label={labels.address}
-          value={customer.current.address}
+          value={customer.address}
           type="text" 
           readonly
         />

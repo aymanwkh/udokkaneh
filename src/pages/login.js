@@ -54,6 +54,7 @@ const Login = props => {
     try{
       setInprocess(true)
       await login(mobile, password)
+      localStorage.removeItem('password-request')
       setInprocess(false)
       showMessage(labels.loginSuccess)
       props.f7router.back()
@@ -63,7 +64,17 @@ const Login = props => {
       setError(getMessage(props, err))
     }
   }
-
+  const handlePasswordRequest = () => {
+    try{
+      const localData = localStorage.getItem('password-request')
+      if (localData) {
+        throw new Error('duplicatePasswordRequest')
+      }
+      props.f7router.navigate('/password-request/')
+    } catch (err){
+      setError(getMessage(props, err))
+    }
+  }
   return (
     <Page>
       <Navbar title={labels.loginTitle} backLink={labels.back} />
@@ -96,7 +107,7 @@ const Login = props => {
       }
       <Toolbar bottom>
         <Link href="/register/">{labels.newUser}</Link>
-        <Link href="/password-request/">{labels.forgetPassword}</Link>
+        <Link onClick={() => handlePasswordRequest()}>{labels.forgetPassword}</Link>
       </Toolbar>
     </Page>
   )

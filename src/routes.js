@@ -82,7 +82,7 @@ export default [
     component: Categories,
   },
   {
-    path: '/packs/:id',
+    path: '/packs/:id/type/:type',
     component: Packs,
   },
   {

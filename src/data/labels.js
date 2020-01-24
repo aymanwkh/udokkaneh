@@ -13,7 +13,7 @@ const labels = {
   search: 'بحث',
   open_order_found: 'هناك طلبية سابقة لم يتم استلامها',
   auth_user_not_found: 'الرجاء التأكد من رقم الموبايل وكلمة المرور',
-  auth_email_already_in_use: 'لقد سجلت سابقا برقم هذا الموبايل',
+  auth_email_already_in_use: 'رقم الموبايل مسجل سابقا',
   auth_wrong_password: 'كلمة السر غير صحيحة',
   productOf: 'انتاج',
   orderBy: 'الترتيب حسب',
@@ -173,13 +173,17 @@ const labels = {
   returnPacks: 'ارجاع مواد',
   deliver: 'تسليم',
   customerDetails: 'معلومات العميل',
-  fullName: 'الاسم',
   isOldAge: 'كبير السن',
   otherMobile: 'رقم موبايل بديل',
   deliveryInterval: 'فترة التسليم',
   returnOrder: 'ارجاع طلب',
   removeFavoriteSuccess: 'تم الحذف من المفضلة',
   addFavoriteSuccess: 'تم الاضافة للمفضلة',
+  itemNotAvailable: 'لم يعد هذا المنتج متوفر',
+  oldPrice: 'سابقا',
+  newPrice: 'الحالي',
+  priceHasChanged: 'حدث تغير في السعر',
+  totalPrice: 'السعر الاجمالي'
 }
 
 export default labels

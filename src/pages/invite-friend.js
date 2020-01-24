@@ -60,7 +60,7 @@ const InviteFriend = props => {
       if (state.userInfo.invitations?.find(i => i.mobile === mobile)) {
         throw new Error('duplicateInvitation')
       }
-      if (state.userInfo.mobile === mobile) {
+      if (mobile === state.customerInfo.mobile || mobile === state.customerInfo.otherMobile) {
         throw new Error('invalidMobile')
       }
       setInprocess(true)

@@ -10,7 +10,7 @@ const Reducer = (state, action) => {
       pack = {
         packId: action.pack.id,
         productName: action.pack.productName,
-        name: action.pack.name,
+        packName: action.pack.name,
         price: action.pack.price,
         quantity: 1,
         isDivided: action.pack.isDivided,
@@ -128,15 +128,15 @@ const Reducer = (state, action) => {
         gross: parseInt(pack.price * nextQuantity)
       }  
       return {...state, orderBasket: [...otherPacks, pack]}
-    case 'SET_CUSTOMER_INFO':
-      return {
-        ...state,
-        customerInfo: action.customerInfo
-      }
     case 'SET_USER_INFO':
       return {
         ...state,
         userInfo: action.userInfo
+      }
+    case 'SET_CUSTOMER_INFO':
+      return {
+        ...state,
+        customerInfo: action.customerInfo
       }
     case 'SET_ORDERS':
       return {
@@ -172,11 +172,6 @@ const Reducer = (state, action) => {
       return {
         ...state,
         orderRequests: action.orderRequests
-      }    
-    case 'SET_PASSWORD_REQUESTS':
-      return {
-        ...state,
-        passwordRequests: action.passwordRequests
       }    
     case 'SET_ADVERTS':
       return {

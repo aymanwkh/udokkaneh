@@ -16,6 +16,14 @@ const Categories = props => {
     <Page>
       <Navbar title={state.categories.find(c => c.id === props.id).name} backLink={labels.back} />
       <Block>
+        <Button 
+            text={labels.allProducts}
+            large 
+            fill 
+            className="sections" 
+            color={randomColors[i++ % 10].name} 
+            href={`/packs/${props.id}/type/a`} 
+          />
         {categories.map(c => {
           return (
             <Button 
@@ -24,7 +32,7 @@ const Categories = props => {
               fill 
               className="sections" 
               color={randomColors[i++ % 10].name} 
-              href={c.isLeaf ? `/packs/${c.id}` : `/categories/${c.id}`} 
+              href={c.isLeaf ? `/packs/${c.id}/type/n` : `/categories/${c.id}`} 
               key={c.id}
             />
           )

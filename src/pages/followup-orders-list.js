@@ -36,7 +36,7 @@ const FollowupOrdersList = props => {
           : orders.map(o => 
               <ListItem
                 link={`/order-details/${o.id}/type/f`}
-                title={o.customerInfo.fullName}
+                title={o.customerInfo.name}
                 subtitle={`${labels.status}: ${o.orderStatusInfo.name}`}
                 text={o.lastUpdate ? moment(o.lastUpdate.toDate()).fromNow() : ''}
                 footer={o.withDelivery ? labels.withDeliveryNote : ''}

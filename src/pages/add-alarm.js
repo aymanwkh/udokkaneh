@@ -172,7 +172,7 @@ const AddAlarm = props => {
         <ListInput 
           name="price" 
           label={labels.price}
-          placeholder={!state.customerInfo.storeId ? labels.lessPricePlaceholder : labels.pricePlaceholder}
+          placeholder={state.customerInfo.storeId ? labels.pricePlaceholder : labels.lessPricePlaceholder}
           clearButton 
           type="number" 
           value={price} 

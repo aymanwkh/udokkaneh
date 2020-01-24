@@ -12,7 +12,7 @@ const PurchasedPacks = props => {
 	const { state } = useContext(StoreContext)
 	const [purchasedPacks, setPurchasedPacks] = useState([])
 	const deliveredOrders = useMemo(() => {
-    const deliveredOrders = state.orders.filter(o => o.status === 'd')
+    const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status))
     return deliveredOrders.sort((o1, o2) => o1.activeTime.seconds - o2.activeTime.seconds)
   }, [state.orders])
 	
@@ -21,7 +21,6 @@ const PurchasedPacks = props => {
 		let packsArray = []
 		deliveredOrders.forEach(o => {
 			o.basket.forEach(p => {
-        const packInfo = state.packs.find(pa => pa.id === p.packId)
         const found = packsArray.find(pa => pa.packId === p.packId)
 				if (found) {
           packsArray = packsArray.filter(pa => pa.packId !== found.packId)
@@ -36,7 +35,8 @@ const PurchasedPacks = props => {
 				} else {
           packsArray.push({
             packId: p.packId,
-            packInfo,
+            productName: p.productName,
+            packName: p.packName,
             bestPrice: p.actual,
             lastPrice: p.actual,
             quantity: p.purchased,
@@ -47,7 +47,7 @@ const PurchasedPacks = props => {
 			})
 		})
 		setPurchasedPacks(packsArray.sort((p1, p2) => p2.lastTime.seconds - p1.lastTime.sconds))
-	}, [deliveredOrders, state.packs, state.products])
+	}, [deliveredOrders])
   return(
     <Page>
       <Navbar title={labels.purchasedPacks} backLink={labels.back} />
@@ -57,7 +57,7 @@ const PurchasedPacks = props => {
 						<ListItem title={labels.noData} /> 
 					: purchasedPacks.map(p => 
 							<ListItem
-								title={`${p.packInfo.productName} ${p.packInfo.name}`}
+								title={`${p.productName} ${p.packName}`}
 								subtitle={`${labels.bestPrice}: ${(p.bestPrice / 1000).toFixed(3)}`}
                 text={`${labels.lastPrice}: ${(p.lastPrice / 1000).toFixed(3)}`}
                 footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}

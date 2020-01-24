@@ -30,7 +30,7 @@ const Panel = props => {
             {notifications.length > 0 ? <Badge color="red">{notifications.length}</Badge> : ''}
           </ListItem> 
         : ''}
-        {user ? <ListItem link="/packs/f" title={labels.favorites} view="#main-view" panelClose /> : ''}
+        {user ? <ListItem link="/packs/0/type/f" title={labels.favorites} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/orders-list/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/purchased-packs/" title={labels.purchasedPacks} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/invite-friend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}

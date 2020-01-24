@@ -12,18 +12,16 @@ const ReturnOrder = props => {
     const order = state.orders.find(o => o.id === props.id)
     let basket = order.basket
     basket = basket.map(p => {
-      const packInfo = state.packs.find(pa => pa.id === p.packId)
       const changePriceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : ''
       const statusNote = `${orderPackStatus.find(s => s.id === p.status).name} ${p.overPriced ? labels.overPricedNote : ''}`
       return {
         ...p,
-        packInfo,
         changePriceNote,
         statusNote
       }
     })
     return basket
-  }, [state.orders, state.packs, props.id])
+  }, [state.orders, props.id])
 
   return(
     <Page>
@@ -34,8 +32,8 @@ const ReturnOrder = props => {
             <ListItem 
               link={`/return-order-pack/${props.id}/pack/${p.packId}`}
               key={p.packId} 
-              title={p.packInfo.productName}
-              subtitle={p.packInfo.name}
+              title={p.productName}
+              subtitle={p.packName}
               text={quantityDetails(p)}
               footer={`${labels.status}: ${p.statusNote}`}
               after={(p.gross / 1000).toFixed(3)}

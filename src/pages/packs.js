@@ -6,13 +6,14 @@ import PackImage from './pack-image'
 import moment from 'moment'
 import labels from '../data/labels'
 import { orderByList } from '../data/config'
+import { isSubCategory } from '../data/actions'
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
   const packs = useMemo(() => {
-    const packs = state.packs.filter(p => props.id ? (props.id === 'f' ? state.userInfo.favorites?.includes(p.id) : p.categoryId === props.id) : true)
+    const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || (props.type === 'a' && isSubCategory(p.categoryId, props.id, state.categories)) || (props.type === 'n' && p.categoryId === props.id))
     return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
-  }, [state.packs, state.userInfo, props.id]) 
+  }, [state.packs, state.userInfo, props.id, props.type, state.categories]) 
   const [orderedPacks, setOrderedPacks] = useState(packs)
   const category = useMemo(() => state.categories.find(category => category.id === props.id)
   , [state.categories, props.id])
@@ -40,7 +41,7 @@ const Packs = props => {
   }
   return(
     <Page>
-      <Navbar title={category?.name || (props.id === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
+      <Navbar title={category?.name || (props.type === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>
