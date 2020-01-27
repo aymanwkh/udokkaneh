@@ -120,13 +120,24 @@ export const cancelOrder = order => {
   })
 }
 
-export const addOrderRequest = (order, type) => {
-  return firebase.firestore().collection('order-requests').add({
-    order,
-    type,
-    status: 'n',
-    time: firebase.firestore.FieldValue.serverTimestamp()
+export const addOrderRequest = (order, type, mergedOrder) => {
+  const batch = firebase.firestore().batch()
+  let orderRef = firebase.firestore().collection('orders').doc(order.id)
+  const basket = type === 'm' ? mergedOrder.basket : []
+  batch.update(orderRef, {
+    requestType: type,
+    requestStatus: 'n',
+    requestBasket: basket,
+    requestTime: firebase.firestore.FieldValue.serverTimestamp()
   })
+  if (mergedOrder) {
+    orderRef = firebase.firestore().collection('orders').doc(mergedOrder.id)
+    batch.update(orderRef, {
+      status: 's',
+      lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+    })
+  }
+  return batch.commit()
 }
 
 export const registerUser = async (mobile, password, name) => {
@@ -197,14 +208,14 @@ export const inviteFriend = (user, mobile, name) => {
 }
 
 export const readNotification = (user, notificationId) => {
-  const newNotifications = user.notifications.slice()
-  const notificationIndex = newNotifications.findIndex(n => n.id === notificationId)
-  newNotifications.splice(notificationIndex, 1, {
+  const notifications = user.notifications.slice()
+  const notificationIndex = notifications.findIndex(n => n.id === notificationId)
+  notifications.splice(notificationIndex, 1, {
     ...user.notifications[notificationIndex],
     status: 'r'
   })
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-    notifications: newNotifications
+    notifications
   })
 }
 
@@ -221,6 +232,31 @@ export const updateFavorites = (user, productId) => {
   })
 }
 
+export const updateOrderDelivery = (order, customer, locations) => {
+  const withDelivery = !order.withDelivery
+  const customerLocation = locations.find(l => l.id === customer.locationId) || ''
+  const deliveryFees = withDelivery ? (customerLocation?.deliveryFees || setup.deliveryFees) * (order.urgent ? 1.5 : 1) - (customer.deliveryDiscount || 0) : 0
+  return firebase.firestore().collection('orders').doc(order.id).update({
+    withDelivery,
+    deliveryFees,
+    deliveryDiscount: withDelivery ? customer.deliveryDiscount : 0
+  })
+}
+
+export const updateOrderUrgent = (order, customer, locations) => {
+  const urgent = !order.urgent
+  const fraction = order.total - Math.floor(order.total / 50) * 50
+  const fixedFees = Math.ceil((urgent ? 1.5 : 1) * setup.fixedFees * order.total / 50) * 50 - fraction
+  const customerLocation = locations.find(l => l.id === customer.locationId) || ''
+  const deliveryFees = order.withDelivery ? (customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - (customer.deliveryDiscount || 0) : 0
+  return firebase.firestore().collection('orders').doc(order.id).update({
+    fixedFees,
+    urgent,
+    deliveryFees,
+    activeTime: firebase.firestore.FieldValue.serverTimestamp()
+  })
+}
+
 export const editOrder = (order, newBasket, customer, locations) => {
   if (order.status === 'n') {
     const basket = newBasket.filter(p => p.quantity > 0)
@@ -234,29 +270,26 @@ export const editOrder = (order, newBasket, customer, locations) => {
       basket,
       total,
       fixedFees,
-      withDelivery: order.withDelivery,
-      urgent: order.urgent,
       deliveryFees,
       status: orderStatus,
       deliveryDiscount: order.withDelivery ? customer.deliveryDiscount : 0
     })
   } else {
-    return firebase.firestore().collection('order-requests').add({
-      order,
-      type: 'e',
-      basket: newBasket,
-      status: 'n',
-      time: firebase.firestore.FieldValue.serverTimestamp()
+    return firebase.firestore().collection('orders').doc(order.id).update({
+      requestType: 'e',
+      requestBasket: newBasket,
+      requestStatus: 'n',
+      requestTime: firebase.firestore.FieldValue.serverTimestamp()
     })
   } 
 }
 
 export const deleteNotification = (user, notificationId) => {
-  const newNotifications = user.notifications.slice()
-  const notificationIndex = newNotifications.findIndex(n => n.id === notificationId)
-  newNotifications.splice(notificationIndex, 1)
+  const notifications = user.notifications.slice()
+  const notificationIndex = notifications.findIndex(n => n.id === notificationId)
+  notifications.splice(notificationIndex, 1)
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-    notifications: newNotifications
+    notifications
   })
 }
 
@@ -297,7 +330,7 @@ export const returnOrderPacks = (order, pack, returned) => {
       returned: pack.isDivided || !pack.byWeight ? returned : orderPack.purchased,
     }
   ]
-  let profit = basket.reduce((sum, p) => sum + (['p', 'f', 'pu', 'pr'].includes(p.status) ? parseInt((p.actual - p.cost) * addQuantity(p.weight || p.purchased, -1 * (p.returned || 0))) : 0), 0)
+  const profit = basket.reduce((sum, p) => sum + (['p', 'f', 'pu', 'pr'].includes(p.status) ? parseInt((p.actual - p.cost) * addQuantity(p.weight || p.purchased, -1 * (p.returned || 0))) : 0), 0)
   const total = basket.reduce((sum, p) => sum + (p.gross || 0), 0)
   const fraction = total - Math.floor(total / 50) * 50
   const fixedFees = Math.ceil((order.urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50 - fraction
@@ -309,4 +342,39 @@ export const returnOrderPacks = (order, pack, returned) => {
     fixedFees
   })
   return batch.commit()
+}
+
+export const getBasket = (stateBasket, packs) => {
+  const basket = stateBasket.map(p => {
+    const packInfo = packs.find(pa => pa.id === p.packId) || ''
+    let lastPrice
+    if (p.offerId) {
+      const offerInfo = packs.find(pa => pa.id === p.offerId)
+      if (!offerInfo) {
+        lastPrice = 0
+      } else if (offerInfo.subPackId === p.packId) {
+        lastPrice = parseInt(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
+      } else {
+        lastPrice = parseInt(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
+      }
+    } else {
+      lastPrice = packInfo.price || 0
+    }
+    const totalPriceText = `${(parseInt(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
+    const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
+    const otherProducts = packs.filter(pa => pa.tagId === packInfo.tagId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
+    const otherOffers = packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
+    const otherPacks = packs.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
+    return {
+      ...p,
+      price: lastPrice,
+      packInfo,
+      totalPriceText,
+      priceText,
+      otherProducts: otherProducts.length,
+      otherOffers: otherOffers.length,
+      otherPacks: otherPacks.length
+    }
+  })
+  return basket.sort((p1, p2) => p1.time > p2.time ? 1 : -1)
 }

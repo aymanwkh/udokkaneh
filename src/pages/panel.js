@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { logout } from '../data/actions'
@@ -6,8 +6,10 @@ import labels from '../data/labels'
 
 const Panel = props => {
   const { state, user, dispatch } = useContext(StoreContext)
-  const notifications = useMemo(() => state.userInfo.notifications?.filter(n => n.status === 'n') || []
-  , [state.userInfo])
+  const [notifications, setNotifications] = useState([])
+  useEffect(() => {
+    setNotifications(() => state.userInfo.notifications?.filter(n => n.status === 'n') || [])
+  }, [state.userInfo])
   const handleLogout = () => {
     logout().then(() => {
       f7.views.main.router.navigate('/home/', {reloadAll: true})

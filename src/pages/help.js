@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react'
+import React, { useState } from 'react'
 import { Page, Navbar, Block, Icon } from 'framework7-react'
 import labels from '../data/labels'
 
 const Help = props => {
-  const helpNote = useMemo(() => {
+  const [helpNote] = useState(() => {
     switch (props.id) {
       case 'r':
         return 'يتم اﻻستلام من مركز التوزيع بجانب الاستقلال مول، ويتم تجهيز طلبك خلال 24-48 ساعة'
@@ -18,7 +18,7 @@ const Help = props => {
       default:
         return ''
     }
-  }, [props.id])
+  })
   const feesNote = 'رسوم الخدمة هي 2.5% من قيمة المشتريات'
   const deliveryNote = (props.id === 'd' || props.id === 'ud') ? 'رسوم خدمة التوصيل تحدد بناء على منطقة السكن' : ''
   const urgentNote = (props.id === 'ur' || props.id === 'ud') ? 'للطلبات المستعجلة تضاف قيمة 50% من قيمة الرسوم' : ''

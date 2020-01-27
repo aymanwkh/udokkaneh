@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import moment from 'moment'
@@ -9,23 +9,25 @@ import { orderStatus, orderPositions } from '../data/config'
 
 const FollowupOrdersList = props => {
   const { state } = useContext(StoreContext)
-  const orders = useMemo(() => {
-    if (state.positionOrders) {
-      const orders = state.positionOrders.map(o => {
-        const customerInfo = state.customers.find(c => c.id === o.userId) || ''
-        const orderStatusInfo = orderStatus.find(s => s.id === o.status)
-        return {
-          ...o,
-          customerInfo,
-          orderStatusInfo
-        }
-      })
-      return orders.sort((o1, o2) => o2.activeTime.seconds - o1.activeTime.seconds)
-    } else {
-      return []
-    }
+  const [orders, setOrders] = useState([])
+  useEffect(() => {
+    setOrders(() => {
+      if (state.positionOrders) {
+        const orders = state.positionOrders.map(o => {
+          const customerInfo = state.customers.find(c => c.id === o.userId) || ''
+          const orderStatusInfo = orderStatus.find(s => s.id === o.status)
+          return {
+            ...o,
+            customerInfo,
+            orderStatusInfo
+          }
+        })
+        return orders.sort((o1, o2) => o2.activeTime.seconds - o1.activeTime.seconds)
+      } else {
+        return []
+      }
+    })
   }, [state.positionOrders, state.customers])
-
   return(
     <Page>
       <Navbar title={`${labels.followupOrders} ${orderPositions.find(p => p.id === props.id).name}`} backLink={labels.back} />

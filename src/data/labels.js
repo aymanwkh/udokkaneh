@@ -155,7 +155,7 @@ const labels = {
   advert: 'اعلان',
   unitPrice: 'سعر الوحدة',
   editSuccess: 'تم التعديل',
-  pendingOrderRequest: 'ارسلت سابقا طلب تعديل لطلب المشتريات هذا ولم يتم معالجته بعد',
+  duplicateOrderRequest: 'ارسلت سابقا طلب تعديل لطلب المشتريات هذا',
   merge: 'طلب دمج مع الطلب الذي قبله',
   edit: 'تعديل',
   editRequest: 'طلب تعديل',
@@ -183,7 +183,14 @@ const labels = {
   oldPrice: 'سابقا',
   newPrice: 'الحالي',
   priceHasChanged: 'حدث تغير في السعر',
-  totalPrice: 'السعر الاجمالي'
+  totalPrice: 'السعر الاجمالي',
+  changeToNoDelivery: 'الغاء خدمة التوصيل',
+  changeToWithDelivery: 'اضافة خدمة التوصيل',
+  changeToNoUrgent: 'الغاء صفة الاستعجال',
+  changeToUrgent: 'اضافة صفة الاستعجال',
+  editOrder: 'تعديل الطلب',
+  editBasket: 'تعديل الكميات',
+  editBasketRequest: 'طلب تعديل الكميات'
 }
 
 export default labels

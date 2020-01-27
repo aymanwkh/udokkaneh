@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -10,14 +10,19 @@ import { isSubCategory } from '../data/actions'
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
-  const packs = useMemo(() => {
-    const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || (props.type === 'a' && isSubCategory(p.categoryId, props.id, state.categories)) || (props.type === 'n' && p.categoryId === props.id))
-    return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
-  }, [state.packs, state.userInfo, props.id, props.type, state.categories]) 
-  const [orderedPacks, setOrderedPacks] = useState(packs)
-  const category = useMemo(() => state.categories.find(category => category.id === props.id)
-  , [state.categories, props.id])
+  const [packs, setPacks] = useState([])
+  const [orderedPacks, setOrderedPacks] = useState([])
+  const [category] = useState(() => state.categories.find(category => category.id === props.id))
   const [orderBy, setOrderBy] = useState('v')
+  useEffect(() => {
+    setPacks(() => {
+      const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || (props.type === 'a' && isSubCategory(p.categoryId, props.id, state.categories)) || (props.type === 'n' && p.categoryId === props.id))
+      return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
+    })
+  }, [state.packs, state.userInfo, props.id, props.type, state.categories])
+  useEffect(() => {
+    setOrderedPacks(packs)
+  }, [packs])
   const handleOrdering = orderByValue => {
     setOrderBy(orderByValue)
     switch(orderByValue){

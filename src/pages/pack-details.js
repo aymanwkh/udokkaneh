@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useEffect, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, Actions, ActionsButton, Row } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
@@ -13,38 +13,46 @@ const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const packs = useRef(state.packs)
-  const pack = packs.current.find(p => p.id === props.id)
-  const hasPurchased = useMemo(() => {
-    const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status) && o.basket.find(p => packs.current.find(pa => pa.id === p.packId).productId === pack.productId))
-    return deliveredOrders.length
-  }, [state.orders, pack])
-  const isAvailable = useMemo(() => state.customerInfo.storeId && state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? true : false
-  , [state.storePacks, state.customerInfo, pack])
-  const subPackInfo = useMemo(() => {
-    if (pack.subPackId) {
-      const subPack =  packs.current.find(p => p.id === pack.subPackId)
-      const price = parseInt(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
-      return `${subPack.productName} ${subPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
-    } else {
-      return ''
-    }
-  }, [pack])
-  const bonusPackInfo = useMemo(() => {
-    if (pack.bonusPackId) {
-      const bonusPack =  packs.current.find(p => p.id === pack.bonusPackId)
-      const price = parseInt(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
-      return `${bonusPack.productName} ${bonusPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
-    } else {
-      return ''
-    }
-  }, [pack])
-  const otherProducts = useMemo(() => packs.current.filter(pa => pa.tagId === pack.tagId && (pa.sales > pack.sales || pa.rating > pack.rating))
-  , [pack])
-  const otherOffers = useMemo(() => packs.current.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer))
-  , [pack])
-  const otherPacks = useMemo(() => packs.current.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice)
-  , [pack])
+  const [pack] = useState(() => state.packs.find(p => p.id === props.id))
+  const [hasPurchased, setHasPurchased] = useState('')
+  const [isAvailable, setIsAvailable] = useState('')
+  const [subPackInfo, setSubPackInfo] = useState('')
+  const [bonusPackInfo, setBonusPackInfo] = useState('')
+  const [otherProducts, setOtherProducts] = useState('')
+  const [otherOffers, setOtherOffers] = useState('')
+  const [otherPacks, setOtherPacks] = useState('')
+  useEffect(() => {
+    setHasPurchased(() => {
+      const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status) && o.basket.find(p => state.packs.find(pa => pa.id === p.packId)?.productId === pack.productId))
+      return deliveredOrders.length
+    })
+  }, [state.orders, pack, state.packs])
+  useEffect(() => {
+    setIsAvailable(() => state.customerInfo.storeId && state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? 1 : -1)
+  }, [state.storePacks, state.customerInfo, pack])
+  useEffect(() => {
+    setSubPackInfo(() => {
+      if (pack.subPackId) {
+        const subPack =  state.packs.find(p => p.id === pack.subPackId) || ''
+        const price = parseInt(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
+        return `${subPack.productName} ${subPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
+      } else {
+        return ''
+      }  
+    })
+    setBonusPackInfo(() => {
+      if (pack.bonusPackId) {
+        const bonusPack =  state.packs.find(p => p.id === pack.bonusPackId) || ''
+        const price = parseInt(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
+        return `${bonusPack.productName} ${bonusPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
+      } else {
+        return ''
+      }  
+    })
+    setOtherProducts(() => state.packs.filter(pa => pa.tagId === pack.tagId && (pa.sales > pack.sales || pa.rating > pack.rating)))
+    setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer)))
+    setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
+  }, [pack, state.packs])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -70,7 +78,7 @@ const PackDetails = props => {
       let purchasedPack = pack
       let price, maxQuantity
       if (packId !== pack.id) {
-        purchasedPack = packs.current.find(p => p.id === packId)
+        purchasedPack = state.packs.find(p => p.id === packId) || ''
         if (packId === pack.subPackId) {
           price = parseInt(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
           maxQuantity = pack.subQuantity - 1
@@ -235,7 +243,7 @@ const PackDetails = props => {
           <ActionsButton onClick={() =>props.f7router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
         }
         {alarmTypes.map(p =>
-          p.actor === 'a' || (props.type === 'c' && p.actor === 'c') || (props.type === 's' && p.actor === 'o' && p.isAvailable === isAvailable) ?
+          (props.type === 'c' && p.actor === 'c' && !state.customerInfo.storeId) || (props.type === 'o' && p.actor === 'o' && state.customerInfo.storeId && (p.isAvailable === 0 || p.isAvailable === isAvailable)) ?
             <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>{p.name}</ActionsButton>
           : ''
         )}

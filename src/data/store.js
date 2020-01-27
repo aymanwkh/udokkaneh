@@ -15,7 +15,6 @@ const Store = props => {
     packs: [],
     locations: [],
     storePacks: [],
-    orderRequests: [],
     adverts: [],
     positionOrders: [],
     customers: []
@@ -89,15 +88,6 @@ const Store = props => {
         }, err => {
           unsubscribeLocations()
         })      
-        const unsubscribeOrderRequests = firebase.firestore().collection('order-requests').where('order.userId', '==', user.uid).onSnapshot(docs => {
-          let orderRequests = []
-          docs.forEach(doc => {
-            orderRequests.push({...doc.data(), id:doc.id})
-          })
-          dispatch({type: 'SET_ORDER_REQUESTS', orderRequests})
-        }, err => {
-          unsubscribeOrderRequests()
-        })  
         if (user.photoURL) { //store owner
           const unsubscribeStorePacks = firebase.firestore().collection('store-packs').where('storeId', '==', user.photoURL).onSnapshot(docs => {
           let storePacks = []

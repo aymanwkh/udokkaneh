@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useState } from 'react'
 import { Page, Navbar, List, ListInput, Toolbar, ListItem, Toggle } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
@@ -7,8 +7,7 @@ import { deliveryIntervals } from '../data/config'
 
 const CustomerDetails = props => {
   const { state } = useContext(StoreContext)
-  const customers = useRef(state.customers)
-  const customer = customers.current.find(c => c.id === props.id)
+  const [customer] = useState(() => state.customers.find(c => c.id === props.id))
 
   return (
     <Page>

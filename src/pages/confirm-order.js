@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect, useMemo, useRef } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Toggle } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import { confirmOrder, showMessage, showError, getMessage, quantityText } from '../data/actions'
+import { confirmOrder, showMessage, showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
 import { setup } from '../data/config'
 
@@ -11,57 +11,41 @@ const ConfirmOrder = props => {
   const [withDelivery, setWithDelivery] = useState(state.customerInfo.withDelivery || false)
   const [urgent, setUrgent] = useState(false)
   const [helpParam, setHelpParam] = useState('r')
-  const customerLocation = useMemo(() => state.locations.find(l => l.id === state.customerInfo.locationId) || ''
-  , [state.locations, state.customerInfo])
+  const [customerLocation] = useState(() => state.locations.find(l => l.id === state.customerInfo.locationId) || '')
   const [deliveryFees, setDeliveryFees] = useState('')
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const packs = useRef(state.packs)
-  const basket = useMemo(() => state.basket.map(p => {
-    const packInfo = packs.current.find(pa => pa.id === p.packId) || ''
-    let lastPrice
-    if (p.offerId) {
-      const offerInfo = packs.current.find(pa => pa.id === p.offerId)
-      if (!offerInfo) {
-        lastPrice = 0
-      } else if (offerInfo.subPackId === p.packId) {
-        lastPrice = parseInt(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
-      } else {
-        lastPrice = parseInt(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
+  const [basket, setBasket] = useState([])
+  const [total, setTotal] = useState('')
+  const [fixedFees, setFixedFees] = useState('')
+  const [discount, setDiscount] = useState('')
+  const [weightedPacks, setWeightedPacks] = useState('')
+  useEffect(() => {
+    setBasket(getBasket(state.basket, state.packs))
+  }, [state.basket, state.packs])
+  useEffect(() => {
+    setTotal(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0))
+    setWeightedPacks(() => basket.filter(p => p.byWeight))
+  }, [basket])
+  useEffect(() => {
+    setFixedFees(() => {
+      const fraction = total - Math.floor(total / 50) * 50
+      const fees = Math.ceil((urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50
+      return fees - fraction
+    })
+  }, [urgent, total])
+  useEffect(() => {
+    setDiscount(() => {
+      const orders = state.orders.filter(o => o.status !== 'c')
+      let discount = 0
+      if (orders.length === 0) {
+        discount = setup.firstOrderDiscount
+      } else if (state.customerInfo.discounts > 0) {
+        discount = Math.min(state.customerInfo.discounts, setup.maxDiscount)
       }
-    } else {
-      lastPrice = packInfo.price || 0
-    }
-    const totalPriceText = `${(parseInt(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
-    const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
-    return {
-      ...p,
-      packInfo,
-      price: lastPrice,
-      priceText,
-      totalPriceText
-    }
-  }), [state.basket])
-  const total = useMemo(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0)
-  , [basket])
-  const fixedFees = useMemo(() => {
-    const fraction = total - Math.floor(total / 50) * 50
-    const fees = Math.ceil((urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50
-    return fees - fraction
-  }, [total, urgent])
-  const discount = useMemo(() => {
-    const orders = state.orders.filter(o => o.status !== 'c')
-    let discount = 0
-    if (orders.length === 0) {
-      discount = setup.firstOrderDiscount
-    } else if (state.customerInfo.discounts > 0) {
-      discount = Math.min(state.customerInfo.discounts, setup.maxDiscount)
-    }
-    return discount
-  }, [state.orders, state.customerInfo]) 
-  
-  const weightedPacks = useMemo(() => basket.filter(p => p.byWeight)
-  , [basket])
+      return discount
+    }) 
+  }, [state.orders, state.customerInfo])
   useEffect(() => {
     if (withDelivery) {
       setDeliveryFees((customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - (state.customerInfo.deliveryDiscount || 0))
@@ -71,6 +55,7 @@ const ConfirmOrder = props => {
       setHelpParam(urgent ? 'ur' : 'r')
     }
   }, [withDelivery, urgent, customerLocation, state.customerInfo])
+
   useEffect(() => {
     if (error) {
       showError(error)

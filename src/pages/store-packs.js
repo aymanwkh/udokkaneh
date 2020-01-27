@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Badge } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -10,18 +10,21 @@ import { storeSummary } from '../data/config'
 
 const StorePacks = props => {
   const { state } = useContext(StoreContext)
-  const storePacks = useMemo(() => {
-    const packs = state.storePacks.map(p => {
-      const packInfo = state.packs.find(pa => pa.id === p.packId)
-      return {
-        ...p,
-        packInfo
-      }
+  const [storePacks, setStorePacks] = useState([])
+  useEffect(() => {
+    setStorePacks(() => {
+      const packs = state.storePacks.map(p => {
+        const packInfo = state.packs.find(pa => pa.id === p.packId) || ''
+        return {
+          ...p,
+          packInfo
+        }
+      })
+      return packs.filter(p => (props.type === 'a')
+                            || (props.type === 'o' && p.price > p.packInfo.price) 
+                            || (props.type === 'n' && p.price === p.packInfo.price && p.storeId !== p.packInfo.minStoreId)
+                            || (props.type === 'l' && p.price === p.packInfo.price && p.storeId === p.packInfo.minStoreId))
     })
-    return packs.filter(p => (props.type === 'a')
-                          || (props.type === 'o' && p.price > p.packInfo.price) 
-                          || (props.type === 'n' && p.price === p.packInfo.price && p.storeId !== p.packInfo.minStoreId)
-                          || (props.type === 'l' && p.price === p.packInfo.price && p.storeId === p.packInfo.minStoreId))
   }, [state.storePacks, state.packs, props.type])
 
   return(
@@ -33,7 +36,7 @@ const StorePacks = props => {
             <ListItem title={labels.noData} /> 
           : storePacks.map(p => 
               <ListItem
-                link={`/pack-details/${p.packId}/type/s`}
+                link={`/pack-details/${p.packId}/type/o`}
                 title={p.packInfo.productName}
                 subtitle={p.packInfo.name}
                 text={`${labels.productOf} ${p.packInfo.trademark ? labels.company + ' ' + p.packInfo.trademark + '-' : ''}${p.packInfo.country}`}

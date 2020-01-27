@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -9,8 +9,10 @@ import 'moment/locale/ar'
 
 const Notifications = props => {
   const { state } = useContext(StoreContext)
-  const notifications = useMemo(() => [...state.userInfo.notifications].sort((n1, n2) => n2.time.seconds - n1.time.seconds)
-  , [state.userInfo])
+  const [notifications, setNotifications] = useState([])
+  useEffect(() => {
+    setNotifications(() => [...state.userInfo.notifications].sort((n1, n2) => n2.time.seconds - n1.time.seconds))
+  }, [state.userInfo])
   return (
     <Page>
       <Navbar title={labels.notifications} backLink={labels.back} />

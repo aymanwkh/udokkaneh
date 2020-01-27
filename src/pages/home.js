@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge, Block, Button } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
@@ -8,8 +8,10 @@ import { StoreContext } from '../data/store'
 
 const Home = props => {
   const { state } = useContext(StoreContext)
-  const advert = useMemo(() => state.adverts.find(a => a.isActive)
-  , [state.adverts])
+  const [advert, setAdvert] = useState('')
+  useEffect(() => {
+    setAdvert(() => state.adverts.find(a => a.isActive))
+  }, [state.adverts])
   return (
     <Page>
       <Navbar large>

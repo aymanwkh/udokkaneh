@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -11,12 +11,13 @@ import 'moment/locale/ar'
 const PurchasedPacks = props => {
 	const { state } = useContext(StoreContext)
 	const [purchasedPacks, setPurchasedPacks] = useState([])
-	const deliveredOrders = useMemo(() => {
-    const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status))
-    return deliveredOrders.sort((o1, o2) => o1.activeTime.seconds - o2.activeTime.seconds)
+  const [deliveredOrders, setDeliveredOrders] = useState([])
+  useEffect(() => {
+    setDeliveredOrders(() => {
+      const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status))
+      return deliveredOrders.sort((o1, o2) => o1.activeTime.seconds - o2.activeTime.seconds)
+    })
   }, [state.orders])
-	
-	let i = 0
 	useEffect(() => {
 		let packsArray = []
 		deliveredOrders.forEach(o => {
@@ -47,7 +48,8 @@ const PurchasedPacks = props => {
 			})
 		})
 		setPurchasedPacks(packsArray.sort((p1, p2) => p2.lastTime.seconds - p1.lastTime.sconds))
-	}, [deliveredOrders])
+  }, [deliveredOrders])
+  let i = 0
   return(
     <Page>
       <Navbar title={labels.purchasedPacks} backLink={labels.back} />

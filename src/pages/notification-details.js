@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { f7, Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
@@ -11,13 +11,12 @@ const NotificationDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const userInfo = useRef(state.userInfo)
-  const notification = userInfo.current.notifications.find(n => n.id === Number(props.id))
+  const [notification] = useState(() => state.userInfo.notifications.find(n => n.id === Number(props.id)))
   useEffect(() => {
     const updateNotification = async () => {
       try{
         setInprocess(true)
-        await readNotification(userInfo.current, notification.id)
+        await readNotification(state.userInfo, notification.id)
         setInprocess(false)
       } catch(err) {
         setInprocess(false)
@@ -25,7 +24,7 @@ const NotificationDetails = props => {
 		  }
     }
     if (notification.status === 'n') updateNotification()
-  }, [notification, props])
+  }, [notification, props, state.userInfo])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -42,7 +41,7 @@ const NotificationDetails = props => {
   const handleDelete = async () => {
     try{
       setInprocess(true)
-      await deleteNotification(userInfo.current, notification.id)
+      await deleteNotification(state.userInfo, notification.id)
       setInprocess(false)
       showMessage(labels.deleteSuccess)
       props.f7router.back()

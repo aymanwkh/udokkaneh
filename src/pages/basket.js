@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useMemo, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { showError, getMessage, quantityText } from '../data/actions'
+import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
 import { setup } from '../data/config'
 
@@ -10,53 +10,21 @@ const Basket = props => {
   const [error, setError] = useState('')
   const [submitVisible, setSubmitVisible] = useState(true)
   const [currentPack, setCurrentPack] = useState('')
-  const packs = useRef(state.packs)
-  const basket = useMemo(() => {
-    const basket = state.basket.map(p => {
-      const packInfo = packs.current.find(pa => pa.id === p.packId) || ''
-      let lastPrice
-      if (p.offerId) {
-        const offerInfo = packs.current.find(pa => pa.id === p.offerId)
-        if (!offerInfo) {
-          lastPrice = 0
-        } else if (offerInfo.subPackId === p.packId) {
-          lastPrice = parseInt(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
-        } else {
-          lastPrice = parseInt(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
-        }
-      } else {
-        lastPrice = packInfo.price || 0
-      }
-      const totalPriceText = `${labels.totalPrice}: ${(parseInt(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
-      const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
-      const otherProducts = packs.current.filter(pa => pa.tagId === packInfo.tagId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
-      const otherOffers = packs.current.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
-      const otherPacks = packs.current.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
-      return {
-        ...p,
-        price: lastPrice,
-        packInfo,
-        totalPriceText,
-        priceText,
-        otherProducts: otherProducts.length,
-        otherOffers: otherOffers.length,
-        otherPacks: otherPacks.length
-      }
-    })
-    return basket.sort((p1, p2) => p1.time > p2.time ? 1 : -1)
-  }, [state.basket])
-  const totalPrice = useMemo(() => basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0)
-  , [basket])
-
-  const weightedPacks = useMemo(() => state.basket.filter(p => p.byWeight)
-  , [state.basket])
-  const customerOrdersTotals = useMemo(() => {
+  const [basket, setBasket] = useState([])
+  const [totalPrice, setTotalPrice] = useState('')
+  const [weightedPacks, setWeightedPacks] = useState('')
+  const [customerOrdersTotals] = useState(() => {
     const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
     return activeOrders.reduce((sum, o) => sum + o.total, 0)
-  }, [state.orders])
+  })
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
-  }, [state.basket, props])
+    else setBasket(getBasket(state.basket, state.packs))
+  }, [state.basket, state.packs, props])
+  useEffect(() => {
+    setTotalPrice(() => basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0))
+    setWeightedPacks(() => basket.filter(p => p.byWeight))
+  }, [basket])
   useEffect(() => {
     if (customerOrdersTotals + totalPrice > (state.customerInfo.orderLimit || setup.orderLimit)){
       setSubmitVisible(false)
@@ -112,15 +80,14 @@ const Basket = props => {
             key={p.packId}
             className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
           >
-            <div className="list-subtext1">{p.totalPriceText}</div>
+            <div className="list-subtext1">{`${labels.totalPrice}:${p.totalPriceText}`}</div>
             {p.price === 0 ? '' : 
               <Stepper 
                 slot="after" 
                 fill
                 buttonsOnly
                 onStepperPlusClick={() => handleIncrease(p)}
-                on
-                StepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
+                onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
               />
             }
             {(p.otherProducts + p.otherOffers + p.otherPacks === 0) ? '' : 

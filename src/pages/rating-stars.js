@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { useState } from 'react'
 import { Icon } from 'framework7-react'
 
 const RatingStars = props => {
-  const stars = useMemo(() => {
+  const [stars] = useState(() => {
     const rating_int = parseInt(props.rating)
     const rating_fraction = Number(props.rating) - rating_int
     let color
@@ -31,7 +31,7 @@ const RatingStars = props => {
       stars.unshift(<Icon key={i} material="star_border" color={color}></Icon>)
     }
     return stars
-  }, [props.rating])
+  })
   return(
     <React.Fragment>
       {Number(props.count) > 0 ? '(' + props.count + ')' : ''}{stars}

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { quantityDetails } from '../data/actions'
@@ -8,21 +8,23 @@ import BottomToolbar from './bottom-toolbar'
 
 const ReturnOrder = props => {
   const { state } = useContext(StoreContext)
-  const orderBasket = useMemo(() => {
-    const order = state.orders.find(o => o.id === props.id)
-    let basket = order.basket
-    basket = basket.map(p => {
-      const changePriceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : ''
-      const statusNote = `${orderPackStatus.find(s => s.id === p.status).name} ${p.overPriced ? labels.overPricedNote : ''}`
-      return {
-        ...p,
-        changePriceNote,
-        statusNote
-      }
+  const [orderBasket, setOrderBasket] = useState([])
+  useEffect(() => {
+    setOrderBasket(() => {
+      const order = state.orders.find(o => o.id === props.id)
+      let basket = order.basket
+      basket = basket.map(p => {
+        const changePriceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : ''
+        const statusNote = `${orderPackStatus.find(s => s.id === p.status).name} ${p.overPriced ? labels.overPricedNote : ''}`
+        return {
+          ...p,
+          changePriceNote,
+          statusNote
+        }
+      })
+      return basket
     })
-    return basket
   }, [state.orders, props.id])
-
   return(
     <Page>
       <Navbar title={labels.returnOrder} backLink={labels.back} />
