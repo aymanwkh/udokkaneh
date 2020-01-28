@@ -207,6 +207,13 @@ export const inviteFriend = (user, mobile, name) => {
   })
 }
 
+export const addDebitRequest = () => {
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    debitRequestStatus: 'n',
+    debitRequestTime: firebase.firestore.FieldValue.serverTimestamp()
+  })
+}
+
 export const readNotification = (user, notificationId) => {
   const notifications = user.notifications.slice()
   const notificationIndex = notifications.findIndex(n => n.id === notificationId)

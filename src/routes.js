@@ -29,6 +29,7 @@ import FollowupOrdersList from './pages/followup-orders-list'
 import CustomerDetails from './pages/customer-details'
 import ReturnOrder from './pages/return-order'
 import ReturnOrderPack from './pages/return-order-pack'
+import Debit from './pages/debit'
 
 export default [
   {
@@ -169,7 +170,10 @@ export default [
     path: '/return-order-pack/:orderId/pack/:packId',
     component: ReturnOrderPack
   },
-
+  {
+    path: '/debit/',
+    component: Debit
+  },
   {
     path: '(.*)',
     component: NotFoundPage,

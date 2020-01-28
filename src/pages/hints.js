@@ -13,9 +13,9 @@ const Hints = props => {
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
-        (props.type === 'p' && p.tagId === pack.current.tagId && (p.sales > pack.current.sales || p.rating > pack.current.rating)) ||
-        (props.type === 'o' && p.productId === pack.current.productId && p.id !== pack.current.id && (p.isOffer || p.endOffer)) ||
-        (props.type === 'w' && p.productId === pack.current.productId && p.weightedPrice < pack.current.weightedPrice)
+        (props.type === 'p' && p.tagId === pack.tagId && (p.sales > pack.sales || p.rating > pack.rating)) ||
+        (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.endOffer)) ||
+        (props.type === 'w' && p.productId === pack.productId && p.weightedPrice < pack.weightedPrice)
       )
       return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
     })
@@ -30,7 +30,7 @@ const Hints = props => {
           : packs.map(p => {
               return (
                 <ListItem
-                  link={`/pack-details/${p.id}`}
+                  link={`/pack-details/${p.id}/type/c`}
                   title={p.productName}
                   subtitle={p.name}
                   text={`${labels.productOf} ${p.trademark ? labels.company + ' ' + p.trademark + '-' : ''}${p.country}`}

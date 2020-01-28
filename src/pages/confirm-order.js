@@ -73,7 +73,7 @@ const ConfirmOrder = props => {
   const handleConfirm = async () => {
     try{
       if (state.adverts[0]?.type === 'n') {
-        showMessage(state.adverts[0].message)
+        showMessage(state.adverts[0].text)
         return
       }
       if (state.customerInfo.isBlocked) {

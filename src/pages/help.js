@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Page, Navbar, Block, Icon } from 'framework7-react'
+import { Page, Navbar, Block, Icon, Toolbar } from 'framework7-react'
 import labels from '../data/labels'
+import BottomToolbar from './bottom-toolbar'
 
 const Help = props => {
   const [helpNote] = useState(() => {
@@ -32,6 +33,9 @@ const Help = props => {
         <p className="note">{deliveryNote}</p>
         <p className="note">{urgentNote}</p>
       </Block>
+      <Toolbar bottom>
+        <BottomToolbar/>
+      </Toolbar>
     </Page>
   )
 }

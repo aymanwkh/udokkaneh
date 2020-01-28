@@ -190,7 +190,9 @@ const labels = {
   changeToUrgent: 'اضافة صفة الاستعجال',
   editOrder: 'تعديل الطلب',
   editBasket: 'تعديل الكميات',
-  editBasketRequest: 'طلب تعديل الكميات'
+  editBasketRequest: 'طلب تعديل الكميات',
+  notifyDebit: 'ابلغني عند تفعيل الخدمة',
+  debitRequest: 'الدفع لاحقا'
 }
 
 export default labels
