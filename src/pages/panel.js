@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
+import { f7, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { logout } from '../data/actions'
 import labels from '../data/labels'
@@ -27,11 +27,7 @@ const Panel = props => {
           <ListItem link="/panel-login/" title={labels.loginTitle} />
         }
         {user ? <ListItem link="/change-password/" title={labels.changePassword} /> : ''}
-        {user ? 
-          <ListItem link="/notifications/" title={labels.notifications} view="#main-view" panelClose >
-            {notifications.length > 0 ? <Badge color="red">{notifications.length}</Badge> : ''}
-          </ListItem> 
-        : ''}
+        {user ? <ListItem link="/notifications/" title={labels.notifications} badge={notifications.length} badgeColor="red" view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/packs/0/type/f" title={labels.favorites} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/orders-list/" title={labels.myOrders} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/purchased-packs/" title={labels.purchasedPacks} view="#main-view" panelClose /> : ''}

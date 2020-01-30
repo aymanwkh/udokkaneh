@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
@@ -17,6 +17,7 @@ const Basket = props => {
     const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
     return activeOrders.reduce((sum, o) => sum + o.total, 0)
   })
+  const hintsList = useRef('')
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
     else setBasket(getBasket(state.basket, state.packs))
@@ -64,7 +65,7 @@ const Basket = props => {
   }
   const handleHints = pack => {
     setCurrentPack(pack)
-    f7.actions.open('#basket-hints')
+    hintsList.current.open()
   }
   return(
     <Page>
@@ -106,7 +107,7 @@ const Basket = props => {
         <Icon material="report_problem"></Icon>
       </Fab>
     }
-    <Actions id="basket-hints">
+    <Actions ref={hintsList}>
       {currentPack.otherProducts === 0 ? '' :
         <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
       }

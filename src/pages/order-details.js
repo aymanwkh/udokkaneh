@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -13,6 +13,7 @@ const OrderDetails = props => {
   const [order] = useState(() => props.type === 'f' ? state.positionOrders.find(o => o.id === props.id) : state.orders.find(o => o.id === props.id))
   const [orderBasket, setOrderBasket] = useState([])
   const [lastOrder, setLastOrder] = useState('')
+  const orderActions = useRef('')
   useEffect(() => {
     setOrderBasket(() => order.basket.map(p => {
       const changePriceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : ''
@@ -149,7 +150,7 @@ const OrderDetails = props => {
     <Page>
       <Navbar title={labels.orderDetails} backLink={labels.back} />
       {['n', 'a', 'e', 'd', 'p'].includes(order.status) ? 
-        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => f7.actions.open('#order-actions')}>
+        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => orderActions.current.open()}>
           <Icon material="build"></Icon>
         </Fab>
       : ''}
@@ -200,7 +201,7 @@ const OrderDetails = props => {
         </List>
       </Block>
       {props.type === 'f' ?
-        <Actions id="order-actions">
+        <Actions ref={orderActions}>
           <ActionsButton onClick={() => props.f7router.navigate(`/customer-details/${order.userId}`)}>{labels.customerInfo}</ActionsButton>
           <ActionsButton onClick={() => props.f7router.navigate(`/return-order/${order.id}`)}>{labels.returnPacks}</ActionsButton>
           {order.total === 0 || order.status === 't' ? '' :
@@ -208,7 +209,7 @@ const OrderDetails = props => {
           }
         </Actions>
       : 
-        <Actions id="order-actions">
+        <Actions ref={orderActions}>
           <ActionsButton onClick={() => handleEdit()}>{order.status === 'n' ? labels.editBasket : labels.editBasketRequest}</ActionsButton>
           <ActionsButton onClick={() => handleDelete()}>{order.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
           {order.status === 'n' && lastOrder ? 

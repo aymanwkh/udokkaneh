@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { randomColors } from '../data/config'
+import labels from '../data/labels'
 
 const MainCategories = props => {
   const { state } = useContext(StoreContext)
@@ -15,6 +16,14 @@ const MainCategories = props => {
   let i = 0
   return (
     <React.Fragment>
+      <Button
+        text={labels.allProducts}
+        href={`/search/`} 
+        large 
+        fill 
+        className="sections" 
+        color={randomColors[i++ % 10].name} 
+      />
       {categories.map(c => {
         return (
           <Button

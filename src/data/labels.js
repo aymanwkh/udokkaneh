@@ -16,7 +16,7 @@ const labels = {
   auth_email_already_in_use: 'رقم الموبايل مسجل سابقا',
   auth_wrong_password: 'كلمة السر غير صحيحة',
   productOf: 'انتاج',
-  orderBy: 'الترتيب حسب',
+  sortBy: 'الترتيب حسب',
   new: 'جديد',
   offer: 'عرض',
   confirmOrder: 'اعتماد الطلب',

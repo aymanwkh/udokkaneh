@@ -71,7 +71,6 @@ export const isSubCategory = (category1, category2, categories) => {
 
 }
 
-
 export const rateProduct = (user, productId, value) => {
   const ratings = user.ratings?.slice() || []
   ratings.push({
@@ -186,7 +185,7 @@ export const addAlarm = (user, alarm) => {
   const alarms = user.alarms?.slice() || []
   alarms.push({
     ...alarm,
-    id: Math.random(),
+    id: Math.random().toString(),
     status: 'n',
     time: new Date()
   })
@@ -369,7 +368,7 @@ export const getBasket = (stateBasket, packs) => {
     }
     const totalPriceText = `${(parseInt(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
     const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
-    const otherProducts = packs.filter(pa => pa.tagId === packInfo.tagId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
+    const otherProducts = packs.filter(pa => pa.tag === packInfo.tag && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
     const otherOffers = packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
     const otherPacks = packs.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
     return {

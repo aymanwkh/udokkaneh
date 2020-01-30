@@ -13,7 +13,7 @@ const Hints = props => {
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
-        (props.type === 'p' && p.tagId === pack.tagId && (p.sales > pack.sales || p.rating > pack.rating)) ||
+        (props.type === 'p' && p.tag === pack.tag && (p.sales > pack.sales || p.rating > pack.rating)) ||
         (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.endOffer)) ||
         (props.type === 'w' && p.productId === pack.productId && p.weightedPrice < pack.weightedPrice)
       )

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, Actions, ActionsButton, Row } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
@@ -21,6 +21,8 @@ const PackDetails = props => {
   const [otherProducts, setOtherProducts] = useState('')
   const [otherOffers, setOtherOffers] = useState('')
   const [otherPacks, setOtherPacks] = useState('')
+  const offerActions = useRef('')
+  const packActions = useRef('')
   useEffect(() => {
     setHasPurchased(() => {
       const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status) && o.basket.find(p => state.packs.find(pa => pa.id === p.packId)?.productId === pack.productId))
@@ -49,7 +51,7 @@ const PackDetails = props => {
         return ''
       }  
     })
-    setOtherProducts(() => state.packs.filter(pa => pa.tagId === pack.tagId && (pa.sales > pack.sales || pa.rating > pack.rating)))
+    setOtherProducts(() => state.packs.filter(pa => pa.tag === pack.tag && (pa.sales > pack.sales || pa.rating > pack.rating)))
     setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer)))
     setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
   }, [pack, state.packs])
@@ -184,7 +186,7 @@ const PackDetails = props => {
                 {(pack.price / 1000).toFixed(3)}
               </div>
               <div>
-                <Link iconMaterial="warning" iconColor="red" onClick={() => f7.actions.open('#pack-actions')} />
+                <Link iconMaterial="warning" iconColor="red" onClick={() => packActions.current.open()} />
               </div>
             </Row>
             <span className="list-subtext1">{pack.offerEnd ? `${labels.offerUpTo}: ${moment(pack.offerEnd.toDate()).format('Y/M/D')}` : ''}</span>
@@ -202,7 +204,7 @@ const PackDetails = props => {
         slot="fixed" 
         text={labels.addToBasket} 
         color="green" 
-        onClick={() => pack.isOffer ? f7.actions.open('#offer-options') : addToBasket(pack.id)}
+        onClick={() => pack.isOffer ? offerActions.current.open() : addToBasket(pack.id)}
       >
         <Icon material="add"></Icon>
       </Fab>
@@ -232,7 +234,7 @@ const PackDetails = props => {
           </FabButtons>
         </Fab>
       : ''}
-      <Actions id="pack-actions">
+      <Actions ref={packActions}>
         {otherProducts.length === 0 ? '' :
           <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
         }
@@ -248,7 +250,7 @@ const PackDetails = props => {
           : ''
         )}
       </Actions>
-      <Actions id="offer-options">
+      <Actions ref={offerActions}>
         <ActionsButton onClick={() => addToBasket(pack.id)}>{labels.allOffer}</ActionsButton>
         <ActionsButton onClick={() => addToBasket(pack.subPackId)}>{subPackInfo}</ActionsButton>
         {pack.bonusPackId ? <ActionsButton onClick={() => addToBasket(pack.bonusPackId)}>{bonusPackInfo}</ActionsButton> : ''}

@@ -9,14 +9,18 @@ import { StoreContext } from '../data/store'
 const Home = props => {
   const { state } = useContext(StoreContext)
   const [advert, setAdvert] = useState('')
+  const [notifications, setNotifications] = useState([])
   useEffect(() => {
     setAdvert(() => state.adverts.find(a => a.isActive))
   }, [state.adverts])
+  useEffect(() => {
+    setNotifications(() => state.userInfo.notifications?.filter(n => n.status === 'n') || [])
+  }, [state.userInfo])
   return (
     <Page>
       <Navbar large>
         <NavLeft>
-          <Link iconMaterial="menu" panelOpen="right"></Link>
+          <Link iconMaterial="menu" panelOpen="right" iconBadge={notifications.length} badgeColor="red" />
         </NavLeft>
         <NavTitle sliding>
           <img src="/dokaneh_logo.png" alt="logo" className="logo" />

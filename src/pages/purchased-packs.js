@@ -3,7 +3,6 @@ import { Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import { quantityText, addQuantity } from '../data/actions'
-import PackImage from './pack-image'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
@@ -65,7 +64,6 @@ const PurchasedPacks = props => {
                 footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}
 								key={i++}
 							>
-								<PackImage slot="media" pack={p.packInfo} type="list" />
                 <div className="list-subtext1">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
                 <div className="list-subtext2">{`${labels.lastQuantity}: ${quantityText(p.lastQuantity)}`}</div>
 							</ListItem>

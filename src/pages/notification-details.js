@@ -11,7 +11,7 @@ const NotificationDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const [notification] = useState(() => state.userInfo.notifications.find(n => n.id === Number(props.id)))
+  const [notification] = useState(() => state.userInfo.notifications.find(n => n.id === props.id))
   useEffect(() => {
     const updateNotification = async () => {
       try{

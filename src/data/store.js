@@ -22,7 +22,7 @@ const Store = props => {
   const [state, dispatch] = useReducer(Reducer, initState)
 
   useEffect(() => {
-    const unsubscribeCategories = firebase.firestore().collection('categories').onSnapshot(docs => {
+    const unsubscribeCategories = firebase.firestore().collection('categories').where('isActive', '==', true).onSnapshot(docs => {
       let categories = []
       docs.forEach(doc => {
         categories.push({...doc.data(), id:doc.id})

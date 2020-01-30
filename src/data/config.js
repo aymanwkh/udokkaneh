@@ -20,7 +20,7 @@ export const randomColors = [
   {id: 9, name: 'teal'},
 ]
 
-export const orderByList = [
+export const sortByList = [
   {id: 'p', name: 'اﻷقل سعرا'},
   {id: 's', name: 'اﻷكثر مبيعا'},
   {id: 'r', name: 'اﻷفضل في التقييم'},
