@@ -154,7 +154,7 @@ const PackDetails = props => {
       setInprocess(true)
       await updateFavorites(state.userInfo, pack.productId)
       setInprocess(false)
-      showMessage(state.userInfo?.favorites?.includes(pack.productId) ? labels.addFavoriteSuccess : labels.removeFavoriteSuccess)
+      showMessage(state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)
 		} catch (err){
       setInprocess(false)
       setError(getMessage(props, err))
@@ -174,7 +174,6 @@ const PackDetails = props => {
       setError(getMessage(props, err))
     }
   }
-
   return (
     <Page>
       <Navbar title={pack.productName} backLink={labels.back} />
@@ -223,14 +222,9 @@ const PackDetails = props => {
                 <Icon material="thumb_down"></Icon>
               </FabButton>
             }
-            {state.userInfo.favorites?.includes(pack.id) ? 
-              <FabButton color="pink" onClick={() => handleFavorite()}>
-                <Icon material="flash_off"></Icon>
-              </FabButton>
-            : <FabButton color="pink" onClick={() => handleFavorite()}>
-                <Icon material="flash_on"></Icon>
-              </FabButton>
-            }
+            <FabButton color="pink" onClick={() => handleFavorite()}>
+              <Icon material={state.userInfo.favorites?.includes(pack.productId) ? 'remove_circle_outline' : 'add_circle_outline'}></Icon>
+            </FabButton>
           </FabButtons>
         </Fab>
       : ''}

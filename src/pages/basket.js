@@ -103,7 +103,7 @@ const Basket = props => {
       <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
         <Icon material="done"></Icon>
       </Fab>
-    : <Fab position="center-bottom" slot="fixed" text={labels.limitOverFlowNote} color="red" href="/help/o">
+    : <Fab position="center-bottom" slot="fixed" text={labels.limitOverFlowNote} color="red" href="/help/ol">
         <Icon material="report_problem"></Icon>
       </Fab>
     }

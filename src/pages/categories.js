@@ -4,16 +4,24 @@ import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 import { randomColors } from '../data/config'
+import { hasChild } from '../data/actions'
 
 const Categories = props => {
   const { state } = useContext(StoreContext)
   const [categories, setCategories] = useState([])
   useEffect(() => {
     setCategories(() => {
-      const categories = state.categories.filter(c => c.parentId === props.id)
+      let categories = state.categories.filter(c => c.parentId === props.id)
+      categories = categories.map(c => {
+        return {
+          ...c,
+          hasChild: hasChild(c, state.packs, state.categories)
+        }
+      })
+      categories = categories.filter(c => c.hasChild)
       return categories.sort((c1, c2) => c1.ordering - c2.ordering)
     })
-  }, [state.categories, props.id])
+  }, [state.categories, state.packs, props.id])
  
   let i = 0
   return(

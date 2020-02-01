@@ -71,13 +71,16 @@ export const isSubCategory = (category1, category2, categories) => {
 
 }
 
+export const hasChild = (category, packs, categories) => {
+  return category.isLeaf ? packs.find(p => p.categoryId === category.id) : categories.find(c => c.parentId === category.id && hasChild(c, packs, categories))
+}
+
 export const rateProduct = (user, productId, value) => {
-  const ratings = user.ratings?.slice() || []
-  ratings.push({
+  const ratings = [...user.ratings, {
     productId,
     value,
     status: 'n'
-  })
+  }]
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     ratings
   })
@@ -182,25 +185,23 @@ export const registerStoreOwner = async (owner, password) => {
 }
 
 export const addAlarm = (user, alarm) => {
-  const alarms = user.alarms?.slice() || []
-  alarms.push({
+  const alarms = [...user.alarms, {
     ...alarm,
     id: Math.random().toString(),
     status: 'n',
     time: new Date()
-  })
+  }]
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     alarms
   })
 }
 
 export const inviteFriend = (user, mobile, name) => {
-  const invitations = user.invitations?.slice() || []
-  invitations.push({
+  const invitations = [...user.invitations, {
     mobile,
     name,
     status: 'n'
-  })
+  }]
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     invitations
   })

@@ -21,14 +21,13 @@ const PurchasedPacks = props => {
 		let packsArray = []
 		deliveredOrders.forEach(o => {
 			o.basket.forEach(p => {
-        const found = packsArray.find(pa => pa.packId === p.packId)
-				if (found) {
-          packsArray = packsArray.filter(pa => pa.packId !== found.packId)
-          packsArray.push({
-            ...found,
-            bestPrice: found.bestPrice <= p.actual ? found.bestPrice : p.actual,
+        const found = packsArray.findIndex(pa => pa.packId === p.packId)
+				if (found > -1) {
+          packsArray.splice(found, 1, {
+            ...packsArray[found],
+            bestPrice: packsArray[found].bestPrice <= p.actual ? packsArray[found].bestPrice : p.actual,
             lastPrice: p.actual,
-            quantity: addQuantity(found.quantity, p.purchased),
+            quantity: addQuantity(packsArray[found].quantity, p.purchased),
             lastQuantity: p.purchased,
             lastTime: o.activeTime
           })
