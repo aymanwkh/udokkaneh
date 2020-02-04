@@ -3,7 +3,7 @@ import { f7, Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
-import { readNotification, deleteNotification, getMessage, showError, showMessage } from '../data/actions'
+import { deleteNotification, getMessage, showError, showMessage } from '../data/actions'
 import moment from 'moment'
 import 'moment/locale/ar'
 
@@ -12,19 +12,6 @@ const NotificationDetails = props => {
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
   const [notification] = useState(() => state.userInfo.notifications.find(n => n.id === props.id))
-  useEffect(() => {
-    const updateNotification = async () => {
-      try{
-        setInprocess(true)
-        await readNotification(state.userInfo, notification.id)
-        setInprocess(false)
-      } catch(err) {
-        setInprocess(false)
-			  setError(getMessage(props, err))
-		  }
-    }
-    if (notification.status === 'n') updateNotification()
-  }, [notification, props, state.userInfo])
   useEffect(() => {
     if (error) {
       showError(error)

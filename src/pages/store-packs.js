@@ -7,6 +7,7 @@ import 'moment/locale/ar'
 import PackImage from './pack-image'
 import labels from '../data/labels'
 import { storeSummary } from '../data/config'
+import { productOfText } from '../data/actions'
 
 const StorePacks = props => {
   const { state } = useContext(StoreContext)
@@ -39,7 +40,7 @@ const StorePacks = props => {
                 link={`/pack-details/${p.packId}/type/o`}
                 title={p.packInfo.productName}
                 subtitle={p.packInfo.name}
-                text={`${labels.productOf} ${p.packInfo.trademark ? labels.company + ' ' + p.packInfo.trademark + '-' : ''}${p.packInfo.country}`}
+                text={productOfText(p.packInfo.trademark, p.packInfo.country)}
                 footer={moment(p.time.toDate()).fromNow()}
                 after={(p.packInfo.price / 1000).toFixed(3)}
                 key={p.id}

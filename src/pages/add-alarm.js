@@ -119,7 +119,7 @@ const AddAlarm = props => {
         offerDays: Number(offerDays)
       }
       setInprocess(true)
-      await addAlarm(state.userInfo, alarm)
+      await addAlarm(alarm)
       setInprocess(false)
       showMessage(labels.sendSuccess)
       props.f7router.back()

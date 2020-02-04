@@ -148,11 +148,6 @@ const Reducer = (state, action) => {
         ...state,
         categories: action.categories
       }
-    case 'SET_LOCATIONS':
-      return {
-        ...state,
-        locations: action.locations
-      }
     case 'SET_STORE_PACKS':
       return {
         ...state,

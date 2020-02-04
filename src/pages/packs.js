@@ -6,7 +6,7 @@ import PackImage from './pack-image'
 import moment from 'moment'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
-import { isSubCategory } from '../data/actions'
+import { getChildren, productOfText } from '../data/actions'
 
 const Packs = props => {
   const { state } = useContext(StoreContext)
@@ -16,7 +16,8 @@ const Packs = props => {
   const sortList = useRef('')
   useEffect(() => {
     setPacks(() => {
-      const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || (props.type === 'a' && isSubCategory(p.categoryId, props.id, state.categories)) || (props.type === 'n' && p.categoryId === props.id))
+      const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
+      const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
       return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories])
@@ -76,7 +77,7 @@ const Packs = props => {
                 link={`/pack-details/${p.id}/type/c`}
                 title={p.productName}
                 subtitle={p.name}
-                text={`${labels.productOf} ${p.trademark ? labels.company + ' ' + p.trademark + '-' : ''}${p.country}`}
+                text={productOfText(p.trademark, p.country)}
                 footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}

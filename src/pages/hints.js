@@ -5,6 +5,7 @@ import { StoreContext } from '../data/store'
 import PackImage from './pack-image'
 import moment from 'moment'
 import labels from '../data/labels'
+import { productOfText } from '../data/actions'
 
 const Hints = props => {
   const { state } = useContext(StoreContext)
@@ -13,7 +14,7 @@ const Hints = props => {
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
-        (props.type === 'p' && p.tag === pack.tag && (p.sales > pack.sales || p.rating > pack.rating)) ||
+        (props.type === 'p' && p.categoryId === pack.categoryId && (p.sales > pack.sales || p.rating > pack.rating)) ||
         (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.endOffer)) ||
         (props.type === 'w' && p.productId === pack.productId && p.weightedPrice < pack.weightedPrice)
       )
@@ -33,7 +34,7 @@ const Hints = props => {
                   link={`/pack-details/${p.id}/type/c`}
                   title={p.productName}
                   subtitle={p.name}
-                  text={`${labels.productOf} ${p.trademark ? labels.company + ' ' + p.trademark + '-' : ''}${p.country}`}
+                  text={productOfText(p.trademark, p.country)}
                   footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                   after={(p.price / 1000).toFixed(3)}
                   key={p.id}

@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Page, Navbar, Card, CardContent, CardHeader, Link, Fab, FabButton, FabButtons, Toolbar, Icon, Actions, ActionsButton, Row } from 'framework7-react'
+import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Toolbar, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
-import { addAlarm, showMessage, showError, getMessage, updateFavorites, rateProduct } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage, updateFavorites, rateProduct, productOfText } from '../data/actions'
 import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
@@ -30,7 +30,7 @@ const PackDetails = props => {
     })
   }, [state.orders, pack, state.packs])
   useEffect(() => {
-    setIsAvailable(() => state.customerInfo.storeId && state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? 1 : -1)
+    setIsAvailable(() => state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? 1 : -1)
   }, [state.storePacks, state.customerInfo, pack])
   useEffect(() => {
     setSubPackInfo(() => {
@@ -51,7 +51,7 @@ const PackDetails = props => {
         return ''
       }  
     })
-    setOtherProducts(() => state.packs.filter(pa => pa.tag === pack.tag && (pa.sales > pack.sales || pa.rating > pack.rating)))
+    setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack.categoryId && (pa.sales > pack.sales || pa.rating > pack.rating)))
     setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer)))
     setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
   }, [pack, state.packs])
@@ -166,7 +166,7 @@ const PackDetails = props => {
         throw new Error('blockedUser')
       }
       setInprocess(true)
-      await rateProduct(state.userInfo, pack.productId, value)
+      await rateProduct(pack.productId, value)
       setInprocess(false)
       showMessage(labels.ratingSuccess)
     } catch(err) {
@@ -180,67 +180,70 @@ const PackDetails = props => {
       <Card>
         <CardHeader className="card-header">
           <div>
-            <Row>
-              <div className="price">
-                {(pack.price / 1000).toFixed(3)}
-              </div>
-              <div>
-                <Link iconMaterial="warning" iconColor="red" onClick={() => packActions.current.open()} />
-              </div>
-            </Row>
+            <div className="price">
+              {(pack.price / 1000).toFixed(3)}
+            </div>
             <span className="list-subtext1">{pack.offerEnd ? `${labels.offerUpTo}: ${moment(pack.offerEnd.toDate()).format('Y/M/D')}` : ''}</span>
           </div>
-          {pack.trademark ? <div className="rating-stars"><RatingStars rating={pack.rating} count={pack.ratingCount} /> </div> : ''}
         </CardHeader>
         <CardContent>
           <div className="card-title">{pack.name}</div>
           <PackImage pack={pack} type="card" />
-          <div>{`${labels.productOf} ${pack.trademark ? labels.company + ' ' + pack.trademark + '-' : ''}${pack.country}`}</div>
         </CardContent>
+        <CardFooter>
+          <p>{productOfText(pack.trademark, pack.country)}</p>
+          {pack.trademark ? <p><RatingStars rating={pack.rating} count={pack.ratingCount} /></p> : ''}
+        </CardFooter>
+
       </Card>
-      <Fab 
-        position="center-bottom" 
-        slot="fixed" 
-        text={labels.addToBasket} 
-        color="green" 
-        onClick={() => pack.isOffer ? offerActions.current.open() : addToBasket(pack.id)}
-      >
-        <Icon material="add"></Icon>
-      </Fab>
+      {props.type === 'c' ? 
+        <Fab 
+          position="center-bottom" 
+          slot="fixed" 
+          text={labels.addToBasket} 
+          color="green" 
+          onClick={() => pack.isOffer ? offerActions.current.open() : addToBasket(pack.id)}
+        >
+          <Icon material="add"></Icon>
+        </Fab>
+      : ''}
       {user ?
-        <Fab position="left-top" slot="fixed" color="blue" className="top-fab">
-          <Icon material="favorite_border"></Icon>
-          <Icon material="close"></Icon>
-          <FabButtons position="bottom">
-            {!pack.trademark || hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
-              <FabButton color="green" onClick={() => handleRate(1)}>
-                <Icon material="thumb_up"></Icon>
-              </FabButton>
-            }
-            {!pack.trademark || hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
-              <FabButton color="red" onClick={() => handleRate(0)}>
-                <Icon material="thumb_down"></Icon>
-              </FabButton>
-            }
-            <FabButton color="pink" onClick={() => handleFavorite()}>
-              <Icon material={state.userInfo.favorites?.includes(pack.productId) ? 'remove_circle_outline' : 'add_circle_outline'}></Icon>
-            </FabButton>
-          </FabButtons>
+        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => packActions.current.open()}>
+          <Icon material="settings"></Icon>
         </Fab>
       : ''}
       <Actions ref={packActions}>
-        {otherProducts.length === 0 ? '' :
-          <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
-        }
-        {otherOffers.length === 0 ? '' :
-          <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/o`)}>{labels.otherOffers}</ActionsButton>
-        }
-        {otherPacks.length === 0 ? '' :
-          <ActionsButton onClick={() =>props.f7router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
-        }
+        {props.type === 'c' ? 
+          <React.Fragment>
+            <ActionsButton onClick={() => handleFavorite()}>{state.userInfo.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
+            {!pack.trademark || hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
+              <React.Fragment>
+                <ActionsButton onClick={() => handleRate(1)}>
+                  {labels.rateGood}
+                  <Icon material="thumb_up" color="green"></Icon>
+                </ActionsButton>
+                <ActionsButton onClick={() => handleRate(0)}>
+                  {labels.rateBad}
+                  <Icon material="thumb_down" color="red"></Icon>
+                </ActionsButton>
+              </React.Fragment>
+            }
+            {otherProducts.length === 0 ? '' :
+              <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
+            }
+            {otherOffers.length === 0 ? '' :
+              <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/o`)}>{labels.otherOffers}</ActionsButton>
+            }
+            {otherPacks.length === 0 ? '' :
+              <ActionsButton onClick={() =>props.f7router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
+            }
+          </React.Fragment>
+        : ''}
         {alarmTypes.map(p =>
-          (props.type === 'c' && p.actor === 'c' && !state.customerInfo.storeId) || (props.type === 'o' && p.actor === 'o' && state.customerInfo.storeId && (p.isAvailable === 0 || p.isAvailable === isAvailable)) ?
-            <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>{p.name}</ActionsButton>
+          (p.actor === 'c' && !state.customerInfo.storeId) || (p.actor === 'o' && state.customerInfo.storeId && (p.isAvailable === 0 || p.isAvailable === isAvailable)) ?
+            <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>
+              {p.name}
+            </ActionsButton>
           : ''
         )}
       </Actions>

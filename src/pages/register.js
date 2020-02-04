@@ -83,7 +83,7 @@ const Register = props => {
 
   return (
     <Page>
-      <Navbar title={labels.registerTitle} backLink={labels.back} />
+      <Navbar title={labels.newUser} backLink={labels.back} />
       <List form>
         <ListInput
           label={labels.name}

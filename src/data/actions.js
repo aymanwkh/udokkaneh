@@ -59,30 +59,31 @@ export const quantityDetails = basketPack => {
   return text
 }
 
-export const isSubCategory = (category1, category2, categories) => {
-  const parent = categories.find(c => c.id === category1).parentId
-  if (parent === '0') {
-    return false
-  } else if (parent === category2) {
-    return true
-  } else {
-    return isSubCategory(parent, category2, categories)
-  }
+export const productOfText = (trademark, country) => {
+  return trademark ? `${labels.oneOfProducts} (${trademark})-${country}` : `${labels.productOf} ${country}`
+}
 
+export const getChildren = (categoryId, categories) => {
+  let childrenArray = [categoryId]
+  let children = categories.filter(c => c.parentId === categoryId)
+  children.forEach(c => {
+    const newChildren = getChildren(c.id, categories)
+    childrenArray = [...childrenArray, ...newChildren]
+  })
+  return childrenArray
 }
 
 export const hasChild = (category, packs, categories) => {
   return category.isLeaf ? packs.find(p => p.categoryId === category.id) : categories.find(c => c.parentId === category.id && hasChild(c, packs, categories))
 }
 
-export const rateProduct = (user, productId, value) => {
-  const ratings = [...user.ratings, {
-    productId,
-    value,
-    status: 'n'
-  }]
+export const rateProduct = (productId, value) => {
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-    ratings
+    ratings: firebase.firestore.FieldValue.arrayUnion({
+      productId,
+      value,
+      status: 'n'  
+    })
   })
 }
 
@@ -184,26 +185,24 @@ export const registerStoreOwner = async (owner, password) => {
   })
 }
 
-export const addAlarm = (user, alarm) => {
-  const alarms = [...user.alarms, {
-    ...alarm,
-    id: Math.random().toString(),
-    status: 'n',
-    time: new Date()
-  }]
+export const addAlarm = alarm => {
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-    alarms
+    alarms: firebase.firestore.FieldValue.arrayUnion({
+      ...alarm,
+      id: Math.random().toString(),
+      status: 'n',
+      time: new Date()  
+    })
   })
 }
 
-export const inviteFriend = (user, mobile, name) => {
-  const invitations = [...user.invitations, {
-    mobile,
-    name,
-    status: 'n'
-  }]
+export const inviteFriend = (mobile, name) => {
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-    invitations
+    invitations: firebase.firestore.FieldValue.arrayUnion({
+      mobile,
+      name,
+      status: 'n'
+    })
   })
 }
 
@@ -239,10 +238,9 @@ export const updateFavorites = (user, productId) => {
   })
 }
 
-export const updateOrderDelivery = (order, customer, locations) => {
+export const updateOrderDelivery = (order, customer) => {
   const withDelivery = !order.withDelivery
-  const customerLocation = locations.find(l => l.id === customer.locationId) || ''
-  const deliveryFees = withDelivery ? (customerLocation?.deliveryFees || setup.deliveryFees) * (order.urgent ? 1.5 : 1) - (customer.deliveryDiscount || 0) : 0
+  const deliveryFees = withDelivery ? (customer.deliveryFees || setup.deliveryFees) : 0
   return firebase.firestore().collection('orders').doc(order.id).update({
     withDelivery,
     deliveryFees,
@@ -250,28 +248,13 @@ export const updateOrderDelivery = (order, customer, locations) => {
   })
 }
 
-export const updateOrderUrgent = (order, customer, locations) => {
-  const urgent = !order.urgent
-  const fraction = order.total - Math.floor(order.total / 50) * 50
-  const fixedFees = Math.ceil((urgent ? 1.5 : 1) * setup.fixedFees * order.total / 50) * 50 - fraction
-  const customerLocation = locations.find(l => l.id === customer.locationId) || ''
-  const deliveryFees = order.withDelivery ? (customerLocation?.deliveryFees || setup.deliveryFees) * (urgent ? 1.5 : 1) - (customer.deliveryDiscount || 0) : 0
-  return firebase.firestore().collection('orders').doc(order.id).update({
-    fixedFees,
-    urgent,
-    deliveryFees,
-    activeTime: firebase.firestore.FieldValue.serverTimestamp()
-  })
-}
-
-export const editOrder = (order, newBasket, customer, locations) => {
+export const editOrder = (order, newBasket, customer) => {
   if (order.status === 'n') {
     const basket = newBasket.filter(p => p.quantity > 0)
     const total = basket.reduce((sum, p) => sum + p.gross, 0)
     const fraction = total - Math.floor(total / 50) * 50
-    const fixedFees = Math.ceil((order.urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50 - fraction
-    const customerLocation = locations.find(l => l.id === customer.locationId) || ''
-    const deliveryFees = order.withDelivery ? (customerLocation?.deliveryFees || setup.deliveryFees) * (order.urgent ? 1.5 : 1) - (customer.deliveryDiscount || 0) : 0
+    const fixedFees = Math.ceil(setup.fixedFees * total / 50) * 50 - fraction
+    const deliveryFees = order.withDelivery ? (customer.deliveryFees || setup.deliveryFees) : 0
     const orderStatus = basket.length === 0 ? 'c' : order.status
     return firebase.firestore().collection('orders').doc(order.id).update({
       basket,
@@ -279,7 +262,7 @@ export const editOrder = (order, newBasket, customer, locations) => {
       fixedFees,
       deliveryFees,
       status: orderStatus,
-      deliveryDiscount: order.withDelivery ? customer.deliveryDiscount : 0
+      deliveryDiscount: order.withDelivery ? customer.locationFees - customer.deliveryFees : 0
     })
   } else {
     return firebase.firestore().collection('orders').doc(order.id).update({
@@ -340,7 +323,7 @@ export const returnOrderPacks = (order, pack, returned) => {
   const profit = basket.reduce((sum, p) => sum + (['p', 'f', 'pu', 'pr'].includes(p.status) ? parseInt((p.actual - p.cost) * addQuantity(p.weight || p.purchased, -1 * (p.returned || 0))) : 0), 0)
   const total = basket.reduce((sum, p) => sum + (p.gross || 0), 0)
   const fraction = total - Math.floor(total / 50) * 50
-  const fixedFees = Math.ceil((order.urgent ? 1.5 : 1) * setup.fixedFees * total / 50) * 50 - fraction
+  const fixedFees = Math.ceil(setup.fixedFees * total / 50) * 50 - fraction
   const orderRef = firebase.firestore().collection('orders').doc(order.id)
   batch.update(orderRef, {
     basket,
@@ -369,7 +352,7 @@ export const getBasket = (stateBasket, packs) => {
     }
     const totalPriceText = `${(parseInt(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
     const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
-    const otherProducts = packs.filter(pa => pa.tag === packInfo.tag && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
+    const otherProducts = packs.filter(pa => pa.categoryId === packInfo.categoryId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
     const otherOffers = packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
     const otherPacks = packs.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
     return {

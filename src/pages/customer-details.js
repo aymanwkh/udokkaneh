@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Page, Navbar, List, ListInput, Toolbar, ListItem, Toggle } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
@@ -20,10 +20,6 @@ const CustomerDetails = props => {
           type="text" 
           readonly
         />
-        <ListItem>
-          <span>{labels.isOldAge}</span>
-          <Toggle color="blue" checked={customer.isOldAge} disabled />
-        </ListItem>
         <ListInput 
           name="otherMobile" 
           label={labels.otherMobile}

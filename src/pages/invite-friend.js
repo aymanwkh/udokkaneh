@@ -64,7 +64,7 @@ const InviteFriend = props => {
         throw new Error('invalidMobile')
       }
       setInprocess(true)
-      await inviteFriend(state.userInfo, mobile, name)
+      await inviteFriend(mobile, name)
       setInprocess(false)
       showMessage(labels.sendSuccess)
       props.f7router.navigate('/home/')

@@ -74,14 +74,6 @@
   width: 5rem;
 }
 
-.card-header p {
-  margin-bottom: 0;
-}
-
-.card-header {
-  min-height: 4.5rem;
-}
-
 .note {
   text-align: center;
   color: red;
@@ -102,7 +94,6 @@
 .img-list{
   width: 6rem;
   height: 6rem;
-  display: block;
   margin-left: auto;
   margin-right: auto;
 }
@@ -136,13 +127,13 @@
 }
 
 .bonus-quantity-card {
-    background-color: rgba(0,0,0,.6);
-    padding: 3px 5px 4px;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    color: #fff;
-    font-size: 1rem;
+  background-color: rgba(0,0,0,.6);
+  padding: 3px 5px 4px;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  color: #fff;
+  font-size: 1rem;
 }
 
 .bonus-img-list{
@@ -185,7 +176,7 @@
 }
 
 .item-title-row {
-  font-size: 1rem;
+  font-size: 0.8rem;
 }
 
 .item-subtitle {
@@ -245,4 +236,9 @@
 
 .item-footer {
   position: relative;
+}
+
+.card-footer {
+  padding-top: 0;
+  height: 2rem;
 }

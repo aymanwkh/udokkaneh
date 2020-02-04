@@ -24,7 +24,7 @@ const Panel = props => {
         {user ?
           <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
         : 
-          <ListItem link="/panel-login/" title={labels.loginTitle} />
+          <ListItem link="/panel-login/" title={labels.login} />
         }
         {user ? <ListItem link="/change-password/" title={labels.changePassword} /> : ''}
         {user ? <ListItem link="/notifications/" title={labels.notifications} badge={notifications.length} badgeColor="red" view="#main-view" panelClose /> : ''}

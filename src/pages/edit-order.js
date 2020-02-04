@@ -49,7 +49,7 @@ const EditOrder = props => {
   const handleSubmit = async () => {
     try{
       setInprocess(true)
-      await editOrder(order, state.orderBasket, state.customerInfo, state.locations)
+      await editOrder(order, state.orderBasket, state.customerInfo)
       setInprocess(false)
       showMessage(order.status === 'n' ? labels.editSuccess : labels.sendSuccess)
       dispatch({type: 'CLEAR_ORDER_BASKET'})

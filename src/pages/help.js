@@ -6,34 +6,30 @@ import BottomToolbar from './bottom-toolbar'
 const Help = props => {
   const [helpNote] = useState(() => {
     switch (props.id) {
-      case 'r':
-        return 'يتم اﻻستلام من مركز التوزيع بجانب الاستقلال مول، ويتم تجهيز طلبك خلال 24-48 ساعة'
-      case 'ur':
-        return 'يتم اﻻستلام من مركز التوزيع بجانب الاستقلال مول، ويتم تجهيز طلبك خلال 6-12 ساعة'
-      case 'd':
-        return 'يتم تجهيز طلبك مع التوصيل خلال 24-48 ساعة'
-      case 'ud':
-        return 'يتم تجهيز طلبك مع التوصيل خلال 6-12 ساعة'
+      case 'o':
+        return 'في حال عدم توفر خدمة التوصيل لمنطقتك، أو عدم رغبتك بالاستفادة من هذه الخدمة، فيتوجب عليك استلام طلبك من مركز التوزيع بجانب اﻻستقلال مول'
       case 'ol':
         return 'سقف الطلبات هو القيمة القصوى لمجموع الطلبات الفعالة وهي خمسون دينارا، ويمكنك طلب رفع هذه القيمة بالتواصل معنا'
-      case 'o':
-        return 'يمكنك التعديل على طلبك أو إلغاؤه قبل بدء تنفيذه من خلال اختيار طلباتي من القائمة الجانبية، كما يمكنك دمجه مع الطلب الذي قبله ليتم تسلميهما معا '
       default:
         return ''
     }
   })
   const feesNote = 'رسوم الخدمة هي 2.5% من قيمة المشتريات'
-  const deliveryNote = (props.id === 'd' || props.id === 'ud') ? 'رسوم خدمة التوصيل تحدد بناء على منطقة السكن' : ''
-  const urgentNote = (props.id === 'ur' || props.id === 'ud') ? 'للطلبات المستعجلة تضاف قيمة 50% من قيمة الرسوم' : ''
+  const deliveryNote = 'رسوم خدمة التوصيل تحدد بناء على منطقة السكن'
+  const orderNote = 'يمكنك تتبع مراحل تنفيذ طلبك من خلال خيار طلباتي من القائمة الجانبية في الصفحة الرئيسية، كما يمكنك التعديل على طلبك أو إلغاؤه قبل بدء تنفيذه، كذلك يمكنك دمج الطلب مع الطلب الذي قبله ليتم تسلمهما معا'
   return (
     <Page>
       <Navbar title={labels.helpPageTitle} backLink={labels.back} />
       <Block strong inset className="center">
         <Icon color="red" material="warning"></Icon>
         <p className="note">{helpNote}</p>
-        <p className="note">{feesNote}</p>
-        <p className="note">{deliveryNote}</p>
-        <p className="note">{urgentNote}</p>
+        {props.id === 'o' ? 
+          <React.Fragment>
+            <p className="note">{feesNote}</p>
+            <p className="note">{deliveryNote}</p>
+            <p className="note">{orderNote}</p>
+          </React.Fragment>
+        : ''}
       </Block>
       <Toolbar bottom>
         <BottomToolbar/>

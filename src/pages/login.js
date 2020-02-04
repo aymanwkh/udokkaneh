@@ -77,7 +77,7 @@ const Login = props => {
   }
   return (
     <Page>
-      <Navbar title={labels.loginTitle} backLink={labels.back} />
+      <Navbar title={labels.login} backLink={labels.back} />
       <List form>
         <ListInput
           label={labels.mobile}

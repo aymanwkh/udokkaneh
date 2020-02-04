@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import { takeOrder, cancelOrder, addOrderRequest, showMessage, showError, getMessage, quantityDetails, updateOrderDelivery, updateOrderUrgent } from '../data/actions'
+import { takeOrder, cancelOrder, addOrderRequest, showMessage, showError, getMessage, quantityDetails, updateOrderDelivery } from '../data/actions'
 import labels from '../data/labels'
 import { orderPackStatus } from '../data/config'
 
@@ -84,12 +84,6 @@ const OrderDetails = props => {
       if (lastOrder.requestType) {
         throw new Error('duplicateOrderRequest')
       }
-      if (order.withDelivery !== lastOrder.withDelivery) {
-        throw new Error('diffInDelivery')
-      }
-      if (order.urgent !== lastOrder.urgent) {
-        throw new Error('diffInUrgent')
-      }
       let found
       for (let p of order.basket) {
         found = lastOrder.basket.find(bp => bp.packId === p.packId)
@@ -125,19 +119,7 @@ const OrderDetails = props => {
   const handleChangeDelivery = async () => {
     try{
       setInprocess(true)
-      await updateOrderDelivery(order, state.customerInfo, state.locations)
-      setInprocess(false)
-      showMessage(labels.editSuccess)
-      props.f7router.back()
-    } catch(err) {
-      setInprocess(false)
-			setError(getMessage(props, err))
-		}
-  }
-  const handleChangeUrgent = async () => {
-    try{
-      setInprocess(true)
-      await updateOrderUrgent(order, state.customerInfo, state.locations)
+      await updateOrderDelivery(order, state.customerInfo)
       setInprocess(false)
       showMessage(labels.editSuccess)
       props.f7router.back()
@@ -218,9 +200,6 @@ const OrderDetails = props => {
           {order.status === 'p' && ['c', 'd'].includes(order.position) ? '' :
             <ActionsButton onClick={() => handleChangeDelivery()}>{order.withDelivery ? labels.changeToNoDelivery : labels.changeToWithDelivery}</ActionsButton>
           }
-          {['n', 'a', 'e'].includes(order.status) ? 
-            <ActionsButton onClick={() => handleChangeUrgent()}>{order.urgent ? labels.changeToNoUrgent : labels.changeToUrgent}</ActionsButton>
-          : ''}
         </Actions>
       }
       <Toolbar bottom>
