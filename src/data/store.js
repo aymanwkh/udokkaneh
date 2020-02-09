@@ -16,7 +16,8 @@ const Store = props => {
     storePacks: [],
     adverts: [],
     positionOrders: [],
-    customers: []
+    customers: [],
+    locations: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -48,7 +49,11 @@ const Store = props => {
     }, err => {
       unsubscribeAdverts()
     })  
-
+    const unsubscribeLocations = firebase.firestore().collection('lookups').doc('l').onSnapshot(doc => {
+      dispatch({type: 'SET_LOCATIONS', locations: doc.data().values})
+    }, err => {
+      unsubscribeLocations()
+    })  
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)
       if (user){

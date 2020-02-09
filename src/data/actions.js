@@ -143,15 +143,14 @@ export const addOrderRequest = (order, type, mergedOrder) => {
   return batch.commit()
 }
 
-export const registerUser = async (mobile, password, name) => {
-  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
+export const registerUser = async (userInfo, password) => {
+  await firebase.auth().createUserWithEmailAndPassword(userInfo.mobile + '@gmail.com', userInfo.mobile.substring(9, 2) + password)
   let colors = []
   for (var i = 0; i < 4; i++){
     colors.push(randomColors[Number(password.charAt(i))].name)
   }
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
-    name,
-    mobile,
+    ...userInfo,
     colors,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
@@ -169,19 +168,6 @@ export const changePassword = async (oldPassword, newPassword) => {
   }
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     colors
-  })
-}
-
-export const registerStoreOwner = async (owner, password) => {
-  await firebase.auth().createUserWithEmailAndPassword(owner.mobile + '@gmail.com', owner.mobile.substring(9, 2) + password)
-  let colors = []
-  for (var i = 0; i < 4; i++){
-    colors.push(randomColors[Number(password.charAt(i))].name)
-  }
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
-    ...owner,
-    colors,
-    time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
 
@@ -238,23 +224,14 @@ export const updateFavorites = (user, productId) => {
   })
 }
 
-export const updateOrderDelivery = (order, customer) => {
-  const withDelivery = !order.withDelivery
-  const deliveryFees = withDelivery ? (customer.deliveryFees || setup.deliveryFees) : 0
-  return firebase.firestore().collection('orders').doc(order.id).update({
-    withDelivery,
-    deliveryFees,
-    deliveryDiscount: withDelivery ? customer.deliveryDiscount : 0
-  })
-}
-
-export const editOrder = (order, newBasket, customer) => {
+export const editOrder = (order, newBasket, customer, userInfo, locations) => {
   if (order.status === 'n') {
     const basket = newBasket.filter(p => p.quantity > 0)
     const total = basket.reduce((sum, p) => sum + p.gross, 0)
     const fraction = total - Math.floor(total / 50) * 50
     const fixedFees = Math.ceil(setup.fixedFees * total / 50) * 50 - fraction
-    const deliveryFees = order.withDelivery ? (customer.deliveryFees || setup.deliveryFees) : 0
+    const locationFees = locations.find(l => l.id === userInfo.locationId).fees
+    const deliveryFees = order.withDelivery ? customer.deliveryFees || locationFees : 0
     const orderStatus = basket.length === 0 ? 'c' : order.status
     return firebase.firestore().collection('orders').doc(order.id).update({
       basket,
@@ -262,7 +239,7 @@ export const editOrder = (order, newBasket, customer) => {
       fixedFees,
       deliveryFees,
       status: orderStatus,
-      deliveryDiscount: order.withDelivery ? customer.locationFees - customer.deliveryFees : 0
+      deliveryDiscount: order.withDelivery ? Math.max(0, locationFees - (customer.deliveryFees || locationFees)) : 0
     })
   } else {
     return firebase.firestore().collection('orders').doc(order.id).update({

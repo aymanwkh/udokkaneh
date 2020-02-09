@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import { takeOrder, cancelOrder, addOrderRequest, showMessage, showError, getMessage, quantityDetails, updateOrderDelivery } from '../data/actions'
+import { takeOrder, cancelOrder, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
 import { orderPackStatus } from '../data/config'
 
@@ -13,6 +13,7 @@ const OrderDetails = props => {
   const [order] = useState(() => props.type === 'f' ? state.positionOrders.find(o => o.id === props.id) : state.orders.find(o => o.id === props.id))
   const [orderBasket, setOrderBasket] = useState([])
   const [lastOrder, setLastOrder] = useState('')
+  const [locationFees] = useState(() => state.locations.find(l => l.id === state.userInfo.locationId).fees)
   const orderActions = useRef('')
   useEffect(() => {
     setOrderBasket(() => order.basket.map(p => {
@@ -116,18 +117,6 @@ const OrderDetails = props => {
 			setError(getMessage(props, err))
 		}
   }
-  const handleChangeDelivery = async () => {
-    try{
-      setInprocess(true)
-      await updateOrderDelivery(order, state.customerInfo)
-      setInprocess(false)
-      showMessage(labels.editSuccess)
-      props.f7router.back()
-    } catch(err) {
-      setInprocess(false)
-			setError(getMessage(props, err))
-		}
-  }
   return(
     <Page>
       <Navbar title={labels.orderDetails} backLink={labels.back} />
@@ -197,9 +186,6 @@ const OrderDetails = props => {
           {order.status === 'n' && lastOrder ? 
             <ActionsButton onClick={() => handleMerge()}>{labels.merge}</ActionsButton>
           : ''}
-          {order.status === 'p' && ['c', 'd'].includes(order.position) ? '' :
-            <ActionsButton onClick={() => handleChangeDelivery()}>{order.withDelivery ? labels.changeToNoDelivery : labels.changeToWithDelivery}</ActionsButton>
-          }
         </Actions>
       }
       <Toolbar bottom>

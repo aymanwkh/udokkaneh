@@ -96,16 +96,11 @@ const PackDetails = props => {
           offerId: pack.id
         }
       }
-      const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
+      const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'd', 'p'].includes(o.status))
       const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
       if (activeOrdersTotal + purchasedPack.price > orderLimit) {
         throw new Error('limitOverFlow')
-      }
-      const packInActiveOrders = activeOrders.filter(o => o.basket.find(p => p.packId === packId))
-      const quantityInActiveOrders = packInActiveOrders.reduce((sum, o) => sum + o.basket.find(p => p.packId === purchasedPack.id).quantity, 0)
-      if (purchasedPack.orderLimit && purchasedPack.orderLimit <= quantityInActiveOrders){
-        throw new Error('ExceedPackLimitActiveOrders')
       }
       dispatch({type: 'ADD_TO_BASKET', pack: purchasedPack})
       showMessage(labels.addToBasketSuccess)

@@ -60,7 +60,6 @@ const labels = {
   logout: 'تسجيل خروج',
   mainPanelTitle: 'الوظائف المساندة',
   registerStoreOwner: 'انا صاحب محل، أود الاشتراك',
-  registerStoreOwnerTitle: 'تسجيل صاحب محل',
   address: 'العنوان',
   notFoundPageTitle: 'الصفحة غير موجودة',
   notFoundPageError: 'حدث خطأ ... الصفحة غير موجودة',
@@ -101,14 +100,12 @@ const labels = {
   quantity: 'الكمية',
   gram: 'غ',
   weightedPricesNote: '*هذا سعر تقديري، السعر يتحدد حسب الوزن الفعلي',
-  ExceedPackLimit: 'لا يمكنك طلب كمية اكبر من هذا المنتج في الطلب الواحد',
   limitOverFlowNote: 'تجاوز لسقف الطلبات',
   helpPageTitle: 'توضيح',
   close: 'اغلاق',
   remain: 'المتبقي',
   changePriceNote: 'تغير السعر',
   unAvailableNote: 'لم يعد متوفر',
-  ExceedPackLimitActiveOrders: 'لا يمكنك طلب كمية اكبر من هذا المنتج الى حين استلام طلبات سابقة لك',
   overPricedNote: 'بسبب ارتفاع الاسعار',
   allOffer: 'كامل العرض',
   status: 'الحالة',
@@ -173,8 +170,6 @@ const labels = {
   newPrice: 'الحالي',
   priceHasChanged: 'حدث تغير في السعر',
   totalPrice: 'السعر الاجمالي',
-  changeToNoDelivery: 'الغاء خدمة التوصيل',
-  changeToWithDelivery: 'اضافة خدمة التوصيل',
   editOrder: 'تعديل الطلب',
   editBasket: 'تعديل الكميات',
   editBasketRequest: 'طلب تعديل الكميات',
@@ -185,7 +180,6 @@ const labels = {
   rateGood: 'تقييم ايجابي ',
   rateBad: 'تقييم سلبي ',
   oneOfProducts: 'احد منتجات',
-  noLocation: 'خدمة التوصيل سوف تحدد بعد التواصل معك'
 }
 
 export default labels

@@ -34,7 +34,7 @@ const Panel = props => {
         {user ? <ListItem link="/invite-friend/" title={labels.inviteFriend} view="#main-view" panelClose /> : ''}
         {user && (user.displayName === 'c' || user.displayName === 'd') ? <ListItem link={`/followup-orders-list/${user.displayName}`} title={labels.followupOrders} view="#main-view" panelClose /> : ''}
         {user && user.photoURL ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
-        {user ? '' : <ListItem link="/store-owner/" title={labels.registerStoreOwner} view="#main-view" panelClose />}
+        {user ? '' : <ListItem link="/register/o" title={labels.registerStoreOwner} view="#main-view" panelClose />}
         {user ? <ListItem link="/debit/" title={labels.debitRequest} view="#main-view" panelClose /> : ''}
         <ListItem link="/contact-us/" title={labels.contactUsTitle} view="#main-view" panelClose />
       </List>

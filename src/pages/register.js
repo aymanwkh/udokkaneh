@@ -1,31 +1,35 @@
-import React, { useState, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import React, { useContext, useState, useEffect } from 'react'
+import { StoreContext } from '../data/store'
+import { f7, Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
-const Register = props => {
+const StoreOwner = props => {
+  const { state } = useContext(StoreContext)
   const [name, setName] = useState('')
+  const [error, setError] = useState('')
+  const [inprocess, setInprocess] = useState(false)
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
+  const [storeName, setStoreName] = useState('')
+  const [locationId, setLocationId] = useState('')
   const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
-  const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
+  const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
+  const [locations] = useState(() => [...state.locations].sort((l1, l2) => l1.ordering - l2.ordering))
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
-      password: /^.{4}$/,
-      mobile: /^07[7-9][0-9]{7}$/
     }
     const validateName = value => {
-        if (patterns.name.test(value)){
-          setNameErrorMessage('')
-        } else {
-          setNameErrorMessage(labels.invalidName)
-        }
+      if (patterns.name.test(value)){
+        setNameErrorMessage('')
+      } else {
+        setNameErrorMessage(labels.invalidName)
+      }
     }  
-    if (name !== '') validateName(name)
+    if (name) validateName(name)
   }, [name])
   useEffect(() => {
     const patterns = {
@@ -59,7 +63,7 @@ const Register = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
+    useEffect(() => {
     if (inprocess) {
       f7.dialog.preloader(labels.inprocess)
     } else {
@@ -67,13 +71,33 @@ const Register = props => {
     }
   }, [inprocess])
 
+  useEffect(() => {
+    const patterns = {
+      name: /^.{4,50}$/,
+    }
+    const validateStoreName = value => {
+      if (patterns.name.test(value)){
+        setStoreNameErrorMessage('')
+      } else {
+        setStoreNameErrorMessage(labels.invalidName)
+      }
+    }  
+    if (storeName) validateStoreName(storeName)
+  }, [storeName])
+
   const handleRegister = async () => {
     try{
+      const userInfo = {
+        mobile,
+        name,
+        storeName,
+        locationId
+      }
       setInprocess(true)
-      await registerUser(mobile, password, name)
+      await registerUser(userInfo, password)
       setInprocess(false)
       showMessage(labels.registerSuccess)
-      props.f7router.back()
+      props.f7router.navigate('/home/')
       props.f7router.app.panel.close('right') 
     } catch (err){
       setInprocess(false)
@@ -121,11 +145,45 @@ const Register = props => {
           onChange={e => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
+        {props.type === 'o' ? 
+          <ListInput
+            label={labels.storeName}
+            type="text"
+            placeholder={labels.namePlaceholder}
+            name="storeName"
+            clearButton
+            value={storeName}
+            errorMessage={storeNameErrorMessage}
+            errorMessageForce
+            onChange={e => setStoreName(e.target.value)}
+            onInputClear={() => setStoreName('')}
+          />
+        : ''}
+        <ListItem
+          title={labels.location}
+          smartSelect
+          smartSelectParams={{
+            openIn: "popup", 
+            closeOnSelect: true, 
+            searchbar: true, 
+            searchbarPlaceholder: labels.search,
+            popupCloseLinkText: labels.close
+          }}
+        >
+          <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
+            <option value=""></option>
+            {locations.map(l => 
+              <option key={l.id} value={l.id}>{l.name}</option>
+            )}
+          </select>
+        </ListItem>
       </List>
-      {!name || !mobile || !password || nameErrorMessage || mobileErrorMessage || passwordErrorMessage ? '' :
-        <Button text={labels.register} href="#" large onClick={() => handleRegister()} />
+      <List>
+      {!name || !mobile || !password || !storeName || !locationId || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
+        <Button text={labels.register} large onClick={() => handleRegister()} />
       }
+      </List>
     </Page>
   )
 }
-export default Register
+export default StoreOwner

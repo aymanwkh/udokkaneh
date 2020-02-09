@@ -12,7 +12,6 @@ const Reducer = (state, action) => {
         quantity: 1,
         isDivided: action.pack.isDivided,
         byWeight: action.pack.byWeight,
-        orderLimit: action.pack.orderLimit,
         maxQuantity: action.pack.maxQuantity,
         offerId: action.pack.offerId,
         time: new Date()
@@ -76,7 +75,7 @@ const Reducer = (state, action) => {
         orderBasket: []
       }
     case 'INCREASE_ORDER_QUANTITY':
-      if (action.pack.isDivided) {
+      if (action.pack.packInfo.isDivided) {
         nextQuantity = increment.filter(i => i > action.pack.quantity)
         nextQuantity = Math.min(...nextQuantity)
         nextQuantity = nextQuantity === Infinity ? action.pack.quantity : nextQuantity
@@ -84,7 +83,7 @@ const Reducer = (state, action) => {
         nextQuantity = action.pack.quantity + 1
       }
       pack = {
-        ...pack,
+        ...action.pack,
         quantity: nextQuantity,
         gross: parseInt(action.pack.price * nextQuantity)
       }
@@ -157,6 +156,11 @@ const Reducer = (state, action) => {
       return {
         ...state,
         adverts: action.adverts
+      }
+    case 'SET_LOCATIONS':
+      return {
+        ...state,
+        locations: action.locations
       }
     case 'SET_POSITION_ORDERS':
       return {

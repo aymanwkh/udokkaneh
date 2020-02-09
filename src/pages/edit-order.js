@@ -4,6 +4,7 @@ import { StoreContext } from '../data/store'
 import { editOrder, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
 import BottomToolbar from './bottom-toolbar'
+import { setup } from '../data/config'
 
 const EditOrder = props => {
   const { state, dispatch } = useContext(StoreContext)
@@ -12,7 +13,12 @@ const EditOrder = props => {
   const [order] = useState(() => state.orders.find(o => o.id === props.id))
   const [orderBasket, setOrderBasket] = useState([])
   const [total, setTotal] = useState('')
+  const [overLimit, setOverLimit] = useState(false)
   const [hasChanged, setHasChanged] = useState(false)
+  const [customerOrdersTotals] = useState(() => {
+    const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
+    return activeOrders.reduce((sum, o) => sum + o.total, 0)
+  })
   useEffect(() => {
     dispatch({type: 'LOAD_ORDER_BASKET', order})
   }, [dispatch, order])
@@ -33,6 +39,15 @@ const EditOrder = props => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
   }, [orderBasket])
   useEffect(() => {
+    const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
+    if (customerOrdersTotals + total > orderLimit){
+      setOverLimit(true)
+    } else {
+      setOverLimit(false)
+    }
+  }, [state.customerInfo, customerOrdersTotals, total])
+
+  useEffect(() => {
     if (error) {
       showError(error)
       setError('')
@@ -49,7 +64,7 @@ const EditOrder = props => {
   const handleSubmit = async () => {
     try{
       setInprocess(true)
-      await editOrder(order, state.orderBasket, state.customerInfo)
+      await editOrder(order, state.orderBasket, state.customerInfo, state.userInfo, state.locations)
       setInprocess(false)
       showMessage(order.status === 'n' ? labels.editSuccess : labels.sendSuccess)
       dispatch({type: 'CLEAR_ORDER_BASKET'})
@@ -92,9 +107,14 @@ const EditOrder = props => {
           )}
         </List>
       </Block>
-      {hasChanged ? 
+      {!overLimit & hasChanged ? 
         <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(total / 1000).toFixed(3)}`} color="green" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
+        </Fab>
+      : ''}
+      {overLimit ? 
+        <Fab position="center-bottom" slot="fixed" text={labels.limitOverFlowNote} color="red" href="/help/ol">
+          <Icon material="report_problem"></Icon>
         </Fab>
       : ''}
       <Toolbar bottom>

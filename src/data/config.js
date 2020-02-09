@@ -4,7 +4,7 @@ export const setup = {
   firstOrderDiscount: 200,
   profit: 0.1,
   orderLimit: 50000,
-  deliveryFees: 200
+  firstOrderLimit: 20000
 }
 
 export const randomColors = [
@@ -76,11 +76,4 @@ export const orderPositions = [
   {id: 's', name: 'المستودع'},
   {id: 'c', name: 'مركز التوزيع'},
   {id: 'd', name: 'سيارة التوزيع'},
-]
-
-export const deliveryIntervals = [
-  {id: 'm', name: 'صباحا'},
-  {id: 'a', name: 'بعد الظهر'},
-  {id: 'n', name: 'مساءا'},
-  {id: 'u', name: 'اي وقت'}
 ]

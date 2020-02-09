@@ -3,7 +3,6 @@ import { Page, Navbar, List, ListInput, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
-import { deliveryIntervals } from '../data/config'
 
 const CustomerDetails = props => {
   const { state } = useContext(StoreContext)
@@ -25,13 +24,6 @@ const CustomerDetails = props => {
           label={labels.otherMobile}
           value={customer.otherMobile}
           type="number"
-          readonly
-        />
-        <ListInput 
-          name="deliveryInterval" 
-          label={labels.deliveryInterval}
-          value={deliveryIntervals.find(i => i.id === customer.deliveryInterval)?.name || ''}
-          type="text"
           readonly
         />
         <ListInput 

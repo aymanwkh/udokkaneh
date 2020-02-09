@@ -106,7 +106,7 @@ const Login = props => {
         <Button text={labels.login} large onClick={() => handleLogin()} />
       }
       <Toolbar bottom>
-        <Link href="/register/">{labels.newUser}</Link>
+        <Link href="/register/n">{labels.newUser}</Link>
         <Link onClick={() => handlePasswordRequest()}>{labels.forgetPassword}</Link>
       </Toolbar>
     </Page>

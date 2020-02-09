@@ -13,7 +13,6 @@ import OrderDetails from './pages/order-details'
 import AddAlarm from './pages/add-alarm'
 import PasswordRequest from './pages/password-request'
 import InviteFriend from './pages/invite-friend'
-import StoreOwner from './pages/store-owner'
 import StoreSummary from './pages/store-summary'
 import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
@@ -64,15 +63,8 @@ export default [
     component: ChangePassword
   },
   {
-    path: '/register/',
+    path: '/register/:type',
     component: Register,
-    options: {
-      reloadCurrent: true,
-    },
-  },
-  {
-    path: '/store-owner/',
-    component: StoreOwner
   },
   {
     path: '/invite-friend/',
