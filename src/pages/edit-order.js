@@ -23,17 +23,7 @@ const EditOrder = props => {
     dispatch({type: 'LOAD_ORDER_BASKET', order})
   }, [dispatch, order])
   useEffect(() => {
-    setOrderBasket(() => {
-      let orderBasket = state.orderBasket?.filter(p => p.quantity > 0) || []
-      orderBasket = orderBasket.map(p => {
-        const packInfo = state.packs.find(pa => pa.id === p.packId) || ''
-        return {
-          ...p,
-          packInfo
-        }
-      })
-      return orderBasket
-    })
+    setOrderBasket(() => state.orderBasket?.filter(p => p.quantity > 0) || [])
   }, [state.orderBasket, state.packs])
   useEffect(() => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
@@ -64,7 +54,7 @@ const EditOrder = props => {
   const handleSubmit = async () => {
     try{
       setInprocess(true)
-      await editOrder(order, state.orderBasket, state.customerInfo, state.userInfo, state.locations)
+      await editOrder(order, state.orderBasket)
       setInprocess(false)
       showMessage(order.status === 'n' ? labels.editSuccess : labels.sendSuccess)
       dispatch({type: 'CLEAR_ORDER_BASKET'})
@@ -74,7 +64,7 @@ const EditOrder = props => {
 			setError(getMessage(props, err))
 		}
   }
-  const hadnleChange = (pack, value) => {
+  const handleChange = (pack, value) => {
     if (value === 1) {
       dispatch({type: 'INCREASE_ORDER_QUANTITY', pack})
     } else {
@@ -89,19 +79,20 @@ const EditOrder = props => {
         <List mediaList>
           {orderBasket.map(p =>
             <ListItem
-              title={p.packInfo.productName}
-              subtitle={p.packInfo.name}
-              text={`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}
+              title={p.productName}
+              subtitle={p.productAlias}
+              text={p.packName}
               footer={quantityDetails(p)}
               key={p.packId}
             >
-              <div className="list-subtext1">{`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}</div>
+              <div className="list-subtext1">{`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}</div>
+              <div className="list-subtext2">{`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}</div>
               <Stepper
                 slot="after"
                 fill
                 buttonsOnly
-                onStepperPlusClick={() => hadnleChange(p, 1)}
-                onStepperMinusClick={() => hadnleChange(p, -1)}
+                onStepperPlusClick={() => handleChange(p, 1)}
+                onStepperMinusClick={() => handleChange(p, -1)}
               />
             </ListItem>
           )}

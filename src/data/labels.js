@@ -40,11 +40,9 @@ const labels = {
   namePlaceholder: 'من 4-50 حرف',
   invalidName: 'اﻻسم غير صحيح',
   total: 'المجموع',
-  fixedFees: 'رسوم الخدمة',
+  fixedFees: 'الرسوم',
   discount: 'الخصم',
   net: 'الصافي',
-  withDelivery: 'خدمة التوصيل',
-  deliveryFees: 'رسوم التوصيل',
   enterPrice: 'الرجاء ادخال السعر',
   enterStore: 'الرجاء ادخال اسم المحل',
   invalidPrice: 'الرجاء التأكد من السعر المدخل',
@@ -171,8 +169,8 @@ const labels = {
   priceHasChanged: 'حدث تغير في السعر',
   totalPrice: 'السعر الاجمالي',
   editOrder: 'تعديل الطلب',
-  editBasket: 'تعديل الكميات',
-  editBasketRequest: 'طلب تعديل الكميات',
+  editBasket: 'تعديل',
+  editBasketRequest: 'طلب تعديل',
   notifyDebit: 'ابلغني عند تفعيل الخدمة',
   debitRequest: 'الدفع لاحقا',
   removeFromFavorites: 'الحذف من المفضلة',
@@ -180,6 +178,8 @@ const labels = {
   rateGood: 'تقييم ايجابي ',
   rateBad: 'تقييم سلبي ',
   oneOfProducts: 'احد منتجات',
+  noImage: 'الصورة غير متوفرة',
+  offerHint: '*اشتر ما يلزمك واستفد من العرض في نفس الوقت...تضاف 10% على القيمة الافرادية'
 }
 
 export default labels

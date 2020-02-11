@@ -17,7 +17,14 @@ const Packs = props => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
+      let packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
+      packs = packs.map(p => {
+        const categoryInfo = state.categories.find(c => c.id === p.categoryId)
+        return {
+          ...p,
+          categoryInfo
+        }
+      })
       return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories])
@@ -51,7 +58,7 @@ const Packs = props => {
         <Searchbar
           className="searchbar"
           searchContainer=".search-list"
-          searchIn=".item-title, .item-subtitle"
+          searchIn=".item-inner"
           clearButton
           expandable
           placeholder={labels.search}
@@ -76,13 +83,15 @@ const Packs = props => {
               <ListItem
                 link={`/pack-details/${p.id}/type/c`}
                 title={p.productName}
-                subtitle={p.name}
-                text={productOfText(p.trademark, p.country)}
+                subtitle={p.productAlias}
+                text={p.name}
                 footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
                 <PackImage slot="media" pack={p} type="list" />
+                <div className="list-subtext1">{productOfText(p.trademark, p.country)}</div>
+                <div className="list-subtext2">{p.categoryInfo ? `${labels.category}: ${p.categoryInfo.name}` : ''}</div>
                 {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
               </ListItem>
             )

@@ -35,11 +35,19 @@ const ConfirmOrder = props => {
   useEffect(() => {
     setDiscount(() => {
       const orders = state.orders.filter(o => o.status !== 'c')
-      let discount = 0
+      let discount = {
+        value: 0,
+        type: 'n'
+      }
       if (orders.length === 0) {
-        discount = setup.firstOrderDiscount
+        discount.value = setup.firstOrderDiscount
+        discount.type = 'f'
       } else if (state.customerInfo.discounts > 0) {
-        discount = Math.min(state.customerInfo.discounts, setup.maxDiscount)
+        discount.value = Math.min(state.customerInfo.discounts, setup.maxDiscount)
+        discount.type = 'o'
+      } else if (state.customerInfo.scpecialDiscount > 0) {
+        discount.value = state.customerInfo.scpecialDiscount
+        discount.type = 's'
       }
       return discount
     }) 
@@ -79,17 +87,26 @@ const ConfirmOrder = props => {
       }
       let packs = basket.filter(p => p.price > 0)
       packs = packs.map(p => {
-        return {
+        const pack = {
           packId: p.packId,
           productName: p.productName,
+          productAlias: p.productAlias,
           packName: p.packName,
+          imageUrl: p.imageUrl,
           price: p.price,
           quantity: p.quantity,
-          gross: parseInt(p.price * p.quantity),
+          gross: Math.trunc(p.price * p.quantity),
           offerId: p.offerId || '',
           purchased: 0,
           status: 'n'
         }
+        if (p.subQuantity) pack['subQuantity'] = p.subQuantity
+        if (p.bonusPackId) {
+          pack['bonusPackId'] = p.bonusPackId
+          pack['bonusImageUrl'] = p.bonusImageUrl
+          pack['bonusQuantity'] = p.bonusQuantity
+        }
+        return pack
       })
       const order = {
         basket: packs,
@@ -122,11 +139,13 @@ const ConfirmOrder = props => {
             <ListItem
               key={p.packId}
               title={p.productName}
-              subtitle={p.packName}
-              text={`${labels.quantity}: ${quantityText(p.quantity)}`}
-              footer={p.priceText}
+              subtitle={p.productAlias}
+              text={p.packName}
+              footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
               after={p.totalPriceText}
-            />
+            >
+              <div className="list-subtext1">{p.priceText}</div>
+            </ListItem>
           )}
           <ListItem 
             title={labels.total} 
@@ -138,26 +157,22 @@ const ConfirmOrder = props => {
             className="fees" 
             after={((fixedFees + deliveryFees) / 1000).toFixed(3)} 
           />
-          {(discount + fraction) > 0 ? 
-            <ListItem 
-              title={labels.discount}
-              className="discount" 
-              after={((discount + fraction) / 1000).toFixed(3)} 
-            /> 
-          : ''}
+          <ListItem 
+            title={labels.discount}
+            className="discount" 
+            after={((discount.value + fraction) / 1000).toFixed(3)} 
+          /> 
           <ListItem 
             title={labels.net} 
             className="net" 
-            after={((total + fixedFees + deliveryFees - discount - fraction) / 1000).toFixed(3)} 
+            after={((total + fixedFees + deliveryFees - discount.value - fraction) / 1000).toFixed(3)} 
           />
           </List>
         <p className="note">{weightedPacks.length > 0 ? labels.weightedPricesNote : ''}</p>
       </Block>
-      {locationFees > 0 ?
-        <Fab position="center-bottom" slot="fixed" text={labels.send} color="green" onClick={() => handleConfirm()}>
-          <Icon material="done"></Icon>
-        </Fab>
-      : ''}
+      <Fab position="center-bottom" slot="fixed" text={labels.send} color="green" onClick={() => handleConfirm()}>
+        <Icon material="done"></Icon>
+      </Fab>
       <Toolbar bottom>
         <BottomToolbar />
       </Toolbar>

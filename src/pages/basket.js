@@ -4,6 +4,7 @@ import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
 import { setup } from '../data/config'
+import PackImage from './pack-image'
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
@@ -23,7 +24,7 @@ const Basket = props => {
     else setBasket(getBasket(state.basket, state.packs))
   }, [state.basket, state.packs, props])
   useEffect(() => {
-    setTotalPrice(() => basket.reduce((sum, p) => sum + parseInt(p.price * p.quantity), 0))
+    setTotalPrice(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
     setWeightedPacks(() => basket.filter(p => p.byWeight))
   }, [basket])
   useEffect(() => {
@@ -74,13 +75,15 @@ const Basket = props => {
         {basket.map(p => 
           <ListItem
             title={p.productName}
-            subtitle={p.packName}
-            text={p.priceText}
-            footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
+            subtitle={p.productAlias}
+            text={p.packName}
+            footer={`${labels.totalPrice}:${p.totalPriceText}`}
             key={p.packId}
             className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
           >
-            <div className="list-subtext1">{`${labels.totalPrice}:${p.totalPriceText}`}</div>
+            <PackImage slot="media" pack={p} type="list" />
+            <div className="list-subtext1">{p.priceText}</div>
+            <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
             {p.price === 0 ? '' : 
               <Stepper 
                 slot="after" 

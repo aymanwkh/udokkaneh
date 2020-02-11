@@ -25,7 +25,7 @@ const PackDetails = props => {
   const packActions = useRef('')
   useEffect(() => {
     setHasPurchased(() => {
-      const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status) && o.basket.find(p => state.packs.find(pa => pa.id === p.packId)?.productId === pack.productId))
+      const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => state.packs.find(pa => pa.id === p.packId)?.productId === pack.productId))
       return deliveredOrders.length
     })
   }, [state.orders, pack, state.packs])
@@ -35,18 +35,16 @@ const PackDetails = props => {
   useEffect(() => {
     setSubPackInfo(() => {
       if (pack.subPackId) {
-        const subPack =  state.packs.find(p => p.id === pack.subPackId) || ''
-        const price = parseInt(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
-        return `${subPack.productName} ${subPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
+        const price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
+        return `${pack.productName} ${pack.subPackName}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
       } else {
         return ''
       }  
     })
     setBonusPackInfo(() => {
       if (pack.bonusPackId) {
-        const bonusPack =  state.packs.find(p => p.id === pack.bonusPackId) || ''
-        const price = parseInt(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
-        return `${bonusPack.productName} ${bonusPack.name}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
+        const price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
+        return `${pack.bonusProductName} ${pack.bonusPackName}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
       } else {
         return ''
       }  
@@ -82,11 +80,11 @@ const PackDetails = props => {
       if (packId !== pack.id) {
         purchasedPack = state.packs.find(p => p.id === packId) || ''
         if (packId === pack.subPackId) {
-          price = parseInt(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
+          price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
           maxQuantity = pack.subQuantity - 1
           if (pack.bonusPackId) maxQuantity++
         } else  {
-          price = parseInt(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
+          price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
           maxQuantity = pack.bonusQuantity
         }
         purchasedPack = {
@@ -97,7 +95,7 @@ const PackDetails = props => {
         }
       }
       const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
-      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'd', 'p'].includes(o.status))
+      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
       if (activeOrdersTotal + purchasedPack.price > orderLimit) {
         throw new Error('limitOverFlow')
@@ -171,7 +169,7 @@ const PackDetails = props => {
   }
   return (
     <Page>
-      <Navbar title={pack.productName} backLink={labels.back} />
+      <Navbar title={`${pack.productName}${pack.productAlias ? '-' + pack.productAlias : ''}`} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <div>
@@ -189,13 +187,12 @@ const PackDetails = props => {
           <p>{productOfText(pack.trademark, pack.country)}</p>
           {pack.trademark ? <p><RatingStars rating={pack.rating} count={pack.ratingCount} /></p> : ''}
         </CardFooter>
-
       </Card>
       {props.type === 'c' ? 
         <Fab 
           position="center-bottom" 
           slot="fixed" 
-          text={labels.addToBasket} 
+          text={`${labels.addToBasket}${pack.isOffer ? '*' : ''}`} 
           color="green" 
           onClick={() => pack.isOffer ? offerActions.current.open() : addToBasket(pack.id)}
         >
@@ -204,9 +201,10 @@ const PackDetails = props => {
       : ''}
       {user ?
         <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => packActions.current.open()}>
-          <Icon material="settings"></Icon>
+          <Icon material="menu"></Icon>
         </Fab>
       : ''}
+      {pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
       <Actions ref={packActions}>
         {props.type === 'c' ? 
           <React.Fragment>

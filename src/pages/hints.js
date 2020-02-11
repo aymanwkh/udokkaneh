@@ -33,13 +33,14 @@ const Hints = props => {
                 <ListItem
                   link={`/pack-details/${p.id}/type/c`}
                   title={p.productName}
-                  subtitle={p.name}
-                  text={productOfText(p.trademark, p.country)}
+                  subtitle={p.productAlias}
+                  text={p.name}
                   footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
                   after={(p.price / 1000).toFixed(3)}
                   key={p.id}
                 >
                   <PackImage slot="media" pack={p} type="list" />
+                  <div className="list-subtext1">{productOfText(p.trademark, p.country)}</div>
                   {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
                 </ListItem>
               )

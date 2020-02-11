@@ -15,8 +15,6 @@ const Store = props => {
     packs: [],
     storePacks: [],
     adverts: [],
-    positionOrders: [],
-    customers: [],
     locations: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
@@ -83,8 +81,8 @@ const Store = props => {
         }, err => {
           unsubscribeOrders()
         }) 
-        if (user.photoURL) { //store owner
-          const unsubscribeStorePacks = firebase.firestore().collection('store-packs').where('storeId', '==', user.photoURL).onSnapshot(docs => {
+        if (user.displayName) { //store owner
+          const unsubscribeStorePacks = firebase.firestore().collection('store-packs').where('storeId', '==', user.displayName).onSnapshot(docs => {
           let storePacks = []
             docs.forEach(doc => {
               storePacks.push({...doc.data(), id:doc.id})
@@ -93,27 +91,6 @@ const Store = props => {
           }, err => {
             unsubscribeStorePacks()
           })
-        }
-        if (user.displayName === 'c' || user.displayName === 'd') { //delivery guy
-          const unsubscribeCustomers = firebase.firestore().collection('customers').onSnapshot(docs => {
-            let customers = []
-            docs.forEach(doc => {
-              customers.push({...doc.data(), id:doc.id})
-            })
-            dispatch({type: 'SET_CUSTOMERS', customers})
-          }, err => {
-            unsubscribeCustomers()
-          })
-          const unsubscribeOrders = firebase.firestore().collection('orders').where('position', '==', user.displayName).onSnapshot(docs => {
-            let orders = []
-            docs.forEach(doc => {
-              orders.push({...doc.data(), id:doc.id})
-            })
-            dispatch({type: 'SET_POSITION_ORDERS', orders})
-          }, err => {
-            unsubscribeOrders()
-          })
-        
         }
       }
     })

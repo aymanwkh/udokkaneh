@@ -38,8 +38,8 @@ export const quantityText = quantity => {
 }
 
 export const addQuantity = (q1, q2, q3 = 0) => {
-  if (parseInt(q1) !== q1 || parseInt(q2) !== q2 || parseInt(q3) !== q3) {
-    return parseInt((q1 * 1000) + (q2 * 1000) + (q3 * 1000)) / 1000
+  if (Math.trunc(q1) !== q1 || Math.trunc(q2) !== q2 || Math.trunc(q3) !== q3) {
+    return Math.trunc(((q1 * 1000) + (q2 * 1000) + (q3 * 1000)) / 1000)
   } else {
     return q1 + q2 + q3
   }
@@ -110,8 +110,7 @@ export const confirmOrder = order => {
     userId: firebase.auth().currentUser.uid,
     status: 'n',
     isArchived: false,
-    time: firebase.firestore.FieldValue.serverTimestamp(),
-    activeTime: firebase.firestore.FieldValue.serverTimestamp()
+    time: firebase.firestore.FieldValue.serverTimestamp()
   }
   return firebase.firestore().collection('orders').add(newOrder)
 }
@@ -166,7 +165,7 @@ export const changePassword = async (oldPassword, newPassword) => {
   for (var i = 0; i < 4; i++){
     colors.push(randomColors[Number(newPassword.charAt(i))].name)
   }
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     colors
   })
 }
@@ -224,22 +223,19 @@ export const updateFavorites = (user, productId) => {
   })
 }
 
-export const editOrder = (order, newBasket, customer, userInfo, locations) => {
+export const editOrder = (order, newBasket) => {
   if (order.status === 'n') {
     const basket = newBasket.filter(p => p.quantity > 0)
     const total = basket.reduce((sum, p) => sum + p.gross, 0)
-    const fraction = total - Math.floor(total / 50) * 50
-    const fixedFees = Math.ceil(setup.fixedFees * total / 50) * 50 - fraction
-    const locationFees = locations.find(l => l.id === userInfo.locationId).fees
-    const deliveryFees = order.withDelivery ? customer.deliveryFees || locationFees : 0
+    const fixedFees = Math.trunc(setup.fixedFees * total)
+    const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 50) * 50
     const orderStatus = basket.length === 0 ? 'c' : order.status
     return firebase.firestore().collection('orders').doc(order.id).update({
       basket,
       total,
       fixedFees,
-      deliveryFees,
+      fraction,
       status: orderStatus,
-      deliveryDiscount: order.withDelivery ? Math.max(0, locationFees - (customer.deliveryFees || locationFees)) : 0
     })
   } else {
     return firebase.firestore().collection('orders').doc(order.id).update({
@@ -260,57 +256,6 @@ export const deleteNotification = (user, notificationId) => {
   })
 }
 
-export const takeOrder = order => {
-  return firebase.firestore().collection('orders').doc(order.id).update({
-    status: 't',
-    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-  })
-}
-
-export const returnOrderPacks = (order, pack, returned) => {
-  const batch = firebase.firestore().batch()
-  const orderPack = order.basket.find(p => p.packId === pack.id)
-  const otherPacks = order.basket.filter(p => p.packId !== pack.id)
-  let status, gross
-  if (returned === 0 && orderPack.returned > 0) {
-    if (pack.isDivided) {
-      status = parseInt(Math.abs(addQuantity(orderPack.quantity, -1 * orderPack.purchased)) / orderPack.quantity * 100) <= setup.weightErrorMargin ? 'f' : 'pu'
-    } else {
-      status = orderPack.quantity === orderPack.purchased ? 'f' : 'pu'
-    }
-    gross = parseInt(orderPack.actual * (orderPack.weight || orderPack.purchased))
-  } else {
-    if (returned === orderPack.purchased) {
-      status = 'r'
-      gross = 0
-    } else {
-      status = 'pr'
-      gross = parseInt(orderPack.actual * addQuantity(orderPack.weight || orderPack.purchased, -1 * returned))
-    }
-  }
-  const basket = [
-    ...otherPacks, 
-    {
-      ...orderPack, 
-      status,
-      gross,
-      returned: pack.isDivided || !pack.byWeight ? returned : orderPack.purchased,
-    }
-  ]
-  const profit = basket.reduce((sum, p) => sum + (['p', 'f', 'pu', 'pr'].includes(p.status) ? parseInt((p.actual - p.cost) * addQuantity(p.weight || p.purchased, -1 * (p.returned || 0))) : 0), 0)
-  const total = basket.reduce((sum, p) => sum + (p.gross || 0), 0)
-  const fraction = total - Math.floor(total / 50) * 50
-  const fixedFees = Math.ceil(setup.fixedFees * total / 50) * 50 - fraction
-  const orderRef = firebase.firestore().collection('orders').doc(order.id)
-  batch.update(orderRef, {
-    basket,
-    total,
-    profit,
-    fixedFees
-  })
-  return batch.commit()
-}
-
 export const getBasket = (stateBasket, packs) => {
   const basket = stateBasket.map(p => {
     const packInfo = packs.find(pa => pa.id === p.packId) || ''
@@ -320,14 +265,14 @@ export const getBasket = (stateBasket, packs) => {
       if (!offerInfo) {
         lastPrice = 0
       } else if (offerInfo.subPackId === p.packId) {
-        lastPrice = parseInt(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
+        lastPrice = Math.trunc(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
       } else {
-        lastPrice = parseInt(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
+        lastPrice = Math.trunc(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
       }
     } else {
       lastPrice = packInfo.price || 0
     }
-    const totalPriceText = `${(parseInt(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
+    const totalPriceText = `${(Math.trunc(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
     const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
     const otherProducts = packs.filter(pa => pa.categoryId === packInfo.categoryId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
     const otherOffers = packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))

@@ -7,7 +7,13 @@ const Reducer = (state, action) => {
       pack = {
         packId: action.pack.id,
         productName: action.pack.productName,
+        productAlias: action.pack.productAlias,
         packName: action.pack.name,
+        imageUrl: action.pack.imageUrl,
+        subQuantity: action.pack.subQuantity,
+        bonusPackId: action.pack.bonusPackId,
+        bonusImageUrl: action.pack.bonusImageUrl,
+        bonusQuantity: action.pack.bonusQuantity,
         price: action.pack.price,
         quantity: 1,
         isDivided: action.pack.isDivided,
@@ -24,7 +30,7 @@ const Reducer = (state, action) => {
         nextQuantity = increment.filter(i => i > action.pack.quantity)
         nextQuantity = Math.min(...nextQuantity)
         nextQuantity = nextQuantity === Infinity ? action.pack.quantity : nextQuantity
-      } else if (action.pack.maxQuantity && action.pack.quantity >= pack.maxQuantity) {
+      } else if (action.pack.maxQuantity && action.pack.quantity >= action.pack.maxQuantity) {
         nextQuantity = action.pack.quantity
       } else {
         nextQuantity = action.pack.quantity + 1
@@ -85,7 +91,7 @@ const Reducer = (state, action) => {
       pack = {
         ...action.pack,
         quantity: nextQuantity,
-        gross: parseInt(action.pack.price * nextQuantity)
+        gross: Math.trunc(action.pack.price * nextQuantity)
       }
       packs = state.orderBasket.slice()
       packIndex = packs.findIndex(p => p.packId === action.pack.packId)
@@ -116,7 +122,7 @@ const Reducer = (state, action) => {
       pack = {
         ...action.pack,
         quantity: nextQuantity,
-        gross: parseInt(action.pack.price * nextQuantity)
+        gross: Math.trunc(action.pack.price * nextQuantity)
       }  
       packs = state.orderBasket.slice()
       packIndex = packs.findIndex(p => p.packId === action.pack.packId)
@@ -161,16 +167,6 @@ const Reducer = (state, action) => {
       return {
         ...state,
         locations: action.locations
-      }
-    case 'SET_POSITION_ORDERS':
-      return {
-        ...state,
-        positionOrders: action.orders
-      }
-    case 'SET_CUSTOMERS':
-      return {
-        ...state,
-        customers: action.customers
       }
     default:
       return state

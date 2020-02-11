@@ -6,15 +6,16 @@ import { quantityText, addQuantity } from '../data/actions'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
+import PackImage from './pack-image'
 
 const PurchasedPacks = props => {
-	const { state } = useContext(StoreContext)
+  const { state } = useContext(StoreContext)
 	const [purchasedPacks, setPurchasedPacks] = useState([])
   const [deliveredOrders, setDeliveredOrders] = useState([])
   useEffect(() => {
     setDeliveredOrders(() => {
-      const deliveredOrders = state.orders.filter(o => ['t', 'f'].includes(o.status))
-      return deliveredOrders.sort((o1, o2) => o1.activeTime.seconds - o2.activeTime.seconds)
+      const deliveredOrders = state.orders.filter(o => o.status === 'd')
+      return deliveredOrders.sort((o1, o2) => o1.time.seconds - o2.time.seconds)
     })
   }, [state.orders])
 	useEffect(() => {
@@ -29,18 +30,24 @@ const PurchasedPacks = props => {
             lastPrice: p.actual,
             quantity: addQuantity(packsArray[found].quantity, p.purchased),
             lastQuantity: p.purchased,
-            lastTime: o.activeTime
+            lastTime: o.time
           })
 				} else {
           packsArray.push({
             packId: p.packId,
             productName: p.productName,
+            productAlias: p.productAlias,
             packName: p.packName,
+            imageUrl: p.imageUrl,
+            subQuantity: p.subQuantity,
+            bonusPackId: p.bonusPackId,
+            bonusImageUrl: p.bonusImageUrl,
+            bonusQuantity: p.bonusQuantity,
             bestPrice: p.actual,
             lastPrice: p.actual,
             quantity: p.purchased,
             lastQuantity: p.purchased,
-            lastTime: o.activeTime
+            lastTime: o.time
           })
         }
 			})
@@ -63,6 +70,7 @@ const PurchasedPacks = props => {
                 footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}
 								key={i++}
 							>
+                <PackImage slot="media" pack={p} type="list" />
                 <div className="list-subtext1">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
                 <div className="list-subtext2">{`${labels.lastQuantity}: ${quantityText(p.lastQuantity)}`}</div>
 							</ListItem>
