@@ -99,7 +99,7 @@ const Reducer = (state, action) => {
       return {...state, orderBasket: packs}
     case 'DECREASE_ORDER_QUANTITY':
       if (action.pack.weight) {
-        if (action.pack.isDivided) {
+        if (action.pack.packInfo.isDivided) {
           if (action.pack.quantity > action.pack.weight) {
             nextQuantity = action.pack.weight
           } else {
@@ -112,7 +112,7 @@ const Reducer = (state, action) => {
             nextQuantity = 0
           }  
         }
-      } else if (action.pack.isDivided) {
+      } else if (action.pack.packInfo.isDivided) {
         nextQuantity = increment.filter(i => i < action.pack.quantity)
         nextQuantity = Math.max(...nextQuantity)
         nextQuantity = nextQuantity === -Infinity ? 0 : nextQuantity

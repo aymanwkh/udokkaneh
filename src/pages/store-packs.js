@@ -40,14 +40,15 @@ const StorePacks = props => {
                 link={`/pack-details/${p.packId}/type/o`}
                 title={p.packInfo.productName}
                 subtitle={p.packInfo.productAlias}
-                text={p.packInfo.name}
+                text={p.packInfo.productDescription}
                 footer={moment(p.time.toDate()).fromNow()}
                 after={(p.packInfo.price / 1000).toFixed(3)}
                 key={p.id}
               >
                 <PackImage slot="media" pack={p.packInfo} type="list" />
-                <div className="list-subtext1">{productOfText(p.packInfo.trademark, p.packInfo.country)}</div>
-                {p.price > p.packInfo.price ? <div className="list-subtext2">{`${labels.myPrice}: ${(p.price / 1000).toFixed(3)}`}</div> : ''}
+                <div className="list-subtext1">{p.packInfo.name}</div>
+                <div className="list-subtext2">{productOfText(p.packInfo.trademark, p.packInfo.country)}</div>
+                {p.price > p.packInfo.price ? <div className="list-subtext3">{`${labels.myPrice}: ${(p.price / 1000).toFixed(3)}`}</div> : ''}
                 {p.packInfo.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
               </ListItem>
             )

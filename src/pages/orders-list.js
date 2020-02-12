@@ -12,7 +12,7 @@ const OrdersList = props => {
   const [orders, setOrders] = useState([])
   useEffect(() => {
     setOrders(() => {
-      let orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd', 'm'].includes(o.status))
+      let orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd'].includes(o.status))
       orders = orders.map(o => {
         const orderStatusInfo = orderStatus.find(s => s.id === o.status)
         return {

@@ -180,8 +180,9 @@ const PackDetails = props => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="card-title">{pack.name}</div>
+          <p className="card-title">{pack.name}</p>
           <PackImage pack={pack} type="card" />
+          <p className="card-title">{pack.productDescription}</p>
         </CardContent>
         <CardFooter>
           <p>{productOfText(pack.trademark, pack.country)}</p>

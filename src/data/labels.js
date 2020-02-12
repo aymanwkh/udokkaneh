@@ -117,7 +117,6 @@ const labels = {
   category: 'الصنف',
   productName: 'اسم المنتج',
   packName: 'العبوة',
-  unapprovedOrder: 'يوجد طلب سابق لم يتم اعتماده بعد، يمكنك تعديله',
   duplicateInvitation: 'يوجد دعوة سابقة لهذا الرقم',
   quantityPlaceholder: 'ادخل رقم اكبر من واحد',
   invalidQuantity: 'الرجاء التأكد من الكمية المدخلة',
@@ -143,7 +142,8 @@ const labels = {
   unitPrice: 'سعر الوحدة',
   editSuccess: 'تم التعديل',
   duplicateOrderRequest: 'ارسلت سابقا طلب تعديل لطلب المشتريات هذا',
-  merge: 'طلب دمج مع الطلب الذي قبله',
+  mergeRequest: 'طلب دمج مع الطلب الذي قبله',
+  merge: 'دمج',
   edit: 'تعديل',
   editRequest: 'طلب تعديل',
   cancel: 'الغاء',
@@ -177,9 +177,10 @@ const labels = {
   addToFavorites: 'الاضافة الى المفضلة',
   rateGood: 'تقييم ايجابي ',
   rateBad: 'تقييم سلبي ',
-  oneOfProducts: 'احد منتجات',
+  productFrom: 'منتج من',
   noImage: 'الصورة غير متوفرة',
-  offerHint: '*اشتر ما يلزمك واستفد من العرض في نفس الوقت...تضاف 10% على القيمة الافرادية'
+  offerHint: '*اشتر ما يلزمك واستفد من العرض في نفس الوقت...تضاف 10% على القيمة الافرادية',
+  mergeSuccess: 'تم الدمج'
 }
 
 export default labels

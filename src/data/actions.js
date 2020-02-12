@@ -8,7 +8,7 @@ export const getMessage = (props, error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
   if (!labels[errorCode]) {
     firebase.firestore().collection('logs').add({
-      userId: firebase.auth().currentUser.uid,
+      userId: firebase.auth().currentUser?.uid || '',
       error,
       page: props.f7route.route.component.name,
       time: firebase.firestore.FieldValue.serverTimestamp()
@@ -60,7 +60,7 @@ export const quantityDetails = basketPack => {
 }
 
 export const productOfText = (trademark, country) => {
-  return trademark ? `${labels.oneOfProducts} (${trademark})-${country}` : `${labels.productOf} ${country}`
+  return trademark ? `${labels.productFrom} ${trademark}-${country}` : `${labels.productOf} ${country}`
 }
 
 export const getChildren = (categoryId, categories) => {
@@ -120,6 +120,44 @@ export const cancelOrder = order => {
     status: 'c',
     lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
   })
+}
+
+export const mergeOrders = (order1, order2) => {
+  const batch = firebase.firestore().batch()
+  let basket = order1.basket.slice()
+  order2.basket.forEach(p => {
+    let newItem
+    let found = basket.findIndex(bp => bp.packId === p.packId)
+    if (found === -1) {
+      newItem = p
+    } else {
+      const status = p.status === 'f' ? 'p' : p.status
+      const newQuantity = addQuantity(basket[found].quantity, p.quantity)
+      newItem = {
+        ...basket[found],
+        quantity: newQuantity,
+        status,
+        gross: status === 'f' ? Math.trunc(p.actual * (p.weight || p.purchased)) : Math.trunc((p.actual || 0) * (p.weight || p.purchased)) + Math.trunc(p.price * addQuantity(newQuantity, -1 * p.purchased)),
+      }  
+    }
+    basket.splice(found === -1 ? basket.length : found, found === -1 ? 0 : 1, newItem)
+  })
+  const total = basket.reduce((sum, p) => sum + (p.gross || 0), 0)
+  const fixedFees = Math.trunc(setup.fixedFees * total)
+  const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 50) * 50
+  let orderRef = firebase.firestore().collection('orders').doc(order1.id)
+  batch.update(orderRef, {
+    basket,
+    total,
+    fixedFees,
+    fraction
+  })
+  orderRef = firebase.firestore().collection('orders').doc(order2.id)
+  batch.update(orderRef, {
+    status: 'm',
+    lastUpdate: new Date()
+  })
+  return batch.commit()
 }
 
 export const addOrderRequest = (order, type, mergedOrder) => {

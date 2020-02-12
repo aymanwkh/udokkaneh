@@ -29,12 +29,12 @@ export const sortByList = [
 ]
 
 export const orderStatus = [
-  {id: 'n', name: 'جديد'},
+  {id: 'n', name: 'غير معتمد'},
   {id: 'a', name: 'معتمد'},
   {id: 's', name: 'معلق'},
   {id: 'r', name: 'مرفوض'},
-  {id: 'e', name: 'قيد التجهيز'},
-  {id: 'f', name: 'مكتمل'},
+  {id: 'e', name: 'قيد التنفيذ'},
+  {id: 'f', name: 'تم التنفيذ'},
   {id: 'p', name: 'جاهز'},
   {id: 'd', name: 'مستلم'},
   {id: 'c', name: 'ملغي'},
@@ -44,7 +44,7 @@ export const orderStatus = [
 ]  
 
 export const orderPackStatus = [
-  {id: 'n', name: 'جديد'},
+  {id: 'n', name: 'لم يتم الشراء'},
   {id: 'p', name: 'شراء جزئي'},
   {id: 'f', name: 'تم الشراء'},
   {id: 'u', name: 'غير متوفر'},

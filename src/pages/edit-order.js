@@ -23,7 +23,16 @@ const EditOrder = props => {
     dispatch({type: 'LOAD_ORDER_BASKET', order})
   }, [dispatch, order])
   useEffect(() => {
-    setOrderBasket(() => state.orderBasket?.filter(p => p.quantity > 0) || [])
+    setOrderBasket(() => {
+      const basket = state.orderBasket?.filter(p => p.quantity > 0) || []
+      return basket.map(p => {
+        const packInfo = state.packs.find(pa => pa.id === p.packId)
+        return {
+          ...p,
+          packInfo
+        }
+      })
+    })
   }, [state.orderBasket, state.packs])
   useEffect(() => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
@@ -82,18 +91,21 @@ const EditOrder = props => {
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
-              footer={quantityDetails(p)}
+              footer={`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}
+              after={p.packInfo ? '' : labels.unAvailableNote}
               key={p.packId}
             >
               <div className="list-subtext1">{`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}</div>
-              <div className="list-subtext2">{`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}</div>
-              <Stepper
-                slot="after"
-                fill
-                buttonsOnly
-                onStepperPlusClick={() => handleChange(p, 1)}
-                onStepperMinusClick={() => handleChange(p, -1)}
-              />
+              <div className="list-subtext2">{quantityDetails(p)}</div>
+              {p.packInfo ? 
+                <Stepper
+                  slot="after"
+                  fill
+                  buttonsOnly
+                  onStepperPlusClick={() => handleChange(p, 1)}
+                  onStepperMinusClick={() => handleChange(p, -1)}
+                />
+              : ''}
             </ListItem>
           )}
         </List>

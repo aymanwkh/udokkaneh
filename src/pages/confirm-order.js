@@ -1,10 +1,9 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon } from 'framework7-react'
+import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Link } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { confirmOrder, showMessage, showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
 import { setup } from '../data/config'
-import BottomToolbar from './bottom-toolbar'
 
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -16,7 +15,7 @@ const ConfirmOrder = props => {
   const [fraction, setFraction] = useState('')
   const [discount, setDiscount] = useState('')
   const [weightedPacks, setWeightedPacks] = useState('')
-  const [locationFees] = useState(() => state.locations.find(l => l.id === state.userInfo.locationId).fees)
+  const [locationFees] = useState(() => state.locations.find(l => l.id === state.userInfo.locationId)?.fees)
   const [deliveryFees] = useState(state.customerInfo.deliveryFees || locationFees)
   useEffect(() => {
     setBasket(getBasket(state.basket, state.packs))
@@ -76,9 +75,6 @@ const ConfirmOrder = props => {
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
-      if (state.orders.filter(o => o.status === 'n').length > 0) {
-        throw new Error('unapprovedOrder')
-      }
       const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
@@ -90,7 +86,7 @@ const ConfirmOrder = props => {
         const pack = {
           packId: p.packId,
           productName: p.productName,
-          productAlias: p.productAlias,
+          productAlias: p.productAlias || '',
           packName: p.packName,
           imageUrl: p.imageUrl,
           price: p.price,
@@ -127,6 +123,11 @@ const ConfirmOrder = props => {
       setError(getMessage(props, err))
     }
   }
+  const handleDelete = () => {
+    props.f7router.navigate('/home/', {reloadAll: true})
+    dispatch({type: 'CLEAR_BASKET'})  
+  }
+
   if (!user) return <Page><h3 className="center"><a href="/login/">{labels.relogin}</a></h3></Page>
   return (
     <Page>
@@ -174,7 +175,8 @@ const ConfirmOrder = props => {
         <Icon material="done"></Icon>
       </Fab>
       <Toolbar bottom>
-        <BottomToolbar />
+        <Link href='/home/' iconMaterial="home" />
+        <Link href='#' iconMaterial="delete" onClick={() => handleDelete()} />
       </Toolbar>
     </Page>
   )

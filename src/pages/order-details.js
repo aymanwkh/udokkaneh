@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import { cancelOrder, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
+import { cancelOrder, mergeOrders, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
 import { orderPackStatus } from '../data/config'
 
@@ -10,24 +10,27 @@ const OrderDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
-  const [order] = useState(() => state.orders.find(o => o.id === props.id))
+  const [order, setOrder] = useState(() => state.orders.find(o => o.id === props.id))
   const [orderBasket, setOrderBasket] = useState([])
   const [lastOrder, setLastOrder] = useState('')
   const orderActions = useRef('')
   useEffect(() => {
+    setOrder(() => state.orders.find(o => o.id === props.id))
+  }, [state.orders, props.id])
+  useEffect(() => {
     setOrderBasket(() => order.basket.map(p => {
-      const changePriceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : ''
+      const priceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : `${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`
       const statusNote = `${orderPackStatus.find(s => s.id === p.status).name} ${p.overPriced ? labels.overPricedNote : ''}`
       return {
         ...p,
-        changePriceNote,
+        priceNote,
         statusNote
       }
     }))
     setLastOrder(() => {
       const orders = state.orders.filter(o => o.id !== order.id)
       orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
-      return ['a', 'e'].includes(orders[0]?.status) ? orders[0] : ''
+      return ['n', 'a', 'e'].includes(orders[0]?.status) ? orders[0] : ''
     })
   }, [order, state.orders])
  
@@ -81,7 +84,7 @@ const OrderDetails = props => {
   }
   const handleMerge = async () => {
     try{
-      if (lastOrder.requestType) {
+      if (lastOrder.status !== 'n' && lastOrder.requestType) {
         throw new Error('duplicateOrderRequest')
       }
       let found
@@ -94,10 +97,17 @@ const OrderDetails = props => {
           throw new Error('samePackPurchasedByWeight')
         }
       }
-      setInprocess(true)
-      await addOrderRequest(lastOrder, 'm', order)
-      setInprocess(false)
-      showMessage(labels.sendSuccess)
+      if (lastOrder.status === 'n') {
+        setInprocess(true)
+        await mergeOrders(lastOrder, order)
+        setInprocess(false)
+        showMessage(labels.mergeSuccess)
+      } else {
+        setInprocess(true)
+        await addOrderRequest(lastOrder, 'm', order)
+        setInprocess(false)
+        showMessage(labels.sendSuccess)  
+      }
       props.f7router.back()
     } catch(err) {
       setInprocess(false)
@@ -123,9 +133,9 @@ const OrderDetails = props => {
               footer={`${labels.status}: ${p.statusNote}`}
               after={(p.gross / 1000).toFixed(3)}
             >
-              <div className="list-subtext1">{p.storeName ? `${labels.storeName}: ${p.storeName}` : ''}</div>
-              {p.changePriceNote ? <div className="list-subtext2">{p.changePriceNote}</div> : ''}
+              <div className="list-subtext1">{p.priceNote}</div>
               <div className="list-subtext2">{quantityDetails(p)}</div>
+              <div className="list-subtext3">{p.storeName ? `${labels.storeName}: ${p.storeName}` : ''}</div>
             </ListItem>
           )}
           <ListItem 
@@ -154,7 +164,7 @@ const OrderDetails = props => {
         <ActionsButton onClick={() => handleEdit()}>{order.status === 'n' ? labels.editBasket : labels.editBasketRequest}</ActionsButton>
         <ActionsButton onClick={() => handleDelete()}>{order.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
         {order.status === 'n' && lastOrder ? 
-          <ActionsButton onClick={() => handleMerge()}>{labels.merge}</ActionsButton>
+          <ActionsButton onClick={() => handleMerge()}>{lastOrder.status === 'n' ? labels.merge : labels.mergeRequest}</ActionsButton>
         : ''}
       </Actions>
       <Toolbar bottom>

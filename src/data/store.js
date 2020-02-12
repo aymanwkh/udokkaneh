@@ -92,6 +92,11 @@ const Store = props => {
             unsubscribeStorePacks()
           })
         }
+      } else {
+        dispatch({type: 'SET_USER_INFO', userInfo: ''})
+        dispatch({type: 'SET_CUSTOMER_INFO', customerInfo: ''})
+        dispatch({type: 'SET_ORDERS', orders: []})
+        dispatch({type: 'SET_STORE_PACKS', storePacks: []})
       }
     })
   }, [])

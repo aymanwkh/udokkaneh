@@ -61,6 +61,9 @@ export default [
   {
     path: '/register/:type',
     component: Register,
+    options: {
+      reloadCurrent: true,
+    },
   },
   {
     path: '/invite-friend/',

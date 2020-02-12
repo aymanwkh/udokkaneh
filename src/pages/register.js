@@ -97,7 +97,8 @@ const StoreOwner = props => {
       await registerUser(userInfo, password)
       setInprocess(false)
       showMessage(labels.registerSuccess)
-      props.f7router.navigate('/home/')
+      //props.f7router.navigate('/home/')
+      props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){
       setInprocess(false)
@@ -178,11 +179,9 @@ const StoreOwner = props => {
           </select>
         </ListItem>
       </List>
-      <List>
-      {!name || !mobile || !password || !storeName || !locationId || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
+      {!name || !mobile || !password || !locationId || (props.type === 'o' && !storeName) || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
         <Button text={labels.register} large onClick={() => handleRegister()} />
       }
-      </List>
     </Page>
   )
 }
