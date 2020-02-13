@@ -154,7 +154,6 @@ const labels = {
   read: 'مقروء',
   followupOrders: 'متابعة الطلبات',
   customerInfo: 'معلومات العميل',
-  customerCalls: 'الاتصال بالعميل',
   returnPacks: 'ارجاع مواد',
   deliver: 'تسليم',
   customerDetails: 'معلومات العميل',
@@ -180,7 +179,10 @@ const labels = {
   productFrom: 'منتج من',
   noImage: 'الصورة غير متوفرة',
   offerHint: '*اشتر ما يلزمك واستفد من العرض في نفس الوقت...تضاف 10% على القيمة الافرادية',
-  mergeSuccess: 'تم الدمج'
+  mergeSuccess: 'تم الدمج',
+  friends: 'الاصدقاء',
+  delete: 'حذف',
+  notifyFriends: 'ابلاغ الاصدقاء عن هذا العرض'
 }
 
 export default labels

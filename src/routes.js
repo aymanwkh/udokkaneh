@@ -25,6 +25,7 @@ import PurchasedPacks from './pages/purchased-packs'
 import Advert from './pages/advert'
 import EditOrder from './pages/edit-order'
 import Debit from './pages/debit'
+import Friends from './pages/friends'
 
 export default [
   {
@@ -148,6 +149,10 @@ export default [
   {
     path: '/debit/',
     component: Debit
+  },
+  {
+    path: '/friends/',
+    component: Friends
   },
   {
     path: '(.*)',

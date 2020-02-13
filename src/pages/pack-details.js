@@ -3,7 +3,7 @@ import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Toolb
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
-import { addAlarm, showMessage, showError, getMessage, updateFavorites, rateProduct, productOfText } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage, updateFavorites, rateProduct, productOfText, notifyFriends } from '../data/actions'
 import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
@@ -167,6 +167,20 @@ const PackDetails = props => {
       setError(getMessage(props, err))
     }
   }
+  const handleNotifyFriends = async () => {
+    try{
+      if (state.customerInfo.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      setInprocess(true)
+      await notifyFriends(pack.id)
+      setInprocess(false)
+      showMessage(labels.sendSuccess)
+    } catch(err) {
+      setInprocess(false)
+      setError(getMessage(props, err))
+    }
+  }
   return (
     <Page>
       <Navbar title={`${pack.productName}${pack.productAlias ? '-' + pack.productAlias : ''}`} backLink={labels.back} />
@@ -222,6 +236,9 @@ const PackDetails = props => {
                 </ActionsButton>
               </React.Fragment>
             }
+            {pack.isOffer && state.userInfo.friends?.find(f => f.status === 'r') ? 
+              <ActionsButton onClick={() => handleNotifyFriends()}>{labels.notifyFriends}</ActionsButton>
+            : ''}
             {otherProducts.length === 0 ? '' :
               <ActionsButton onClick={() => props.f7router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
             }

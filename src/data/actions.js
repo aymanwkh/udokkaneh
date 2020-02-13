@@ -1,8 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
-import { randomColors } from './config'
+import { randomColors, setup } from './config'
 import { f7 } from 'framework7-react'
-import { setup } from './config'
 
 export const getMessage = (props, error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -33,30 +32,28 @@ export const showError = messageText => {
   message.open()
 }
 
-export const quantityText = quantity => {
-  return `${quantity < 1 ? quantity * 1000 + ' ' + labels.gram : quantity}`
-}
 
-export const addQuantity = (q1, q2, q3 = 0) => {
-  if (Math.trunc(q1) !== q1 || Math.trunc(q2) !== q2 || Math.trunc(q3) !== q3) {
-    return Math.trunc(((q1 * 1000) + (q2 * 1000) + (q3 * 1000)) / 1000)
-  } else {
-    return q1 + q2 + q3
-  }
+export const quantityText = (quantity, weight) => {
+  return weight && weight !== quantity ? `${quantityText(quantity)}(${quantityText(weight)})` : quantity < 1 ? `${quantity * 1000} ${labels.gram}` : String(quantity)
 }
 
 export const quantityDetails = basketPack => {
   let text = `${labels.requested}: ${quantityText(basketPack.quantity)}`
   if (basketPack.purchased > 0) {
-    text += `, ${labels.purchased}: ${quantityText(basketPack.purchased)}`
-    if (basketPack.weight && basketPack.weight !== basketPack.purchased) {
-      text += `, ${labels.weight}: ${quantityText(basketPack.weight)}`
-    }
+    text += `, ${labels.purchased}: ${quantityText(basketPack.purchased, basketPack.weight)}`
   }
   if (basketPack.returned > 0) {
     text += `, ${labels.returned}: ${quantityText(basketPack.returned)}`
   }
   return text
+}
+
+export const addQuantity = (q1, q2, q3 = 0) => {
+  if (Math.trunc(q1) !== q1 || Math.trunc(q2) !== q2 || Math.trunc(q3) !== q3) {
+    return ((q1 * 1000) + (q2 * 1000) + (q3 * 1000)) / 1000
+  } else {
+    return q1 + q2 + q3
+  }
 }
 
 export const productOfText = (trademark, country) => {
@@ -221,7 +218,7 @@ export const addAlarm = alarm => {
 
 export const inviteFriend = (mobile, name) => {
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-    invitations: firebase.firestore.FieldValue.arrayUnion({
+    friends: firebase.firestore.FieldValue.arrayUnion({
       mobile,
       name,
       status: 'n'
@@ -291,6 +288,21 @@ export const deleteNotification = (user, notificationId) => {
   notifications.splice(notificationIndex, 1)
   return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     notifications
+  })
+}
+
+export const notifyFriends = offerId => {
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    notifyFriends: firebase.firestore.FieldValue.arrayUnion(offerId)
+  })
+}
+
+export const deleteFriend = (user, mobile) => {
+  const friends = user.friends.slice()
+  const friendIndex = friends.findIndex(f => f.mobile === mobile)
+  friends.splice(friendIndex, 1)
+  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+    friends
   })
 }
 

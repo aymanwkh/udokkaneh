@@ -29,8 +29,8 @@ export const sortByList = [
 ]
 
 export const orderStatus = [
-  {id: 'n', name: 'غير معتمد'},
-  {id: 'a', name: 'معتمد'},
+  {id: 'n', name: 'قيد الموافقة'},
+  {id: 'a', name: 'تمت الموافقة'},
   {id: 's', name: 'معلق'},
   {id: 'r', name: 'مرفوض'},
   {id: 'e', name: 'قيد التنفيذ'},
@@ -44,7 +44,7 @@ export const orderStatus = [
 ]  
 
 export const orderPackStatus = [
-  {id: 'n', name: 'لم يتم الشراء'},
+  {id: 'n', name: 'قيد الشراء'},
   {id: 'p', name: 'شراء جزئي'},
   {id: 'f', name: 'تم الشراء'},
   {id: 'u', name: 'غير متوفر'},
@@ -69,4 +69,11 @@ export const storeSummary = [
   {id: 'o', name: 'منتجات اعلى من السوق'},
   {id: 'n', name: 'منتجات مساوية للسوق'},
   {id: 'l', name: 'منتجات أقل سعر في السوق'}
+]
+
+export const friendStatus = [
+  {id: 'n', name: 'قيد الموافقة'},
+  {id: 's', name: 'ارسلت الدعوة'},
+  {id: 'o', name: 'مدعو سابقا'},
+  {id: 'r', name: 'مسجل'}
 ]

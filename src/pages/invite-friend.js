@@ -57,17 +57,17 @@ const InviteFriend = props => {
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
-      if (state.userInfo.invitations?.find(i => i.mobile === mobile)) {
+      if (state.userInfo.friends?.find(f => f.mobile === mobile)) {
         throw new Error('duplicateInvitation')
       }
-      if (mobile === state.customerInfo.mobile || mobile === state.customerInfo.otherMobile) {
+      if (mobile === state.userInfo.mobile || mobile === state.customerInfo.otherMobile) {
         throw new Error('invalidMobile')
       }
       setInprocess(true)
       await inviteFriend(mobile, name)
       setInprocess(false)
       showMessage(labels.sendSuccess)
-      props.f7router.navigate('/home/')
+      props.f7router.back()
     } catch (err){
       setInprocess(false)
       setError(getMessage(props, err))
