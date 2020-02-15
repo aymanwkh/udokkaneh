@@ -1,7 +1,7 @@
 export const setup = {
   fixedFees: 0.025,
   maxDiscount: 100,
-  firstOrderDiscount: 200,
+  firstOrderDiscount: 100,
   profit: 0.1,
   orderLimit: 50000,
   firstOrderLimit: 20000
@@ -25,7 +25,7 @@ export const sortByList = [
   {id: 's', name: 'اﻷكثر مبيعا'},
   {id: 'r', name: 'اﻷفضل في التقييم'},
   {id: 'o', name: 'العروض أولا'},
-  {id: 'v', name: 'اﻷفضل قيمة (السعر/الكمية)'},
+  {id: 'v', name: 'اﻷفضل قيمة (السعر/الوزن)'},
 ]
 
 export const orderStatus = [

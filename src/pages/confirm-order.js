@@ -44,8 +44,8 @@ const ConfirmOrder = props => {
       } else if (state.customerInfo.discounts > 0) {
         discount.value = Math.min(state.customerInfo.discounts, setup.maxDiscount)
         discount.type = 'o'
-      } else if (state.customerInfo.scpecialDiscount > 0) {
-        discount.value = state.customerInfo.scpecialDiscount
+      } else if (state.customerInfo.specialDiscount > 0) {
+        discount.value = state.customerInfo.specialDiscount
         discount.type = 's'
       }
       return discount

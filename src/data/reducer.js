@@ -19,8 +19,7 @@ const Reducer = (state, action) => {
         isDivided: action.pack.isDivided,
         byWeight: action.pack.byWeight,
         maxQuantity: action.pack.maxQuantity,
-        offerId: action.pack.offerId,
-        time: new Date()
+        offerId: action.pack.offerId
       }
       packs = [...state.basket, pack]
       localStorage.setItem('basket', JSON.stringify(packs))
