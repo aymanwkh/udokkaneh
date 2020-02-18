@@ -22,7 +22,7 @@ const ConfirmOrder = props => {
   }, [state.basket, state.packs])
 
   useEffect(() => {
-    setTotal(() => basket.reduce((sum, p) => sum + p.price * p.quantity, 0))
+    setTotal(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
     setWeightedPacks(() => basket.filter(p => p.byWeight))
   }, [basket])
   useEffect(() => {
@@ -75,7 +75,7 @@ const ConfirmOrder = props => {
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
-      const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
+      const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const totalOrders = activeOrders.reduce((sum, o) => sum + o.total, 0)
       if (totalOrders + total > orderLimit) {

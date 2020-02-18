@@ -39,7 +39,7 @@ const AddAlarm = props => {
           setPriceErrorMessage(labels.invalidPrice)
         }  
       } else {
-        if (Number(value) > 0 && Number(value * 1000) !== currentPrice) {
+        if (Number(value) > 0 && value * 1000 !== currentPrice) {
           setPriceErrorMessage('')
         } else {
           setPriceErrorMessage(labels.invalidPrice)

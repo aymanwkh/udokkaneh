@@ -49,11 +49,7 @@ export const quantityDetails = basketPack => {
 }
 
 export const addQuantity = (q1, q2, q3 = 0) => {
-  if (Math.trunc(q1) !== q1 || Math.trunc(q2) !== q2 || Math.trunc(q3) !== q3) {
-    return ((q1 * 1000) + (q2 * 1000) + (q3 * 1000)) / 1000
-  } else {
-    return q1 + q2 + q3
-  }
+  return Math.trunc(q1 * 1000 + q2 * 1000 + q3 * 1000) / 1000
 }
 
 export const productOfText = (trademark, country) => {

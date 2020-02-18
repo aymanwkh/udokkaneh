@@ -1,6 +1,6 @@
 const Reducer = (state, action) => {
-  let pack, packIndex, packs, nextQuantity
-  const increment = [0.125, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
+  let pack, packIndex, packs, nextQuantity, i
+  const increment = [0.125, 0.25, 0.5, 0.75, 1]
   switch (action.type){
     case 'ADD_TO_BASKET':
       if (state.basket.find(p => p.packId === action.pack.id)) return state
@@ -25,14 +25,19 @@ const Reducer = (state, action) => {
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'INCREASE_QUANTITY':
-      if (action.pack.isDivided) {
-        nextQuantity = increment.filter(i => i > action.pack.quantity)
-        nextQuantity = Math.min(...nextQuantity)
-        nextQuantity = nextQuantity === Infinity ? action.pack.quantity : nextQuantity
-      } else if (action.pack.maxQuantity && action.pack.quantity >= action.pack.maxQuantity) {
+      if (action.pack.maxQuantity && action.pack.quantity >= action.pack.maxQuantity) {
         nextQuantity = action.pack.quantity
       } else {
-        nextQuantity = action.pack.quantity + 1
+        if (action.pack.isDivided) {
+          if (action.pack.quantity >= 1) {
+            nextQuantity = action.pack.quantity + 0.5
+          } else {
+            i = increment.indexOf(action.pack.quantity)
+            nextQuantity = increment[++i]  
+          }
+        } else {
+          nextQuantity = action.pack.quantity + 1
+        }  
       }
       pack = {
         ...action.pack,
@@ -45,9 +50,12 @@ const Reducer = (state, action) => {
       return {...state, basket: packs}
     case 'DECREASE_QUANTITY':
       if (action.pack.isDivided) {
-        nextQuantity = increment.filter(i => i < action.pack.quantity)
-        nextQuantity = Math.max(...nextQuantity)
-        nextQuantity = nextQuantity === -Infinity ? 0 : nextQuantity
+        if (action.pack.quantity > 1) {
+          nextQuantity = action.pack.quantity - 0.5
+        } else {
+          i = increment.indexOf(action.pack.quantity)
+          nextQuantity = i === 0 ? increment[0] : increment[--i]  
+        }
       } else {
         nextQuantity = action.pack.quantity - 1
       }
@@ -81,9 +89,12 @@ const Reducer = (state, action) => {
       }
     case 'INCREASE_ORDER_QUANTITY':
       if (action.pack.packInfo.isDivided) {
-        nextQuantity = increment.filter(i => i > action.pack.quantity)
-        nextQuantity = Math.min(...nextQuantity)
-        nextQuantity = nextQuantity === Infinity ? action.pack.quantity : nextQuantity
+        if (action.pack.quantity >= 1) {
+          nextQuantity = action.pack.quantity + 0.5
+        } else {
+          i = increment.indexOf(action.pack.quantity)
+          nextQuantity = increment[++i]  
+        }
       } else {
         nextQuantity = action.pack.quantity + 1
       }
@@ -112,9 +123,12 @@ const Reducer = (state, action) => {
           }  
         }
       } else if (action.pack.packInfo.isDivided) {
-        nextQuantity = increment.filter(i => i < action.pack.quantity)
-        nextQuantity = Math.max(...nextQuantity)
-        nextQuantity = nextQuantity === -Infinity ? 0 : nextQuantity
+        if (action.pack.quantity > 1) {
+          nextQuantity = action.pack.quantity - 0.5
+        } else {
+          i = increment.indexOf(action.pack.quantity)
+          nextQuantity = i === 0 ? increment[0] : increment[--i]  
+        }
       } else {
         nextQuantity = action.pack.quantity - 1
       }

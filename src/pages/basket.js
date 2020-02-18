@@ -28,7 +28,7 @@ const Basket = props => {
     setWeightedPacks(() => basket.filter(p => p.byWeight))
   }, [basket])
   useEffect(() => {
-    const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
+    const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
     if (customerOrdersTotals + totalPrice > orderLimit){
       setSubmitVisible(false)
     } else {
@@ -55,7 +55,7 @@ const Basket = props => {
   const handleIncrease = pack => {
     try{
       dispatch({type: 'INCREASE_QUANTITY', pack})
-      const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
+      const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
       if (customerOrdersTotals + totalPrice > orderLimit){
         throw new Error('limitOverFlow')
       }  

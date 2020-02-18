@@ -4,7 +4,6 @@ export const setup = {
   firstOrderDiscount: 100,
   profit: 0.1,
   orderLimit: 50000,
-  firstOrderLimit: 20000
 }
 
 export const randomColors = [

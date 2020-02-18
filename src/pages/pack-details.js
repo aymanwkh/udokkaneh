@@ -94,7 +94,7 @@ const PackDetails = props => {
           offerId: pack.id
         }
       }
-      const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
+      const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
       const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
       if (activeOrdersTotal + purchasedPack.price > orderLimit) {
@@ -200,7 +200,7 @@ const PackDetails = props => {
         </CardContent>
         <CardFooter>
           <p>{productOfText(pack.trademark, pack.country)}</p>
-          {pack.trademark ? <p><RatingStars rating={pack.rating} count={pack.ratingCount} /></p> : ''}
+          <p><RatingStars rating={pack.rating} count={pack.ratingCount} /></p>
         </CardFooter>
       </Card>
       {props.type === 'c' ? 
@@ -224,7 +224,7 @@ const PackDetails = props => {
         {props.type === 'c' ? 
           <React.Fragment>
             <ActionsButton onClick={() => handleFavorite()}>{state.userInfo.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
-            {!pack.trademark || hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
+            {hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
               <React.Fragment>
                 <ActionsButton onClick={() => handleRate(1)}>
                   {labels.rateGood}

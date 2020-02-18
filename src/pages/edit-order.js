@@ -38,7 +38,7 @@ const EditOrder = props => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
   }, [orderBasket])
   useEffect(() => {
-    const orderLimit = (state.customerInfo?.ordersCount || 0) === 0 ? setup.firstOrderLimit : state.customerInfo.orderLimit || setup.orderLimit
+    const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
     if (customerOrdersTotals + total > orderLimit){
       setOverLimit(true)
     } else {
