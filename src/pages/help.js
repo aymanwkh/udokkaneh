@@ -17,6 +17,7 @@ const Help = props => {
         return ''
     }
   })
+  const purchaseNote = 'يتم الشراء بالسعر عند الطلب أو أقل في حال انخفاض السعر بعد ارسال الطلب وقبل الشراء، أما في حال ارتفاع السعر فتتوقف عملية الشراء حسب المؤشر بجانب كل منتج في السلة هل ترغب اتمام الشراء بافضل سعر في السوق او عدم الشراء'
   const feesNote = 'رسوم الخدمة هي 2.5% من قيمة المشتريات، مضافا إليها رسوم التوصيل والتي تحدد بناء على منطقتك'
   const locationFeesNote = 'حيث أن رسوم التوصيل ل'
   const discountNote = 'وللحصول على المزيد من الخصومات لا تنس تقييم المنتجات التي تشتريها، والإبلاغ عن الأسعار الأقل من خلال القائمة في صفحة المنتج، ودعوة أصدقائك من خلال القائمة الجانبية في الصفحة الرئيسية'
@@ -28,9 +29,10 @@ const Help = props => {
         <p className="note">{helpNote}</p>
         {props.id === 'o' ?
           <React.Fragment>
-            <p className="help1">{feesNote}</p>
-            {userLocation.fees === 0 ? '' : <p className="help1">{`${locationFeesNote}${userLocation.name}: ${(userLocation.fees / 1000).toFixed(3)}`}</p>}
-            <p className="help2">{discountNote}</p>
+            <p className="help1">{purchaseNote}</p>
+            <p className="help2">{feesNote}</p>
+            {userLocation.fees === 0 ? '' : <p className="help2">{`${locationFeesNote}${userLocation.name}: ${(userLocation.fees / 1000).toFixed(3)}`}</p>}
+            <p className="help3">{discountNote}</p>
           </React.Fragment>
         : ''}
       </Block>

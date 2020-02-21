@@ -19,9 +19,20 @@ const Reducer = (state, action) => {
         isDivided: action.pack.isDivided,
         byWeight: action.pack.byWeight,
         maxQuantity: action.pack.maxQuantity,
-        offerId: action.pack.offerId
+        offerId: action.pack.offerId,
+        withBestPrice: false
       }
       packs = [...state.basket, pack]
+      localStorage.setItem('basket', JSON.stringify(packs))
+      return {...state, basket: packs}
+    case 'TOGGLE_BEST_PRICE':
+      pack = {
+        ...action.pack,
+        withBestPrice: !action.pack.withBestPrice
+      }
+      packs = state.basket.slice()
+      packIndex = packs.findIndex(p => p.packId === action.pack.packId)
+      packs.splice(packIndex, 1, pack)
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'INCREASE_QUANTITY':
@@ -80,13 +91,28 @@ const Reducer = (state, action) => {
     case 'LOAD_ORDER_BASKET':
       return {
         ...state,
-        orderBasket: action.order.basket
+        orderBasket: action.order.basket.map(p => {
+          return {
+            ...p,
+            oldQuantity: p.quantity,
+            oldWithBestPrice: p.withBestPrice
+          }
+        })
       }
     case 'CLEAR_ORDER_BASKET':
       return {
         ...state,
         orderBasket: []
       }
+      case 'TOGGLE_ORDER_BEST_PRICE':
+        pack = {
+          ...action.pack,
+          withBestPrice: !action.pack.withBestPrice
+        }
+        packs = state.orderBasket.slice()
+        packIndex = packs.findIndex(p => p.packId === action.pack.packId)
+        packs.splice(packIndex, 1, pack)
+        return {...state, orderBasket: packs}
     case 'INCREASE_ORDER_QUANTITY':
       if (action.pack.packInfo.isDivided) {
         if (action.pack.quantity >= 1) {

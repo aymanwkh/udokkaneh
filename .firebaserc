@@ -1,5 +1,15 @@
 {
   "projects": {
-    "default": "dokanehnet"
+    "default": "dokaneh-6870f",
+    "prod": "dokaneh-prod"
+  },
+  "targets": {
+    "dokaneh-prod": {
+      "hosting": {
+        "prod": [
+          "dokaneh-net"
+        ]
+      }
+    }
   }
 }

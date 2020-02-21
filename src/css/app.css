@@ -92,6 +92,12 @@
   margin: 1rem;
 }
 
+.help3 {
+  text-align: center;
+  color: purple;
+  margin: 1rem;
+}
+
 .avatar {
   width: 100px;
 }
@@ -220,6 +226,11 @@
 .list-subtext3 {
   font-size: 0.8rem;
   color:teal;
+}
+
+.list-subtext4 {
+  font-size: 0.8rem;
+  color:orange;
 }
 
 .toolbar-inner .link {

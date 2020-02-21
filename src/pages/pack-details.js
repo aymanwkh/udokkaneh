@@ -231,6 +231,10 @@ const PackDetails = props => {
                   <Icon material="thumb_up" color="green"></Icon>
                 </ActionsButton>
                 <ActionsButton onClick={() => handleRate(0)}>
+                  {labels.rateMiddle}
+                  <Icon material="thumbs_up_down" color="blue"></Icon>
+                </ActionsButton>
+                <ActionsButton onClick={() => handleRate(-1)}>
                   {labels.rateBad}
                   <Icon material="thumb_down" color="red"></Icon>
                 </ActionsButton>

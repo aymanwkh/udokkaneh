@@ -77,13 +77,14 @@ const Basket = props => {
             title={p.productName}
             subtitle={p.productAlias}
             text={p.packName}
-            footer={`${labels.totalPrice}:${p.totalPriceText}`}
+            footer={`${labels.priceIncrease}: ${p.withBestPrice ? labels.withBestPrice : labels.noPurchase}`}
             key={p.packId}
             className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
           >
             <PackImage slot="media" pack={p} type="list" />
             <div className="list-subtext1">{p.priceText}</div>
             <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
+            <div className="list-subtext3">{`${labels.totalPrice}:${p.totalPriceText}`}</div>
             {p.price === 0 ? '' : 
               <Stepper 
                 slot="after" 
@@ -93,9 +94,7 @@ const Basket = props => {
                 onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
               />
             }
-            {(p.otherProducts + p.otherOffers + p.otherPacks === 0) ? '' : 
-              <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>
-            }
+            <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>
           </ListItem>
         )}
       </List>
@@ -110,6 +109,7 @@ const Basket = props => {
       </Fab>
     }
     <Actions ref={hintsList}>
+      <ActionsButton onClick={() => dispatch({type: 'TOGGLE_BEST_PRICE', pack: currentPack})}>{`${labels.priceIncrease}: ${currentPack.withBestPrice ? labels.noPurchase : labels.withBestPrice}`}</ActionsButton>
       {currentPack.otherProducts === 0 ? '' :
         <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
       }

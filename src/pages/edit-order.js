@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper } from 'framework7-react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
+import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper, Link, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { editOrder, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
@@ -14,11 +14,13 @@ const EditOrder = props => {
   const [orderBasket, setOrderBasket] = useState([])
   const [total, setTotal] = useState('')
   const [overLimit, setOverLimit] = useState(false)
+  const [currentPack, setCurrentPack] = useState('')
   const [hasChanged, setHasChanged] = useState(false)
   const [customerOrdersTotals] = useState(() => {
     const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
     return activeOrders.reduce((sum, o) => sum + o.total, 0)
   })
+  const hintsList = useRef('')
   useEffect(() => {
     dispatch({type: 'LOAD_ORDER_BASKET', order})
   }, [dispatch, order])
@@ -34,6 +36,9 @@ const EditOrder = props => {
       })
     })
   }, [state.orderBasket, state.packs])
+  useEffect(() => {
+    setHasChanged(() => state.orderBasket?.find(p => p.oldQuantity !== p.quantity || p.oldWithBestPrice !== p.withBestPrice) ? true : false)
+  }, [state.orderBasket])
   useEffect(() => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
   }, [orderBasket])
@@ -73,13 +78,9 @@ const EditOrder = props => {
 			setError(getMessage(props, err))
 		}
   }
-  const handleChange = (pack, value) => {
-    if (value === 1) {
-      dispatch({type: 'INCREASE_ORDER_QUANTITY', pack})
-    } else {
-      dispatch({type: 'DECREASE_ORDER_QUANTITY', pack})
-    }
-    setHasChanged(true)
+  const handleHints = pack => {
+    setCurrentPack(pack)
+    hintsList.current.open()
   }
   return (
     <Page>
@@ -91,21 +92,24 @@ const EditOrder = props => {
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
-              footer={`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}
+              footer={`${labels.priceIncrease}: ${p.withBestPrice ? labels.withBestPrice : labels.noPurchase}`}
               after={p.packInfo ? '' : labels.unAvailableNote}
               key={p.packId}
+              className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
             >
               <div className="list-subtext1">{`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}</div>
               <div className="list-subtext2">{quantityDetails(p)}</div>
+              <div className="list-subtext3">{`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}</div>
               {p.packInfo ? 
                 <Stepper
                   slot="after"
                   fill
                   buttonsOnly
-                  onStepperPlusClick={() => handleChange(p, 1)}
-                  onStepperMinusClick={() => handleChange(p, -1)}
+                  onStepperPlusClick={() => dispatch({type: 'INCREASE_ORDER_QUANTITY', pack: p})}
+                  onStepperMinusClick={() => dispatch({type: 'DECREASE_ORDER_QUANTITY', pack: p})}
                 />
               : ''}
+              <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>
             </ListItem>
           )}
         </List>
@@ -120,6 +124,9 @@ const EditOrder = props => {
           <Icon material="report_problem"></Icon>
         </Fab>
       : ''}
+      <Actions ref={hintsList}>
+        <ActionsButton onClick={() => dispatch({type: 'TOGGLE_ORDER_BEST_PRICE', pack: currentPack})}>{`${labels.priceIncrease}: ${currentPack.withBestPrice ? labels.noPurchase : labels.withBestPrice}`}</ActionsButton>
+      </Actions>
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>

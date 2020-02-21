@@ -135,7 +135,7 @@ const labels = {
   suggestions: 'اقتراحات لبدائل',
   favorites: 'المفضلة',
   inprocess: 'تنفيذ العملية',
-  orderHelp: 'للمزيد عن الرسوم والخصومات ومتابعة الطلب...',
+  orderHelp: 'للمزيد عن الرسوم،الخصم،الشراء ومتابعة الطلب ',
   clickHere: 'اضغط هنا',
   advert: 'اعلان',
   unitPrice: 'سعر الوحدة',
@@ -175,13 +175,17 @@ const labels = {
   addToFavorites: 'الاضافة الى المفضلة',
   rateGood: 'تقييم ايجابي ',
   rateBad: 'تقييم سلبي ',
+  rateMiddle: 'تقييم متوسط',
   productFrom: 'منتج من',
   noImage: 'الصورة غير متوفرة',
   offerHint: '*اشتر ما يلزمك واستفد من العرض في نفس الوقت...تضاف 10% على القيمة الافرادية',
   mergeSuccess: 'تم الدمج',
   friends: 'الاصدقاء',
   delete: 'حذف',
-  notifyFriends: 'ابلاغ الاصدقاء عن هذا العرض'
+  notifyFriends: 'ابلاغ الاصدقاء عن هذا العرض',
+  withBestPrice: 'الشراء بأفضل سعر',
+  noPurchase: 'عدم الشراء',
+  priceIncrease: 'اذا ارتفع السعر'
 }
 
 export default labels
