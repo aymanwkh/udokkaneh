@@ -24,12 +24,12 @@ const AddAlarm = props => {
   useEffect(() => {
     setCurrentPrice(() => {
       if (props.alarmType === 'cp') {
-        return state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id)?.price
+        return state.packPrices.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id)?.price
       } else {
         return pack.price
       }
     })
-  }, [state.storePacks, props.alarmType, state.customerInfo, pack])
+  }, [state.packPrices, props.alarmType, state.customerInfo, pack])
   useEffect(() => {
     const validatePrice = (value) => {
       if (['lp', 'la'].includes(props.alarmType)) {

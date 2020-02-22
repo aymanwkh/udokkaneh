@@ -10,7 +10,7 @@ const StoreSummary = props => {
   const [sections, setSections] = useState([])
   useEffect(() => {
     setSections(() => {
-      const storePacks = state.storePacks.map(p => {
+      const storePacks = state.packPrices.map(p => {
         const packInfo = state.packs.find(pa => pa.id === p.packId) || ''
         return {
           ...p,
@@ -29,7 +29,7 @@ const StoreSummary = props => {
       })
       return sections
     })
-  }, [state.storePacks, state.packs])
+  }, [state.packPrices, state.packs])
   let i = 0
   return(
     <Page>

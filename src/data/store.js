@@ -13,7 +13,7 @@ const Store = props => {
     customerInfo: {},
     orders: [],
     packs: [],
-    storePacks: [],
+    packPrices: [],
     adverts: [],
     locations: []
   }
@@ -31,10 +31,17 @@ const Store = props => {
     })  
     const unsubscribePacks = firebase.firestore().collection('packs').where('price', '>', 0).onSnapshot(docs => {
       let packs = []
+      let packPrices = []
       docs.forEach(doc => {
         packs.push({...doc.data(), id: doc.id})
+        if (doc.data().prices) {
+          doc.data().prices.forEach(p => {
+            packPrices.push({...p, packId: doc.id})
+          })
+        }
       })
       dispatch({type: 'SET_PACKS', packs})
+      dispatch({type: 'SET_PACK_PRICES', packPrices})
     }, err => {
       unsubscribePacks()
     })
@@ -81,22 +88,10 @@ const Store = props => {
         }, err => {
           unsubscribeOrders()
         }) 
-        if (user.displayName) { //store owner
-          const unsubscribeStorePacks = firebase.firestore().collection('store-packs').where('storeId', '==', user.displayName).onSnapshot(docs => {
-          let storePacks = []
-            docs.forEach(doc => {
-              storePacks.push({...doc.data(), id:doc.id})
-            })
-            dispatch({type: 'SET_STORE_PACKS', storePacks})
-          }, err => {
-            unsubscribeStorePacks()
-          })
-        }
       } else {
         dispatch({type: 'SET_USER_INFO', userInfo: ''})
         dispatch({type: 'SET_CUSTOMER_INFO', customerInfo: ''})
         dispatch({type: 'SET_ORDERS', orders: []})
-        dispatch({type: 'SET_STORE_PACKS', storePacks: []})
       }
     })
   }, [])

@@ -30,8 +30,8 @@ const PackDetails = props => {
     })
   }, [state.orders, pack, state.packs])
   useEffect(() => {
-    setIsAvailable(() => state.storePacks.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? 1 : -1)
-  }, [state.storePacks, state.customerInfo, pack])
+    setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? 1 : -1)
+  }, [state.packPrices, state.customerInfo, pack])
   useEffect(() => {
     setSubPackInfo(() => {
       if (pack.subPackId) {

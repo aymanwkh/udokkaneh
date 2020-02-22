@@ -14,7 +14,7 @@ const StorePacks = props => {
   const [storePacks, setStorePacks] = useState([])
   useEffect(() => {
     setStorePacks(() => {
-      const packs = state.storePacks.map(p => {
+      const packs = state.packPrices.map(p => {
         const packInfo = state.packs.find(pa => pa.id === p.packId) || ''
         return {
           ...p,
@@ -26,7 +26,7 @@ const StorePacks = props => {
                             || (props.type === 'n' && p.price === p.packInfo.price && p.storeId !== p.packInfo.minStoreId)
                             || (props.type === 'l' && p.price === p.packInfo.price && p.storeId === p.packInfo.minStoreId))
     })
-  }, [state.storePacks, state.packs, props.type])
+  }, [state.packPrices, state.packs, props.type])
 
   return(
     <Page>

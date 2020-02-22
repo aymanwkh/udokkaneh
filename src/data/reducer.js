@@ -192,10 +192,10 @@ const Reducer = (state, action) => {
         ...state,
         categories: action.categories
       }
-    case 'SET_STORE_PACKS':
+    case 'SET_PACK_PRICES':
       return {
         ...state,
-        storePacks: action.storePacks
+        packPrices: action.packPrices
       }
     case 'SET_ADVERTS':
       return {
