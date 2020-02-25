@@ -12,14 +12,7 @@ const OrdersList = props => {
   const [orders, setOrders] = useState([])
   useEffect(() => {
     setOrders(() => {
-      let orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd'].includes(o.status))
-      orders = orders.map(o => {
-        const orderStatusInfo = orderStatus.find(s => s.id === o.status)
-        return {
-          ...o,
-          orderStatusInfo
-        }
-      })
+      const orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd'].includes(o.status))
       return orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
     })
   }, [state.orders])
@@ -33,7 +26,7 @@ const OrdersList = props => {
           : orders.map(o =>
               <ListItem
                 link={`/order-details/${o.id}`}
-                title={o.orderStatusInfo.name}
+                title={orderStatus.find(s => s.id === o.status).name}
                 subtitle={moment(o.time.toDate()).fromNow()}
                 after={(o.total / 1000).toFixed(3)}
                 key={o.id}

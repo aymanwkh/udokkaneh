@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, Block, Icon, Button, Toolbar } from 'framework7-react'
+import { Page, Navbar, Block, Icon, Button, Toolbar } from 'framework7-react'
 import labels from '../data/labels'
 import { addDebitRequest, showMessage, showError, getMessage } from '../data/actions'
 import { StoreContext } from '../data/store'
@@ -8,32 +8,21 @@ import BottomToolbar from './bottom-toolbar'
 const Debit = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   useEffect(() => {
     if (error) {
       showError(error)
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try{
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
-      setInprocess(true)
-      await addDebitRequest()
-      setInprocess(false)
+      addDebitRequest()
       showMessage(labels.sendSuccess)
       props.f7router.back()
     } catch (err) {
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

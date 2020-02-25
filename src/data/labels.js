@@ -14,6 +14,7 @@ const labels = {
   auth_user_not_found: 'الرجاء التأكد من رقم الموبايل وكلمة المرور',
   auth_email_already_in_use: 'رقم الموبايل مسجل سابقا',
   auth_wrong_password: 'كلمة السر غير صحيحة',
+  auth_network_request_failed: 'لا يوجد اتصال بالشبكة',
   productOf: 'انتاج',
   sortBy: 'الترتيب حسب',
   new: 'جديد',

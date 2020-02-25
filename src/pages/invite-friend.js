@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { inviteFriend, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
@@ -11,7 +11,6 @@ const InviteFriend = props => {
   const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -44,15 +43,7 @@ const InviteFriend = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-
-  const handleSend = async () => {
+  const handleSend = () => {
     try{
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
@@ -63,13 +54,10 @@ const InviteFriend = props => {
       if (mobile === state.userInfo.mobile || mobile === state.customerInfo.otherMobile) {
         throw new Error('invalidMobile')
       }
-      setInprocess(true)
-      await inviteFriend(mobile, name)
-      setInprocess(false)
+      inviteFriend(mobile, name)
       showMessage(labels.sendSuccess)
       props.f7router.back()
     } catch (err){
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

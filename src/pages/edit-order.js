@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper, Link, Actions, ActionsButton } from 'framework7-react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper, Link, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { editOrder, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
@@ -9,7 +9,6 @@ import { setup } from '../data/config'
 const EditOrder = props => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [order] = useState(() => state.orders.find(o => o.id === props.id))
   const [orderBasket, setOrderBasket] = useState([])
   const [total, setTotal] = useState('')
@@ -57,24 +56,13 @@ const EditOrder = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try{
-      setInprocess(true)
-      await editOrder(order, state.orderBasket)
-      setInprocess(false)
+      editOrder(order, state.orderBasket)
       showMessage(order.status === 'n' ? labels.editSuccess : labels.sendSuccess)
       dispatch({type: 'CLEAR_ORDER_BASKET'})
       props.f7router.back()
     } catch(err) {
-      setInprocess(false)
 			setError(getMessage(props, err))
 		}
   }

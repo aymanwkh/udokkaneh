@@ -4,7 +4,6 @@ import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import moment from 'moment'
 import 'moment/locale/ar'
-import PackImage from './pack-image'
 import labels from '../data/labels'
 import { storeSummary } from '../data/config'
 import { productOfText } from '../data/actions'
@@ -14,20 +13,14 @@ const StorePacks = props => {
   const [storePacks, setStorePacks] = useState([])
   useEffect(() => {
     setStorePacks(() => {
-      const packs = state.packPrices.map(p => {
-        const packInfo = state.packs.find(pa => pa.id === p.packId) || ''
-        return {
-          ...p,
-          packInfo
-        }
-      })
-      return packs.filter(p => (props.type === 'a')
+      const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo.storeId)
+      return storePacks.filter(p => (props.type === 'a')
                             || (props.type === 'o' && p.price > p.packInfo.price) 
                             || (props.type === 'n' && p.price === p.packInfo.price && p.storeId !== p.packInfo.minStoreId)
                             || (props.type === 'l' && p.price === p.packInfo.price && p.storeId === p.packInfo.minStoreId))
     })
-  }, [state.packPrices, state.packs, props.type])
-
+  }, [state.packPrices, state.customerInfo, props.type])
+  let i = 0
   return(
     <Page>
       <Navbar title={storeSummary.find(s => s.id === props.type).name} backLink={labels.back} />
@@ -43,9 +36,9 @@ const StorePacks = props => {
                 text={p.packInfo.productDescription}
                 footer={moment(p.time.toDate()).fromNow()}
                 after={(p.packInfo.price / 1000).toFixed(3)}
-                key={p.id}
+                key={i++}
               >
-                <PackImage slot="media" pack={p.packInfo} type="list" />
+                <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{p.packInfo.name}</div>
                 <div className="list-subtext2">{productOfText(p.packInfo.trademark, p.packInfo.country)}</div>
                 {p.price > p.packInfo.price ? <div className="list-subtext3">{`${labels.myPrice}: ${(p.price / 1000).toFixed(3)}`}</div> : ''}

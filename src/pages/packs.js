@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import PackImage from './pack-image'
 import moment from 'moment'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
@@ -17,15 +16,7 @@ const Packs = props => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      let packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
-      packs = packs.map(p => {
-        const categoryInfo = state.categories.find(c => c.id === p.categoryId)
-        return {
-          ...p,
-          categoryInfo
-        }
-      })
-      return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
+      return state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories])
   const handleSorting = sortByValue => {
@@ -89,10 +80,10 @@ const Packs = props => {
                 after={(p.price / 1000).toFixed(3)}
                 key={p.id}
               >
-                <PackImage slot="media" pack={p} type="list" />
+                <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{p.name}</div>
                 <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
-                <div className="list-subtext3">{p.categoryInfo ? `${labels.category}: ${p.categoryInfo.name}` : ''}</div>
+                <div className="list-subtext3">{`${labels.category}: ${p.categoryName}`}</div>
                 {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
               </ListItem>
             )

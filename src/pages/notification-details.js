@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { f7, Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
@@ -10,7 +10,6 @@ import 'moment/locale/ar'
 const NotificationDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [notification] = useState(() => state.userInfo.notifications.find(n => n.id === props.id))
   useEffect(() => {
     if (error) {
@@ -18,22 +17,12 @@ const NotificationDetails = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-  const handleDelete = async () => {
+  const handleDelete = () => {
     try{
-      setInprocess(true)
-      await deleteNotification(state.userInfo, notification.id)
-      setInprocess(false)
+      deleteNotification(state.userInfo, notification.id)
       showMessage(labels.deleteSuccess)
       props.f7router.back()
     } catch(err) {
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

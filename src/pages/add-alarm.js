@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
+import { Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
@@ -8,7 +8,6 @@ import { alarmTypes } from '../data/config'
 const AddAlarm = props => {
   const { state, user } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [pack] = useState(() => state.packs.find(p => p.id === props.packId))
   const [price, setPrice] = useState('')
   const [quantity, setQuantity] = useState('')
@@ -77,14 +76,6 @@ const AddAlarm = props => {
     }
   }, [error])
   useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-
-  useEffect(() => {
     if (!price
     || (isOffer && !offerDays)
     || (['la', 'aa'].includes(props.alarmType) && !alternative)
@@ -98,7 +89,7 @@ const AddAlarm = props => {
   const formatPrice = value => {
     return Number(value).toFixed(3)
   } 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try{
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
@@ -118,13 +109,10 @@ const AddAlarm = props => {
         alternative,
         offerDays: Number(offerDays)
       }
-      setInprocess(true)
-      await addAlarm(alarm)
-      setInprocess(false)
+      addAlarm(alarm)
       showMessage(labels.sendSuccess)
       props.f7router.back()
     } catch (err) {
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

@@ -1,11 +1,12 @@
 const Reducer = (state, action) => {
-  let pack, packIndex, packs, nextQuantity, i
+  let pack, packIndex, packs, data, nextQuantity, i
   const increment = [0.125, 0.25, 0.5, 0.75, 1]
   switch (action.type){
     case 'ADD_TO_BASKET':
       if (state.basket.find(p => p.packId === action.pack.id)) return state
       pack = {
         packId: action.pack.id,
+        productId: action.pack.productId,
         productName: action.pack.productName,
         productAlias: action.pack.productAlias,
         packName: action.pack.name,
@@ -185,7 +186,22 @@ const Reducer = (state, action) => {
     case 'SET_PACKS':
       return {
         ...state,
-        packs: action.packs
+        packs: action.packs,
+        packsStatus: 'c'
+      }
+    case 'FINISH_PACKS':
+      data = state.packs.map(p => {
+        const categoryName = state.categories.find(c => c.id === p.categoryId).name
+        return {
+          ...p,
+          categoryName
+        }
+      })
+      data.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
+      return {
+        ...state,
+        packs: data,
+        packsStatus: 'f'
       }
     case 'SET_CATEGORIES':
       return {

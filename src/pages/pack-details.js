@@ -4,7 +4,6 @@ import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, rateProduct, productOfText, notifyFriends } from '../data/actions'
-import PackImage from './pack-image'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
 import moment from 'moment'
@@ -12,7 +11,6 @@ import moment from 'moment'
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
   const [hasPurchased, setHasPurchased] = useState('')
   const [isAvailable, setIsAvailable] = useState('')
@@ -25,7 +23,7 @@ const PackDetails = props => {
   const packActions = useRef('')
   useEffect(() => {
     setHasPurchased(() => {
-      const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => state.packs.find(pa => pa.id === p.packId)?.productId === pack.productId))
+      const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => p.productId === pack.productId))
       return deliveredOrders.length
     })
   }, [state.orders, pack, state.packs])
@@ -59,14 +57,6 @@ const PackDetails = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-
   const addToBasket = packId => {
     try{
       if (state.customerInfo.isBlocked) {
@@ -110,7 +100,7 @@ const PackDetails = props => {
   const handleAddAlarm = alarmTypeId => {
     try {
       if (alarmTypeId === '4') {
-        f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
+        f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
           try{
             if (state.customerInfo.isBlocked) {
               throw new Error('blockedUser')
@@ -119,13 +109,10 @@ const PackDetails = props => {
               packId: props.id,
               alarmType: alarmTypeId 
             }
-            setInprocess(true)
-            await addAlarm(alarm)
-            setInprocess(false)
+            addAlarm(alarm)
             showMessage(labels.sendSuccess)
             props.f7router.back()
           } catch(err) {
-            setInprocess(false)
             setError(getMessage(props, err))
           }
         })  
@@ -142,42 +129,33 @@ const PackDetails = props => {
       setError(getMessage(props, err))
     }
   }
-  const handleFavorite = async () => {
+  const handleFavorite = () => {
     try{
-      setInprocess(true)
-      await updateFavorites(state.userInfo, pack.productId)
-      setInprocess(false)
+      updateFavorites(state.userInfo, pack.productId)
       showMessage(state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)
 		} catch (err){
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }
-  const handleRate = async value => {
+  const handleRate = value => {
     try{
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
-      setInprocess(true)
-      await rateProduct(pack.productId, value)
-      setInprocess(false)
+      rateProduct(pack.productId, value)
       showMessage(labels.ratingSuccess)
     } catch(err) {
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }
-  const handleNotifyFriends = async () => {
+  const handleNotifyFriends = () => {
     try{
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
-      setInprocess(true)
-      await notifyFriends(pack.id)
-      setInprocess(false)
+      notifyFriends(pack.id)
       showMessage(labels.sendSuccess)
     } catch(err) {
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }
@@ -195,7 +173,7 @@ const PackDetails = props => {
         </CardHeader>
         <CardContent>
           <p className="card-title">{pack.name}</p>
-          <PackImage pack={pack} type="card" />
+          <img src={pack.imageUrl} className="img-card" alt={labels.noImage} />
           <p className="card-title">{pack.productDescription}</p>
         </CardContent>
         <CardFooter>

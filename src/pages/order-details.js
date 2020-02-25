@@ -9,7 +9,6 @@ import { orderPackStatus } from '../data/config'
 const OrderDetails = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [order, setOrder] = useState(() => state.orders.find(o => o.id === props.id))
   const [orderBasket, setOrderBasket] = useState([])
   const [lastOrder, setLastOrder] = useState('')
@@ -40,13 +39,6 @@ const OrderDetails = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
   const handleEdit = () => {
     try{
       if (order.status !== 'n' && order.requestType) {
@@ -58,26 +50,21 @@ const OrderDetails = props => {
     }
   }
   const handleDelete = () => {
-    f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
+    f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
       try{
         if (order.status === 'n') {
-          setInprocess(true)
-          await cancelOrder(order)
-          setInprocess(false)
+          cancelOrder(order)
           showMessage(labels.deleteSuccess)
           props.f7router.back()
         } else {
           if (order.requestType) {
             throw new Error('duplicateOrderRequest')
           }
-          setInprocess(true)
-          await addOrderRequest(order, 'c')
-          setInprocess(false)
+          addOrderRequest(order, 'c')
           showMessage(labels.sendSuccess)
           props.f7router.back()
         }
       } catch(err) {
-        setInprocess(false)
         setError(getMessage(props, err))
       }
     })    
@@ -98,19 +85,14 @@ const OrderDetails = props => {
         }
       }
       if (lastOrder.status === 'n') {
-        setInprocess(true)
-        await mergeOrders(lastOrder, order)
-        setInprocess(false)
+        mergeOrders(lastOrder, order)
         showMessage(labels.mergeSuccess)
       } else {
-        setInprocess(true)
-        await addOrderRequest(lastOrder, 'm', order)
-        setInprocess(false)
+        addOrderRequest(lastOrder, 'm', order)
         showMessage(labels.sendSuccess)  
       }
       props.f7router.back()
     } catch(err) {
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

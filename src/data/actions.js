@@ -71,7 +71,7 @@ export const hasChild = (category, packs, categories) => {
 }
 
 export const rateProduct = (productId, value) => {
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     ratings: firebase.firestore.FieldValue.arrayUnion({
       productId,
       value,
@@ -85,12 +85,12 @@ export const login = (mobile, password) => {
 }
 
 export const logout = () => {
-  return firebase.auth().signOut()
+  firebase.auth().signOut()
 }
 
 export const addPasswordRequest = mobile => {
   localStorage.setItem('password-request', mobile)
-  return firebase.firestore().collection('password-requests').add({
+  firebase.firestore().collection('password-requests').add({
     mobile,
     status: 'n',
     time: firebase.firestore.FieldValue.serverTimestamp()
@@ -105,11 +105,11 @@ export const confirmOrder = order => {
     isArchived: false,
     time: firebase.firestore.FieldValue.serverTimestamp()
   }
-  return firebase.firestore().collection('orders').add(newOrder)
+  firebase.firestore().collection('orders').add(newOrder)
 }
 
 export const cancelOrder = order => {
-  return firebase.firestore().collection('orders').doc(order.id).update({
+  firebase.firestore().collection('orders').doc(order.id).update({
     status: 'c',
     lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
   })
@@ -150,7 +150,7 @@ export const mergeOrders = (order1, order2) => {
     status: 'm',
     lastUpdate: new Date()
   })
-  return batch.commit()
+  batch.commit()
 }
 
 export const addOrderRequest = (order, type, mergedOrder) => {
@@ -170,7 +170,7 @@ export const addOrderRequest = (order, type, mergedOrder) => {
       lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
     })
   }
-  return batch.commit()
+  batch.commit()
 }
 
 export const registerUser = async (userInfo, password) => {
@@ -179,7 +179,7 @@ export const registerUser = async (userInfo, password) => {
   for (var i = 0; i < 4; i++){
     colors.push(randomColors[Number(password.charAt(i))].name)
   }
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
     ...userInfo,
     colors,
     time: firebase.firestore.FieldValue.serverTimestamp()
@@ -202,7 +202,7 @@ export const changePassword = async (oldPassword, newPassword) => {
 }
 
 export const addAlarm = alarm => {
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     alarms: firebase.firestore.FieldValue.arrayUnion({
       ...alarm,
       id: Math.random().toString(),
@@ -213,7 +213,7 @@ export const addAlarm = alarm => {
 }
 
 export const inviteFriend = (mobile, name) => {
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     friends: firebase.firestore.FieldValue.arrayUnion({
       mobile,
       name,
@@ -223,7 +223,7 @@ export const inviteFriend = (mobile, name) => {
 }
 
 export const addDebitRequest = () => {
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     debitRequestStatus: 'n',
     debitRequestTime: firebase.firestore.FieldValue.serverTimestamp()
   })
@@ -236,7 +236,7 @@ export const readNotification = (user, notificationId) => {
     ...user.notifications[notificationIndex],
     status: 'r'
   })
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     notifications
   })
 }
@@ -249,7 +249,7 @@ export const updateFavorites = (user, productId) => {
   } else {
     favorites.splice(found, 1)
   }
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     favorites
   })
 }
@@ -261,7 +261,7 @@ export const editOrder = (order, newBasket) => {
     const fixedFees = Math.trunc(setup.fixedFees * total)
     const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 50) * 50
     const orderStatus = basket.length === 0 ? 'c' : order.status
-    return firebase.firestore().collection('orders').doc(order.id).update({
+    firebase.firestore().collection('orders').doc(order.id).update({
       basket,
       total,
       fixedFees,
@@ -269,7 +269,7 @@ export const editOrder = (order, newBasket) => {
       status: orderStatus,
     })
   } else {
-    return firebase.firestore().collection('orders').doc(order.id).update({
+    firebase.firestore().collection('orders').doc(order.id).update({
       requestType: 'e',
       requestBasket: newBasket,
       requestStatus: 'n',
@@ -282,13 +282,13 @@ export const deleteNotification = (user, notificationId) => {
   const notifications = user.notifications.slice()
   const notificationIndex = notifications.findIndex(n => n.id === notificationId)
   notifications.splice(notificationIndex, 1)
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     notifications
   })
 }
 
 export const notifyFriends = offerId => {
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     notifyFriends: firebase.firestore.FieldValue.arrayUnion(offerId)
   })
 }
@@ -297,7 +297,7 @@ export const deleteFriend = (user, mobile) => {
   const friends = user.friends.slice()
   const friendIndex = friends.findIndex(f => f.mobile === mobile)
   friends.splice(friendIndex, 1)
-  return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     friends
   })
 }

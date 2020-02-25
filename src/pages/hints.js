@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Badge } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import PackImage from './pack-image'
 import moment from 'moment'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
@@ -39,7 +38,7 @@ const Hints = props => {
                   after={(p.price / 1000).toFixed(3)}
                   key={p.id}
                 >
-                  <PackImage slot="media" pack={p} type="list" />
+                  <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                   <div className="list-subtext1">{p.name}</div>
                   <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
                   {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}

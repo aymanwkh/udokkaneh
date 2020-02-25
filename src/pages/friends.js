@@ -9,7 +9,6 @@ import { friendStatus } from '../data/config'
 const Friends = props => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [friends, setFriends] = useState([])
   useEffect(() => {
     setFriends(() => {
@@ -23,22 +22,12 @@ const Friends = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
   const handleDelete = mobile => {
-    f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
+    f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
       try{
-        setInprocess(true)
-        await deleteFriend(state.userInfo, mobile)
-        setInprocess(false)
+        deleteFriend(state.userInfo, mobile)
         showMessage(labels.deleteSuccess)
       } catch(err) {
-        setInprocess(false)
         setError(getMessage(props, err))
       }
     })  

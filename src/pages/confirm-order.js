@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Link } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Link } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { confirmOrder, showMessage, showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
@@ -8,7 +8,6 @@ import { setup } from '../data/config'
 const ConfirmOrder = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [basket, setBasket] = useState([])
   const [total, setTotal] = useState('')
   const [fixedFees, setFixedFees] = useState('')
@@ -58,15 +57,7 @@ const ConfirmOrder = props => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     try{
       if (state.adverts[0]?.type === 'n') {
         showMessage(state.adverts[0].text)
@@ -85,6 +76,7 @@ const ConfirmOrder = props => {
       packs = packs.map(p => {
         const pack = {
           packId: p.packId,
+          productId: p.productId,
           productName: p.productName,
           productAlias: p.productAlias,
           packName: p.packName,
@@ -113,14 +105,11 @@ const ConfirmOrder = props => {
         total,
         fraction
       }
-      setInprocess(true)
-      await confirmOrder(order)
-      setInprocess(false)
+      confirmOrder(order)
       showMessage(labels.sendSuccess)
       props.f7router.navigate('/home/', {reloadAll: true})
       dispatch({ type: 'CLEAR_BASKET'})
     } catch (err){
-      setInprocess(false)
       setError(getMessage(props, err))
     }
   }

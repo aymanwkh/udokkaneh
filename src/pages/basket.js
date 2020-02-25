@@ -4,7 +4,6 @@ import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
 import { setup } from '../data/config'
-import PackImage from './pack-image'
 
 const Basket = props => {
   const { state, dispatch } = useContext(StoreContext)
@@ -81,7 +80,7 @@ const Basket = props => {
             key={p.packId}
             className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
           >
-            <PackImage slot="media" pack={p} type="list" />
+            <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
             <div className="list-subtext1">{p.priceText}</div>
             <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
             <div className="list-subtext3">{`${labels.totalPrice}:${p.totalPriceText}`}</div>

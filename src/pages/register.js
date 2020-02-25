@@ -97,10 +97,10 @@ const StoreOwner = props => {
       await registerUser(userInfo, password)
       setInprocess(false)
       showMessage(labels.registerSuccess)
-      //props.f7router.navigate('/home/')
       props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){
+      console.log('errr == ', err)
       setInprocess(false)
       setError(getMessage(props, err))
     }

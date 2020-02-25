@@ -6,7 +6,6 @@ import { quantityText, addQuantity } from '../data/actions'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
-import PackImage from './pack-image'
 
 const PurchasedPacks = props => {
   const { state } = useContext(StoreContext)
@@ -70,7 +69,7 @@ const PurchasedPacks = props => {
                 footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}
 								key={i++}
 							>
-                <PackImage slot="media" pack={p} type="list" />
+                <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
                 <div className="list-subtext2">{`${labels.lastQuantity}: ${quantityText(p.lastQuantity)}`}</div>
 							</ListItem>
