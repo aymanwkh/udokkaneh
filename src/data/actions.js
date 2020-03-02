@@ -66,14 +66,11 @@ export const getChildren = (categoryId, categories) => {
   return childrenArray
 }
 
-export const hasChild = (category, packs, categories) => {
-  return category.isLeaf ? packs.find(p => p.categoryId === category.id) : categories.find(c => c.parentId === category.id && hasChild(c, packs, categories))
-}
-
-export const rateProduct = (productId, value) => {
+export const rateProduct = (productId, price, value) => {
   firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     ratings: firebase.firestore.FieldValue.arrayUnion({
       productId,
+      price,
       value,
       status: 'n'  
     })

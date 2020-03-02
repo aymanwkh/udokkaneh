@@ -38,7 +38,7 @@ const StorePacks = props => {
                 after={(p.packInfo.price / 1000).toFixed(3)}
                 key={i++}
               >
-                <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
+                <img src={p.packInfo.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{p.packInfo.name}</div>
                 <div className="list-subtext2">{productOfText(p.packInfo.trademark, p.packInfo.country)}</div>
                 {p.price > p.packInfo.price ? <div className="list-subtext3">{`${labels.myPrice}: ${(p.price / 1000).toFixed(3)}`}</div> : ''}

@@ -53,14 +53,12 @@ export const orderPackStatus = [
 ]
 
 export const alarmTypes = [
-  {id: 'lp', name: 'الابلاغ عن سعر أقل', actor: 'c'},
-  {id: 'cp', name: 'الابلاغ عن تغيير السعر', actor: 'o', isAvailable: 1},
-  {id: 'av', name: 'الابلاغ عن توفر هذا المنتج/العرض', actor: 'o', isAvailable: -1},
-  {id: 'ua', name: 'الابلاغ عن عدم توفر هذا المنتج/العرض', actor: 'o', isAvailable: 1},
-  {id: 'la', name: 'الابلاغ عن توفر بديل بسعر اقل', actor: 'c'},
-  {id: 'aa', name: 'الابلاغ عن توفر بديل', actor: 'o', isAvailable: 0},
-  {id: 'eo', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', actor: 'o', isAvailable: 0},
-  {id: 'go', name: 'الابلاغ عن عرض لمجموعة', actor: 'o', isAvailable: 0},
+  {id: 'cp', name: 'الابلاغ عن تغيير السعر', isAvailable: 1},
+  {id: 'av', name: 'الابلاغ عن توفر هذا المنتج/العرض', isAvailable: -1},
+  {id: 'ua', name: 'الابلاغ عن عدم توفر هذا المنتج/العرض', isAvailable: 1},
+  {id: 'aa', name: 'الابلاغ عن توفر بديل', isAvailable: 0},
+  {id: 'eo', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', isAvailable: 0},
+  {id: 'go', name: 'الابلاغ عن عرض لمجموعة', isAvailable: 0},
 ]
 
 export const storeSummary = [

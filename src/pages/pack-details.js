@@ -3,7 +3,7 @@ import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Toolb
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
-import { addAlarm, showMessage, showError, getMessage, updateFavorites, rateProduct, productOfText, notifyFriends } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText, notifyFriends } from '../data/actions'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
 import moment from 'moment'
@@ -12,7 +12,6 @@ const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
-  const [hasPurchased, setHasPurchased] = useState('')
   const [isAvailable, setIsAvailable] = useState('')
   const [subPackInfo, setSubPackInfo] = useState('')
   const [bonusPackInfo, setBonusPackInfo] = useState('')
@@ -21,12 +20,6 @@ const PackDetails = props => {
   const [otherPacks, setOtherPacks] = useState('')
   const offerActions = useRef('')
   const packActions = useRef('')
-  useEffect(() => {
-    setHasPurchased(() => {
-      const deliveredOrders = state.orders.filter(o => o.status === 'd' && o.basket.find(p => p.productId === pack.productId))
-      return deliveredOrders.length
-    })
-  }, [state.orders, pack, state.packs])
   useEffect(() => {
     setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id) ? 1 : -1)
   }, [state.packPrices, state.customerInfo, pack])
@@ -137,17 +130,6 @@ const PackDetails = props => {
       setError(getMessage(props, err))
     }
   }
-  const handleRate = value => {
-    try{
-      if (state.customerInfo.isBlocked) {
-        throw new Error('blockedUser')
-      }
-      rateProduct(pack.productId, value)
-      showMessage(labels.ratingSuccess)
-    } catch(err) {
-      setError(getMessage(props, err))
-    }
-  }
   const handleNotifyFriends = () => {
     try{
       if (state.customerInfo.isBlocked) {
@@ -197,27 +179,11 @@ const PackDetails = props => {
           <Icon material="menu"></Icon>
         </Fab>
       : ''}
-      {pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
+      {props.type === 'c' && pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
       <Actions ref={packActions}>
         {props.type === 'c' ? 
           <React.Fragment>
             <ActionsButton onClick={() => handleFavorite()}>{state.userInfo.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
-            {hasPurchased === 0 || state.userInfo.ratings?.find(r => r.productId === pack.productId) ? '' : 
-              <React.Fragment>
-                <ActionsButton onClick={() => handleRate(1)}>
-                  {labels.rateGood}
-                  <Icon material="thumb_up" color="green"></Icon>
-                </ActionsButton>
-                <ActionsButton onClick={() => handleRate(0)}>
-                  {labels.rateMiddle}
-                  <Icon material="thumbs_up_down" color="blue"></Icon>
-                </ActionsButton>
-                <ActionsButton onClick={() => handleRate(-1)}>
-                  {labels.rateBad}
-                  <Icon material="thumb_down" color="red"></Icon>
-                </ActionsButton>
-              </React.Fragment>
-            }
             {pack.isOffer && state.userInfo.friends?.find(f => f.status === 'r') ? 
               <ActionsButton onClick={() => handleNotifyFriends()}>{labels.notifyFriends}</ActionsButton>
             : ''}
@@ -232,8 +198,8 @@ const PackDetails = props => {
             }
           </React.Fragment>
         : ''}
-        {alarmTypes.map(p =>
-          (p.actor === 'c' && !state.customerInfo.storeId) || (p.actor === 'o' && state.customerInfo.storeId && (p.isAvailable === 0 || p.isAvailable === isAvailable)) ?
+        {props.type === 'o' && alarmTypes.map(p =>
+          p.isAvailable === 0 || p.isAvailable === isAvailable ?
             <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>
               {p.name}
             </ActionsButton>

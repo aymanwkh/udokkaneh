@@ -12,8 +12,6 @@ const AddAlarm = props => {
   const [price, setPrice] = useState('')
   const [quantity, setQuantity] = useState('')
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
-  const [storeName, setStoreName] = useState('')
-  const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
   const [alternative, setAlternative] = useState('')
   const [alternativeErrorMessage, setAlternativeErrorMessage] = useState('')
   const [offerDays, setOfferDays] = useState('')
@@ -31,19 +29,11 @@ const AddAlarm = props => {
   }, [state.packPrices, props.alarmType, state.customerInfo, pack])
   useEffect(() => {
     const validatePrice = (value) => {
-      if (['lp', 'la'].includes(props.alarmType)) {
-        if (value * 1000 < pack.price) {
-          setPriceErrorMessage('')
-        } else {
-          setPriceErrorMessage(labels.invalidPrice)
-        }  
+      if (Number(value) > 0 && value * 1000 !== currentPrice) {
+        setPriceErrorMessage('')
       } else {
-        if (Number(value) > 0 && value * 1000 !== currentPrice) {
-          setPriceErrorMessage('')
-        } else {
-          setPriceErrorMessage(labels.invalidPrice)
-        }  
-      }
+        setPriceErrorMessage(labels.invalidPrice)
+      }  
     }
     if (price) validatePrice(price)
   }, [price, pack, props.alarmType, currentPrice])
@@ -51,13 +41,6 @@ const AddAlarm = props => {
     const patterns = {
       name: /^.{4,50}$/,
     }
-    const validateStoreName = value => {
-      if (patterns.name.test(value)){
-        setStoreNameErrorMessage('')
-      } else {
-        setStoreNameErrorMessage(labels.invalidName)
-      }
-    }  
     const validateAlternative = value => {
       if (patterns.name.test(value)){
         setAlternativeErrorMessage('')
@@ -65,9 +48,8 @@ const AddAlarm = props => {
         setAlternativeErrorMessage(labels.invalidName)
       }
     }  
-    if (storeName) validateStoreName(storeName)
     if (alternative) validateAlternative(alternative)
-  }, [storeName, alternative])
+  }, [alternative])
 
   useEffect(() => {
     if (error) {
@@ -78,14 +60,12 @@ const AddAlarm = props => {
   useEffect(() => {
     if (!price
     || (isOffer && !offerDays)
-    || (['la', 'aa'].includes(props.alarmType) && !alternative)
+    || (props.alarmType === 'aa' && !alternative)
     || (props.alarmType === 'go' && !quantity) 
-    || (!state.customerInfo.storeId && !storeName)
     || priceErrorMessage
-    || storeNameErrorMessage
     || alternativeErrorMessage) setButtonVisisble(false)
     else setButtonVisisble(true)
-  }, [props.alarmType, price, isOffer, offerDays, alternative, quantity, state.customerInfo, storeName, priceErrorMessage, storeNameErrorMessage, alternativeErrorMessage])
+  }, [props.alarmType, price, isOffer, offerDays, alternative, quantity, state.customerInfo, priceErrorMessage, alternativeErrorMessage])
   const formatPrice = value => {
     return Number(value).toFixed(3)
   } 
@@ -105,7 +85,6 @@ const AddAlarm = props => {
         type: props.alarmType,
         price: price * 1000,
         quantity: Number(quantity),
-        storeName,
         alternative,
         offerDays: Number(offerDays)
       }
@@ -143,7 +122,7 @@ const AddAlarm = props => {
           type="number" 
           readonly
         />
-        {['la', 'aa'].includes(props.alarmType) ?
+        {props.alarmType === 'aa' ?
           <ListInput 
             name="alternative" 
             label={labels.alternative}
@@ -160,7 +139,7 @@ const AddAlarm = props => {
         <ListInput 
           name="price" 
           label={labels.price}
-          placeholder={['lp', 'la'].includes(props.alarmType) ? labels.lessPricePlaceholder : labels.pricePlaceholder}
+          placeholder={labels.pricePlaceholder}
           clearButton 
           type="number" 
           value={price} 
@@ -182,31 +161,15 @@ const AddAlarm = props => {
             onInputClear={() => setQuantity('')}
           />
         : ''}
-        {['lp', 'la'].includes(props.alarmType) ? 
-          <ListInput 
-            name="storeName" 
-            label={labels.storeName}
-            placeholder={labels.namePlaceholder}
-            clearButton 
-            type="text" 
-            value={storeName} 
-            errorMessage={storeNameErrorMessage}
-            errorMessageForce  
-            onChange={e => setStoreName(e.target.value)}
-            onInputClear={() => setStoreName('')}
+        <ListItem>
+          <span>{labels.isOffer}</span>
+          <Toggle 
+            name="isOffer" 
+            color="green" 
+            checked={isOffer} 
+            onToggleChange={() => setIsOffer(!isOffer)}
           />
-        : ''}
-        {['lp', 'la'].includes(props.alarmType) ? '' :
-          <ListItem>
-            <span>{labels.isOffer}</span>
-            <Toggle 
-              name="isOffer" 
-              color="green" 
-              checked={isOffer} 
-              onToggleChange={() => setIsOffer(!isOffer)}
-            />
-          </ListItem>
-        }
+        </ListItem>
         {isOffer ? 
           <ListInput 
             name="offerDays" 
