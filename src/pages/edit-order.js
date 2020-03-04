@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper, Link, Actions, ActionsButton } from 'framework7-react'
+import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper, Link, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { editOrder, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
@@ -36,7 +36,7 @@ const EditOrder = props => {
     })
   }, [state.orderBasket, state.packs])
   useEffect(() => {
-    setHasChanged(() => state.orderBasket?.find(p => p.oldQuantity !== p.quantity || p.oldWithBestPrice !== p.withBestPrice) ? true : false)
+    setHasChanged(() => state.orderBasket?.find(p => p.oldQuantity !== p.quantity || p.oldPriceLimit !== p.priceLimit) ? true : false)
   }, [state.orderBasket])
   useEffect(() => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
@@ -66,6 +66,22 @@ const EditOrder = props => {
 			setError(getMessage(props, err))
 		}
   }
+  const handleIncreasePrice = () => {
+    if (currentPack.price === currentPack.priceLimit) {
+      f7.dialog.prompt(labels.enterPriceLimit, labels.priceLimit, price => {
+        try {
+          if (price * 1000 <= currentPack.price) {
+            throw new Error('invalidPrice')
+          }
+          dispatch({type: 'SET_ORDER_PRICE_LIMIT', pack: {...currentPack, priceLimit: price * 1000}})  
+        } catch(err) {
+          setError(getMessage(props, err))
+        }
+      })  
+    } else {
+      dispatch({type: 'SET_ORDER_PRICE_LIMIT', pack: {...currentPack, priceLimit: currentPack.price}}) 
+    }
+  }
   const handleHints = pack => {
     setCurrentPack(pack)
     hintsList.current.open()
@@ -80,7 +96,7 @@ const EditOrder = props => {
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
-              footer={`${labels.priceIncrease}: ${p.withBestPrice ? labels.withBestPrice : labels.noPurchase}`}
+              footer={`${labels.priceIncrease}: ${p.priceLimit === p.price ? labels.noPurchase : labels.priceLimit + ' ' + (p.priceLimit / 1000).toFixed(3)}`}
               after={p.packInfo ? '' : labels.unAvailableNote}
               key={p.packId}
               className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
@@ -113,7 +129,7 @@ const EditOrder = props => {
         </Fab>
       : ''}
       <Actions ref={hintsList}>
-        <ActionsButton onClick={() => dispatch({type: 'TOGGLE_ORDER_BEST_PRICE', pack: currentPack})}>{`${labels.priceIncrease}: ${currentPack.withBestPrice ? labels.noPurchase : labels.withBestPrice}`}</ActionsButton>
+        <ActionsButton onClick={() => handleIncreasePrice()}>{`${labels.priceIncrease}: ${currentPack.priceLimit === currentPack.price ? labels.priceLimit : labels.noPurchase}`}</ActionsButton>
       </Actions>
       <Toolbar bottom>
         <BottomToolbar/>

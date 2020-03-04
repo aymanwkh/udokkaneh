@@ -124,9 +124,9 @@ const labels = {
   notificationDetails: 'نص التنبيه',
   notifications: 'التنبيهات',
   bestPrice: 'افضل سعر',
-  lastPrice: 'السعر آخر مرة',
+  lastPrice: 'آخر سعر',
   lastTime: 'آخر شراء',
-  lastQuantity: 'الكمية آخر مرة',
+  lastQuantity: 'آخر كمية',
   purchasedPacks: 'مشترياتي',
   otherProducts: 'بدائل اكثر طلبا وافضل تقييما',
   otherPacks: 'عبوات للمنتج ذات قيمة أعلى',
@@ -168,8 +168,6 @@ const labels = {
   editOrder: 'تعديل الطلب',
   editBasket: 'تعديل',
   editBasketRequest: 'طلب تعديل',
-  notifyDebit: 'ابلغني عند تفعيل الخدمة',
-  debitRequest: 'الدفع لاحقا',
   removeFromFavorites: 'الحذف من المفضلة',
   addToFavorites: 'الاضافة الى المفضلة',
   rateGood: 'تقييم ايجابي ',
@@ -182,9 +180,10 @@ const labels = {
   friends: 'الاصدقاء',
   delete: 'حذف',
   notifyFriends: 'ابلاغ الاصدقاء عن هذا العرض',
-  withBestPrice: 'الشراء بأفضل سعر',
   noPurchase: 'عدم الشراء',
-  priceIncrease: 'اذا ارتفع السعر'
+  priceIncrease: 'اذا ارتفع السعر',
+  priceLimit: 'الشراء بسقف',
+  enterPriceLimit: 'الرجاء تحديد سقف الشراء'
 }
 
 export default labels

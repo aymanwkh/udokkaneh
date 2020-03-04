@@ -20,11 +20,8 @@ const Panel = props => {
     <Page>
       <Navbar title={labels.mainPanelTitle} />
       <List>
-        {user ?
-          <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
-        : 
-          <ListItem link="/panel-login/" title={labels.login} />
-        }
+        {user ? <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
+        : <ListItem link="/panel-login/" title={labels.login} />}
         {user ? <ListItem link="/change-password/" title={labels.changePassword} /> : ''}
         {user ? <ListItem link="/notifications/" title={labels.notifications} badge={notifications.length} badgeColor="red" view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/packs/0/type/f" title={labels.favorites} view="#main-view" panelClose /> : ''}
@@ -33,7 +30,6 @@ const Panel = props => {
         {user ? <ListItem link="/friends/" title={labels.friends} view="#main-view" panelClose /> : ''}
         {user && user.displayName ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
         {user ? '' : <ListItem link="/register/o" title={labels.registerStoreOwner} view="#main-view" panelClose />}
-        {user ? <ListItem link="/debit/" title={labels.debitRequest} view="#main-view" panelClose /> : ''}
         <ListItem link="/contact-us/" title={labels.contactUsTitle} view="#main-view" panelClose />
       </List>
     </Page>

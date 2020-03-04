@@ -21,19 +21,15 @@ const Reducer = (state, action) => {
         byWeight: action.pack.byWeight,
         maxQuantity: action.pack.maxQuantity,
         offerId: action.pack.offerId,
-        withBestPrice: false
+        priceLimit: action.pack.price
       }
       packs = [...state.basket, pack]
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
-    case 'TOGGLE_BEST_PRICE':
-      pack = {
-        ...action.pack,
-        withBestPrice: !action.pack.withBestPrice
-      }
+    case 'SET_PRICE_LIMIT':
       packs = state.basket.slice()
       packIndex = packs.findIndex(p => p.packId === action.pack.packId)
-      packs.splice(packIndex, 1, pack)
+      packs.splice(packIndex, 1, action.pack)
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'INCREASE_QUANTITY':
@@ -96,7 +92,7 @@ const Reducer = (state, action) => {
           return {
             ...p,
             oldQuantity: p.quantity,
-            oldWithBestPrice: p.withBestPrice
+            oldPriceLimit: p.priceLimit
           }
         })
       }
@@ -105,15 +101,11 @@ const Reducer = (state, action) => {
         ...state,
         orderBasket: []
       }
-      case 'TOGGLE_ORDER_BEST_PRICE':
-        pack = {
-          ...action.pack,
-          withBestPrice: !action.pack.withBestPrice
-        }
-        packs = state.orderBasket.slice()
-        packIndex = packs.findIndex(p => p.packId === action.pack.packId)
-        packs.splice(packIndex, 1, pack)
-        return {...state, orderBasket: packs}
+    case 'SET_ORDER_PRICE_LIMIT':
+      packs = state.orderBasket.slice()
+      packIndex = packs.findIndex(p => p.packId === action.pack.packId)
+      packs.splice(packIndex, 1, action.pack)
+      return {...state, orderBasket: packs}
     case 'INCREASE_ORDER_QUANTITY':
       if (action.pack.packInfo.isDivided) {
         if (action.pack.quantity >= 1) {

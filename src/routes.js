@@ -24,7 +24,6 @@ import NotificationDetails from './pages/notification-details'
 import PurchasedPacks from './pages/purchased-packs'
 import Advert from './pages/advert'
 import EditOrder from './pages/edit-order'
-import Debit from './pages/debit'
 import Friends from './pages/friends'
 
 export default [
@@ -145,10 +144,6 @@ export default [
   {
     path: '/edit-order/:id',
     component: EditOrder
-  },
-  {
-    path: '/debit/',
-    component: Debit
   },
   {
     path: '/friends/',

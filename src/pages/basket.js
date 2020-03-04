@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
+import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
@@ -62,6 +62,22 @@ const Basket = props => {
 			setError(getMessage(props, err))
 		}
   }
+  const handleIncreasePrice = () => {
+    if (currentPack.price === currentPack.priceLimit) {
+      f7.dialog.prompt(labels.enterPriceLimit, labels.priceLimit, price => {
+        try {
+          if (price * 1000 <= currentPack.price) {
+            throw new Error('invalidPrice')
+          }
+          dispatch({type: 'SET_PRICE_LIMIT', pack: {...currentPack, priceLimit: price * 1000}})  
+        } catch(err) {
+          setError(getMessage(props, err))
+        }
+      })  
+    } else {
+      dispatch({type: 'SET_PRICE_LIMIT', pack: {...currentPack, priceLimit: currentPack.price}}) 
+    }
+  }
   const handleHints = pack => {
     setCurrentPack(pack)
     hintsList.current.open()
@@ -76,7 +92,7 @@ const Basket = props => {
             title={p.productName}
             subtitle={p.productAlias}
             text={p.packName}
-            footer={`${labels.priceIncrease}: ${p.withBestPrice ? labels.withBestPrice : labels.noPurchase}`}
+            footer={`${labels.priceIncrease}: ${p.priceLimit === p.price ? labels.noPurchase : labels.priceLimit + ' ' + (p.priceLimit / 1000).toFixed(3)}`}
             key={p.packId}
             className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
           >
@@ -108,7 +124,7 @@ const Basket = props => {
       </Fab>
     }
     <Actions ref={hintsList}>
-      <ActionsButton onClick={() => dispatch({type: 'TOGGLE_BEST_PRICE', pack: currentPack})}>{`${labels.priceIncrease}: ${currentPack.withBestPrice ? labels.noPurchase : labels.withBestPrice}`}</ActionsButton>
+      <ActionsButton onClick={() => handleIncreasePrice()}>{`${labels.priceIncrease}: ${currentPack.priceLimit === currentPack.price ? labels.priceLimit : labels.noPurchase}`}</ActionsButton>
       {currentPack.otherProducts === 0 ? '' :
         <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
       }

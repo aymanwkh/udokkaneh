@@ -66,11 +66,10 @@ export const getChildren = (categoryId, categories) => {
   return childrenArray
 }
 
-export const rateProduct = (productId, price, value) => {
+export const rateProduct = (productId, value) => {
   firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
     ratings: firebase.firestore.FieldValue.arrayUnion({
       productId,
-      price,
       value,
       status: 'n'  
     })
@@ -219,13 +218,6 @@ export const inviteFriend = (mobile, name) => {
   })
 }
 
-export const addDebitRequest = () => {
-  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-    debitRequestStatus: 'n',
-    debitRequestTime: firebase.firestore.FieldValue.serverTimestamp()
-  })
-}
-
 export const readNotification = (user, notificationId) => {
   const notifications = user.notifications.slice()
   const notificationIndex = notifications.findIndex(n => n.id === notificationId)
@@ -252,8 +244,12 @@ export const updateFavorites = (user, productId) => {
 }
 
 export const editOrder = (order, newBasket) => {
+  let basket = newBasket.map(p => {
+    const { oldQuantity, oldPriceLimit, packInfo, ...others } = p
+    return others
+  })
   if (order.status === 'n') {
-    const basket = newBasket.filter(p => p.quantity > 0)
+    basket = basket.filter(p => p.quantity > 0)
     const total = basket.reduce((sum, p) => sum + p.gross, 0)
     const fixedFees = Math.trunc(setup.fixedFees * total)
     const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 50) * 50
@@ -268,7 +264,7 @@ export const editOrder = (order, newBasket) => {
   } else {
     firebase.firestore().collection('orders').doc(order.id).update({
       requestType: 'e',
-      requestBasket: newBasket,
+      requestBasket: basket,
       requestStatus: 'n',
       requestTime: firebase.firestore.FieldValue.serverTimestamp()
     })
@@ -323,6 +319,7 @@ export const getBasket = (stateBasket, packs) => {
     return {
       ...p,
       price: lastPrice,
+      priceLimit: Math.max(lastPrice, p.priceLimit),
       packInfo,
       totalPriceText,
       priceText,

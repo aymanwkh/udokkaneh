@@ -69,7 +69,7 @@ const PurchasedPacks = props => {
       if (state.customerInfo.isBlocked) {
         throw new Error('blockedUser')
       }
-      rateProduct(currentPack.productId, currentPack.lastPrice, value)
+      rateProduct(currentPack.productId, value)
       showMessage(labels.ratingSuccess)
     } catch(err) {
       setError(getMessage(props, err))
@@ -106,15 +106,15 @@ const PurchasedPacks = props => {
 				</List>
       </Block>
       <Actions ref={actionsList}>
-        <ActionsButton onClick={() => handleRate(1)}>
+        <ActionsButton onClick={() => handleRate(5)}>
           {labels.rateGood}
           <Icon material="thumb_up" color="green"></Icon>
         </ActionsButton>
-        <ActionsButton onClick={() => handleRate(0)}>
+        <ActionsButton onClick={() => handleRate(3)}>
           {labels.rateMiddle}
           <Icon material="thumbs_up_down" color="blue"></Icon>
         </ActionsButton>
-        <ActionsButton onClick={() => handleRate(-1)}>
+        <ActionsButton onClick={() => handleRate(1)}>
           {labels.rateBad}
           <Icon material="thumb_down" color="red"></Icon>
         </ActionsButton>

@@ -86,7 +86,7 @@ const ConfirmOrder = props => {
           gross: Math.trunc(p.price * p.quantity),
           offerId: p.offerId || '',
           purchased: 0,
-          withBestPrice: p.withBestPrice,
+          priceLimit: p.priceLimit,
           status: 'n'
         }
         if (p.subQuantity) pack['subQuantity'] = p.subQuantity
@@ -132,7 +132,7 @@ const ConfirmOrder = props => {
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
-              footer={`${labels.priceIncrease}: ${p.withBestPrice ? labels.withBestPrice : labels.noPurchase}`}
+              footer={`${labels.priceIncrease}: ${p.priceLimit === p.price ? labels.noPurchase : labels.priceLimit + ' ' + (p.priceLimit / 1000).toFixed(3)}`}
               after={p.totalPriceText}
             >
               <div className="list-subtext1">{p.priceText}</div>
