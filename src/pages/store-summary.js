@@ -10,7 +10,14 @@ const StoreSummary = props => {
   const [sections, setSections] = useState([])
   useEffect(() => {
     setSections(() => {
-      const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo.storeId)
+      let storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo.storeId)
+      storePacks = storePacks.map(p => {
+        const packInfo = state.packs.find(pa => pa.id === p.packId)
+        return {
+          ...p,
+          packInfo
+        }
+      })
       const sections = storeSummary.map(s => {
         const packs = storePacks.filter(p => (s.id === 'a') 
                                           || (s.id === 'o' && p.price > p.packInfo.price) 
@@ -23,7 +30,7 @@ const StoreSummary = props => {
       })
       return sections
     })
-  }, [state.packPrices, state.customerInfo])
+  }, [state.packPrices, state.packs, state.customerInfo])
   let i = 0
   return(
     <Page>

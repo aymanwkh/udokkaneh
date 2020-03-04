@@ -155,7 +155,6 @@ const labels = {
   returnPacks: 'ارجاع مواد',
   deliver: 'تسليم',
   customerDetails: 'معلومات العميل',
-  otherMobile: 'رقم موبايل بديل',
   deliveryInterval: 'فترة التسليم',
   returnOrder: 'ارجاع طلب',
   removeFavoriteSuccess: 'تم الحذف من المفضلة',

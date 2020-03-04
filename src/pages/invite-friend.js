@@ -51,7 +51,7 @@ const InviteFriend = props => {
       if (state.userInfo.friends?.find(f => f.mobile === mobile)) {
         throw new Error('duplicateInvitation')
       }
-      if (mobile === state.userInfo.mobile || mobile === state.customerInfo.otherMobile) {
+      if (mobile === state.userInfo.mobile) {
         throw new Error('invalidMobile')
       }
       inviteFriend(mobile, name)

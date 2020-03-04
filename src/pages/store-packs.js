@@ -13,13 +13,20 @@ const StorePacks = props => {
   const [storePacks, setStorePacks] = useState([])
   useEffect(() => {
     setStorePacks(() => {
-      const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo.storeId)
+      let storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo.storeId)
+      storePacks = storePacks.map(p => {
+        const packInfo = state.packs.find(pa => pa.id === p.packId)
+        return {
+          ...p,
+          packInfo
+        }
+      })
       return storePacks.filter(p => (props.type === 'a')
                             || (props.type === 'o' && p.price > p.packInfo.price) 
                             || (props.type === 'n' && p.price === p.packInfo.price && p.storeId !== p.packInfo.minStoreId)
                             || (props.type === 'l' && p.price === p.packInfo.price && p.storeId === p.packInfo.minStoreId))
     })
-  }, [state.packPrices, state.customerInfo, props.type])
+  }, [state.packPrices, state.packs, state.customerInfo, props.type])
   let i = 0
   return(
     <Page>

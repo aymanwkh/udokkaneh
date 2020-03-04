@@ -17,7 +17,6 @@ import StoreSummary from './pages/store-summary'
 import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
 import Hints from './pages/hints'
-import ContactUs from './pages/contact-us'
 import Help from './pages/help'
 import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
@@ -117,10 +116,7 @@ export default [
     path: '/hints/:id/type/:type',
     component: Hints
   },
-  {
-    path: '/contact-us/',
-    component: ContactUs
-  },
+
   {
     path: '/help/:id',
     component: Help
