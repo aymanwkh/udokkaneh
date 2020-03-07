@@ -96,11 +96,6 @@ const Store = props => {
       }
     })
   }, [])
-  useEffect(() => {
-    if(state.categories.length > 0 && state.packsStatus === 'c') {
-      dispatch({type: 'FINISH_PACKS'})
-    }
-  }, [state.categories, state.packsStatus])
   return (
     <StoreContext.Provider value={{state, user, dispatch}}>
       {props.children}

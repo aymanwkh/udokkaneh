@@ -1,5 +1,5 @@
 const Reducer = (state, action) => {
-  let pack, packIndex, packs, data, nextQuantity, i
+  let pack, packIndex, packs, nextQuantity, i
   const increment = [0.125, 0.25, 0.5, 0.75, 1]
   switch (action.type){
     case 'ADD_TO_BASKET':
@@ -20,16 +20,9 @@ const Reducer = (state, action) => {
         isDivided: action.pack.isDivided,
         byWeight: action.pack.byWeight,
         maxQuantity: action.pack.maxQuantity,
-        offerId: action.pack.offerId,
-        priceLimit: action.pack.price
+        offerId: action.pack.offerId
       }
       packs = [...state.basket, pack]
-      localStorage.setItem('basket', JSON.stringify(packs))
-      return {...state, basket: packs}
-    case 'SET_PRICE_LIMIT':
-      packs = state.basket.slice()
-      packIndex = packs.findIndex(p => p.packId === action.pack.packId)
-      packs.splice(packIndex, 1, action.pack)
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'INCREASE_QUANTITY':
@@ -91,8 +84,7 @@ const Reducer = (state, action) => {
         orderBasket: action.order.basket.map(p => {
           return {
             ...p,
-            oldQuantity: p.quantity,
-            oldPriceLimit: p.priceLimit
+            oldQuantity: p.quantity
           }
         })
       }
@@ -101,11 +93,6 @@ const Reducer = (state, action) => {
         ...state,
         orderBasket: []
       }
-    case 'SET_ORDER_PRICE_LIMIT':
-      packs = state.orderBasket.slice()
-      packIndex = packs.findIndex(p => p.packId === action.pack.packId)
-      packs.splice(packIndex, 1, action.pack)
-      return {...state, orderBasket: packs}
     case 'INCREASE_ORDER_QUANTITY':
       if (action.pack.packInfo.isDivided) {
         if (action.pack.quantity >= 1) {
@@ -180,20 +167,6 @@ const Reducer = (state, action) => {
         ...state,
         packs: action.packs,
         packsStatus: 'c'
-      }
-    case 'FINISH_PACKS':
-      data = state.packs.map(p => {
-        const categoryName = state.categories.find(c => c.id === p.categoryId).name
-        return {
-          ...p,
-          categoryName
-        }
-      })
-      data.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
-      return {
-        ...state,
-        packs: data,
-        packsStatus: 'f'
       }
     case 'SET_CATEGORIES':
       return {

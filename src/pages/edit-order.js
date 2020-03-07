@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper, Link, Actions, ActionsButton } from 'framework7-react'
+import React, { useContext, useEffect, useState } from 'react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { editOrder, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
@@ -13,13 +13,11 @@ const EditOrder = props => {
   const [orderBasket, setOrderBasket] = useState([])
   const [total, setTotal] = useState('')
   const [overLimit, setOverLimit] = useState(false)
-  const [currentPack, setCurrentPack] = useState('')
   const [hasChanged, setHasChanged] = useState(false)
   const [customerOrdersTotals] = useState(() => {
     const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
     return activeOrders.reduce((sum, o) => sum + o.total, 0)
   })
-  const hintsList = useRef('')
   useEffect(() => {
     dispatch({type: 'LOAD_ORDER_BASKET', order})
   }, [dispatch, order])
@@ -36,7 +34,7 @@ const EditOrder = props => {
     })
   }, [state.orderBasket, state.packs])
   useEffect(() => {
-    setHasChanged(() => state.orderBasket?.find(p => p.oldQuantity !== p.quantity || p.oldPriceLimit !== p.priceLimit) ? true : false)
+    setHasChanged(() => state.orderBasket?.find(p => p.oldQuantity !== p.quantity) ? true : false)
   }, [state.orderBasket])
   useEffect(() => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
@@ -66,26 +64,6 @@ const EditOrder = props => {
 			setError(getMessage(props, err))
 		}
   }
-  const handleIncreasePrice = () => {
-    if (currentPack.price === currentPack.priceLimit) {
-      f7.dialog.prompt(labels.enterPriceLimit, labels.priceLimit, price => {
-        try {
-          if (price * 1000 <= currentPack.price) {
-            throw new Error('invalidPrice')
-          }
-          dispatch({type: 'SET_ORDER_PRICE_LIMIT', pack: {...currentPack, priceLimit: price * 1000}})  
-        } catch(err) {
-          setError(getMessage(props, err))
-        }
-      })  
-    } else {
-      dispatch({type: 'SET_ORDER_PRICE_LIMIT', pack: {...currentPack, priceLimit: currentPack.price}}) 
-    }
-  }
-  const handleHints = pack => {
-    setCurrentPack(pack)
-    hintsList.current.open()
-  }
   return (
     <Page>
       <Navbar title={labels.editOrder} backLink={labels.back} />
@@ -96,14 +74,12 @@ const EditOrder = props => {
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
-              footer={`${labels.priceIncrease}: ${p.priceLimit === p.price ? labels.noPurchase : labels.priceLimit + ' ' + (p.priceLimit / 1000).toFixed(3)}`}
+              footer={`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}
               after={p.packInfo ? '' : labels.unAvailableNote}
               key={p.packId}
-              className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
             >
               <div className="list-subtext1">{`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}</div>
               <div className="list-subtext2">{quantityDetails(p)}</div>
-              <div className="list-subtext3">{`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}</div>
               {p.packInfo ? 
                 <Stepper
                   slot="after"
@@ -113,7 +89,6 @@ const EditOrder = props => {
                   onStepperMinusClick={() => dispatch({type: 'DECREASE_ORDER_QUANTITY', pack: p})}
                 />
               : ''}
-              <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>
             </ListItem>
           )}
         </List>
@@ -128,9 +103,6 @@ const EditOrder = props => {
           <Icon material="report_problem"></Icon>
         </Fab>
       : ''}
-      <Actions ref={hintsList}>
-        <ActionsButton onClick={() => handleIncreasePrice()}>{`${labels.priceIncrease}: ${currentPack.priceLimit === currentPack.price ? labels.priceLimit : labels.noPurchase}`}</ActionsButton>
-      </Actions>
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>

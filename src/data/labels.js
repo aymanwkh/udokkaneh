@@ -174,15 +174,13 @@ const labels = {
   rateMiddle: 'تقييم متوسط',
   productFrom: 'منتج من',
   noImage: 'الصورة غير متوفرة',
-  offerHint: '*اشتر ما يلزمك واستفد من العرض في نفس الوقت...تضاف 10% على القيمة الافرادية',
+  offerHintPart1: '*اشتر ما يلزمك فقط...تضاف',
+  offerHintPart2: '% على القيمة اﻻفرادية',
   mergeSuccess: 'تم الدمج',
   friends: 'الاصدقاء',
   delete: 'حذف',
   notifyFriends: 'ابلاغ الاصدقاء عن هذا العرض',
   noPurchase: 'عدم الشراء',
-  priceIncrease: 'اذا ارتفع السعر',
-  priceLimit: 'الشراء بسقف',
-  enterPriceLimit: 'الرجاء تحديد سقف الشراء'
 }
 
 export default labels

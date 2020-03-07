@@ -17,8 +17,8 @@ const ConfirmOrder = props => {
   const [locationFees] = useState(() => state.locations.find(l => l.id === state.userInfo.locationId)?.fees)
   const [deliveryFees] = useState(state.customerInfo.deliveryFees || locationFees)
   useEffect(() => {
-    setBasket(getBasket(state.basket, state.packs))
-  }, [state.basket, state.packs])
+    setBasket(getBasket(state.basket, state.packs, state.categories))
+  }, [state.basket, state.packs, state.categories])
 
   useEffect(() => {
     setTotal(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
@@ -86,7 +86,6 @@ const ConfirmOrder = props => {
           gross: Math.trunc(p.price * p.quantity),
           offerId: p.offerId || '',
           purchased: 0,
-          priceLimit: p.priceLimit,
           status: 'n'
         }
         if (p.subQuantity) pack['subQuantity'] = p.subQuantity
@@ -132,11 +131,10 @@ const ConfirmOrder = props => {
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
-              footer={`${labels.priceIncrease}: ${p.priceLimit === p.price ? labels.noPurchase : labels.priceLimit + ' ' + (p.priceLimit / 1000).toFixed(3)}`}
+              footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
               after={p.totalPriceText}
             >
               <div className="list-subtext1">{p.priceText}</div>
-              <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
             </ListItem>
           )}
           <ListItem 

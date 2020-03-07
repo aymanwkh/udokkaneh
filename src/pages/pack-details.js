@@ -12,6 +12,7 @@ const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
+  const [packCategory] = useState(() => state.categories.find(c => c.id === pack.categoryId))
   const [isAvailable, setIsAvailable] = useState('')
   const [subPackInfo, setSubPackInfo] = useState('')
   const [bonusPackInfo, setBonusPackInfo] = useState('')
@@ -26,7 +27,7 @@ const PackDetails = props => {
   useEffect(() => {
     setSubPackInfo(() => {
       if (pack.subPackId) {
-        const price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
+        const price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + packCategory.minProfit))
         return `${pack.productName} ${pack.subPackName}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
       } else {
         return ''
@@ -34,7 +35,7 @@ const PackDetails = props => {
     })
     setBonusPackInfo(() => {
       if (pack.bonusPackId) {
-        const price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
+        const price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + packCategory.minProfit))
         return `${pack.bonusProductName} ${pack.bonusPackName}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
       } else {
         return ''
@@ -43,7 +44,7 @@ const PackDetails = props => {
     setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack.categoryId && (pa.sales > pack.sales || pa.rating > pack.rating)))
     setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer)))
     setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
-  }, [pack, state.packs])
+  }, [pack, state.packs, packCategory])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -63,11 +64,11 @@ const PackDetails = props => {
       if (packId !== pack.id) {
         purchasedPack = state.packs.find(p => p.id === packId) || ''
         if (packId === pack.subPackId) {
-          price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
+          price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + packCategory.minProfit))
           maxQuantity = pack.subQuantity - 1
           if (pack.bonusPackId) maxQuantity++
         } else  {
-          price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
+          price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + packCategory.minProfit))
           maxQuantity = pack.bonusQuantity
         }
         purchasedPack = {
@@ -179,7 +180,7 @@ const PackDetails = props => {
           <Icon material="menu"></Icon>
         </Fab>
       : ''}
-      {props.type === 'c' && pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
+      {props.type === 'c' && pack.isOffer ? <p className="note">{`${labels.offerHintPart1} ${packCategory.minProfit * 100}${labels.offerHintPart2}`}</p> : ''}
       <Actions ref={packActions}>
         {props.type === 'c' ? 
           <React.Fragment>

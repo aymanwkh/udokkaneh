@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
@@ -20,8 +20,8 @@ const Basket = props => {
   const hintsList = useRef('')
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
-    else setBasket(getBasket(state.basket, state.packs))
-  }, [state.basket, state.packs, props])
+    else setBasket(getBasket(state.basket, state.packs, state.categories))
+  }, [state.basket, state.packs, state.categories, props])
   useEffect(() => {
     setTotalPrice(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
     setWeightedPacks(() => basket.filter(p => p.byWeight))
@@ -62,22 +62,6 @@ const Basket = props => {
 			setError(getMessage(props, err))
 		}
   }
-  const handleIncreasePrice = () => {
-    if (currentPack.price === currentPack.priceLimit) {
-      f7.dialog.prompt(labels.enterPriceLimit, labels.priceLimit, price => {
-        try {
-          if (price * 1000 <= currentPack.price) {
-            throw new Error('invalidPrice')
-          }
-          dispatch({type: 'SET_PRICE_LIMIT', pack: {...currentPack, priceLimit: price * 1000}})  
-        } catch(err) {
-          setError(getMessage(props, err))
-        }
-      })  
-    } else {
-      dispatch({type: 'SET_PRICE_LIMIT', pack: {...currentPack, priceLimit: currentPack.price}}) 
-    }
-  }
   const handleHints = pack => {
     setCurrentPack(pack)
     hintsList.current.open()
@@ -92,14 +76,13 @@ const Basket = props => {
             title={p.productName}
             subtitle={p.productAlias}
             text={p.packName}
-            footer={`${labels.priceIncrease}: ${p.priceLimit === p.price ? labels.noPurchase : labels.priceLimit + ' ' + (p.priceLimit / 1000).toFixed(3)}`}
+            footer={`${labels.totalPrice}:${p.totalPriceText}`}
             key={p.packId}
             className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
           >
             <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
             <div className="list-subtext1">{p.priceText}</div>
             <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
-            <div className="list-subtext3">{`${labels.totalPrice}:${p.totalPriceText}`}</div>
             {p.price === 0 ? '' : 
               <Stepper 
                 slot="after" 
@@ -109,7 +92,7 @@ const Basket = props => {
                 onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
               />
             }
-            <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>
+            {p.otherProducts + p.otherOffers + p.otherPacks === 0 ? '' : <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>}
           </ListItem>
         )}
       </List>
@@ -124,7 +107,6 @@ const Basket = props => {
       </Fab>
     }
     <Actions ref={hintsList}>
-      <ActionsButton onClick={() => handleIncreasePrice()}>{`${labels.priceIncrease}: ${currentPack.priceLimit === currentPack.price ? labels.priceLimit : labels.noPurchase}`}</ActionsButton>
       {currentPack.otherProducts === 0 ? '' :
         <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
       }

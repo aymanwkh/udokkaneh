@@ -245,7 +245,7 @@ export const updateFavorites = (user, productId) => {
 
 export const editOrder = (order, newBasket) => {
   let basket = newBasket.map(p => {
-    const { oldQuantity, oldPriceLimit, packInfo, ...others } = p
+    const { oldQuantity, packInfo, ...others } = p
     return others
   })
   if (order.status === 'n') {
@@ -295,18 +295,19 @@ export const deleteFriend = (user, mobile) => {
   })
 }
 
-export const getBasket = (stateBasket, packs) => {
+export const getBasket = (stateBasket, packs, categories) => {
   const basket = stateBasket.map(p => {
     const packInfo = packs.find(pa => pa.id === p.packId) || ''
+    const packCategory = categories.find(c => c.id === packInfo?.categoryId)
     let lastPrice
     if (p.offerId) {
       const offerInfo = packs.find(pa => pa.id === p.offerId)
       if (!offerInfo) {
         lastPrice = 0
       } else if (offerInfo.subPackId === p.packId) {
-        lastPrice = Math.trunc(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
+        lastPrice = Math.trunc(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + packCategory.minProfit))
       } else {
-        lastPrice = Math.trunc(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
+        lastPrice = Math.trunc(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + packCategory.minProfit))
       }
     } else {
       lastPrice = packInfo.price || 0
@@ -319,7 +320,6 @@ export const getBasket = (stateBasket, packs) => {
     return {
       ...p,
       price: lastPrice,
-      priceLimit: Math.max(lastPrice, p.priceLimit),
       packInfo,
       totalPriceText,
       priceText,
