@@ -16,7 +16,15 @@ const Packs = props => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      return state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
+      let packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
+      packs = packs.map(p => {
+        const categoryInfo = state.categories.find(c => c.id === p.categoryId)
+        return {
+          ...p,
+          categoryInfo
+        }
+      })
+      return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories])
   const handleSorting = sortByValue => {
@@ -83,7 +91,7 @@ const Packs = props => {
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{p.name}</div>
                 <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
-                <div className="list-subtext3">{`${labels.category}: ${p.categoryName}`}</div>
+                <div className="list-subtext3">{`${labels.category}: ${p.categoryInfo.name}`}</div>
                 {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
               </ListItem>
             )

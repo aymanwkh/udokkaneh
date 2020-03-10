@@ -69,7 +69,7 @@ const OrderDetails = props => {
       }
     })    
   }
-  const handleMerge = async () => {
+  const handleMerge = () => {
     try{
       if (lastOrder.status !== 'n' && lastOrder.requestType) {
         throw new Error('duplicateOrderRequest')
