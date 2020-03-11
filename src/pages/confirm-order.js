@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Link } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Link, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { confirmOrder, showMessage, showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
@@ -17,8 +17,8 @@ const ConfirmOrder = props => {
   const [locationFees] = useState(() => state.locations.find(l => l.id === state.userInfo.locationId)?.fees)
   const [deliveryFees] = useState(state.customerInfo.deliveryFees || locationFees)
   useEffect(() => {
-    setBasket(getBasket(state.basket, state.packs, state.categories))
-  }, [state.basket, state.packs, state.categories])
+    setBasket(getBasket(state.basket, state.packs))
+  }, [state.basket, state.packs])
 
   useEffect(() => {
     setTotal(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
@@ -74,7 +74,7 @@ const ConfirmOrder = props => {
       }
       let packs = basket.filter(p => p.price > 0)
       packs = packs.map(p => {
-        const pack = {
+        return {
           packId: p.packId,
           productId: p.productId,
           productName: p.productName,
@@ -83,18 +83,12 @@ const ConfirmOrder = props => {
           imageUrl: p.imageUrl,
           price: p.price,
           quantity: p.quantity,
+          closeExpired: p.closeExpired,
           gross: Math.trunc(p.price * p.quantity),
           offerId: p.offerId || '',
           purchased: 0,
           status: 'n'
         }
-        if (p.subQuantity) pack['subQuantity'] = p.subQuantity
-        if (p.bonusPackId) {
-          pack['bonusPackId'] = p.bonusPackId
-          pack['bonusImageUrl'] = p.bonusImageUrl
-          pack['bonusQuantity'] = p.bonusQuantity
-        }
-        return pack
       })
       const order = {
         basket: packs,
@@ -135,6 +129,7 @@ const ConfirmOrder = props => {
               after={p.totalPriceText}
             >
               <div className="list-subtext1">{p.priceText}</div>
+              {p.closeExpired ? <Badge slot="title" color="red">{labels.closeExpired}</Badge> : ''}
             </ListItem>
           )}
           <ListItem 

@@ -40,7 +40,7 @@ const Packs = props => {
         setPacks([...packs].sort((p1, p2) => p2.rating - p1.rating))
         break
       case 'o':
-        setPacks([...packs].sort((p1, p2) => p2.isOffer - p1.isOffer))
+        setPacks([...packs].sort((p1, p2) => (p2.isOffer || p2.offerEnd ? 1 : 0) - (p1.isOffer || p1.offerEnd ? 1 : 0)))
         break
       case 'v':
         setPacks([...packs].sort((p1, p2) => p1.weightedPrice - p2.weightedPrice))
@@ -92,7 +92,7 @@ const Packs = props => {
                 <div className="list-subtext1">{p.name}</div>
                 <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
                 <div className="list-subtext3">{`${labels.category}: ${p.categoryInfo.name}`}</div>
-                {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
+                {p.isOffer || p.offerEnd ? <Badge slot="title" color={p.closeExpired ? 'red' : 'green'}>{p.closeExpired ? labels.closeExpired : labels.offer}</Badge> : ''}
               </ListItem>
             )
           }

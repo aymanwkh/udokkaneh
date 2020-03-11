@@ -41,7 +41,7 @@ const PackDetails = props => {
       }  
     })
     setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack.categoryId && (pa.sales > pack.sales || pa.rating > pack.rating)))
-    setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.endOffer)))
+    setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
     setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
   }, [pack, state.packs])
   useEffect(() => {
@@ -74,7 +74,8 @@ const PackDetails = props => {
           ...purchasedPack,
           price,
           maxQuantity,
-          offerId: pack.id
+          offerId: pack.id,
+          closeExpired: pack.closeExpired
         }
       }
       const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
@@ -92,11 +93,14 @@ const PackDetails = props => {
   }
   const handleAddAlarm = alarmTypeId => {
     try {
-      if (alarmTypeId === '4') {
+      if (alarmTypeId === 'ua') {
         f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
           try{
             if (state.customerInfo.isBlocked) {
               throw new Error('blockedUser')
+            }
+            if (state.userInfo.alarms?.find(a => a.packId === props.id && a.status === 'n')){
+              throw new Error('duplicateAlarms')
             }
             const alarm = {
               packId: props.id,

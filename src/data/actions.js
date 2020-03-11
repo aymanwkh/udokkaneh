@@ -85,10 +85,8 @@ export const logout = () => {
 }
 
 export const addPasswordRequest = mobile => {
-  localStorage.setItem('password-request', mobile)
   firebase.firestore().collection('password-requests').add({
     mobile,
-    status: 'n',
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
@@ -295,19 +293,18 @@ export const deleteFriend = (user, mobile) => {
   })
 }
 
-export const getBasket = (stateBasket, packs, categories) => {
+export const getBasket = (stateBasket, packs) => {
   const basket = stateBasket.map(p => {
     const packInfo = packs.find(pa => pa.id === p.packId) || ''
-    const packCategory = categories.find(c => c.id === packInfo?.categoryId)
     let lastPrice
     if (p.offerId) {
       const offerInfo = packs.find(pa => pa.id === p.offerId)
       if (!offerInfo) {
         lastPrice = 0
       } else if (offerInfo.subPackId === p.packId) {
-        lastPrice = Math.trunc(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + packCategory.minProfit))
+        lastPrice = Math.trunc(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
       } else {
-        lastPrice = Math.trunc(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + packCategory.minProfit))
+        lastPrice = Math.trunc(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
       }
     } else {
       lastPrice = packInfo.price || 0
@@ -315,7 +312,7 @@ export const getBasket = (stateBasket, packs, categories) => {
     const totalPriceText = `${(Math.trunc(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
     const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
     const otherProducts = packs.filter(pa => pa.categoryId === packInfo.categoryId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
-    const otherOffers = packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.endOffer))
+    const otherOffers = packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.offerEnd))
     const otherPacks = packs.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
     return {
       ...p,

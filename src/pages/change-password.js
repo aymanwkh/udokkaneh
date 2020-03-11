@@ -57,6 +57,7 @@ const ChangePassword = props => {
       setInprocess(false)
       showMessage(labels.changePasswordSuccess)
       props.f7router.back()
+      props.f7router.app.panel.close('right') 
     } catch (err){
       setInprocess(false)
       setError(getMessage(props, err))

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Button, Block, Page, Navbar, Toolbar } from 'framework7-react'
+import { f7, Button, Block, Page, Navbar, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
@@ -14,7 +14,14 @@ const Categories = props => {
       return categories.sort((c1, c2) => c1.ordering - c2.ordering)
     })
   }, [state.categories, state.packs, props.id])
- 
+  useEffect(() => {
+    if (state.packs.length === 0) {
+      f7.dialog.preloader('')
+    } else {
+      f7.dialog.close()
+    }
+  }, [state.packs])
+
   let i = 0
   return(
     <Page>

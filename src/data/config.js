@@ -72,5 +72,5 @@ export const friendStatus = [
   {id: 'n', name: 'قيد الموافقة'},
   {id: 's', name: 'ارسلت الدعوة'},
   {id: 'o', name: 'مدعو سابقا'},
-  {id: 'r', name: 'مسجل'}
+  {id: 'r', name: 'مستخدم فعلي'}
 ]

@@ -14,7 +14,7 @@ const Hints = props => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
         (props.type === 'p' && p.categoryId === pack.categoryId && (p.sales > pack.sales || p.rating > pack.rating)) ||
-        (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.endOffer)) ||
+        (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
         (props.type === 'w' && p.productId === pack.productId && p.weightedPrice < pack.weightedPrice)
       )
       return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
+import { StoreContext } from '../data/store'
 import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { addPasswordRequest, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
 const PasswordRequest = props => {
+  const { state } = useContext(StoreContext)
   const [mobile, setMobile] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [error, setError] = useState('')
@@ -28,6 +30,9 @@ const PasswordRequest = props => {
   }, [error])
   const handlePasswordRequest = () => {
     try{
+      if (state.passwordRequests.find(r => r.mobile === mobile)) {
+        throw new Error('duplicatePasswordRequest')
+      }
       addPasswordRequest(mobile)
       showMessage(labels.sendSuccess)
       props.f7router.back()

@@ -49,10 +49,6 @@ const PurchasedPacks = props => {
             productAlias: p.productAlias,
             packName: p.packName,
             imageUrl: p.imageUrl,
-            subQuantity: p.subQuantity,
-            bonusPackId: p.bonusPackId,
-            bonusImageUrl: p.bonusImageUrl,
-            bonusQuantity: p.bonusQuantity,
             bestPrice: p.actual,
             lastPrice: p.actual,
             quantity: p.purchased,
@@ -89,17 +85,18 @@ const PurchasedPacks = props => {
 						<ListItem title={labels.noData} /> 
 					: purchasedPacks.map(p => 
 							<ListItem
-								title={`${p.productName} ${p.packName}`}
-								subtitle={`${labels.bestPrice}: ${(p.bestPrice / 1000).toFixed(3)}`}
-                text={`${labels.lastPrice}: ${(p.lastPrice / 1000).toFixed(3)}`}
+								title={`${p.productName}${p.productAlias ? '-' + p.productAlias : ''}`}
+								subtitle={p.packName}
+                text={`${labels.bestPrice}: ${(p.bestPrice / 1000).toFixed(3)}`}
                 footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}
 								key={i++}
                 className={currentPack?.packId === p.packId ? 'selected' : ''}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
-                <div className="list-subtext2">{`${labels.lastQuantity}: ${quantityText(p.lastQuantity)}`}</div>
-                {state.userInfo.ratings?.find(r => r.productId === currentPack.productId) ? '' : <Link slot="after" iconMaterial="favorite_border" onClick={()=> handleActions(p)}/> }
+                <div className="list-subtext1">{`${labels.lastPrice}: ${(p.lastPrice / 1000).toFixed(3)}`}</div>
+                <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
+                <div className="list-subtext3">{`${labels.lastQuantity}: ${quantityText(p.lastQuantity)}`}</div>
+                {state.userInfo.ratings?.find(r => r.productId === p.productId) ? '' : <Link slot="after" iconMaterial="favorite_border" onClick={()=> handleActions(p)}/> }
 							</ListItem>
 						)
 					}

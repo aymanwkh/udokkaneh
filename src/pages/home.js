@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import {Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge, Block, Button } from 'framework7-react'
+import { f7, Page, Navbar, NavLeft, NavTitle, Link, Toolbar, NavTitleLarge, Block, Button } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 import MainCategories from './main-categories'
@@ -16,6 +16,14 @@ const Home = props => {
   useEffect(() => {
     setNotifications(() => state.userInfo.notifications?.filter(n => n.status === 'n') || [])
   }, [state.userInfo])
+  useEffect(() => {
+    if (state.categories.length === 0) {
+      f7.dialog.preloader('')
+    } else {
+      f7.dialog.close()
+    }
+  }, [state.categories])
+
   return (
     <Page>
       <Navbar large>

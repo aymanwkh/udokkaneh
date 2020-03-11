@@ -29,7 +29,7 @@ const Panel = props => {
         {user ? <ListItem link="/purchased-packs/" title={labels.purchasedPacks} view="#main-view" panelClose /> : ''}
         {user ? <ListItem link="/friends/" title={labels.friends} view="#main-view" panelClose /> : ''}
         {user && user.displayName ? <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose /> : ''}
-        {user ? '' : <ListItem link="/register/o" title={labels.registerStoreOwner} view="#main-view" panelClose />}
+        {user ? '' : <ListItem link="/register/o" title={labels.registerStoreOwner} />}
       </List>
     </Page>
   )

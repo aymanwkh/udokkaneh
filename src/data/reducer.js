@@ -11,16 +11,13 @@ const Reducer = (state, action) => {
         productAlias: action.pack.productAlias,
         packName: action.pack.name,
         imageUrl: action.pack.imageUrl,
-        subQuantity: action.pack.subQuantity,
-        bonusPackId: action.pack.bonusPackId,
-        bonusImageUrl: action.pack.bonusImageUrl,
-        bonusQuantity: action.pack.bonusQuantity,
         price: action.pack.price,
         quantity: 1,
         isDivided: action.pack.isDivided,
         byWeight: action.pack.byWeight,
         maxQuantity: action.pack.maxQuantity,
-        offerId: action.pack.offerId
+        offerId: action.pack.offerId,
+        closeExpired: action.pack.closeExpired
       }
       packs = [...state.basket, pack]
       localStorage.setItem('basket', JSON.stringify(packs))
@@ -165,8 +162,7 @@ const Reducer = (state, action) => {
     case 'SET_PACKS':
       return {
         ...state,
-        packs: action.packs,
-        packsStatus: 'c'
+        packs: action.packs
       }
     case 'SET_CATEGORIES':
       return {
@@ -187,6 +183,11 @@ const Reducer = (state, action) => {
       return {
         ...state,
         locations: action.locations
+      }
+    case 'SET_PASSWORD_REQUESTS':
+      return {
+        ...state,
+        passwordRequests: action.passwordRequests
       }
     default:
       return state

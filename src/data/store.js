@@ -16,7 +16,7 @@ const Store = props => {
     packPrices: [],
     adverts: [],
     locations: [],
-    packsStatus: ''
+    passwordRequests: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -59,6 +59,15 @@ const Store = props => {
       dispatch({type: 'SET_LOCATIONS', locations: doc.data().values})
     }, err => {
       unsubscribeLocations()
+    })  
+    const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
+      let passwordRequests = []
+      docs.forEach(doc => {
+        passwordRequests.push({...doc.data(), id:doc.id})
+      })
+      dispatch({type: 'SET_PASSWORD_REQUESTS', passwordRequests})
+    }, err => {
+      unsubscribePasswordRequests()
     })  
     firebase.auth().onAuthStateChanged(user => {
       setUser(user)

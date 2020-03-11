@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton } from 'framework7-react'
+import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton, Badge } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import { cancelOrder, mergeOrders, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
@@ -41,6 +41,9 @@ const OrderDetails = props => {
   }, [error])
   const handleEdit = () => {
     try{
+      if (state.customerInfo.isBlocked) {
+        throw new Error('blockedUser')
+      }
       if (order.status !== 'n' && order.requestType) {
         throw new Error('duplicateOrderRequest')
       }
@@ -52,6 +55,9 @@ const OrderDetails = props => {
   const handleDelete = () => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
       try{
+        if (state.customerInfo.isBlocked) {
+          throw new Error('blockedUser')
+        }  
         if (order.status === 'n') {
           cancelOrder(order)
           showMessage(labels.deleteSuccess)
@@ -71,6 +77,9 @@ const OrderDetails = props => {
   }
   const handleMerge = () => {
     try{
+      if (state.customerInfo.isBlocked) {
+        throw new Error('blockedUser')
+      }
       if (lastOrder.status !== 'n' && lastOrder.requestType) {
         throw new Error('duplicateOrderRequest')
       }
@@ -108,15 +117,16 @@ const OrderDetails = props => {
         <List mediaList>
           {orderBasket.map(p => 
             <ListItem 
-              key={p.packId} 
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
               footer={`${labels.status}: ${p.statusNote}`}
               after={(p.gross / 1000).toFixed(3)}
+              key={p.packId} 
             >
               <div className="list-subtext1">{p.priceNote}</div>
               <div className="list-subtext2">{quantityDetails(p)}</div>
+              {p.closeExpired ? <Badge slot="title" color="red">{labels.closeExpired}</Badge> : ''}
             </ListItem>
           )}
           <ListItem 

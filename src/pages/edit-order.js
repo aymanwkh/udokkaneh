@@ -56,6 +56,9 @@ const EditOrder = props => {
   }, [error])
   const handleSubmit = () => {
     try{
+      if (state.customerInfo.isBlocked) {
+        throw new Error('blockedUser')
+      }
       editOrder(order, state.orderBasket)
       showMessage(order.status === 'n' ? labels.editSuccess : labels.sendSuccess)
       dispatch({type: 'CLEAR_ORDER_BASKET'})

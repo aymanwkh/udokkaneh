@@ -54,24 +54,12 @@ const Login = props => {
     try{
       setInprocess(true)
       await login(mobile, password)
-      localStorage.removeItem('password-request')
       setInprocess(false)
       showMessage(labels.loginSuccess)
       props.f7router.back()
       props.f7router.app.panel.close('right') 
     } catch (err){
       setInprocess(false)
-      setError(getMessage(props, err))
-    }
-  }
-  const handlePasswordRequest = () => {
-    try{
-      const localData = localStorage.getItem('password-request')
-      if (localData) {
-        throw new Error('duplicatePasswordRequest')
-      }
-      props.f7router.navigate('/password-request/')
-    } catch (err){
       setError(getMessage(props, err))
     }
   }
@@ -107,7 +95,7 @@ const Login = props => {
       }
       <Toolbar bottom>
         <Link href="/register/n">{labels.newUser}</Link>
-        <Link onClick={() => handlePasswordRequest()}>{labels.forgetPassword}</Link>
+        <Link href="/password-request/">{labels.forgetPassword}</Link>
       </Toolbar>
     </Page>
   )

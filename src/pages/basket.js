@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton } from 'framework7-react'
+import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
@@ -20,8 +20,8 @@ const Basket = props => {
   const hintsList = useRef('')
   useEffect(() => {
     if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
-    else setBasket(getBasket(state.basket, state.packs, state.categories))
-  }, [state.basket, state.packs, state.categories, props])
+    else setBasket(getBasket(state.basket, state.packs))
+  }, [state.basket, state.packs, props])
   useEffect(() => {
     setTotalPrice(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
     setWeightedPacks(() => basket.filter(p => p.byWeight))
@@ -83,6 +83,7 @@ const Basket = props => {
             <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
             <div className="list-subtext1">{p.priceText}</div>
             <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
+            {p.closeExpired ? <Badge slot="title" color="red">{labels.closeExpired}</Badge> : ''}
             {p.price === 0 ? '' : 
               <Stepper 
                 slot="after" 
