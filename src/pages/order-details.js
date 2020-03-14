@@ -27,7 +27,7 @@ const OrderDetails = props => {
       }
     }))
     setLastOrder(() => {
-      const orders = state.orders.filter(o => o.id !== order.id)
+      const orders = state.orders.filter(o => o.id !== order.id && !['c', 'm', 'r'].includes(o.status))
       orders.sort((o1, o2) => o2.time.seconds - o1.time.seconds)
       return ['n', 'a', 'e'].includes(orders[0]?.status) ? orders[0] : ''
     })
@@ -126,7 +126,7 @@ const OrderDetails = props => {
             >
               <div className="list-subtext1">{p.priceNote}</div>
               <div className="list-subtext2">{quantityDetails(p)}</div>
-              {p.closeExpired ? <Badge slot="title" color="red">{labels.closeExpired}</Badge> : ''}
+              {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
             </ListItem>
           )}
           <ListItem 

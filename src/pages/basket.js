@@ -83,7 +83,7 @@ const Basket = props => {
             <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
             <div className="list-subtext1">{p.priceText}</div>
             <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
-            {p.closeExpired ? <Badge slot="title" color="red">{labels.closeExpired}</Badge> : ''}
+            {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
             {p.price === 0 ? '' : 
               <Stepper 
                 slot="after" 

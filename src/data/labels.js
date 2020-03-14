@@ -130,7 +130,7 @@ const labels = {
   advert: 'اعلان',
   unitPrice: 'سعر الوحدة',
   editSuccess: 'تم التعديل',
-  duplicateOrderRequest: 'ارسلت سابقا طلب تعديل لطلب المشتريات هذا',
+  duplicateOrderRequest: 'ارسلت سابقا طلب تعديل او الغاء لهذا الطلب',
   mergeRequest: 'طلب دمج مع الطلب الذي قبله',
   merge: 'دمج',
   edit: 'تعديل',

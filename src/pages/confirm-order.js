@@ -129,7 +129,7 @@ const ConfirmOrder = props => {
               after={p.totalPriceText}
             >
               <div className="list-subtext1">{p.priceText}</div>
-              {p.closeExpired ? <Badge slot="title" color="red">{labels.closeExpired}</Badge> : ''}
+              {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
             </ListItem>
           )}
           <ListItem 

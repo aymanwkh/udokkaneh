@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Badge } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import moment from 'moment'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
 
@@ -12,14 +11,21 @@ const Hints = props => {
   const [packs, setPacks] = useState([])
   useEffect(() => {
     setPacks(() => {
-      const packs = state.packs.filter(p => 
+      let packs = state.packs.filter(p => 
         (props.type === 'p' && p.categoryId === pack.categoryId && (p.sales > pack.sales || p.rating > pack.rating)) ||
         (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
         (props.type === 'w' && p.productId === pack.productId && p.weightedPrice < pack.weightedPrice)
       )
+      packs = packs.map(p => {
+        const categoryInfo = state.categories.find(c => c.id === p.categoryId)
+        return {
+          ...p,
+          categoryInfo
+        }
+      })
       return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
     })
-  }, [pack, state.packs, props.type]) 
+  }, [pack, state.packs, state.categories, props.type]) 
   return(
     <Page>
       <Navbar title={props.type === 'p' ? labels.otherProducts : (props.type === 'o' ? labels.otherOffers : labels.otherPacks)} backLink={labels.back} />
@@ -33,15 +39,16 @@ const Hints = props => {
                   link={`/pack-details/${p.id}/type/c`}
                   title={p.productName}
                   subtitle={p.productAlias}
-                  text={p.productDescription}
-                  footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
-                  after={(p.price / 1000).toFixed(3)}
+                  text={p.name}
+                  footer={`${labels.category}: ${p.categoryInfo.name}`}
+                  after={p.isOffer || p.offerEnd ? '' : (p.price / 1000).toFixed(3)}
                   key={p.id}
                 >
                   <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                  <div className="list-subtext1">{p.name}</div>
+                  <div className="list-subtext1">{p.productDescription}</div>
                   <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
-                  {p.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
+                  {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 1000).toFixed(3)}</Badge> : ''}
+                  {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
                 </ListItem>
               )
             })

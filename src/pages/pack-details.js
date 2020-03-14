@@ -6,7 +6,6 @@ import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText, notifyFriends } from '../data/actions'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
-import moment from 'moment'
 
 const PackDetails = props => {
   const { state, user, dispatch } = useContext(StoreContext)
@@ -74,8 +73,7 @@ const PackDetails = props => {
           ...purchasedPack,
           price,
           maxQuantity,
-          offerId: pack.id,
-          closeExpired: pack.closeExpired
+          offerId: pack.id
         }
       }
       const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
@@ -150,15 +148,12 @@ const PackDetails = props => {
       <Navbar title={`${pack.productName}${pack.productAlias ? '-' + pack.productAlias : ''}`} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
-          <div>
-            <div className="price">
-              {(pack.price / 1000).toFixed(3)}
-            </div>
-            <span className="list-subtext1">{pack.offerEnd ? `${labels.offerUpTo}: ${moment(pack.offerEnd.toDate()).format('Y/M/D')}` : ''}</span>
+          <div className="price">
+            {(pack.price / 1000).toFixed(3)}
           </div>
         </CardHeader>
         <CardContent>
-          <p className="card-title">{pack.name}</p>
+          <p className="card-title">{`${pack.name} ${pack.closeExpired ? '(' + labels.closeExpired + ')' : ''}`}</p>
           <img src={pack.imageUrl} className="img-card" alt={labels.noImage} />
           <p className="card-title">{pack.productDescription}</p>
         </CardContent>

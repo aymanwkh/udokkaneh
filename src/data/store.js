@@ -78,6 +78,8 @@ const Store = props => {
         const unsubscribeUser = firebase.firestore().collection('users').doc(user.uid).onSnapshot(doc => {
           if (doc.exists){
             dispatch({type: 'SET_USER_INFO', userInfo: doc.data()})
+          } else {
+            firebase.auth().signOut()
           }
         }, err => {
           unsubscribeUser()

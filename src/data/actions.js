@@ -153,7 +153,6 @@ export const addOrderRequest = (order, type, mergedOrder) => {
   const basket = type === 'm' ? mergedOrder.basket : []
   batch.update(orderRef, {
     requestType: type,
-    requestStatus: 'n',
     requestBasket: basket,
     requestTime: firebase.firestore.FieldValue.serverTimestamp()
   })
@@ -263,7 +262,6 @@ export const editOrder = (order, newBasket) => {
     firebase.firestore().collection('orders').doc(order.id).update({
       requestType: 'e',
       requestBasket: basket,
-      requestStatus: 'n',
       requestTime: firebase.firestore.FieldValue.serverTimestamp()
     })
   } 

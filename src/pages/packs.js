@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
-import moment from 'moment'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
 import { getChildren, productOfText } from '../data/actions'
@@ -83,16 +82,16 @@ const Packs = props => {
                 link={`/pack-details/${p.id}/type/c`}
                 title={p.productName}
                 subtitle={p.productAlias}
-                text={p.productDescription}
-                footer={p.offerEnd ? `${labels.offerUpTo}: ${moment(p.offerEnd.toDate()).format('Y/M/D')}` : ''}
-                after={(p.price / 1000).toFixed(3)}
+                text={p.name}
+                footer={`${labels.category}: ${p.categoryInfo.name}`}
+                after={p.isOffer || p.offerEnd ? '' : (p.price / 1000).toFixed(3)}
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{p.name}</div>
+                <div className="list-subtext1">{p.productDescription}</div>
                 <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
-                <div className="list-subtext3">{`${labels.category}: ${p.categoryInfo.name}`}</div>
-                {p.isOffer || p.offerEnd ? <Badge slot="title" color={p.closeExpired ? 'red' : 'green'}>{p.closeExpired ? labels.closeExpired : labels.offer}</Badge> : ''}
+                {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 1000).toFixed(3)}</Badge> : ''}
+                {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
               </ListItem>
             )
           }
