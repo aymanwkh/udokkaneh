@@ -26,7 +26,7 @@ const PackDetails = props => {
     setSubPackInfo(() => {
       if (pack.subPackId) {
         const price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
-        return `${pack.productName} ${pack.subPackName}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
+        return `${pack.productName} ${pack.subPackName}(${(price / 1000).toFixed(3)})`
       } else {
         return ''
       }  
@@ -34,7 +34,7 @@ const PackDetails = props => {
     setBonusPackInfo(() => {
       if (pack.bonusPackId) {
         const price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
-        return `${pack.bonusProductName} ${pack.bonusPackName}, ${labels.unitPrice}: ${(price / 1000).toFixed(3)}`
+        return `${pack.bonusProductName} ${pack.bonusPackName}(${(price / 1000).toFixed(3)})`
       } else {
         return ''
       }  
