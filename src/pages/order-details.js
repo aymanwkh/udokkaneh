@@ -18,7 +18,7 @@ const OrderDetails = props => {
   }, [state.orders, props.id])
   useEffect(() => {
     setOrderBasket(() => order.basket.map(p => {
-      const priceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.currentPrice}: ${(p.actual / 1000).toFixed(3)}` : `${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`
+      const priceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 100).toFixed(2)}, ${labels.currentPrice}: ${(p.actual / 100).toFixed(2)}` : `${labels.unitPrice}: ${(p.price / 100).toFixed(2)}`
       const statusNote = `${orderPackStatus.find(s => s.id === p.status).name} ${p.overPriced ? labels.overPricedNote : ''}`
       return {
         ...p,
@@ -121,7 +121,7 @@ const OrderDetails = props => {
               subtitle={p.productAlias}
               text={p.packName}
               footer={`${labels.status}: ${p.statusNote}`}
-              after={(p.gross / 1000).toFixed(3)}
+              after={(p.gross / 100).toFixed(2)}
               key={p.packId} 
             >
               <div className="list-subtext1">{p.priceNote}</div>
@@ -132,22 +132,22 @@ const OrderDetails = props => {
           <ListItem 
             title={labels.total} 
             className="total"
-            after={(order.total / 1000).toFixed(3)} 
+            after={(order.total / 100).toFixed(2)} 
           />
           <ListItem 
             title={labels.fixedFees} 
             className="fees" 
-            after={((order.fixedFees + order.deliveryFees) / 1000).toFixed(3)} 
+            after={((order.fixedFees + order.deliveryFees) / 100).toFixed(2)} 
           />
           <ListItem 
             title={labels.discount} 
             className="discount" 
-            after={((order.discount.value + order.fraction) / 1000).toFixed(3)} 
+            after={((order.discount.value + order.fraction) / 100).toFixed(2)} 
           /> 
           <ListItem 
             title={labels.net} 
             className="net" 
-            after={((order.total + order.fixedFees + order.deliveryFees - order.discount.value - order.fraction) / 1000).toFixed(3)} 
+            after={((order.total + order.fixedFees + order.deliveryFees - order.discount.value - order.fraction) / 100).toFixed(2)} 
           />
         </List>
       </Block>

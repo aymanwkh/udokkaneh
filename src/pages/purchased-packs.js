@@ -87,13 +87,13 @@ const PurchasedPacks = props => {
 							<ListItem
 								title={`${p.productName}${p.productAlias ? '-' + p.productAlias : ''}`}
 								subtitle={p.packName}
-                text={`${labels.bestPrice}: ${(p.bestPrice / 1000).toFixed(3)}`}
+                text={`${labels.bestPrice}: ${(p.bestPrice / 100).toFixed(2)}`}
                 footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}
 								key={i++}
                 className={currentPack?.packId === p.packId ? 'selected' : ''}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{`${labels.lastPrice}: ${(p.lastPrice / 1000).toFixed(3)}`}</div>
+                <div className="list-subtext1">{`${labels.lastPrice}: ${(p.lastPrice / 100).toFixed(2)}`}</div>
                 <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
                 <div className="list-subtext3">{`${labels.lastQuantity}: ${quantityText(p.lastQuantity)}`}</div>
                 {state.userInfo.ratings?.find(r => r.productId === p.productId) ? '' : <Link slot="after" iconMaterial="favorite_border" onClick={()=> handleActions(p)}/> }

@@ -21,14 +21,14 @@ const ConfirmOrder = props => {
   }, [state.basket, state.packs])
 
   useEffect(() => {
-    setTotal(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
+    setTotal(() => basket.reduce((sum, p) => sum + Math.round(p.price * p.quantity), 0))
     setWeightedPacks(() => basket.filter(p => p.byWeight))
   }, [basket])
   useEffect(() => {
-    setFixedFees(() => Math.trunc(setup.fixedFees * total))
+    setFixedFees(() => Math.round(setup.fixedFees * total))
   }, [total])
   useEffect(() => {
-    setFraction((total + fixedFees) - Math.floor((total + fixedFees) / 50) * 50)
+    setFraction((total + fixedFees) - Math.floor((total + fixedFees) / 5) * 5)
   }, [total, fixedFees])
   useEffect(() => {
     setDiscount(() => {
@@ -84,7 +84,7 @@ const ConfirmOrder = props => {
           price: p.price,
           quantity: p.quantity,
           closeExpired: p.closeExpired,
-          gross: Math.trunc(p.price * p.quantity),
+          gross: Math.round(p.price * p.quantity),
           offerId: p.offerId || '',
           purchased: 0,
           status: 'n'
@@ -110,7 +110,6 @@ const ConfirmOrder = props => {
     props.f7router.navigate('/home/', {reloadAll: true})
     dispatch({type: 'CLEAR_BASKET'})  
   }
-
   if (!user) return <Page><h3 className="center"><a href="/login/">{labels.relogin}</a></h3></Page>
   return (
     <Page>
@@ -135,22 +134,22 @@ const ConfirmOrder = props => {
           <ListItem 
             title={labels.total} 
             className="total" 
-            after={(total / 1000).toFixed(3)} 
+            after={(total / 100).toFixed(2)} 
           />
           <ListItem 
             title={labels.fixedFees} 
             className="fees" 
-            after={((fixedFees + deliveryFees) / 1000).toFixed(3)} 
+            after={((fixedFees + deliveryFees) / 100).toFixed(2)} 
           />
           <ListItem 
             title={labels.discount}
             className="discount" 
-            after={((discount.value + fraction) / 1000).toFixed(3)} 
+            after={((discount.value + fraction) / 100).toFixed(2)} 
           /> 
           <ListItem 
             title={labels.net} 
             className="net" 
-            after={((total + fixedFees + deliveryFees - discount.value - fraction) / 1000).toFixed(3)} 
+            after={((total + fixedFees + deliveryFees - discount.value - fraction) / 100).toFixed(2)} 
           />
           </List>
         <p className="note">{weightedPacks.length > 0 ? labels.weightedPricesNote : ''}</p>

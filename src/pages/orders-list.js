@@ -28,7 +28,7 @@ const OrdersList = props => {
                 link={`/order-details/${o.id}`}
                 title={orderStatus.find(s => s.id === o.status).name}
                 subtitle={moment(o.time.toDate()).fromNow()}
-                after={(o.total / 1000).toFixed(3)}
+                after={(o.total / 100).toFixed(2)}
                 key={o.id}
               />
             )

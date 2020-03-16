@@ -42,13 +42,13 @@ const StorePacks = props => {
                 subtitle={p.packInfo.productAlias}
                 text={p.packInfo.productDescription}
                 footer={moment(p.time.toDate()).fromNow()}
-                after={(p.packInfo.price / 1000).toFixed(3)}
+                after={(p.packInfo.price / 100).toFixed(2)}
                 key={i++}
               >
                 <img src={p.packInfo.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{p.packInfo.name}</div>
                 <div className="list-subtext2">{productOfText(p.packInfo.trademark, p.packInfo.country)}</div>
-                {p.price > p.packInfo.price ? <div className="list-subtext3">{`${labels.myPrice}: ${(p.price / 1000).toFixed(3)}`}</div> : ''}
+                {p.price > p.packInfo.price ? <div className="list-subtext3">{`${labels.myPrice}: ${(p.price / 100).toFixed(2)}`}</div> : ''}
                 {p.packInfo.isOffer ? <Badge slot="title" color='green'>{labels.offer}</Badge> : ''}
               </ListItem>
             )

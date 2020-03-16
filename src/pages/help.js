@@ -30,7 +30,7 @@ const Help = props => {
         {props.id === 'o' ?
           <React.Fragment>
             <p className="help1">{feesNote}</p>
-            {userLocation.fees === 0 ? '' : <p className="help1">{`${locationFeesNote}${userLocation.name}: ${(userLocation.fees / 1000).toFixed(3)}`}</p>}
+            {userLocation.fees === 0 ? '' : <p className="help1">{`${locationFeesNote}${userLocation.name}: ${(userLocation.fees / 100).toFixed(2)}`}</p>}
             <p className="help2">{invitationsNote}</p>
             <p className="help2">{ratingsNote}</p>
           </React.Fragment>

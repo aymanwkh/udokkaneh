@@ -41,13 +41,13 @@ const Hints = props => {
                   subtitle={p.productAlias}
                   text={p.name}
                   footer={`${labels.category}: ${p.categoryInfo.name}`}
-                  after={p.isOffer || p.offerEnd ? '' : (p.price / 1000).toFixed(3)}
+                  after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
                   key={p.id}
                 >
                   <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                   <div className="list-subtext1">{p.productDescription}</div>
                   <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
-                  {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 1000).toFixed(3)}</Badge> : ''}
+                  {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge> : ''}
                   {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
                 </ListItem>
               )

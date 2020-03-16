@@ -25,16 +25,16 @@ const PackDetails = props => {
   useEffect(() => {
     setSubPackInfo(() => {
       if (pack.subPackId) {
-        const price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
-        return `${pack.productName} ${pack.subPackName}(${(price / 1000).toFixed(3)})`
+        const price = Math.round(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
+        return `${pack.productName} ${pack.subPackName}(${(price / 100).toFixed(2)})`
       } else {
         return ''
       }  
     })
     setBonusPackInfo(() => {
       if (pack.bonusPackId) {
-        const price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
-        return `${pack.bonusProductName} ${pack.bonusPackName}(${(price / 1000).toFixed(3)})`
+        const price = Math.round(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
+        return `${pack.bonusProductName} ${pack.bonusPackName}(${(price / 100).toFixed(2)})`
       } else {
         return ''
       }  
@@ -62,11 +62,11 @@ const PackDetails = props => {
       if (packId !== pack.id) {
         purchasedPack = state.packs.find(p => p.id === packId) || ''
         if (packId === pack.subPackId) {
-          price = Math.trunc(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
+          price = Math.round(pack.price / pack.subQuantity * pack.subPercent * (1 + setup.profit))
           maxQuantity = pack.subQuantity - 1
           if (pack.bonusPackId) maxQuantity++
         } else  {
-          price = Math.trunc(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
+          price = Math.round(pack.price / pack.bonusQuantity * pack.bonusPercent * (1 + setup.profit))
           maxQuantity = pack.bonusQuantity
         }
         purchasedPack = {
@@ -149,7 +149,7 @@ const PackDetails = props => {
       <Card>
         <CardHeader className="card-header">
           <div className="price">
-            {(pack.price / 1000).toFixed(3)}
+            {(pack.price / 100).toFixed(2)}
           </div>
         </CardHeader>
         <CardContent>

@@ -77,11 +77,11 @@ const EditOrder = props => {
               title={p.productName}
               subtitle={p.productAlias}
               text={p.packName}
-              footer={`${labels.price}: ${(p.gross / 1000).toFixed(3)}`}
+              footer={`${labels.price}: ${(p.gross / 100).toFixed(2)}`}
               after={p.packInfo ? '' : labels.unAvailableNote}
               key={p.packId}
             >
-              <div className="list-subtext1">{`${labels.unitPrice}: ${(p.price / 1000).toFixed(3)}`}</div>
+              <div className="list-subtext1">{`${labels.unitPrice}: ${(p.price / 100).toFixed(2)}`}</div>
               <div className="list-subtext2">{quantityDetails(p)}</div>
               {p.packInfo ? 
                 <Stepper
@@ -97,7 +97,7 @@ const EditOrder = props => {
         </List>
       </Block>
       {!overLimit & hasChanged ? 
-        <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(total / 1000).toFixed(3)}`} color="green" onClick={() => handleSubmit()}>
+        <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(total / 100).toFixed(2)}`} color="green" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>
       : ''}

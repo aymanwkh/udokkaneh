@@ -23,7 +23,7 @@ const Basket = props => {
     else setBasket(getBasket(state.basket, state.packs))
   }, [state.basket, state.packs, props])
   useEffect(() => {
-    setTotalPrice(() => basket.reduce((sum, p) => sum + Math.trunc(p.price * p.quantity), 0))
+    setTotalPrice(() => basket.reduce((sum, p) => sum + Math.round(p.price * p.quantity), 0))
     setWeightedPacks(() => basket.filter(p => p.byWeight))
   }, [basket])
   useEffect(() => {
@@ -100,7 +100,7 @@ const Basket = props => {
       <p className="note">{weightedPacks.length > 0 ? labels.weightedPricesNote : ''}</p>
     </Block>
     {submitVisible ? 
-      <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(totalPrice / 1000).toFixed(3)}`} color="green" onClick={() => handleConfirm()}>
+      <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(totalPrice / 100).toFixed(2)}`} color="green" onClick={() => handleConfirm()}>
         <Icon material="done"></Icon>
       </Fab>
     : <Fab position="center-bottom" slot="fixed" text={labels.limitOverFlowNote} color="red" href="/help/ol">

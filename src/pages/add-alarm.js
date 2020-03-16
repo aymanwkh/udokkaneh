@@ -29,7 +29,7 @@ const AddAlarm = props => {
   }, [state.packPrices, props.alarmType, state.customerInfo, pack])
   useEffect(() => {
     const validatePrice = (value) => {
-      if (Number(value) > 0 && value * 1000 !== currentPrice) {
+      if (Number(value) > 0 && value * 100 !== currentPrice) {
         setPriceErrorMessage('')
       } else {
         setPriceErrorMessage(labels.invalidPrice)
@@ -67,7 +67,7 @@ const AddAlarm = props => {
     else setButtonVisisble(true)
   }, [props.alarmType, price, isOffer, offerDays, alternative, quantity, state.customerInfo, priceErrorMessage, alternativeErrorMessage])
   const formatPrice = value => {
-    return Number(value).toFixed(3)
+    return Number(value).toFixed(2)
   } 
   const handleSubmit = () => {
     try{
@@ -83,7 +83,7 @@ const AddAlarm = props => {
       const alarm = {
         packId: pack.id,
         type: props.alarmType,
-        price: price * 1000,
+        price: price * 100,
         quantity: Number(quantity),
         alternative,
         offerDays: Number(offerDays)
@@ -118,7 +118,7 @@ const AddAlarm = props => {
         <ListInput 
           name="currentPrice" 
           label={labels.currentPrice}
-          value={(currentPrice / 1000).toFixed(3)}
+          value={(currentPrice / 100).toFixed(2)}
           type="number" 
           readonly
         />

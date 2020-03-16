@@ -34,7 +34,7 @@ export const showError = messageText => {
 
 
 export const quantityText = (quantity, weight) => {
-  return weight && weight !== quantity ? `${quantityText(quantity)}(${quantityText(weight)})` : quantity === Math.trunc(quantity) ? quantity.toString() : quantity.toFixed(3)
+  return weight && weight !== quantity ? `${quantityText(quantity)}(${quantityText(weight)})` : quantity === Math.round(quantity) ? quantity.toString() : quantity.toFixed(3)
 }
 
 export const quantityDetails = basketPack => {
@@ -124,14 +124,14 @@ export const mergeOrders = (order1, order2) => {
         ...basket[found],
         quantity: newQuantity,
         status,
-        gross: status === 'f' ? Math.trunc(p.actual * (p.weight || p.purchased)) : Math.trunc((p.actual || 0) * (p.weight || p.purchased)) + Math.trunc(p.price * addQuantity(newQuantity, -1 * p.purchased)),
+        gross: status === 'f' ? Math.round(p.actual * (p.weight || p.purchased)) : Math.round((p.actual || 0) * (p.weight || p.purchased)) + Math.round(p.price * addQuantity(newQuantity, -1 * p.purchased)),
       }  
     }
     basket.splice(found === -1 ? basket.length : found, found === -1 ? 0 : 1, newItem)
   })
   const total = basket.reduce((sum, p) => sum + (p.gross || 0), 0)
-  const fixedFees = Math.trunc(setup.fixedFees * total)
-  const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 50) * 50
+  const fixedFees = Math.round(setup.fixedFees * total)
+  const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 5) * 5
   let orderRef = firebase.firestore().collection('orders').doc(order1.id)
   batch.update(orderRef, {
     basket,
@@ -248,8 +248,8 @@ export const editOrder = (order, newBasket) => {
   if (order.status === 'n') {
     basket = basket.filter(p => p.quantity > 0)
     const total = basket.reduce((sum, p) => sum + p.gross, 0)
-    const fixedFees = Math.trunc(setup.fixedFees * total)
-    const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 50) * 50
+    const fixedFees = Math.round(setup.fixedFees * total)
+    const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 5) * 5
     const orderStatus = basket.length === 0 ? 'c' : order.status
     firebase.firestore().collection('orders').doc(order.id).update({
       basket,
@@ -300,15 +300,15 @@ export const getBasket = (stateBasket, packs) => {
       if (!offerInfo) {
         lastPrice = 0
       } else if (offerInfo.subPackId === p.packId) {
-        lastPrice = Math.trunc(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
+        lastPrice = Math.round(offerInfo.price / offerInfo.subQuantity * offerInfo.subPercent * (1 + setup.profit))
       } else {
-        lastPrice = Math.trunc(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
+        lastPrice = Math.round(offerInfo.price / offerInfo.bonusQuantity * offerInfo.bonusPercent * (1 + setup.profit))
       }
     } else {
       lastPrice = packInfo.price || 0
     }
-    const totalPriceText = `${(Math.trunc(lastPrice * p.quantity) / 1000).toFixed(3)}${p.byWeight ? '*' : ''}`
-    const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 1000).toFixed(3)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 1000).toFixed(3)}, ${labels.newPrice}: ${(lastPrice / 1000).toFixed(3)}`)
+    const totalPriceText = `${(Math.round(lastPrice * p.quantity) / 100).toFixed(2)}${p.byWeight ? '*' : ''}`
+    const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 100).toFixed(2)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 100).toFixed(2)}, ${labels.newPrice}: ${(lastPrice / 100).toFixed(2)}`)
     const otherProducts = packs.filter(pa => pa.categoryId === packInfo.categoryId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
     const otherOffers = packs.filter(pa => pa.productId === packInfo.productId && pa.id !== packInfo.id && (pa.isOffer || pa.offerEnd))
     const otherPacks = packs.filter(pa => pa.productId === packInfo.productId && pa.weightedPrice < packInfo.weightedPrice)
