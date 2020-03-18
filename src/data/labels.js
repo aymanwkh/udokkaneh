@@ -93,7 +93,7 @@ const labels = {
   remain: 'المتبقي',
   changePriceNote: 'تغير السعر',
   unAvailableNote: 'لم يعد متوفر',
-  overPricedNote: 'بسبب ارتفاع الاسعار',
+  overPricedNote: 'بسبب ارتفاع السعر',
   allOffer: 'كامل العرض',
   status: 'الحالة',
   requested: 'الكمية المطلوبة',

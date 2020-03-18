@@ -34,7 +34,7 @@ export const showError = messageText => {
 
 
 export const quantityText = (quantity, weight) => {
-  return weight && weight !== quantity ? `${quantityText(quantity)}(${quantityText(weight)})` : quantity === Math.round(quantity) ? quantity.toString() : quantity.toFixed(3)
+  return weight && weight !== quantity ? `${quantityText(quantity)}(${quantityText(weight)})` : quantity === Math.trunc(quantity) ? quantity.toString() : quantity.toFixed(3)
 }
 
 export const quantityDetails = basketPack => {
