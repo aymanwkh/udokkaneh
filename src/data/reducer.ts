@@ -1,8 +1,10 @@
-const Reducer = (state, action) => {
+import { iState, iAction } from './interfaces'
+
+const Reducer = (state: iState, action: iAction) => {
   let pack, packIndex, packs, nextQuantity, i
   const increment = [0.125, 0.25, 0.5, 0.75, 1]
   switch (action.type){
-    case 'ADD_TO_BASKET':
+    /*case 'ADD_TO_BASKET':
       if (state.basket.find(p => p.packId === action.pack.id)) return state
       pack = {
         packId: action.pack.id,
@@ -143,51 +145,51 @@ const Reducer = (state, action) => {
       packs = state.orderBasket.slice()
       packIndex = packs.findIndex(p => p.packId === action.pack.packId)
       packs.splice(packIndex, 1, pack)
-      return {...state, orderBasket: packs}
+      return {...state, orderBasket: packs}*/
     case 'SET_USER_INFO':
       return {
         ...state,
-        userInfo: action.userInfo
+        userInfo: action.payload
       }
     case 'SET_CUSTOMER_INFO':
       return {
         ...state,
-        customerInfo: action.customerInfo
+        customerInfo: action.payload
       }
     case 'SET_ORDERS':
       return {
         ...state,
-        orders: action.orders
+        orders: action.payload
       }
     case 'SET_PACKS':
       return {
         ...state,
-        packs: action.packs
+        packs: action.payload
       }
     case 'SET_CATEGORIES':
       return {
         ...state,
-        categories: action.categories
+        categories: action.payload
       }
     case 'SET_PACK_PRICES':
       return {
         ...state,
-        packPrices: action.packPrices
+        packPrices: action.payload
       }
     case 'SET_ADVERTS':
       return {
         ...state,
-        adverts: action.adverts
+        adverts: action.payload
       }
     case 'SET_LOCATIONS':
       return {
         ...state,
-        locations: action.locations
+        locations: action.payload
       }
     case 'SET_PASSWORD_REQUESTS':
       return {
         ...state,
-        passwordRequests: action.passwordRequests
+        passwordRequests: action.payload
       }
     default:
       return state

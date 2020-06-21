@@ -4,12 +4,12 @@ import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 import MainCategories from './main-categories'
 import { StoreContext } from '../data/store'
+import { iAdvert, iNotification } from '../data/interfaces'
 
-
-const Home = props => {
+const Home = () => {
   const { state } = useContext(StoreContext)
-  const [advert, setAdvert] = useState('')
-  const [notifications, setNotifications] = useState([])
+  const [advert, setAdvert] = useState<iAdvert | undefined>(undefined)
+  const [notifications, setNotifications] = useState<iNotification[]>([])
   useEffect(() => {
     setAdvert(() => state.adverts.find(a => a.isActive))
   }, [state.adverts])
