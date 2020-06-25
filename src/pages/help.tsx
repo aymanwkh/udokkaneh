@@ -4,9 +4,13 @@ import { Page, Navbar, Block, Icon, Toolbar } from 'framework7-react'
 import labels from '../data/labels'
 import BottomToolbar from './bottom-toolbar'
 
-const Help = props => {
+interface iProps {
+  id: string
+}
+
+const Help = (props: iProps) => {
   const { state } = useContext(StoreContext)
-  const [userLocation] = useState(() => state.locations.find(l => l.id === state.userInfo.locationId))
+  const [userLocation] = useState(() => state.locations.find(l => l.id === state.userInfo?.locationId))
   const [helpNote] = useState(() => {
     switch (props.id) {
       case 'o':
@@ -27,14 +31,14 @@ const Help = props => {
       <Block strong inset className="center">
         <Icon color="red" material="warning"></Icon>
         <p className="note">{helpNote}</p>
-        {props.id === 'o' ?
+        {props.id === 'o' &&
           <React.Fragment>
             <p className="help1">{feesNote}</p>
-            {userLocation.fees === 0 ? '' : <p className="help1">{`${locationFeesNote}${userLocation.name}: ${(userLocation.fees / 100).toFixed(2)}`}</p>}
+            {userLocation && userLocation.fees > 0 && <p className="help1">{`${locationFeesNote}${userLocation.name}: ${(userLocation.fees / 100).toFixed(2)}`}</p>}
             <p className="help2">{invitationsNote}</p>
             <p className="help2">{ratingsNote}</p>
           </React.Fragment>
-        : ''}
+        }
       </Block>
       <Toolbar bottom>
         <BottomToolbar/>

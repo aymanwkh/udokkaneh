@@ -146,6 +146,16 @@ const Reducer = (state: iState, action: iAction) => {
       packIndex = packs.findIndex(p => p.packId === action.pack.packId)
       packs.splice(packIndex, 1, pack)
       return {...state, orderBasket: packs}*/
+    case 'LOGIN':
+      return {
+        ...state,
+        user: action.payload
+      }
+    case 'LOGOUT':
+      return {
+        ...state,
+        user: undefined
+      }
     case 'SET_USER_INFO':
       return {
         ...state,

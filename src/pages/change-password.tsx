@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
-import { changePassword, showMessage, showError, getMessage } from '../data/actions'
+import { changePassword, showMessage, showError, getMessage } from '../data/actionst'
 import labels from '../data/labels'
 
-const ChangePassword = props => {
+const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('')
   const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -14,7 +14,7 @@ const ChangePassword = props => {
     const patterns = {
       password: /^.{4}$/,
     }
-    const validatePassword = value => {
+    const validatePassword = (value: string) => {
       if (patterns.password.test(value)){
         setOldPasswordErrorMessage('')
       } else {
@@ -27,7 +27,7 @@ const ChangePassword = props => {
     const patterns = {
       password: /^.{4}$/,
     }
-    const validatePassword = value => {
+    const validatePassword = (value: string) => {
       if (patterns.password.test(value)){
         setNewPasswordErrorMessage('')
       } else {
@@ -56,11 +56,11 @@ const ChangePassword = props => {
       await changePassword(oldPassword, newPassword)
       setInprocess(false)
       showMessage(labels.changePasswordSuccess)
-      props.f7router.back()
-      props.f7router.app.panel.close('right') 
+      f7.views.current.router.back()
+      f7.panel.close('right')  
     } catch (err){
       setInprocess(false)
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
 

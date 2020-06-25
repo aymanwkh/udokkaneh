@@ -4,10 +4,15 @@ import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
 import { randomColors } from '../data/config'
+import { iCategory } from '../data/interfaces'
 
-const Categories = props => {
+interface iProps {
+  id: string
+} 
+
+const Categories = (props: iProps) => {
   const { state } = useContext(StoreContext)
-  const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState<iCategory[]>([])
   useEffect(() => {
     setCategories(() => {
       const categories = state.categories.filter(c => c.parentId === props.id)
@@ -25,7 +30,7 @@ const Categories = props => {
   let i = 0
   return(
     <Page>
-      <Navbar title={state.categories.find(c => c.id === props.id).name} backLink={labels.back} />
+      <Navbar title={state.categories.find(c => c.id === props.id)?.name} backLink={labels.back} />
       <Block>
         <Button 
             text={labels.allProducts}

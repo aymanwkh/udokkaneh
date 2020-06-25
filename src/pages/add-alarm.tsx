@@ -1,12 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 import { alarmTypes } from '../data/config'
 
-const AddAlarm = props => {
-  const { state, user } = useContext(StoreContext)
+interface iProps {
+  alarmType: string,
+  packId: string
+}
+
+const AddAlarm = (props: iProps) => {
+  const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.packId))
   const [price, setPrice] = useState('')
@@ -17,19 +22,19 @@ const AddAlarm = props => {
   const [offerDays, setOfferDays] = useState('')
   const [isOffer, setIsOffer] = useState(false)
   const [buttonVisible, setButtonVisisble] = useState(false)
-  const [currentPrice, setCurrentPrice] = useState('')
+  const [currentPrice, setCurrentPrice] = useState<number|undefined>(undefined)
   useEffect(() => {
     setCurrentPrice(() => {
       if (props.alarmType === 'cp') {
-        return state.packPrices.find(p => p.storeId === state.customerInfo.storeId && p.packId === pack.id)?.price
+        return state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack?.id)?.price
       } else {
-        return pack.price
+        return pack?.price
       }
     })
   }, [state.packPrices, props.alarmType, state.customerInfo, pack])
   useEffect(() => {
-    const validatePrice = (value) => {
-      if (Number(value) > 0 && value * 100 !== currentPrice) {
+    const validatePrice = (value: string) => {
+      if (Number(value) > 0 && Number(value) * 100 !== Number(currentPrice)) {
         setPriceErrorMessage('')
       } else {
         setPriceErrorMessage(labels.invalidPrice)
@@ -41,7 +46,7 @@ const AddAlarm = props => {
     const patterns = {
       name: /^.{4,50}$/,
     }
-    const validateAlternative = value => {
+    const validateAlternative = (value: string) => {
       if (patterns.name.test(value)){
         setAlternativeErrorMessage('')
       } else {
@@ -66,12 +71,12 @@ const AddAlarm = props => {
     || alternativeErrorMessage) setButtonVisisble(false)
     else setButtonVisisble(true)
   }, [props.alarmType, price, isOffer, offerDays, alternative, quantity, state.customerInfo, priceErrorMessage, alternativeErrorMessage])
-  const formatPrice = value => {
+  const formatPrice = (value: string) => {
     return Number(value).toFixed(2)
   } 
   const handleSubmit = () => {
     try{
-      if (state.customerInfo.isBlocked) {
+      if (state.customerInfo?.isBlocked) {
         throw new Error('blockedUser')
       }
       if (offerDays && Number(offerDays) <= 0) {
@@ -81,44 +86,44 @@ const AddAlarm = props => {
         throw new Error('invalidQuantity')
       }
       const alarm = {
-        packId: pack.id,
+        packId: pack?.id,
         type: props.alarmType,
-        price: price * 100,
+        price: Number(price) * 100,
         quantity: Number(quantity),
         alternative,
         offerDays: Number(offerDays)
       }
       addAlarm(alarm)
       showMessage(labels.sendSuccess)
-      props.f7router.back()
+      f7.views.current.router.back()
     } catch (err) {
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
 
-  if (!user) return <Page><h3 className="center"><a href="/login/">{labels.relogin}</a></h3></Page>
+  if (!state.user) return <Page><h3 className="center"><a href="/login/">{labels.relogin}</a></h3></Page>
   return (
     <Page>
-      <Navbar title={alarmTypes.find(t => t.id === props.alarmType).name} backLink={labels.back} />
+      <Navbar title={alarmTypes.find(t => t.id === props.alarmType)?.name} backLink={labels.back} />
       <List form>
         <ListInput 
           name="productName" 
           label={labels.productName}
-          value={pack.productName}
+          value={pack?.productName}
           type="text" 
           readonly
         />
         <ListInput 
           name="packName" 
           label={labels.packName}
-          value={pack.name}
+          value={pack?.name}
           type="text" 
           readonly
         />
         <ListInput 
           name="currentPrice" 
           label={labels.currentPrice}
-          value={(currentPrice / 100).toFixed(2)}
+          value={((currentPrice || 0) / 100).toFixed(2)}
           type="number" 
           readonly
         />

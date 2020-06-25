@@ -7,8 +7,6 @@ export const StoreContext = React.createContext({} as iContext)
 
 const Store = (props: any) => {
   const initState: iState = {
-    userInfo: {},
-    customerInfo: {},
     categories: [], 
     basket: [], 
     orders: [],
@@ -28,7 +26,8 @@ const Store = (props: any) => {
           id: doc.id,
           name: doc.data().name,
           parentId: doc.data().parentId,
-          ordering: doc.data().ordering
+          ordering: doc.data().ordering,
+          isLeaf: doc.data().isLeaf
         })
       })
       dispatch({type: 'SET_CATEGORIES', payload: categories})
@@ -39,7 +38,19 @@ const Store = (props: any) => {
       let packs: iPack[] = []
       let packPrices: iPackPrice[] = []
       docs.forEach(doc => {
-        packs.push({...doc.data(), id: doc.id})
+        packs.push({
+          id: doc.id,
+          name: doc.data().name,
+          productId: doc.data().productId,
+          productName: doc.data().productName,
+          price: doc.data().price,
+          categoryId: doc.data().categoryId,
+          sales: doc.data().sales,
+          rating: doc.data().rating,
+          isOffer: doc.data().isOffer,
+          offerEnd: doc.data().offerEnd,
+          weightedPrice: doc.data().weightedPrice
+        })
         if (doc.data().prices) {
           doc.data().prices.forEach((p: iPackPrice) => {
             packPrices.push({...p, packId: doc.id})
@@ -56,8 +67,11 @@ const Store = (props: any) => {
       docs.forEach(doc => {
         adverts.push({
           id: doc.id,
+          type: doc.data().type,
           title: doc.data().title,
-          isActive: doc.data().isActive
+          text: doc.data().text,
+          isActive: doc.data().isActive,
+          imageUrl: doc.data().imageUrl
         })
       })
       dispatch({type: 'SET_ADVERTS', payload: adverts})
@@ -103,7 +117,16 @@ const Store = (props: any) => {
         const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
           let orders: iOrder[] = []
           docs.forEach(doc => {
-            orders.push({...doc.data(), id:doc.id})
+            orders.push({
+              id: doc.id,
+              basket: doc.data().basket,
+              status: doc.data().status,
+              total: doc.data().total,
+              fixedFees: doc.data().fixedFees,
+              deliveryFees: doc.data().deliveryFees,
+              discount: doc.data().discount,
+              fraction: doc.data().fraction
+            })
           })
           dispatch({type: 'SET_ORDERS', payload: orders})
         }, err => {

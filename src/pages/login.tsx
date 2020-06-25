@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7-react'
-import { login, showMessage, showError, getMessage } from '../data/actions'
+import { login, showMessage, showError, getMessage } from '../data/actionst'
 import labels from '../data/labels'
 
-const Login = props => {
+const Login = () => {
   const [password, setPassword] = useState('')
   const [mobile, setMobile] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
@@ -14,7 +14,7 @@ const Login = props => {
     const patterns = {
       password: /^.{4}$/,
     }
-    const validatePassword = value => {
+    const validatePassword = (value: string) => {
       if (patterns.password.test(value)){
         setPasswordErrorMessage('')
       } else {
@@ -27,7 +27,7 @@ const Login = props => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
     }
-    const validateMobile = value => {
+    const validateMobile = (value: string) => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
@@ -56,11 +56,11 @@ const Login = props => {
       await login(mobile, password)
       setInprocess(false)
       showMessage(labels.loginSuccess)
-      props.f7router.back()
-      props.f7router.app.panel.close('right') 
+      f7.views.current.router.back()
+      f7.panel.close('right') 
     } catch (err){
       setInprocess(false)
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
   return (

@@ -4,7 +4,7 @@ import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import BottomToolbar from './bottom-toolbar'
 
-const Advert = props => {
+const Advert = () => {
   const { state } = useContext(StoreContext)
   const [advert] = useState(state.adverts[0])
   return (

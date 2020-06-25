@@ -3,7 +3,7 @@ import { Icon, Link, Badge} from 'framework7-react'
 import { StoreContext } from '../data/store'
 
 interface iProps {
-  isHome: string
+  isHome?: string
 }
 
 const BottomToolbar = (props: iProps) => {

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { logout } from '../data/actions'
+import { logout } from '../data/actionst'
 import labels from '../data/labels'
 import { iNotification } from '../data/interfaces'
 
@@ -13,6 +13,7 @@ const Panel = () => {
   }, [state.userInfo])
   const handleLogout = () => {
     logout()
+    dispatch({type: 'LOGOUT'})
     f7.views.main.router.navigate('/home/', {reloadAll: true})
     f7.panel.close('right') 
     dispatch({type: 'CLEAR_BASKET'})
