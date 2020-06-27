@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
-import { deleteNotification, getMessage, showError, showMessage } from '../data/actions'
+import { deleteNotification, getMessage, showError, showMessage } from '../data/actionst'
 import moment from 'moment'
 import 'moment/locale/ar'
 
-const NotificationDetails = props => {
+interface iProps {
+  id: string
+}
+const NotificationDetails = (props: iProps) => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [notification] = useState(() => state.userInfo.notifications.find(n => n.id === props.id))
+  const [notification] = useState(() => state.userInfo?.notifications?.find(n => n.id === props.id))
   useEffect(() => {
     if (error) {
       showError(error)
@@ -19,26 +22,28 @@ const NotificationDetails = props => {
   }, [error])
   const handleDelete = () => {
     try{
-      deleteNotification(state.userInfo, notification.id)
-      showMessage(labels.deleteSuccess)
-      props.f7router.back()
+      if (state.userInfo && notification) {
+        deleteNotification(state.userInfo, notification.id)
+        showMessage(labels.deleteSuccess)
+        f7.views.current.router.back()
+      }
     } catch(err) {
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
   return (
     <Page>
-      <Navbar title={notification.title} backLink={labels.back} />
+      <Navbar title={notification?.title} backLink={labels.back} />
       <List form>
         <ListInput 
           name="message" 
-          value={notification.message}
+          value={notification?.message}
           type="textarea" 
           readonly
         />
         <ListInput 
           name="time" 
-          value={moment(notification.time.toDate()).fromNow()}
+          value={moment(notification?.time).fromNow()}
           type="text" 
           readonly
         />

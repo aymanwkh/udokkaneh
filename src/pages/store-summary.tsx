@@ -5,13 +5,18 @@ import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { randomColors, storeSummary } from '../data/config'
 
-const StoreSummary = props => {
+interface iExtendedSections {
+  id: string,
+  name: string,
+  count: number
+}
+const StoreSummary = () => {
   const { state } = useContext(StoreContext)
-  const [sections, setSections] = useState([])
+  const [sections, setSections] = useState<iExtendedSections[]>([])
   useEffect(() => {
     setSections(() => {
-      let storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo.storeId)
-      storePacks = storePacks.map(p => {
+      const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo?.storeId)
+      const extendedStorePacks = storePacks.map(p => {
         const packInfo = state.packs.find(pa => pa.id === p.packId)
         return {
           ...p,
@@ -19,10 +24,10 @@ const StoreSummary = props => {
         }
       })
       const sections = storeSummary.map(s => {
-        const packs = storePacks.filter(p => (s.id === 'a') 
-                                          || (s.id === 'o' && p.price > p.packInfo.price) 
-                                          || (s.id === 'n' && p.price === p.packInfo.price && p.storeId !== p.packInfo.minStoreId)
-                                          || (s.id === 'l' && p.price === p.packInfo.price && p.storeId === p.packInfo.minStoreId))
+        const packs = extendedStorePacks.filter(p => (s.id === 'a') 
+                                          || (s.id === 'o' && p.price > (p.packInfo?.price ?? 0)) 
+                                          || (s.id === 'n' && p.price === (p.packInfo?.price ?? 0) && p.storeId !== p.packInfo?.minStoreId)
+                                          || (s.id === 'l' && p.price === (p.packInfo?.price ?? 0) && p.storeId === p.packInfo?.minStoreId))
         return {
           ...s,
           count: packs.length

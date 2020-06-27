@@ -43,13 +43,19 @@ const Store = (props: any) => {
           name: doc.data().name,
           productId: doc.data().productId,
           productName: doc.data().productName,
+          productAlias: doc.data().productAlias,
+          productDescription: doc.data().productDescription,
+          imageUrl: doc.data().imageUrl,
           price: doc.data().price,
           categoryId: doc.data().categoryId,
           sales: doc.data().sales,
           rating: doc.data().rating,
           isOffer: doc.data().isOffer,
           offerEnd: doc.data().offerEnd,
-          weightedPrice: doc.data().weightedPrice
+          weightedPrice: doc.data().weightedPrice,
+          isDivided: doc.data().isDivided,
+          trademark: doc.data().trademark,
+          country: doc.data().country
         })
         if (doc.data().prices) {
           doc.data().prices.forEach((p: iPackPrice) => {
@@ -125,7 +131,9 @@ const Store = (props: any) => {
               fixedFees: doc.data().fixedFees,
               deliveryFees: doc.data().deliveryFees,
               discount: doc.data().discount,
-              fraction: doc.data().fraction
+              fraction: doc.data().fraction,
+              requestType: doc.data().requestType,
+              time: doc.data().time
             })
           })
           dispatch({type: 'SET_ORDERS', payload: orders})

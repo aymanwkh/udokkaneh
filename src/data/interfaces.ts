@@ -20,6 +20,9 @@ export interface iPack {
   name: string,
   productId: string,
   productName: string,
+  productAlias: string,
+  productDescription: string,
+  imageUrl: string,
   price: number,
   categoryId: string,
   sales: number,
@@ -31,17 +34,23 @@ export interface iPack {
   bonusPercent?: number,
   isOffer: boolean,
   offerEnd: Date,
-  weightedPrice: number
+  weightedPrice: number,
+  isDivided: boolean,
+  minStoreId?: string,
+  trademark: string,
+  country: string
 }
 export interface iPackPrice {
   storeId: string,
   packId: string,
-  price: number
-
+  price: number,
+  packInfo?: iPack
+  time: Date
 }
 export interface iNotification {
   id: string,
   title: string,
+  message: string,
   status: string,
   time: Date
 }
@@ -69,12 +78,16 @@ export interface iBasketPack {
   offerId: string
   closeExpired: boolean,
   byWeight: boolean,
-
+  weight?: number,
+  purchased?: number,
+  returned?: number
 }
 export interface iOrderPack extends iBasketPack {
   gross: number,
   purchased: number,
   status: string,
+  actual: number,
+  overPriced: boolean
 }
 export interface iBigBasketPack extends iBasketPack {
   packInfo?: iPack,
@@ -92,7 +105,9 @@ export interface iOrder {
   fixedFees: number,
   deliveryFees: number,
   discount?: iDiscount,
-  fraction: number
+  fraction: number,
+  requestType: string,
+  time: Date
 }
 export interface iAdvert {
   id: string,
