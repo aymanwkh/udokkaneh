@@ -1,5 +1,4 @@
 import firebase from './firebase'
-import { firestore } from 'firebase';
 
 export interface iLabel {
     [key: string]: string
@@ -38,7 +37,8 @@ export interface iPack {
   isDivided: boolean,
   minStoreId?: string,
   trademark: string,
-  country: string
+  country: string,
+  closeExpired: boolean
 }
 export interface iPackPrice {
   storeId: string,
@@ -54,9 +54,21 @@ export interface iNotification {
   status: string,
   time: Date
 }
+export interface iFriend {
+  mobile: string,
+  name: string,
+  status: string
+}
+export interface iRating {
+  productId: string
+}
 export interface iUserInfo {
+  mobile: string,
   locationId: string,
-  notifications?: iNotification[]
+  notifications?: iNotification[],
+  friends?: iFriend[],
+  ratings?: iRating[],
+  favorites?: string[]
 }
 export interface iCustomerInfo {
   storeId: string,
@@ -87,7 +99,9 @@ export interface iOrderPack extends iBasketPack {
   purchased: number,
   status: string,
   actual: number,
-  overPriced: boolean
+  overPriced: boolean,
+  packInfo?: iPack,
+  oldQuantity?: number
 }
 export interface iBigBasketPack extends iBasketPack {
   packInfo?: iPack,
@@ -120,11 +134,13 @@ export interface iAdvert {
 export interface iLocation {
   id: string,
   name: string,
-  fees: number
+  fees: number,
+  ordering: number
 
 }
 export interface iPasswordRequest {
-
+  id: string,
+  mobile: string
 }
 export interface iDiscount {
   value: number,

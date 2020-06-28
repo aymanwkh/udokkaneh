@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { StoreContext } from '../data/store'
 import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
-import { addPasswordRequest, showMessage, showError, getMessage } from '../data/actions'
+import { addPasswordRequest, showMessage, showError, getMessage } from '../data/actionst'
 import labels from '../data/labels'
 
-const PasswordRequest = props => {
+const PasswordRequest = () => {
   const { state } = useContext(StoreContext)
   const [mobile, setMobile] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
@@ -13,7 +13,7 @@ const PasswordRequest = props => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
     }
-    const validateMobile = (value) => {
+    const validateMobile = (value: string) => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
@@ -35,11 +35,10 @@ const PasswordRequest = props => {
       }
       addPasswordRequest(mobile)
       showMessage(labels.sendSuccess)
-      props.f7router.back()
       f7.views.main.router.navigate('/home/')
       f7.panel.close('right')
     } catch (err){
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
 

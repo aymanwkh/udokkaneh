@@ -2,7 +2,7 @@ import firebase from './firebase'
 import labels from './labels'
 import { randomColors, setup } from './config'
 import { f7 } from 'framework7-react'
-import { iError, iUserInfo, iOrder, iBasketPack, iPack } from './interfaces'
+import { iError, iUserInfo, iOrder, iBasketPack, iPack, iCategory, iOrderPack } from './interfaces'
 
 export const getMessage = (path: string, error: iError) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -35,6 +35,10 @@ export const showError = (messageText: string) => {
 
 export const quantityText = (quantity: number, weight?: number): string => {
   return weight && weight !== quantity ? `${quantityText(quantity)}(${quantityText(weight)})` : quantity === Math.trunc(quantity) ? quantity.toString() : quantity.toFixed(3)
+}
+
+export const productOfText = (trademark: string, country: string) => {
+  return trademark ? `${labels.productFrom} ${trademark}-${country}` : `${labels.productOf} ${country}`
 }
 
 export const addQuantity = (q1: number, q2: number, q3 = 0) => {
@@ -196,6 +200,33 @@ export const mergeOrders = (order1: iOrder, order2: iOrder) => {
   batch.commit()
 }
 
+export const editOrder = (order: iOrder, newBasket: iOrderPack[]) => {
+  let basket = newBasket.map(p => {
+    const { oldQuantity, packInfo, ...others } = p
+    return others
+  })
+  if (order.status === 'n') {
+    basket = basket.filter(p => p.quantity > 0)
+    const total = basket.reduce((sum, p) => sum + p.gross, 0)
+    const fixedFees = Math.round(setup.fixedFees * total)
+    const fraction = (total + fixedFees) - Math.floor((total + fixedFees) / 5) * 5
+    const orderStatus = basket.length === 0 ? 'c' : order.status
+    firebase.firestore().collection('orders').doc(order.id).update({
+      basket,
+      total,
+      fixedFees,
+      fraction,
+      status: orderStatus,
+    })
+  } else {
+    firebase.firestore().collection('orders').doc(order.id).update({
+      requestType: 'e',
+      requestBasket: basket,
+      requestTime: firebase.firestore.FieldValue.serverTimestamp()
+    })
+  } 
+}
+
 export const addOrderRequest = (order: iOrder, type: string, mergedOrder?: iOrder) => {
   const batch = firebase.firestore().batch()
   let orderRef = firebase.firestore().collection('orders').doc(order.id)
@@ -213,4 +244,68 @@ export const addOrderRequest = (order: iOrder, type: string, mergedOrder?: iOrde
     })
   }
   batch.commit()
+}
+
+export const registerUser = async (mobile: string, name: string, storeName: string, locationId: string, password: string) => {
+  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
+  let colors = []
+  for (var i = 0; i < 4; i++){
+    colors.push(randomColors[Number(password.charAt(i))].name)
+  }
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).set({
+    mobile,
+    name,
+    storeName,
+    locationId,
+    colors,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  })
+}
+
+export const inviteFriend = (mobile: string, name: string) => {
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
+    friends: firebase.firestore.FieldValue.arrayUnion({
+      mobile,
+      name,
+      status: 'n'
+    })
+  })
+}
+
+export const deleteFriend = (mobile: string, user?: iUserInfo) => {
+  const friends = user?.friends?.slice()
+  if (friends) {
+    const friendIndex = friends.findIndex(f => f.mobile === mobile)
+    friends.splice(friendIndex, 1)
+    firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
+      friends
+    })  
+  }
+}
+
+export const addPasswordRequest = (mobile: string) => {
+  firebase.firestore().collection('password-requests').add({
+    mobile,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  })
+}
+
+export const rateProduct = (productId: string, value: number) => {
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
+    ratings: firebase.firestore.FieldValue.arrayUnion({
+      productId,
+      value,
+      status: 'n'  
+    })
+  })
+}
+
+export const getChildren = (categoryId: string, categories: iCategory[]) => {
+  let childrenArray = [categoryId]
+  let children = categories.filter(c => c.parentId === categoryId)
+  children.forEach(c => {
+    const newChildren = getChildren(c.id, categories)
+    childrenArray = [...childrenArray, ...newChildren]
+  })
+  return childrenArray
 }

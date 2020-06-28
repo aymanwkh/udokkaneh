@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { Page, Navbar, List, ListInput, Button } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { inviteFriend, showMessage, showError, getMessage } from '../data/actions'
+import { inviteFriend, showMessage, showError, getMessage } from '../data/actionst'
 import labels from '../data/labels'
 
-const InviteFriend = props => {
+const InviteFriend = () => {
   const { state } = useContext(StoreContext)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
@@ -15,7 +15,7 @@ const InviteFriend = props => {
     const patterns = {
       name: /^.{4,50}$/,
     }
-    const validateName = (value) => {
+    const validateName = (value: string) => {
       if (patterns.name.test(value)){
         setNameErrorMessage('')
       } else {
@@ -28,7 +28,7 @@ const InviteFriend = props => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
     }
-    const validateMobile = (value) => {
+    const validateMobile = (value: string) => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
@@ -45,20 +45,20 @@ const InviteFriend = props => {
   }, [error])
   const handleSend = () => {
     try{
-      if (state.customerInfo.isBlocked) {
+      if (state.customerInfo?.isBlocked) {
         throw new Error('blockedUser')
       }
-      if (state.userInfo.friends?.find(f => f.mobile === mobile)) {
+      if (state.userInfo?.friends?.find(f => f.mobile === mobile)) {
         throw new Error('duplicateInvitation')
       }
-      if (mobile === state.userInfo.mobile) {
+      if (mobile === state.userInfo?.mobile) {
         throw new Error('invalidMobile')
       }
       inviteFriend(mobile, name)
       showMessage(labels.sendSuccess)
-      props.f7router.back()
+      f7.views.current.router.back()
     } catch (err){
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
 

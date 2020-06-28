@@ -55,7 +55,8 @@ const Store = (props: any) => {
           weightedPrice: doc.data().weightedPrice,
           isDivided: doc.data().isDivided,
           trademark: doc.data().trademark,
-          country: doc.data().country
+          country: doc.data().country,
+          closeExpired: doc.data().closeExpired
         })
         if (doc.data().prices) {
           doc.data().prices.forEach((p: iPackPrice) => {
@@ -92,7 +93,10 @@ const Store = (props: any) => {
     const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
       let passwordRequests: iPasswordRequest[] = []
       docs.forEach(doc => {
-        passwordRequests.push({...doc.data(), id:doc.id})
+        passwordRequests.push({
+          id: doc.id,
+          mobile: doc.data().mobile
+        })
       })
       dispatch({type: 'SET_PASSWORD_REQUESTS', payload: passwordRequests})
     }, err => {

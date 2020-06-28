@@ -96,16 +96,16 @@ const EditOrder = props => {
           )}
         </List>
       </Block>
-      {!overLimit & hasChanged ? 
+      {(!overLimit && hasChanged) &&
         <Fab position="center-bottom" slot="fixed" text={`${labels.submit} ${(total / 100).toFixed(2)}`} color="green" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>
-      : ''}
-      {overLimit ? 
+      }
+      {overLimit && 
         <Fab position="center-bottom" slot="fixed" text={labels.limitOverFlowNote} color="red" href="/help/ol">
           <Icon material="report_problem"></Icon>
         </Fab>
-      : ''}
+      }
       <Toolbar bottom>
         <BottomToolbar/>
       </Toolbar>

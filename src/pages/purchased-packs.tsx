@@ -1,20 +1,35 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Actions, ActionsButton, Icon, Link } from 'framework7-react'
+import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Actions, ActionsButton, Icon, Link } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import { quantityText, addQuantity } from '../data/actions'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
-import { showMessage, showError, getMessage, rateProduct } from '../data/actions'
+import { showMessage, showError, getMessage, rateProduct } from '../data/actionst'
+import { iOrder } from '../data/interfaces'
 
-const PurchasedPacks = props => {
+interface iPurchasedPack {
+  packId: string,
+  productId: string,
+  productName: string,
+  productAlias: string,
+  packName: string,
+  imageUrl: string,
+  bestPrice: number,
+  lastPrice: number,
+  quantity: number,
+  lastQuantity: number,
+  lastTime: Date
+}
+
+const PurchasedPacks = () => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-	const [purchasedPacks, setPurchasedPacks] = useState([])
-  const [deliveredOrders, setDeliveredOrders] = useState([])
-  const [currentPack, setCurrentPack] = useState('')
-  const actionsList = useRef('')
+	const [purchasedPacks, setPurchasedPacks] = useState<iPurchasedPack[]>([])
+  const [deliveredOrders, setDeliveredOrders] = useState<iOrder[]>([])
+  const [currentPack, setCurrentPack] = useState<iPurchasedPack | undefined>(undefined)
+  const actionsList = useRef<Actions>(null)
   useEffect(() => {
     if (error) {
       showError(error)
@@ -24,11 +39,11 @@ const PurchasedPacks = props => {
   useEffect(() => {
     setDeliveredOrders(() => {
       const deliveredOrders = state.orders.filter(o => o.status === 'd')
-      return deliveredOrders.sort((o1, o2) => o1.time.seconds - o2.time.seconds)
+      return deliveredOrders.sort((o1, o2) => o1.time > o2.time ? -1 : 1)
     })
   }, [state.orders])
 	useEffect(() => {
-		let packsArray = []
+		let packsArray: iPurchasedPack[] = []
 		deliveredOrders.forEach(o => {
 			o.basket.forEach(p => {
         const found = packsArray.findIndex(pa => pa.packId === p.packId)
@@ -58,22 +73,24 @@ const PurchasedPacks = props => {
         }
 			})
 		})
-		setPurchasedPacks(packsArray.sort((p1, p2) => p2.lastTime.seconds - p1.lastTime.sconds))
+		setPurchasedPacks(packsArray.sort((p1, p2) => p2.lastTime > p1.lastTime ? -1 : 1))
   }, [deliveredOrders])
-  const handleRate = value => {
+  const handleRate = (value: number) => {
     try{
-      if (state.customerInfo.isBlocked) {
+      if (state.customerInfo?.isBlocked) {
         throw new Error('blockedUser')
       }
-      rateProduct(currentPack.productId, value)
-      showMessage(labels.ratingSuccess)
+      if (currentPack) {
+        rateProduct(currentPack.productId, value)
+        showMessage(labels.ratingSuccess)  
+      }
     } catch(err) {
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
-  const handleActions = pack => {
+  const handleActions = (pack: iPurchasedPack)=> {
     setCurrentPack(pack)
-    actionsList.current.open()
+    actionsList?.current?.open()
   }
   let i = 0
   return(
@@ -88,7 +105,7 @@ const PurchasedPacks = props => {
 								title={`${p.productName}${p.productAlias ? '-' + p.productAlias : ''}`}
 								subtitle={p.packName}
                 text={`${labels.bestPrice}: ${(p.bestPrice / 100).toFixed(2)}`}
-                footer={`${labels.lastTime}: ${moment(p.lastTime.toDate()).fromNow()}`}
+                footer={`${labels.lastTime}: ${moment(p.lastTime).fromNow()}`}
 								key={i++}
                 className={currentPack?.packId === p.packId ? 'selected' : ''}
               >
@@ -96,7 +113,7 @@ const PurchasedPacks = props => {
                 <div className="list-subtext1">{`${labels.lastPrice}: ${(p.lastPrice / 100).toFixed(2)}`}</div>
                 <div className="list-subtext2">{`${labels.quantity}: ${quantityText(p.quantity)}`}</div>
                 <div className="list-subtext3">{`${labels.lastQuantity}: ${quantityText(p.lastQuantity)}`}</div>
-                {state.userInfo.ratings?.find(r => r.productId === p.productId) ? '' : <Link slot="after" iconMaterial="favorite_border" onClick={()=> handleActions(p)}/> }
+                {state.userInfo?.ratings?.find(r => r.productId === p.productId) ? '' : <Link slot="after" iconMaterial="favorite_border" onClick={()=> handleActions(p)}/> }
 							</ListItem>
 						)
 					}

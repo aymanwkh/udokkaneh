@@ -4,29 +4,27 @@ import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
-import { getChildren, productOfText } from '../data/actions'
+import { getChildren, productOfText } from '../data/actionst'
+import { iPack } from '../data/interfaces'
 
-const Packs = props => {
+interface iProps {
+  id: string,
+  type: string
+}
+const Packs = (props: iProps) => {
   const { state } = useContext(StoreContext)
-  const [packs, setPacks] = useState([])
+  const [packs, setPacks] = useState<iPack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === props.id))
   const [sortBy, setSortBy] = useState('v')
-  const sortList = useRef('')
+  const sortList = useRef<Actions>(null)
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      let packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo.favorites?.includes(p.productId)) || children.includes(p.categoryId))
-      packs = packs.map(p => {
-        const categoryInfo = state.categories.find(c => c.id === p.categoryId)
-        return {
-          ...p,
-          categoryInfo
-        }
-      })
+      let packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo?.favorites?.includes(p.productId)) || children.includes(p.categoryId))
       return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories])
-  const handleSorting = sortByValue => {
+  const handleSorting = (sortByValue: string) => {
     setSortBy(sortByValue)
     switch(sortByValue){
       case 'p':
@@ -68,32 +66,35 @@ const Packs = props => {
           <ListItem title={labels.noData} />
         </List>
         <List mediaList className="search-list searchbar-found">
-          {packs.length > 1 ?
+          {packs.length > 1 &&
             <ListItem 
               title={labels.sortBy} 
-              after={sortByList.find(o => o.id === sortBy).name}
-              onClick={() => sortList.current.open()}
+              after={sortByList.find(o => o.id === sortBy)?.name}
+              onClick={() => sortList?.current?.open()}
             />
-          : ''}
+          }
           {packs.length === 0 ?
             <ListItem title={labels.noData} />
-          : packs.map(p => 
-              <ListItem
-                link={`/pack-details/${p.id}/type/c`}
-                title={p.productName}
-                subtitle={p.productAlias}
-                text={p.name}
-                footer={`${labels.category}: ${p.categoryInfo.name}`}
-                after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
-                key={p.id}
-              >
-                <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{p.productDescription}</div>
-                <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
-                {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge> : ''}
-                {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
-              </ListItem>
-            )
+          : packs.map(p => {
+              const categoryInfo = state.categories.find(c => c.id === p.categoryId)
+              return (
+                <ListItem
+                  link={`/pack-details/${p.id}/type/c`}
+                  title={p.productName}
+                  subtitle={p.productAlias}
+                  text={p.name}
+                  footer={`${labels.category}: ${categoryInfo?.name}`}
+                  after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
+                  key={p.id}
+                >
+                  <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
+                  <div className="list-subtext1">{p.productDescription}</div>
+                  <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
+                  {(p.isOffer || p.offerEnd) && <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge>}
+                  {p.closeExpired && <Badge slot="text" color="red">{labels.closeExpired}</Badge>}
+                </ListItem>
+              )
+            })
           }
         </List>
       </Block>

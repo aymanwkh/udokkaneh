@@ -1,10 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { StoreContext } from '../data/store'
 import { f7, Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
-import { registerUser, showMessage, showError, getMessage } from '../data/actions'
+import { registerUser, showMessage, showError, getMessage } from '../data/actionst'
 import labels from '../data/labels'
 
-const StoreOwner = props => {
+interface iProps {
+  type: string
+}
+const StoreOwner = (props: iProps) => {
   const { state } = useContext(StoreContext)
   const [name, setName] = useState('')
   const [error, setError] = useState('')
@@ -22,7 +25,7 @@ const StoreOwner = props => {
     const patterns = {
       name: /^.{4,50}$/,
     }
-    const validateName = value => {
+    const validateName = (value: string) => {
       if (patterns.name.test(value)){
         setNameErrorMessage('')
       } else {
@@ -35,7 +38,7 @@ const StoreOwner = props => {
     const patterns = {
       password: /^.{4}$/,
     }
-    const validatePassword = value => {
+    const validatePassword = (value: string) => {
       if (patterns.password.test(value)){
         setPasswordErrorMessage('')
       } else {
@@ -48,7 +51,7 @@ const StoreOwner = props => {
     const patterns = {
       mobile: /^07[7-9][0-9]{7}$/
     }
-    const validateMobile = value => {
+    const validateMobile = (value: string) => {
       if (patterns.mobile.test(value)){
         setMobileErrorMessage('')
       } else {
@@ -75,7 +78,7 @@ const StoreOwner = props => {
     const patterns = {
       name: /^.{4,50}$/,
     }
-    const validateStoreName = value => {
+    const validateStoreName = (value: string) => {
       if (patterns.name.test(value)){
         setStoreNameErrorMessage('')
       } else {
@@ -87,22 +90,15 @@ const StoreOwner = props => {
 
   const handleRegister = async () => {
     try{
-      const userInfo = {
-        mobile,
-        name,
-        storeName,
-        locationId
-      }
       setInprocess(true)
-      await registerUser(userInfo, password)
+      await registerUser(mobile, name, storeName, locationId, password)
       setInprocess(false)
       showMessage(labels.registerSuccess)
-      props.f7router.back()
-      props.f7router.app.panel.close('right') 
+      f7.views.current.router.back()
+      f7.panel.close('right') 
     } catch (err){
-      console.log('errr == ', err)
       setInprocess(false)
-      setError(getMessage(props, err))
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
 

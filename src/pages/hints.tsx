@@ -3,26 +3,24 @@ import { Block, Page, Navbar, List, ListItem, Toolbar, Badge } from 'framework7-
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
-import { productOfText } from '../data/actions'
+import { productOfText } from '../data/actionst'
+import { iPack } from '../data/interfaces'
 
-const Hints = props => {
+interface iProps {
+  id: string,
+  type: string
+}
+const Hints = (props: iProps) => {
   const { state } = useContext(StoreContext)
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
-  const [packs, setPacks] = useState([])
+  const [packs, setPacks] = useState<iPack[]>([])
   useEffect(() => {
     setPacks(() => {
       let packs = state.packs.filter(p => 
-        (props.type === 'p' && p.categoryId === pack.categoryId && (p.sales > pack.sales || p.rating > pack.rating)) ||
-        (props.type === 'o' && p.productId === pack.productId && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
-        (props.type === 'w' && p.productId === pack.productId && p.weightedPrice < pack.weightedPrice)
+        (props.type === 'p' && p.categoryId === pack?.categoryId && (p.sales > pack.sales || p.rating > pack.rating)) ||
+        (props.type === 'o' && p.productId === pack?.productId && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
+        (props.type === 'w' && p.productId === pack?.productId && p.weightedPrice < pack.weightedPrice)
       )
-      packs = packs.map(p => {
-        const categoryInfo = state.categories.find(c => c.id === p.categoryId)
-        return {
-          ...p,
-          categoryInfo
-        }
-      })
       return packs.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
     })
   }, [pack, state.packs, state.categories, props.type]) 
@@ -34,13 +32,14 @@ const Hints = props => {
           {packs.length === 0 ? 
             <ListItem title={labels.noData} />
           : packs.map(p => {
+              const categoryInfo = state.categories.find(c => c.id === p.categoryId)
               return (
                 <ListItem
                   link={`/pack-details/${p.id}/type/c`}
                   title={p.productName}
                   subtitle={p.productAlias}
                   text={p.name}
-                  footer={`${labels.category}: ${p.categoryInfo.name}`}
+                  footer={`${labels.category}: ${categoryInfo?.name}`}
                   after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
                   key={p.id}
                 >
@@ -48,7 +47,7 @@ const Hints = props => {
                   <div className="list-subtext1">{p.productDescription}</div>
                   <div className="list-subtext2">{productOfText(p.trademark, p.country)}</div>
                   {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge> : ''}
-                  {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
+                  {p.closeExpired && <Badge slot="text" color="red">{labels.closeExpired}</Badge>}
                 </ListItem>
               )
             })

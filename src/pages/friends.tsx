@@ -3,16 +3,17 @@ import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Button } f
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
-import { deleteFriend, getMessage, showError, showMessage } from '../data/actions'
+import { deleteFriend, getMessage, showError, showMessage } from '../data/actionst'
 import { friendStatus } from '../data/config'
+import { iFriend } from '../data/interfaces'
 
-const Friends = props => {
+const Friends = () => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [friends, setFriends] = useState([])
+  const [friends, setFriends] = useState<iFriend[]>([])
   useEffect(() => {
     setFriends(() => {
-      const friends = state.userInfo.friends?.slice() || []
+      const friends = state.userInfo?.friends?.slice() || []
       return friends.sort((f1, f2) => f1.name > f2.name ? 1 : -1)
     })
   }, [state.userInfo])
@@ -22,13 +23,13 @@ const Friends = props => {
       setError('')
     }
   }, [error])
-  const handleDelete = mobile => {
+  const handleDelete = (mobile: string) => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
       try{
-        deleteFriend(state.userInfo, mobile)
+        deleteFriend(mobile, state.userInfo)
         showMessage(labels.deleteSuccess)
       } catch(err) {
-        setError(getMessage(props, err))
+        setError(getMessage(f7.views.current.router.currentRoute.path, err))
       }
     })  
   }
@@ -44,10 +45,10 @@ const Friends = props => {
               <ListItem
                 title={f.name}
                 subtitle={f.mobile}
-                footer={friendStatus.find(s => s.id === f.status).name}
+                footer={friendStatus.find(s => s.id === f.status)?.name}
                 key={i++}
               >
-                <Button text={labels.delete} slot="after" onClick={() => handleDelete(f)} />
+                <Button text={labels.delete} slot="after" onClick={() => handleDelete(f.mobile)} />
               </ListItem>
             )
           }
