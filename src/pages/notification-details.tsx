@@ -3,7 +3,7 @@ import { f7, Page, Navbar, List, ListInput, Toolbar, Fab, Icon } from 'framework
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
-import { deleteNotification, getMessage, showError, showMessage } from '../data/actionst'
+import { deleteNotification, getMessage, showError, showMessage } from '../data/actions'
 import moment from 'moment'
 import 'moment/locale/ar'
 

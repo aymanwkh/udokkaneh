@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { logout } from '../data/actionst'
+import { logout } from '../data/actions'
 import labels from '../data/labels'
 import { iNotification } from '../data/interfaces'
 
@@ -9,7 +9,7 @@ const Panel = () => {
   const { state, dispatch } = useContext(StoreContext)
   const [notifications, setNotifications] = useState<iNotification[]>([])
   useEffect(() => {
-    setNotifications(() => state.userInfo.notifications?.filter(n => n.status === 'n') || [])
+    setNotifications(() => state.userInfo?.notifications?.filter(n => n.status === 'n') || [])
   }, [state.userInfo])
   const handleLogout = () => {
     logout()

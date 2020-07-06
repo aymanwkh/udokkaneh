@@ -6,7 +6,7 @@ import { quantityText, addQuantity } from '../data/actions'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
-import { showMessage, showError, getMessage, rateProduct } from '../data/actionst'
+import { showMessage, showError, getMessage, rateProduct } from '../data/actions'
 import { iOrder } from '../data/interfaces'
 
 interface iPurchasedPack {

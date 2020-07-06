@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { inviteFriend, showMessage, showError, getMessage } from '../data/actionst'
+import { inviteFriend, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
 const InviteFriend = () => {

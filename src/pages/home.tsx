@@ -14,7 +14,7 @@ const Home = () => {
     setAdvert(() => state.adverts.find(a => a.isActive))
   }, [state.adverts])
   useEffect(() => {
-    setNotifications(() => state.userInfo.notifications?.filter(n => n.status === 'n') || [])
+    setNotifications(() => state.userInfo?.notifications?.filter(n => n.status === 'n') || [])
   }, [state.userInfo])
   useEffect(() => {
     if (state.categories.length === 0) {

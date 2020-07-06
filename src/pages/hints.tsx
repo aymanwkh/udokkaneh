@@ -3,7 +3,7 @@ import { Block, Page, Navbar, List, ListItem, Toolbar, Badge } from 'framework7-
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
-import { productOfText } from '../data/actionst'
+import { productOfText } from '../data/actions'
 import { iPack } from '../data/interfaces'
 
 interface iProps {

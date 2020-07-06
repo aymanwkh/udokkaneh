@@ -4,7 +4,7 @@ import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
-import { getChildren, productOfText } from '../data/actionst'
+import { getChildren, productOfText } from '../data/actions'
 import { iPack } from '../data/interfaces'
 
 interface iProps {

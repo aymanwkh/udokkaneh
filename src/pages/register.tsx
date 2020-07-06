@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { StoreContext } from '../data/store'
 import { f7, Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
-import { registerUser, showMessage, showError, getMessage } from '../data/actionst'
+import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
 interface iProps {

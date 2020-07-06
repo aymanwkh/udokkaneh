@@ -3,7 +3,7 @@ import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Button } f
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
-import { deleteFriend, getMessage, showError, showMessage } from '../data/actionst'
+import { deleteFriend, getMessage, showError, showMessage } from '../data/actions'
 import { friendStatus } from '../data/config'
 import { iFriend } from '../data/interfaces'
 

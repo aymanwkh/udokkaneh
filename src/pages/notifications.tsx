@@ -5,7 +5,7 @@ import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
-import { readNotification, getMessage, showError } from '../data/actionst'
+import { readNotification, getMessage, showError } from '../data/actions'
 import { iNotification } from '../data/interfaces'
 
 const Notifications = () => {
