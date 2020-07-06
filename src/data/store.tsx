@@ -51,6 +51,7 @@ const Store = (props: any) => {
           categoryId: doc.data().categoryId,
           sales: doc.data().sales,
           rating: doc.data().rating,
+          ratingCount: doc.data().ratingCount,
           isOffer: doc.data().isOffer,
           offerEnd: doc.data().offerEnd,
           weightedPrice: doc.data().weightedPrice,

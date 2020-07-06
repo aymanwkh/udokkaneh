@@ -90,7 +90,7 @@ const PurchasedPacks = () => {
   }
   const handleActions = (pack: iPurchasedPack)=> {
     setCurrentPack(pack)
-    actionsList?.current?.open()
+    actionsList.current?.open()
   }
   let i = 0
   return(

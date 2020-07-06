@@ -1,17 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper } from 'framework7-react'
+import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { editOrder, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
 import BottomToolbar from './bottom-toolbar'
 import { setup } from '../data/config'
+import { iOrderPack } from '../data/interfaces'
 
-const EditOrder = props => {
+interface iProps {
+  id: string
+}
+const EditOrder = (props: iProps) => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [order] = useState(() => state.orders.find(o => o.id === props.id))
-  const [orderBasket, setOrderBasket] = useState([])
-  const [total, setTotal] = useState('')
+  const [orderBasket, setOrderBasket] = useState<iOrderPack[]>([])
+  const [total, setTotal] = useState(0)
   const [overLimit, setOverLimit] = useState(false)
   const [hasChanged, setHasChanged] = useState(false)
   const [customerOrdersTotals] = useState(() => {
@@ -26,7 +30,7 @@ const EditOrder = props => {
           oldQuantity: p.quantity
         }
       })
-      dispatch({type: 'LOAD_ORDER_BASKET', basket})
+      dispatch({type: 'LOAD_ORDER_BASKET', payload: basket})
     }
   }, [dispatch, order])
   useEffect(() => {
@@ -48,7 +52,7 @@ const EditOrder = props => {
     setTotal(() => orderBasket.reduce((sum, p) => sum + p.gross, 0))
   }, [orderBasket])
   useEffect(() => {
-    const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
+    const orderLimit = state.customerInfo?.orderLimit ?? setup.orderLimit
     if (customerOrdersTotals + total > orderLimit){
       setOverLimit(true)
     } else {
@@ -64,15 +68,17 @@ const EditOrder = props => {
   }, [error])
   const handleSubmit = () => {
     try{
-      if (state.customerInfo.isBlocked) {
+      if (state.customerInfo?.isBlocked) {
         throw new Error('blockedUser')
       }
-      editOrder(order, state.orderBasket)
-      showMessage(order.status === 'n' ? labels.editSuccess : labels.sendSuccess)
-      dispatch({type: 'CLEAR_ORDER_BASKET'})
-      props.f7router.back()
+      if (order) {
+        editOrder(order, state.orderBasket)
+        showMessage(order.status === 'n' ? labels.editSuccess : labels.sendSuccess)
+        dispatch({type: 'CLEAR_ORDER_BASKET'})
+        f7.views.current.router.back()  
+      }
     } catch(err) {
-			setError(getMessage(props, err))
+			setError(getMessage(f7.views.current.router.currentRoute.path, err))
 		}
   }
   return (
@@ -96,8 +102,8 @@ const EditOrder = props => {
                   slot="after"
                   fill
                   buttonsOnly
-                  onStepperPlusClick={() => dispatch({type: 'INCREASE_ORDER_QUANTITY', pack: p})}
-                  onStepperMinusClick={() => dispatch({type: 'DECREASE_ORDER_QUANTITY', pack: p})}
+                  onStepperPlusClick={() => dispatch({type: 'INCREASE_ORDER_QUANTITY', payload: p})}
+                  onStepperMinusClick={() => dispatch({type: 'DECREASE_ORDER_QUANTITY', payload: p})}
                 />
               : ''}
             </ListItem>

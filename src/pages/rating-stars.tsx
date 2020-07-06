@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import { Icon } from 'framework7-react'
 
 interface iProps {
-  rating: string,
-  count: string
+  rating: number,
+  count: number
 }
 const RatingStars = (props: iProps) => {
   const [stars] = useState(() => {
-    const rating_int = parseInt(props.rating)
+    const rating_int = props.rating
     const rating_fraction = Number(props.rating) - rating_int
     let color
     switch(rating_int){
@@ -38,7 +38,7 @@ const RatingStars = (props: iProps) => {
   })
   return(
     <React.Fragment>
-      {Number(props.count) > 0 ? '(' + props.count + ')' : ''}{stars}
+      {props.count > 0 ? '(' + props.count + ')' : ''}{stars}
     </React.Fragment>
   )
 }

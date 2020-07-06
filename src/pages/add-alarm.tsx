@@ -91,7 +91,8 @@ const AddAlarm = (props: iProps) => {
         price: Number(price) * 100,
         quantity: Number(quantity),
         alternative,
-        offerDays: Number(offerDays)
+        offerDays: Number(offerDays),
+        status: 'n'
       }
       addAlarm(alarm)
       showMessage(labels.sendSuccess)

@@ -121,7 +121,7 @@ const OrderDetails = (props: iProps) => {
     <Page>
       <Navbar title={labels.orderDetails} backLink={labels.back} />
       {order && ['n', 'a', 'e'].includes(order.status) && 
-        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => orderActions?.current?.open()}>
+        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => orderActions.current?.open()}>
           <Icon material="menu"></Icon>
         </Fab>
       }

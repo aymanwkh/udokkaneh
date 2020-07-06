@@ -1,33 +1,34 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton, Badge } from 'framework7-react'
+import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
 import { setup } from '../data/config'
+import { iBigBasketPack } from '../data/interfaces'
 
-const Basket = props => {
+const Basket = () => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [submitVisible, setSubmitVisible] = useState(true)
-  const [currentPack, setCurrentPack] = useState('')
-  const [basket, setBasket] = useState([])
-  const [totalPrice, setTotalPrice] = useState('')
-  const [weightedPacks, setWeightedPacks] = useState('')
+  const [currentPack, setCurrentPack] = useState<iBigBasketPack | undefined>(undefined)
+  const [basket, setBasket] = useState<iBigBasketPack[]>([])
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [weightedPacks, setWeightedPacks] = useState<iBigBasketPack[]>([])
   const [customerOrdersTotals] = useState(() => {
     const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
     return activeOrders.reduce((sum, o) => sum + o.total, 0)
   })
-  const hintsList = useRef('')
+  const hintsList = useRef<Actions>(null)
   useEffect(() => {
-    if (state.basket.length === 0) props.f7router.navigate('/home/', {reloadAll: true})
+    if (state.basket.length === 0) f7.views.current.router.navigate('/home/', {reloadAll: true})
     else setBasket(getBasket(state.basket, state.packs))
-  }, [state.basket, state.packs, props])
+  }, [state.basket, state.packs])
   useEffect(() => {
     setTotalPrice(() => basket.reduce((sum, p) => sum + Math.round(p.price * p.quantity), 0))
     setWeightedPacks(() => basket.filter(p => p.byWeight))
   }, [basket])
   useEffect(() => {
-    const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
+    const orderLimit = state.customerInfo?.orderLimit ?? setup.orderLimit
     if (customerOrdersTotals + totalPrice > orderLimit){
       setSubmitVisible(false)
     } else {
@@ -43,28 +44,28 @@ const Basket = props => {
 
   const handleConfirm = () => {
     try{
-      if (state.customerInfo.isBlocked) {
+      if (state.customerInfo?.isBlocked) {
         throw new Error('blockedUser')
       }
-      props.f7router.navigate('/confirm-order/')
+      f7.views.current.router.navigate('/confirm-order/')
     } catch(err) {
-			setError(getMessage(props, err))
+			setError(getMessage(f7.views.current.router.currentRoute.path, err))
 		}
   }
-  const handleIncrease = pack => {
+  const handleIncrease = (pack: iBigBasketPack) => {
     try{
-      dispatch({type: 'INCREASE_QUANTITY', pack})
-      const orderLimit = state.customerInfo.orderLimit || setup.orderLimit
+      dispatch({type: 'INCREASE_QUANTITY', payload: pack})
+      const orderLimit = state.customerInfo?.orderLimit ?? setup.orderLimit
       if (customerOrdersTotals + totalPrice > orderLimit){
         throw new Error('limitOverFlow')
       }  
     } catch(err) {
-			setError(getMessage(props, err))
+			setError(getMessage(f7.views.current.router.currentRoute.path, err))
 		}
   }
-  const handleHints = pack => {
+  const handleHints = (pack: iBigBasketPack) => {
     setCurrentPack(pack)
-    hintsList.current.open()
+    hintsList.current?.open()
   }
   return(
     <Page>
@@ -90,7 +91,7 @@ const Basket = props => {
                 fill
                 buttonsOnly
                 onStepperPlusClick={() => handleIncrease(p)}
-                onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', pack: p})}
+                onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', payload: p})}
               />
             }
             {p.otherProducts + p.otherOffers + p.otherPacks === 0 ? '' : <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>}
@@ -108,14 +109,14 @@ const Basket = props => {
       </Fab>
     }
     <Actions ref={hintsList}>
-      {currentPack.otherProducts === 0 ? '' :
-        <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
+      {currentPack?.otherProducts === 0 ? '' :
+        <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${currentPack?.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
       }
-      {currentPack.otherOffers === 0 ? '' :
-        <ActionsButton onClick={() => props.f7router.navigate(`/hints/${currentPack.packId}/type/o`)}>{labels.otherOffers}</ActionsButton>
+      {currentPack?.otherOffers === 0 ? '' :
+        <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${currentPack?.packId}/type/o`)}>{labels.otherOffers}</ActionsButton>
       }
-      {currentPack.otherPacks === 0 ? '' :
-        <ActionsButton onClick={() =>props.f7router.navigate(`/hints/${currentPack.packId}/type/w`)}>{labels.otherPacks}</ActionsButton>
+      {currentPack?.otherPacks === 0 ? '' :
+        <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${currentPack?.packId}/type/w`)}>{labels.otherPacks}</ActionsButton>
       }
     </Actions>
 

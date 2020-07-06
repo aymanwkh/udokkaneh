@@ -29,6 +29,10 @@ export interface iPack {
   subPackId?: string,
   subQuantity?: number,
   subPercent?: number,
+  subPackName?: string,
+  bonusPackId?: string,
+  bonusProductName?: string,
+  bonusPackName?: string,
   bonusQuantity?: number,
   bonusPercent?: number,
   isOffer: boolean,
@@ -38,7 +42,8 @@ export interface iPack {
   minStoreId?: string,
   trademark: string,
   country: string,
-  closeExpired: boolean
+  closeExpired: boolean,
+  ratingCount: number
 }
 export interface iPackPrice {
   storeId: string,
@@ -62,13 +67,23 @@ export interface iFriend {
 export interface iRating {
   productId: string
 }
+export interface iAlarm {
+  packId?: string,
+  type: string,
+  price?: number,
+  quantity?: number,
+  alternative?: string,
+  offerDays?: number,
+  status: string
+}
 export interface iUserInfo {
   mobile: string,
   locationId: string,
   notifications?: iNotification[],
   friends?: iFriend[],
   ratings?: iRating[],
-  favorites?: string[]
+  favorites?: string[],
+  alarms?: iAlarm[]
 }
 export interface iCustomerInfo {
   storeId: string,
@@ -145,9 +160,6 @@ export interface iPasswordRequest {
 export interface iDiscount {
   value: number,
   type: string
-}
-export interface iAlarm {
-  
 }
 export interface iState {
   user?: firebase.User,

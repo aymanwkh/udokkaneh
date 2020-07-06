@@ -70,7 +70,7 @@ const Packs = (props: iProps) => {
             <ListItem 
               title={labels.sortBy} 
               after={sortByList.find(o => o.id === sortBy)?.name}
-              onClick={() => sortList?.current?.open()}
+              onClick={() => sortList.current?.open()}
             />
           }
           {packs.length === 0 ?

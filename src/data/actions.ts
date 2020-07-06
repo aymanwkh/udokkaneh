@@ -208,7 +208,6 @@ export const addAlarm = (alarm: iAlarm) => {
     alarms: firebase.firestore.FieldValue.arrayUnion({
       ...alarm,
       id: Math.random().toString(),
-      status: 'n',
       time: new Date()  
     })
   })
