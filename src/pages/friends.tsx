@@ -26,8 +26,10 @@ const Friends = () => {
   const handleDelete = (mobile: string) => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
       try{
-        deleteFriend(mobile, state.userInfo)
-        showMessage(labels.deleteSuccess)
+        if (state.userInfo) {
+          deleteFriend(state.userInfo, mobile)
+          showMessage(labels.deleteSuccess)  
+        }
       } catch(err) {
         setError(getMessage(f7.views.current.router.currentRoute.path, err))
       }

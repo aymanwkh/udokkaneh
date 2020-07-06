@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect } from 'react'
+import React from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import { iState, iContext, iCategory, iPack, iPackPrice, iAdvert, iPasswordRequest, iOrder } from './interfaces'
@@ -14,11 +14,12 @@ const Store = (props: any) => {
     packPrices: [],
     adverts: [],
     locations: [],
-    passwordRequests: []
+    passwordRequests: [],
+    orderBasket: []
   }
-  const [state, dispatch] = useReducer(Reducer, initState)
+  const [state, dispatch] = React.useReducer(Reducer, initState)
 
-  useEffect(() => {
+  React.useEffect(() => {
     const unsubscribeCategories = firebase.firestore().collection('categories').where('isActive', '==', true).onSnapshot(docs => {
       let categories: iCategory[] = []
       docs.forEach(doc => {

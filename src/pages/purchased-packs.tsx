@@ -39,7 +39,7 @@ const PurchasedPacks = () => {
   useEffect(() => {
     setDeliveredOrders(() => {
       const deliveredOrders = state.orders.filter(o => o.status === 'd')
-      return deliveredOrders.sort((o1, o2) => o1.time > o2.time ? -1 : 1)
+      return deliveredOrders.sort((o1, o2) => o1.time! > o2.time! ? -1 : 1)
     })
   }, [state.orders])
 	useEffect(() => {
@@ -50,11 +50,11 @@ const PurchasedPacks = () => {
 				if (found > -1) {
           packsArray.splice(found, 1, {
             ...packsArray[found],
-            bestPrice: packsArray[found].bestPrice <= p.actual ? packsArray[found].bestPrice : p.actual,
-            lastPrice: p.actual,
+            bestPrice: packsArray[found].bestPrice <= p.actual! ? packsArray[found].bestPrice! : p.actual!,
+            lastPrice: p.actual!,
             quantity: addQuantity(packsArray[found].quantity, p.purchased),
             lastQuantity: p.purchased,
-            lastTime: o.time
+            lastTime: o.time!
           })
 				} else {
           packsArray.push({
@@ -64,11 +64,11 @@ const PurchasedPacks = () => {
             productAlias: p.productAlias,
             packName: p.packName,
             imageUrl: p.imageUrl,
-            bestPrice: p.actual,
-            lastPrice: p.actual,
+            bestPrice: p.actual!,
+            lastPrice: p.actual!,
             quantity: p.purchased,
             lastQuantity: p.purchased,
-            lastTime: o.time
+            lastTime: o.time!
           })
         }
 			})

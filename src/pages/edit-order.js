@@ -19,7 +19,15 @@ const EditOrder = props => {
     return activeOrders.reduce((sum, o) => sum + o.total, 0)
   })
   useEffect(() => {
-    dispatch({type: 'LOAD_ORDER_BASKET', order})
+    if (order) {
+      const basket = order.basket.map(p => {
+        return {
+          ...p,
+          oldQuantity: p.quantity
+        }
+      })
+      dispatch({type: 'LOAD_ORDER_BASKET', basket})
+    }
   }, [dispatch, order])
   useEffect(() => {
     setOrderBasket(() => {

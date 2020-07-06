@@ -26,8 +26,10 @@ const Notifications = () => {
   }, [error])
   const handleOpen = (notificationId: string) => {
     try{
-      readNotification(state.userInfo, notificationId)
-      f7.views.current.router.navigate(`/notification-details/${notificationId}`)
+      if (state.userInfo) {
+        readNotification(state.userInfo, notificationId)
+        f7.views.current.router.navigate(`/notification-details/${notificationId}`)  
+      }
     } catch(err) {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }

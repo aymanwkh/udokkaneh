@@ -36,7 +36,7 @@ const OrderDetails = (props: iProps) => {
     }) : [])
     setLastOrder(() => {
       const orders = state.orders.filter(o => o.id !== order?.id && !['c', 'm', 'r'].includes(o.status))
-      orders.sort((o1, o2) => o2.time > o1.time ? -1 : 1)
+      orders.sort((o1, o2) => o2.time! > o1.time! ? -1 : 1)
       return ['n', 'a', 'e'].includes(orders[0]?.status) ? orders[0] : undefined
     })
   }, [order, state.orders])

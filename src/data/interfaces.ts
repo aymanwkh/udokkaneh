@@ -98,8 +98,8 @@ export interface iOrderPack extends iBasketPack {
   gross: number,
   purchased: number,
   status: string,
-  actual: number,
-  overPriced: boolean,
+  actual?: number,
+  overPriced?: boolean,
   packInfo?: iPack,
   oldQuantity?: number
 }
@@ -120,8 +120,8 @@ export interface iOrder {
   deliveryFees: number,
   discount?: iDiscount,
   fraction: number,
-  requestType: string,
-  time: Date
+  requestType?: string,
+  time?: Date
 }
 export interface iAdvert {
   id: string,
@@ -160,7 +160,8 @@ export interface iState {
   packPrices: iPackPrice[],
   adverts: iAdvert[],
   locations: iLocation[],
-  passwordRequests: iPasswordRequest[]
+  passwordRequests: iPasswordRequest[],
+  orderBasket: iOrderPack[]
 }
 
 export interface iAction {

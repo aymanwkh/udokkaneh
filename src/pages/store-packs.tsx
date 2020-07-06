@@ -51,7 +51,7 @@ const StorePacks = (props: iProps) => {
               >
                 <img src={p.packInfo?.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{p.packInfo?.name}</div>
-                <div className="list-subtext2">{productOfText(p.packInfo?.trademark, p.packInfo?.country)}</div>
+                <div className="list-subtext2">{productOfText(p.packInfo?.trademark ?? '', p.packInfo?.country ?? '')}</div>
                 {p.price > (p.packInfo?.price ?? 0) && <div className="list-subtext3">{`${labels.myPrice}: ${(p.price / 100).toFixed(2)}`}</div>}
                 {p.packInfo?.isOffer && <Badge slot="title" color='green'>{labels.offer}</Badge>}
               </ListItem>

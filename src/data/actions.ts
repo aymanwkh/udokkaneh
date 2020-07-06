@@ -96,7 +96,6 @@ export const confirmOrder = (order: iOrder) => {
   const newOrder = {
     ...order,
     userId: firebase.auth().currentUser?.uid,
-    status: 'n',
     isArchived: false,
     time: firebase.firestore.FieldValue.serverTimestamp()
   }
@@ -125,7 +124,7 @@ export const mergeOrders = (order1: iOrder, order2: iOrder) => {
         ...basket[found],
         quantity: newQuantity,
         status,
-        gross: status === 'f' ? Math.round(p.actual * (p.weight || p.purchased)) : Math.round((p.actual || 0) * (p.weight || p.purchased)) + Math.round(p.price * addQuantity(newQuantity, -1 * p.purchased)),
+        gross: status === 'f' ? Math.round((p.actual ?? 0) * (p.weight || p.purchased)) : Math.round((p.actual || 0) * (p.weight || p.purchased)) + Math.round(p.price * addQuantity(newQuantity, -1 * p.purchased)),
       }  
     }
     basket.splice(found === -1 ? basket.length : found, found === -1 ? 0 : 1, newItem)
@@ -167,14 +166,17 @@ export const addOrderRequest = (order: iOrder, type: string, mergedOrder?: iOrde
   batch.commit()
 }
 
-export const registerUser = async (userInfo: iUserInfo, password: string) => {
-  await firebase.auth().createUserWithEmailAndPassword(userInfo.mobile + '@gmail.com', userInfo.mobile.substring(9, 2) + password)
+export const registerUser = async (mobile: string, name: string, storeName: string, locationId: string, password: string) => {
+  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
   let colors = []
   for (var i = 0; i < 4; i++){
     colors.push(randomColors[Number(password.charAt(i))].name)
   }
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).set({
-    ...userInfo,
+    mobile,
+    name,
+    storeName,
+    locationId,
     colors,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
