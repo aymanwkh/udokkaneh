@@ -146,6 +146,9 @@ export interface iDiscount {
   value: number,
   type: string
 }
+export interface iAlarm {
+  
+}
 export interface iState {
   user?: firebase.User,
   userInfo?: iUserInfo,
