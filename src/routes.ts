@@ -25,7 +25,7 @@ import Advert from './pages/advert'
 import EditOrder from './pages/edit-order'
 import Friends from './pages/friends'
 
-export default [
+const routes = [
   {
     path: '/',
     component: Home,
@@ -149,5 +149,7 @@ export default [
     path: '(.*)',
     component: NotFoundPage,
   },
-
 ]
+
+
+export default routes
