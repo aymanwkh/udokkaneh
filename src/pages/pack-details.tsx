@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react'
+import { useContext, useEffect, useState, useRef } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Toolbar, Icon, Actions, ActionsButton } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import RatingStars from './rating-stars'
@@ -192,7 +192,7 @@ const PackDetails = (props: iProps) => {
       {props.type === 'c' && pack?.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
       <Actions ref={packActions}>
         {props.type === 'c' ? 
-          <React.Fragment>
+          <>
             <ActionsButton onClick={() => handleFavorite()}>{pack?.productId && state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
             {pack?.isOffer && state.userInfo?.friends?.find(f => f.status === 'r') ? 
               <ActionsButton onClick={() => handleNotifyFriends()}>{labels.notifyFriends}</ActionsButton>
@@ -206,7 +206,7 @@ const PackDetails = (props: iProps) => {
             {otherPacks.length === 0 ? '' :
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack?.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
             }
-          </React.Fragment>
+          </>
         : ''}
         {props.type === 'o' && alarmTypes.map(p =>
           p.isAvailable === 0 || p.isAvailable === isAvailable ?

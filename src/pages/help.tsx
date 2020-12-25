@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { StoreContext } from '../data/store'
 import { Page, Navbar, Block, Icon, Toolbar } from 'framework7-react'
 import labels from '../data/labels'
@@ -32,12 +32,12 @@ const Help = (props: iProps) => {
         <Icon color="red" material="warning"></Icon>
         <p className="note">{helpNote}</p>
         {props.id === 'o' &&
-          <React.Fragment>
+          <>
             <p className="help1">{feesNote}</p>
             {userLocation && userLocation.fees > 0 && <p className="help1">{`${locationFeesNote}${userLocation.name}: ${(userLocation.fees / 100).toFixed(2)}`}</p>}
             <p className="help2">{invitationsNote}</p>
             <p className="help2">{ratingsNote}</p>
-          </React.Fragment>
+          </>
         }
       </Block>
       <Toolbar bottom>

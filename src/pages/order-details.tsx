@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton, Badge } from 'framework7-react'
 import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
@@ -15,16 +15,16 @@ interface iExtendedOrderPack extends iOrderPack {
   statusNote: string
 }
 const OrderDetails = (props: iProps) => {
-  const { state } = React.useContext(StoreContext)
-  const [error, setError] = React.useState('')
-  const [order, setOrder] = React.useState(() => state.orders.find(o => o.id === props.id))
-  const [orderBasket, setOrderBasket] = React.useState<iExtendedOrderPack[]>([])
-  const [lastOrder, setLastOrder] = React.useState<iOrder | undefined>(undefined)
-  const orderActions = React.useRef<Actions>(null)
-  React.useEffect(() => {
+  const { state } = useContext(StoreContext)
+  const [error, setError] = useState('')
+  const [order, setOrder] = useState(() => state.orders.find(o => o.id === props.id))
+  const [orderBasket, setOrderBasket] = useState<iExtendedOrderPack[]>([])
+  const [lastOrder, setLastOrder] = useState<iOrder | undefined>(undefined)
+  const orderActions = useRef<Actions>(null)
+  useEffect(() => {
     setOrder(() => state.orders.find(o => o.id === props.id))
   }, [state.orders, props.id])
-  React.useEffect(() => {
+  useEffect(() => {
     setOrderBasket(() => order ? order.basket.map(p => {
       const priceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 100).toFixed(2)}, ${labels.currentPrice}: ${(p.actual / 100).toFixed(2)}` : `${labels.unitPrice}: ${(p.price / 100).toFixed(2)}`
       const statusNote = `${orderPackStatus.find(s => s.id === p.status)?.name} ${p.overPriced ? labels.overPricedNote : ''}`
@@ -41,7 +41,7 @@ const OrderDetails = (props: iProps) => {
     })
   }, [order, state.orders])
  
-  React.useEffect(() => {
+  useEffect(() => {
     if (error) {
       showError(error)
       setError('')

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Icon } from 'framework7-react'
 
 interface iProps {
@@ -37,9 +37,9 @@ const RatingStars = (props: iProps) => {
     return stars
   })
   return(
-    <React.Fragment>
+    <>
       {props.count > 0 ? '(' + props.count + ')' : ''}{stars}
-    </React.Fragment>
+    </>
   )
 }
 
