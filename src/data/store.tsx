@@ -1,4 +1,3 @@
-import React from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import { iState, iContext, iCategory, iPack, iPackPrice, iAdvert, iPasswordRequest, iOrder } from './interfaces'
