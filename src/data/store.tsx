@@ -1,11 +1,11 @@
-import { createContext, useReducer, useEffect } from 'react'
+import { createContext, useReducer, useEffect, ReactElement } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import { iState, iContext, iCategory, iPack, iPackPrice, iAdvert, iPasswordRequest, iOrder } from './interfaces'
 
 export const StoreContext = createContext({} as iContext)
 
-const Store = (props: any) => {
+const Store = ({ children }: { children: ReactElement }) => {
   const initState: iState = {
     categories: [], 
     basket: [], 
@@ -155,7 +155,7 @@ const Store = (props: any) => {
   }, [])
   return (
     <StoreContext.Provider value={{state, dispatch}}>
-      {props.children}
+      {children}
     </StoreContext.Provider>
   )
 }
