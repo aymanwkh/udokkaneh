@@ -1,11 +1,13 @@
 import { IonPage } from '@ionic/react';
-import BottomToolbar from './ibottom-toolbar'
+import Footer from './ifooter'
+import Header from './iheader'
 
 const Home = () => {
   return (
     <IonPage>
+      <Header />
       Home
-      <BottomToolbar />
+      <Footer />
     </IonPage>
   )
 }

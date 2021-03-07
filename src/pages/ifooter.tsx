@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom'
 interface Props {
   isHome?: string
 }
-const BottomToolbar = (props: Props) => {
+const Footer = (props: Props) => {
   const { state } = useContext(StoreContext)
   const history = useHistory()
   return (
@@ -29,5 +29,5 @@ const BottomToolbar = (props: Props) => {
   );
 }
 
-export default BottomToolbar
+export default Footer
 
