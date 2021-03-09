@@ -164,6 +164,7 @@ export interface iDiscount {
 export interface iState {
   user?: firebase.User,
   userInfo?: iUserInfo,
+  menuOpen?: boolean,
   customerInfo?: iCustomerInfo,
   categories: iCategory[],
   basket: iBasketPack[],

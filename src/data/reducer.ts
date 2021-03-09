@@ -78,15 +78,9 @@ const Reducer = (state: iState, action: iAction) => {
     case 'SET_BASKET':
       return {...state, basket: action.payload}
     case 'LOAD_ORDER_BASKET':
-      return {
-        ...state,
-        orderBasket: action.payload.basket
-      }
+      return {...state, orderBasket: action.payload.basket}
     case 'CLEAR_ORDER_BASKET':
-      return {
-        ...state,
-        orderBasket: []
-      }
+      return {...state, orderBasket: []}
     case 'INCREASE_ORDER_QUANTITY':
       if (action.payload.packInfo.isDivided) {
         if (action.payload.quantity >= 1) {
@@ -142,60 +136,29 @@ const Reducer = (state: iState, action: iAction) => {
       packs.splice(packIndex, 1, pack)
       return {...state, orderBasket: packs}
     case 'LOGIN':
-      return {
-        ...state,
-        user: action.payload
-      }
+      return {...state, user: action.payload}
     case 'LOGOUT':
-      return {
-        ...state,
-        user: undefined
-      }
+      return {...state, user: undefined}
     case 'SET_USER_INFO':
-      return {
-        ...state,
-        userInfo: action.payload
-      }
+      return {...state, userInfo: action.payload}
     case 'SET_CUSTOMER_INFO':
-      return {
-        ...state,
-        customerInfo: action.payload
-      }
+      return {...state, customerInfo: action.payload}
     case 'SET_ORDERS':
-      return {
-        ...state,
-        orders: action.payload
-      }
+      return {...state, orders: action.payload}
     case 'SET_PACKS':
-      return {
-        ...state,
-        packs: action.payload
-      }
+      return {...state, packs: action.payload}
     case 'SET_CATEGORIES':
-      return {
-        ...state,
-        categories: action.payload
-      }
+      return {...state, categories: action.payload}
     case 'SET_PACK_PRICES':
-      return {
-        ...state,
-        packPrices: action.payload
-      }
+      return {...state, packPrices: action.payload}
     case 'SET_ADVERTS':
-      return {
-        ...state,
-        adverts: action.payload
-      }
+      return {...state, adverts: action.payload}
     case 'SET_LOCATIONS':
-      return {
-        ...state,
-        locations: action.payload
-      }
+      return {...state, locations: action.payload}
     case 'SET_PASSWORD_REQUESTS':
-      return {
-        ...state,
-        passwordRequests: action.payload
-      }
+      return {...state, passwordRequests: action.payload}
+    case 'OPEN_MENU':
+      return {...state, menuOpen: !state.menuOpen}
     default:
       return state
   }
