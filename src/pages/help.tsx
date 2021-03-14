@@ -4,11 +4,11 @@ import { Page, Navbar, Block, Icon, Toolbar } from 'framework7-react'
 import labels from '../data/labels'
 import BottomToolbar from './bottom-toolbar'
 
-interface iProps {
+interface Props {
   id: string
 }
 
-const Help = (props: iProps) => {
+const Help = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [userLocation] = useState(() => state.locations.find(l => l.id === state.userInfo?.locationId))
   const [helpNote] = useState(() => {

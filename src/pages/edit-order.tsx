@@ -5,16 +5,16 @@ import { editOrder, showMessage, showError, getMessage, quantityDetails } from '
 import labels from '../data/labels'
 import BottomToolbar from './bottom-toolbar'
 import { setup } from '../data/config'
-import { iOrderPack } from '../data/interfaces'
+import { OrderPack } from '../data/interfaces'
 
-interface iProps {
+interface Props {
   id: string
 }
-const EditOrder = (props: iProps) => {
+const EditOrder = (props: Props) => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [order] = useState(() => state.orders.find(o => o.id === props.id))
-  const [orderBasket, setOrderBasket] = useState<iOrderPack[]>([])
+  const [orderBasket, setOrderBasket] = useState<OrderPack[]>([])
   const [total, setTotal] = useState(0)
   const [overLimit, setOverLimit] = useState(false)
   const [hasChanged, setHasChanged] = useState(false)

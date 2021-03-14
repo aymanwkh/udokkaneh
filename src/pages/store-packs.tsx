@@ -7,14 +7,14 @@ import 'moment/locale/ar'
 import labels from '../data/labels'
 import { storeSummary } from '../data/config'
 import { productOfText } from '../data/actions'
-import { iPackPrice } from '../data/interfaces'
+import { PackPrice } from '../data/interfaces'
 
-interface iProps {
+interface Props {
   type: string
 }
-const StorePacks = (props: iProps) => {
+const StorePacks = (props: Props) => {
   const { state } = useContext(StoreContext)
-  const [storePacks, setStorePacks] = useState<iPackPrice[]>([])
+  const [storePacks, setStorePacks] = useState<PackPrice[]>([])
   useEffect(() => {
     setStorePacks(() => {
       const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo?.storeId)

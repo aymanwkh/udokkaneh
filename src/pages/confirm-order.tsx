@@ -4,17 +4,17 @@ import { StoreContext } from '../data/store'
 import { confirmOrder, showMessage, showError, getMessage, quantityText, getBasket } from '../data/actions'
 import labels from '../data/labels'
 import { setup } from '../data/config'
-import { iBasketPack, iDiscount, iBigBasketPack } from '../data/interfaces'
+import { BasketPack, Discount, BigBasketPack } from '../data/interfaces'
 
 const ConfirmOrder = () => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [basket, setBasket] = useState<iBigBasketPack[]>([])
+  const [basket, setBasket] = useState<BigBasketPack[]>([])
   const [total, setTotal] = useState(0)
   const [fixedFees, setFixedFees] = useState(0)
   const [fraction, setFraction] = useState(0)
-  const [discount, setDiscount] = useState<iDiscount>()
-  const [weightedPacks, setWeightedPacks] = useState<iBasketPack[]>([])
+  const [discount, setDiscount] = useState<Discount>()
+  const [weightedPacks, setWeightedPacks] = useState<BasketPack[]>([])
   const [locationFees] = useState(() => state.locations.find(l => l.id === state.userInfo?.locationId)?.fees ?? 0)
   const [deliveryFees] = useState(state.customerInfo?.deliveryFees ?? locationFees)
   useEffect(() => {

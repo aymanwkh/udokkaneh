@@ -1,13 +1,13 @@
 import { useContext, useState, useEffect } from 'react'
 import { Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { randomColors } from '../data/config'
+import { randomColors, setup } from '../data/config'
 import labels from '../data/labels'
-import { iCategory } from '../data/interfaces'
+import { Category } from '../data/interfaces'
 
 const MainCategories = () => {
   const { state } = useContext(StoreContext)
-  const [categories, setCategories] = useState<iCategory[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   useEffect(() => {
     setCategories(() => {
       const categories = state.categories.filter(c => c.parentId === '0')
@@ -28,7 +28,7 @@ const MainCategories = () => {
       {categories.map(c => {
         return (
           <Button
-            text={c.name}
+            text={setup.locale === 'en' ? c.name_e : c.name}
             href={`/categories/${c.id}`} 
             large 
             fill 

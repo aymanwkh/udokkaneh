@@ -5,12 +5,12 @@ import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 import { alarmTypes } from '../data/config'
 
-interface iProps {
+interface Props {
   alarmType: string,
   packId: string
 }
 
-const AddAlarm = (props: iProps) => {
+const AddAlarm = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.packId))

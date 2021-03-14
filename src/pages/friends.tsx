@@ -5,12 +5,12 @@ import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { deleteFriend, getMessage, showError, showMessage } from '../data/actions'
 import { friendStatus } from '../data/config'
-import { iFriend } from '../data/interfaces'
+import { Friend } from '../data/interfaces'
 
 const Friends = () => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [friends, setFriends] = useState<iFriend[]>([])
+  const [friends, setFriends] = useState<Friend[]>([])
   useEffect(() => {
     setFriends(() => {
       const friends = state.userInfo?.friends?.slice() || []

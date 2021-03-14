@@ -3,22 +3,24 @@ import { f7, Button, Block, Page, Navbar, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import BottomToolbar from './bottom-toolbar'
 import labels from '../data/labels'
-import { randomColors } from '../data/config'
-import { iCategory } from '../data/interfaces'
+import { randomColors, setup } from '../data/config'
+import { Category } from '../data/interfaces'
 
-interface iProps {
+interface Props {
   id: string
 } 
 
-const Categories = (props: iProps) => {
+const Categories = (props: Props) => {
   const { state } = useContext(StoreContext)
-  const [categories, setCategories] = useState<iCategory[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [currentCategory, setCurrentCategory] = useState<Category | undefined>()
   useEffect(() => {
     setCategories(() => {
       const categories = state.categories.filter(c => c.parentId === props.id)
       return categories.sort((c1, c2) => c1.ordering - c2.ordering)
     })
-  }, [state.categories, state.packs, props.id])
+    setCurrentCategory(() => state.categories.find(c => c.id === props.id))
+  }, [state.categories, props.id])
   useEffect(() => {
     if (state.packs.length === 0) {
       f7.dialog.preloader('')
@@ -30,7 +32,7 @@ const Categories = (props: iProps) => {
   let i = 0
   return(
     <Page>
-      <Navbar title={state.categories.find(c => c.id === props.id)?.name} backLink={labels.back} />
+      <Navbar title={setup.locale === 'en' ? currentCategory?.name_e : currentCategory?.name} backLink={labels.back} />
       <Block>
         <Button 
             text={labels.allProducts}
@@ -43,7 +45,7 @@ const Categories = (props: iProps) => {
         {categories.map(c => {
           return (
             <Button 
-              text={c.name}
+              text={setup.locale === 'en' ? c.name_e : c.name}
               large 
               fill 
               className="sections" 

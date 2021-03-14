@@ -6,11 +6,11 @@ import 'moment/locale/ar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { orderStatus } from '../data/config'
-import { iOrder } from '../data/interfaces'
+import { Order } from '../data/interfaces'
 
 const OrdersList = () => {
   const { state } = useContext(StoreContext)
-  const [orders, setOrders] = useState<iOrder[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
   useEffect(() => {
     setOrders(() => {
       const orders = state.orders.filter(o => ['n', 'a', 'e', 'u', 'f', 'p', 'd'].includes(o.status))

@@ -7,10 +7,10 @@ import { deleteNotification, getMessage, showError, showMessage } from '../data/
 import moment from 'moment'
 import 'moment/locale/ar'
 
-interface iProps {
+interface Props {
   id: string
 }
-const NotificationDetails = (props: iProps) => {
+const NotificationDetails = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [notification] = useState(() => state.userInfo?.notifications?.find(n => n.id === props.id))

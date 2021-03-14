@@ -57,7 +57,7 @@
 }
 
 .logo {
-  width: 120px;
+  width: 150px;
   margin-bottom: -10px;
 }
 
@@ -208,4 +208,8 @@
 .card-footer {
   padding-top: 0;
   height: 2rem;
+}
+
+.navbar-bg {
+  background-color: white;
 }

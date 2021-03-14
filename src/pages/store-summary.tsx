@@ -5,14 +5,14 @@ import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { randomColors, storeSummary } from '../data/config'
 
-interface iExtendedSections {
+interface ExtendedSections {
   id: string,
   name: string,
   count: number
 }
 const StoreSummary = () => {
   const { state } = useContext(StoreContext)
-  const [sections, setSections] = useState<iExtendedSections[]>([])
+  const [sections, setSections] = useState<ExtendedSections[]>([])
   useEffect(() => {
     setSections(() => {
       const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo?.storeId)

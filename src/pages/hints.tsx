@@ -4,16 +4,16 @@ import BottomToolbar from './bottom-toolbar'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
-import { iPack } from '../data/interfaces'
+import { Pack } from '../data/interfaces'
 
-interface iProps {
+interface Props {
   id: string,
   type: string
 }
-const Hints = (props: iProps) => {
+const Hints = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
-  const [packs, setPacks] = useState<iPack[]>([])
+  const [packs, setPacks] = useState<Pack[]>([])
   useEffect(() => {
     setPacks(() => {
       let packs = state.packs.filter(p => 

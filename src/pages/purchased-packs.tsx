@@ -7,28 +7,14 @@ import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { showMessage, showError, getMessage, rateProduct } from '../data/actions'
-import { iOrder } from '../data/interfaces'
-
-interface iPurchasedPack {
-  packId: string,
-  productId: string,
-  productName: string,
-  productAlias: string,
-  packName: string,
-  imageUrl: string,
-  bestPrice: number,
-  lastPrice: number,
-  quantity: number,
-  lastQuantity: number,
-  lastTime: Date
-}
+import { Order, PurchasedPack } from '../data/interfaces'
 
 const PurchasedPacks = () => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-	const [purchasedPacks, setPurchasedPacks] = useState<iPurchasedPack[]>([])
-  const [deliveredOrders, setDeliveredOrders] = useState<iOrder[]>([])
-  const [currentPack, setCurrentPack] = useState<iPurchasedPack | undefined>(undefined)
+	const [purchasedPacks, setPurchasedPacks] = useState<PurchasedPack[]>([])
+  const [deliveredOrders, setDeliveredOrders] = useState<Order[]>([])
+  const [currentPack, setCurrentPack] = useState<PurchasedPack | undefined>(undefined)
   const actionsList = useRef<Actions>(null)
   useEffect(() => {
     if (error) {
@@ -43,7 +29,7 @@ const PurchasedPacks = () => {
     })
   }, [state.orders])
 	useEffect(() => {
-		let packsArray: iPurchasedPack[] = []
+		let packsArray: PurchasedPack[] = []
 		deliveredOrders.forEach(o => {
 			o.basket.forEach(p => {
         const found = packsArray.findIndex(pa => pa.packId === p.packId)
@@ -88,7 +74,7 @@ const PurchasedPacks = () => {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
-  const handleActions = (pack: iPurchasedPack)=> {
+  const handleActions = (pack: PurchasedPack)=> {
     setCurrentPack(pack)
     actionsList.current?.open()
   }

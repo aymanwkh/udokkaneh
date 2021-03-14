@@ -1,12 +1,12 @@
 import { createContext, useReducer, useEffect, ReactElement } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import { iState, iContext, iCategory, iPack, iPackPrice, iAdvert, iPasswordRequest, iOrder } from './interfaces'
+import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Order } from './interfaces'
 
-export const StoreContext = createContext({} as iContext)
+export const StoreContext = createContext({} as Context)
 
 const Store = ({ children }: { children: ReactElement }) => {
-  const initState: iState = {
+  const initState: State = {
     categories: [], 
     basket: [], 
     orders: [],
@@ -21,11 +21,12 @@ const Store = ({ children }: { children: ReactElement }) => {
 
   useEffect(() => {
     const unsubscribeCategories = firebase.firestore().collection('categories').where('isActive', '==', true).onSnapshot(docs => {
-      let categories: iCategory[] = []
+      let categories: Category[] = []
       docs.forEach(doc => {
         categories.push({
           id: doc.id,
           name: doc.data().name,
+          name_e: doc.data().name_e,
           parentId: doc.data().parentId,
           ordering: doc.data().ordering,
           isLeaf: doc.data().isLeaf
@@ -36,8 +37,8 @@ const Store = ({ children }: { children: ReactElement }) => {
       unsubscribeCategories()
     })  
     const unsubscribePacks = firebase.firestore().collection('packs').where('price', '>', 0).onSnapshot(docs => {
-      let packs: iPack[] = []
-      let packPrices: iPackPrice[] = []
+      let packs: Pack[] = []
+      let packPrices: PackPrice[] = []
       docs.forEach(doc => {
         packs.push({
           id: doc.id,
@@ -61,7 +62,7 @@ const Store = ({ children }: { children: ReactElement }) => {
           closeExpired: doc.data().closeExpired
         })
         if (doc.data().prices) {
-          doc.data().prices.forEach((p: iPackPrice) => {
+          doc.data().prices.forEach((p: PackPrice) => {
             packPrices.push({...p, packId: doc.id})
           })
         }
@@ -72,7 +73,7 @@ const Store = ({ children }: { children: ReactElement }) => {
       unsubscribePacks()
     })
     const unsubscribeAdverts = firebase.firestore().collection('adverts').where('isActive', '==', true).onSnapshot(docs => {
-      let adverts: iAdvert[] = []
+      let adverts: Advert[] = []
       docs.forEach(doc => {
         adverts.push({
           id: doc.id,
@@ -93,7 +94,7 @@ const Store = ({ children }: { children: ReactElement }) => {
       unsubscribeLocations()
     })  
     const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
-      let passwordRequests: iPasswordRequest[] = []
+      let passwordRequests: PasswordRequest[] = []
       docs.forEach(doc => {
         passwordRequests.push({
           id: doc.id,
@@ -127,7 +128,7 @@ const Store = ({ children }: { children: ReactElement }) => {
           unsubscribeCustomer()
         })  
         const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
-          let orders: iOrder[] = []
+          let orders: Order[] = []
           docs.forEach(doc => {
             orders.push({
               id: doc.id,

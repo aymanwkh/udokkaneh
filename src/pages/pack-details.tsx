@@ -6,22 +6,22 @@ import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText, notifyFriends } from '../data/actions'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
-import { iPack } from '../data/interfaces'
+import { Pack } from '../data/interfaces'
 
-interface iProps {
+interface Props {
   id: string,
   type: string
 }
-const PackDetails = (props: iProps) => {
+const PackDetails = (props: Props) => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
   const [isAvailable, setIsAvailable] = useState(-1)
   const [subPackInfo, setSubPackInfo] = useState('')
   const [bonusPackInfo, setBonusPackInfo] = useState('')
-  const [otherProducts, setOtherProducts] = useState<iPack[]>([])
-  const [otherOffers, setOtherOffers] = useState<iPack[]>([])
-  const [otherPacks, setOtherPacks] = useState<iPack[]>([])
+  const [otherProducts, setOtherProducts] = useState<Pack[]>([])
+  const [otherOffers, setOtherOffers] = useState<Pack[]>([])
+  const [otherPacks, setOtherPacks] = useState<Pack[]>([])
   const offerActions = useRef<Actions>(null)
   const packActions = useRef<Actions>(null)
   useEffect(() => {

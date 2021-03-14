@@ -6,12 +6,12 @@ import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { readNotification, getMessage, showError } from '../data/actions'
-import { iNotification } from '../data/interfaces'
+import { Notification } from '../data/interfaces'
 
 const Notifications = () => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [notifications, setNotifications] = useState<iNotification[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
     const notifications = state.userInfo?.notifications?.slice()
     if (notifications) {

@@ -3,11 +3,12 @@ import { f7, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { logout } from '../data/actions'
 import labels from '../data/labels'
-import { iNotification } from '../data/interfaces'
+import { Notification } from '../data/interfaces'
+import { setup } from '../data/config'
 
 const Panel = () => {
   const { state, dispatch } = useContext(StoreContext)
-  const [notifications, setNotifications] = useState<iNotification[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
     setNotifications(() => state.userInfo?.notifications?.filter(n => n.status === 'n') || [])
   }, [state.userInfo])
@@ -15,7 +16,7 @@ const Panel = () => {
     logout()
     dispatch({type: 'LOGOUT'})
     f7.views.main.router.navigate('/home/', {reloadAll: true})
-    f7.panel.close('right') 
+    f7.panel.close(setup.locale === 'en' ? 'left' : 'right') 
     dispatch({type: 'CLEAR_BASKET'})
   }
   return(

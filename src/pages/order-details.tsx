@@ -5,21 +5,21 @@ import { StoreContext } from '../data/store'
 import { cancelOrder, mergeOrders, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
 import { orderPackStatus } from '../data/config'
-import { iOrder, iOrderPack } from '../data/interfaces'
+import { Order, OrderPack } from '../data/interfaces'
 
-interface iProps {
+interface Props {
   id: string
 }
-interface iExtendedOrderPack extends iOrderPack {
+interface ExtendedOrderPack extends OrderPack {
   priceNote: string,
   statusNote: string
 }
-const OrderDetails = (props: iProps) => {
+const OrderDetails = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [error, setError] = useState('')
   const [order, setOrder] = useState(() => state.orders.find(o => o.id === props.id))
-  const [orderBasket, setOrderBasket] = useState<iExtendedOrderPack[]>([])
-  const [lastOrder, setLastOrder] = useState<iOrder | undefined>(undefined)
+  const [orderBasket, setOrderBasket] = useState<ExtendedOrderPack[]>([])
+  const [lastOrder, setLastOrder] = useState<Order | undefined>(undefined)
   const orderActions = useRef<Actions>(null)
   useEffect(() => {
     setOrder(() => state.orders.find(o => o.id === props.id))

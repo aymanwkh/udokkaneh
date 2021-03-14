@@ -5,15 +5,15 @@ import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
 import { getChildren, productOfText } from '../data/actions'
-import { iPack } from '../data/interfaces'
+import { Pack } from '../data/interfaces'
 
-interface iProps {
+interface Props {
   id: string,
   type: string
 }
-const Packs = (props: iProps) => {
+const Packs = (props: Props) => {
   const { state } = useContext(StoreContext)
-  const [packs, setPacks] = useState<iPack[]>([])
+  const [packs, setPacks] = useState<Pack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === props.id))
   const [sortBy, setSortBy] = useState('v')
   const sortList = useRef<Actions>(null)

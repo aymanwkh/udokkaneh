@@ -3,11 +3,12 @@ import { StoreContext } from '../data/store'
 import { f7, Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
+import { setup } from '../data/config'
 
-interface iProps {
+interface Props {
   type: string
 }
-const StoreOwner = (props: iProps) => {
+const StoreOwner = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [name, setName] = useState('')
   const [error, setError] = useState('')
@@ -95,7 +96,7 @@ const StoreOwner = (props: iProps) => {
       setInprocess(false)
       showMessage(labels.registerSuccess)
       f7.views.current.router.back()
-      f7.panel.close('right') 
+      f7.panel.close(setup.locale === 'en' ? 'left' : 'right') 
     } catch (err){
       setInprocess(false)
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
