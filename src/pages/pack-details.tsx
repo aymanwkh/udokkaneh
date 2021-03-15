@@ -15,7 +15,7 @@ interface Props {
 const PackDetails = (props: Props) => {
   const { state, dispatch } = useContext(StoreContext)
   const [error, setError] = useState('')
-  const [pack] = useState(() => state.packs.find(p => p.id === props.id))
+  const [pack, setPack] = useState<Pack>()
   const [isAvailable, setIsAvailable] = useState(-1)
   const [subPackInfo, setSubPackInfo] = useState('')
   const [bonusPackInfo, setBonusPackInfo] = useState('')
@@ -24,6 +24,18 @@ const PackDetails = (props: Props) => {
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
   const offerActions = useRef<Actions>(null)
   const packActions = useRef<Actions>(null)
+  useEffect(() => {
+    setPack(() => {
+      const pack = state.packs.find(p => p.id === props.id)!
+      const trademarkInfo = state.trademarks.find(t => t.id === pack?.trademarkId)
+      const countryInfo = state.countries.find(c => c.id === pack?.countryId)
+      return {
+        ...pack,
+        trademarkName: setup.locale === 'en' ? trademarkInfo?.ename : trademarkInfo?.name,
+        countryName: setup.locale === 'en' ? countryInfo?.ename : countryInfo?.name
+      }
+    })
+  }, [state.packs, state.trademarks, state.countries, props.id])
   useEffect(() => {
     setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack?.id) ? 1 : -1)
   }, [state.packPrices, state.customerInfo, pack])
@@ -156,7 +168,7 @@ const PackDetails = (props: Props) => {
   }
   return (
     <Page>
-      <Navbar title={`${pack?.productName}${pack?.productAlias ? '-' + pack?.productAlias : ''}`} backLink={labels.back} />
+      <Navbar title={`${pack?.productName}${pack?.productEname ? '-' + pack?.productEname : ''}`} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <div className="price">
@@ -169,7 +181,7 @@ const PackDetails = (props: Props) => {
           <p className="card-title">{pack?.productDescription}</p>
         </CardContent>
         <CardFooter>
-          <p>{productOfText(pack?.trademark ?? '', pack?.country ?? '')}</p>
+          <p>{productOfText(pack?.trademarkName, pack?.countryName)}</p>
           <p><RatingStars rating={pack?.rating ?? 0} count={pack?.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>

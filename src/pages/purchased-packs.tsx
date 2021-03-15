@@ -47,7 +47,7 @@ const PurchasedPacks = () => {
             packId: p.packId,
             productId: p.productId,
             productName: p.productName,
-            productAlias: p.productAlias,
+            productEname: p.productEname,
             packName: p.packName,
             imageUrl: p.imageUrl,
             bestPrice: p.actual!,
@@ -88,7 +88,7 @@ const PurchasedPacks = () => {
 						<ListItem title={labels.noData} /> 
 					: purchasedPacks.map(p => 
 							<ListItem
-								title={`${p.productName}${p.productAlias ? '-' + p.productAlias : ''}`}
+								title={`${p.productName}${p.productEname ? '-' + p.productEname : ''}`}
 								subtitle={p.packName}
                 text={`${labels.bestPrice}: ${(p.bestPrice / 100).toFixed(2)}`}
                 footer={`${labels.lastTime}: ${moment(p.lastTime).fromNow()}`}

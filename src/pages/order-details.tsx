@@ -130,7 +130,7 @@ const OrderDetails = (props: Props) => {
           {orderBasket.map(p => 
             <ListItem 
               title={p.productName}
-              subtitle={p.productAlias}
+              subtitle={p.productEname}
               text={p.packName}
               footer={`${labels.status}: ${p.statusNote}`}
               after={(p.gross / 100).toFixed(2)}

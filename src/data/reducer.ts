@@ -10,7 +10,7 @@ const Reducer = (state: State, action: Action) => {
         packId: action.payload.id,
         productId: action.payload.productId,
         productName: action.payload.productName,
-        productAlias: action.payload.productAlias,
+        productEname: action.payload.productEname,
         packName: action.payload.name,
         imageUrl: action.payload.imageUrl,
         price: action.payload.price,
@@ -155,6 +155,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, adverts: action.payload}
     case 'SET_LOCATIONS':
       return {...state, locations: action.payload}
+    case 'SET_COUNTRIES':
+      return {...state, countries: action.payload}
     case 'SET_PASSWORD_REQUESTS':
       return {...state, passwordRequests: action.payload}
     case 'OPEN_MENU':

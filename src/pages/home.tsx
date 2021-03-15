@@ -31,10 +31,10 @@ const Home = () => {
           <Link iconMaterial="menu" panelOpen={setup.locale === 'en' ? 'left' : 'right'} iconBadge={notifications.length} badgeColor="red" />
         </NavLeft>
         <NavTitle sliding>
-          <img src="/logo2.png" alt="logo" className="logo" />
+          <img src={setup.locale === 'en' ? '/logo_e.png' : '/logo_a'} alt="logo" className="logo" />
         </NavTitle>
         <NavTitleLarge>
-          <img src="/logo2.png" alt="logo" className="logo" />
+          <img src={setup.locale === 'en' ? '/logo_e.png' : '/logo_a'} alt="logo" className="logo" />
         </NavTitleLarge>
       </Navbar>
       <Block>

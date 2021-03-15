@@ -14,6 +14,8 @@ const Store = ({ children }: { children: ReactElement }) => {
     packPrices: [],
     adverts: [],
     locations: [],
+    countries: [],
+    trademarks: [],
     passwordRequests: [],
     orderBasket: []
   }
@@ -26,7 +28,7 @@ const Store = ({ children }: { children: ReactElement }) => {
         categories.push({
           id: doc.id,
           name: doc.data().name,
-          name_e: doc.data().name_e,
+          ename: doc.data().ename,
           parentId: doc.data().parentId,
           ordering: doc.data().ordering,
           isLeaf: doc.data().isLeaf
@@ -45,7 +47,7 @@ const Store = ({ children }: { children: ReactElement }) => {
           name: doc.data().name,
           productId: doc.data().productId,
           productName: doc.data().productName,
-          productAlias: doc.data().productAlias,
+          productEname: doc.data().productEname,
           productDescription: doc.data().productDescription,
           imageUrl: doc.data().imageUrl,
           price: doc.data().price,
@@ -57,8 +59,8 @@ const Store = ({ children }: { children: ReactElement }) => {
           offerEnd: doc.data().offerEnd,
           weightedPrice: doc.data().weightedPrice,
           isDivided: doc.data().isDivided,
-          trademark: doc.data().trademark,
-          country: doc.data().country,
+          trademarkId: doc.data().trademarkId,
+          countryId: doc.data().countryId,
           closeExpired: doc.data().closeExpired
         })
         if (doc.data().prices) {
@@ -92,6 +94,11 @@ const Store = ({ children }: { children: ReactElement }) => {
       dispatch({type: 'SET_LOCATIONS', payload: doc.data()?.values})
     }, err => {
       unsubscribeLocations()
+    })  
+    const unsubscribeCountries = firebase.firestore().collection('lookups').doc('c').onSnapshot(doc => {
+      dispatch({type: 'SET_COUNTRIES', payload: doc.data()?.values})
+    }, err => {
+      unsubscribeCountries()
     })  
     const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
       let passwordRequests: PasswordRequest[] = []

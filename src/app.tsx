@@ -15,7 +15,7 @@ const app = () => {
         <Panel left={setup.locale === 'en'} right={setup.locale === 'ar'} reveal themeDark>
           <View url="/panel/"/>
         </Panel>
-        <View id="main-view" url="/" main className="safe-areas"/>
+        <View id="main-view" url="/" main className="safe-areas" pushState={true} />
       </App>
     </Store>
   )

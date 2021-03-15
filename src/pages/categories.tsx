@@ -32,7 +32,7 @@ const Categories = (props: Props) => {
   let i = 0
   return(
     <Page>
-      <Navbar title={setup.locale === 'en' ? currentCategory?.name_e : currentCategory?.name} backLink={labels.back} />
+      <Navbar title={setup.locale === 'en' ? currentCategory?.ename : currentCategory?.name} backLink={labels.back} />
       <Block>
         <Button 
             text={labels.allProducts}
@@ -45,7 +45,7 @@ const Categories = (props: Props) => {
         {categories.map(c => {
           return (
             <Button 
-              text={setup.locale === 'en' ? c.name_e : c.name}
+              text={setup.locale === 'en' ? c.ename : c.name}
               large 
               fill 
               className="sections" 

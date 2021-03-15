@@ -28,7 +28,7 @@ const MainCategories = () => {
       {categories.map(c => {
         return (
           <Button
-            text={setup.locale === 'en' ? c.name_e : c.name}
+            text={setup.locale === 'en' ? c.ename : c.name}
             href={`/categories/${c.id}`} 
             large 
             fill 

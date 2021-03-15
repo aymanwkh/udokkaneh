@@ -89,7 +89,7 @@ const EditOrder = (props: Props) => {
           {orderBasket.map(p =>
             <ListItem
               title={p.productName}
-              subtitle={p.productAlias}
+              subtitle={p.productEname}
               text={p.packName}
               footer={`${labels.price}: ${(p.gross / 100).toFixed(2)}`}
               after={p.packInfo ? '' : labels.unAvailableNote}

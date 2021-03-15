@@ -58,7 +58,7 @@ const labels: Label = {
   pricePlaceholder: 'Enter the price',
   logout: 'Logout', 
   mainPanelTitle: 'Main panel',
-  registerStoreOwner: 'Are you a store owner, register?',
+  registerStoreOwner: 'Store owner?, register now',
   address: 'Address',
   notFoundPageTitle: 'Page not found',
   notFoundPageError: 'Something wrong ... Page not found',

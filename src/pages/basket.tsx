@@ -75,7 +75,7 @@ const Basket = () => {
         {basket.map(p => 
           <ListItem
             title={p.productName}
-            subtitle={p.productAlias}
+            subtitle={p.productEname}
             text={p.packName}
             footer={`${labels.totalPrice}:${p.totalPriceText}`}
             key={p.packId}

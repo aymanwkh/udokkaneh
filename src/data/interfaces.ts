@@ -6,7 +6,7 @@ export interface Label {
 export interface Category {
   id: string,
   name: string,
-  name_e?: string,
+  ename?: string,
   parentId: string,
   ordering: number,
   isLeaf: boolean
@@ -20,7 +20,7 @@ export interface Pack {
   name: string,
   productId: string,
   productName: string,
-  productAlias: string,
+  productEname: string,
   productDescription: string,
   imageUrl: string,
   price: number,
@@ -41,10 +41,13 @@ export interface Pack {
   weightedPrice: number,
   isDivided: boolean,
   minStoreId?: string,
-  trademark: string,
-  country: string,
+  trademarkId?: string,
+  countryId: string,
   closeExpired: boolean,
-  ratingCount: number
+  ratingCount: number,
+  categoryName?: string,
+  trademarkName?: string,
+  countryName?: string
 }
 export interface PackPrice {
   storeId: string,
@@ -98,7 +101,7 @@ export interface BasketPack {
   packId: string,
   productId: string,
   productName: string,
-  productAlias: string,
+  productEname: string,
   packName: string,
   imageUrl: string,
   price: number,
@@ -152,7 +155,16 @@ export interface Location {
   name: string,
   fees: number,
   ordering: number
-
+}
+export interface Country {
+  id: string,
+  name: string,
+  ename?: string
+}
+export interface Trademark {
+  id: string,
+  name: string,
+  ename?: string
 }
 export interface PasswordRequest {
   id: string,
@@ -166,7 +178,7 @@ export interface PurchasedPack {
   packId: string,
   productId: string,
   productName: string,
-  productAlias: string,
+  productEname: string,
   packName: string,
   imageUrl: string,
   bestPrice: number,
@@ -187,6 +199,8 @@ export interface State {
   packPrices: PackPrice[],
   adverts: Advert[],
   locations: Location[],
+  countries: Country[],
+  trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
   orderBasket: OrderPack[]
 }

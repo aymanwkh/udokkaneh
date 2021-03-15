@@ -79,7 +79,7 @@ const ConfirmOrder = () => {
           packId: p.packId,
           productId: p.productId,
           productName: p.productName,
-          productAlias: p.productAlias,
+          productEname: p.productEname,
           packName: p.packName,
           imageUrl: p.imageUrl,
           price: p.price,
@@ -125,7 +125,7 @@ const ConfirmOrder = () => {
             <ListItem
               key={p.packId}
               title={p.productName}
-              subtitle={p.productAlias}
+              subtitle={p.productEname}
               text={p.packName}
               footer={`${labels.quantity}: ${quantityText(p.quantity)}`}
               after={p.totalPriceText}
