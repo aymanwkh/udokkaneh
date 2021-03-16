@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from 'react'
 import { f7, Button, Block, Page, Navbar, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import BottomToolbar from './bottom-toolbar'
+import Footer from './footer'
 import labels from '../data/labels'
 import { randomColors, setup } from '../data/config'
 import { Category } from '../data/interfaces'
@@ -57,7 +57,7 @@ const Categories = (props: Props) => {
         })}
       </Block>
       <Toolbar bottom>
-        <BottomToolbar isHome="1"/>
+        <Footer isHome="1"/>
       </Toolbar>
     </Page>
   )

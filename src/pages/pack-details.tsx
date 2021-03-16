@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Toolbar, Icon, Actions, ActionsButton } from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText, notifyFriends } from '../data/actions'
@@ -234,7 +234,7 @@ const PackDetails = (props: Props) => {
         {pack?.bonusPackId ? <ActionsButton onClick={() => addToBasket(pack?.bonusPackId)}>{bonusPackInfo}</ActionsButton> : ''}
       </Actions>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

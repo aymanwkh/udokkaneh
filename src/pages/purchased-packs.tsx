@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Actions, ActionsButton, Icon, Link } from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { f7, Block, Page, Navbar, List, ListItem, Actions, ActionsButton, Icon, Link, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import { StoreContext } from '../data/store'
 import { quantityText, addQuantity } from '../data/actions'
 import labels from '../data/labels'
@@ -120,7 +120,7 @@ const PurchasedPacks = () => {
         </ActionsButton>
       </Actions>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

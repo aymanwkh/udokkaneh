@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
-import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Icon, Stepper } from 'framework7-react'
+import { f7, Block, Fab, Page, Navbar, List, ListItem, Icon, Stepper, Toolbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { editOrder, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
-import BottomToolbar from './bottom-toolbar'
+import Footer from './footer'
 import { setup } from '../data/config'
 import { OrderPack } from '../data/interfaces'
 
@@ -121,7 +121,7 @@ const EditOrder = (props: Props) => {
         </Fab>
       }
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

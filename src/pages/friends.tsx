@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Button } from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { f7, Block, Page, Navbar, List, ListItem, Fab, Icon, Button, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { deleteFriend, getMessage, showError, showMessage } from '../data/actions'
@@ -60,7 +60,7 @@ const Friends = () => {
         <Icon material="add"></Icon>
       </Fab>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

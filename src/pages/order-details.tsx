@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Toolbar, Fab, Icon, Actions, ActionsButton, Badge } from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { f7, Block, Page, Navbar, List, ListItem, Fab, Icon, Actions, ActionsButton, Badge, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import { StoreContext } from '../data/store'
 import { cancelOrder, mergeOrders, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
@@ -171,7 +171,7 @@ const OrderDetails = (props: Props) => {
         : ''}
       </Actions>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

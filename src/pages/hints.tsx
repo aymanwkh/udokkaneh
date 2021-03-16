@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Badge } from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { Block, Page, Navbar, List, ListItem, Badge, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
@@ -64,7 +64,7 @@ const Hints = (props: Props) => {
         </List>
       </Block>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

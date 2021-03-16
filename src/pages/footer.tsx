@@ -1,12 +1,12 @@
 import { useContext } from 'react'
-import { Icon, Link, Badge} from 'framework7-react'
+import { Icon, Link, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 
 interface Props {
   isHome?: string
 }
 
-const BottomToolbar = (props: Props) => {
+const Footer = (props: Props) => {
   const { state } = useContext(StoreContext)
   const searchHome = props.isHome === '1' ? 'search' : 'home'
   return (
@@ -21,4 +21,4 @@ const BottomToolbar = (props: Props) => {
   )
 }
 
-export default BottomToolbar
+export default Footer

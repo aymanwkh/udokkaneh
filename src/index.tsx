@@ -11,8 +11,8 @@ import Framework7React from 'framework7-react'
 import App from './app'
 
 // Framework7 styles
-// import 'framework7/css/framework7.bundle.rtl.min.css'
-import 'framework7/css/framework7.bundle.min.css'
+import 'framework7/css/framework7.bundle.rtl.min.css'
+// import 'framework7/css/framework7.bundle.min.css'
 
 // Icons
 // import './css/icons.css'

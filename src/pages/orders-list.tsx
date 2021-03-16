@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar} from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { StoreContext } from '../data/store'
@@ -37,7 +37,7 @@ const OrdersList = () => {
         </List>
       </Block>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

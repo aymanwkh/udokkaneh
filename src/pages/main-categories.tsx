@@ -25,19 +25,17 @@ const MainCategories = () => {
         className="sections" 
         color={randomColors[i++ % 10].name} 
       />
-      {categories.map(c => {
-        return (
-          <Button
-            text={setup.locale === 'en' ? c.ename : c.name}
-            href={`/categories/${c.id}`} 
-            large 
-            fill 
-            className="sections" 
-            color={randomColors[i++ % 10].name} 
-            key={c.id}
-          />
-        )
-      })}
+      {categories.map(c => 
+        <Button
+          text={setup.locale === 'en' ? c.ename : c.name}
+          href={`/categories/${c.id}`} 
+          large 
+          fill 
+          className="sections" 
+          color={randomColors[i++ % 10].name} 
+          key={c.id}
+        />
+      )}
     </>
   )
 

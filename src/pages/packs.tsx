@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect, useRef } from 'react'
-import { Block, Page, Navbar, List, ListItem, Toolbar, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { sortByList, setup } from '../data/config'
@@ -15,7 +15,7 @@ const Packs = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [packs, setPacks] = useState<Pack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === props.id))
-  const [sortBy, setSortBy] = useState('v')
+  const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))
   const sortList = useRef<Actions>(null)
   useEffect(() => {
     setPacks(() => {
@@ -36,7 +36,7 @@ const Packs = (props: Props) => {
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries])
   const handleSorting = (sortByValue: string) => {
-    setSortBy(sortByValue)
+    setSortBy(() => sortByList.find(s => s.id === sortByValue))
     switch(sortByValue){
       case 'p':
         setPacks([...packs].sort((p1, p2) => p1.price - p2.price))
@@ -80,7 +80,7 @@ const Packs = (props: Props) => {
           {packs.length > 1 &&
             <ListItem 
               title={labels.sortBy} 
-              after={sortByList.find(o => o.id === sortBy)?.name}
+              after={setup.locale === 'en' ? sortBy?.ename : sortBy?.name}
               onClick={() => sortList.current?.open()}
             />
           }
@@ -110,12 +110,12 @@ const Packs = (props: Props) => {
       <Actions ref={sortList}>
         <ActionsLabel>{labels.sortBy}</ActionsLabel>
         {sortByList.map(o => 
-          o.id === sortBy ? ''
-          : <ActionsButton key={o.id} onClick={() => handleSorting(o.id)}>{o.name}</ActionsButton>
+          o.id === sortBy?.id ? ''
+          : <ActionsButton key={o.id} onClick={() => handleSorting(o.id)}>{setup.locale === 'en' ? o.ename : o.name}</ActionsButton>
         )}
       </Actions>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

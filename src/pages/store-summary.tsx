@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, Toolbar, Button } from 'framework7-react'
-import BottomToolbar from './bottom-toolbar'
+import { Block, Page, Navbar, Button, Toolbar } from 'framework7-react'
+import Footer from './footer'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { randomColors, storeSummary } from '../data/config'
@@ -54,7 +54,7 @@ const StoreSummary = () => {
         )}
       </Block>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )

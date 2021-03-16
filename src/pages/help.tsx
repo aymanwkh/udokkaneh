@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { StoreContext } from '../data/store'
 import { Page, Navbar, Block, Icon, Toolbar } from 'framework7-react'
 import labels from '../data/labels'
-import BottomToolbar from './bottom-toolbar'
+import Footer from './footer'
 
 interface Props {
   id: string
@@ -41,7 +41,7 @@ const Help = (props: Props) => {
         }
       </Block>
       <Toolbar bottom>
-        <BottomToolbar/>
+        <Footer/>
       </Toolbar>
     </Page>
   )
