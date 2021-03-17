@@ -10,7 +10,7 @@ const Reducer = (state: State, action: Action) => {
         packId: action.payload.id,
         productId: action.payload.productId,
         productName: action.payload.productName,
-        productEname: action.payload.productEname,
+        productDescription: action.payload.productDescription,
         packName: action.payload.name,
         imageUrl: action.payload.imageUrl,
         price: action.payload.price,

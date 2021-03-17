@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Toolbar } from 'framework7-react'
+import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Toolbar, Preloader } from 'framework7-react'
 import Footer from './footer'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
@@ -27,38 +27,41 @@ const PackDetails = (props: Props) => {
   useEffect(() => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
-      const trademarkInfo = state.trademarks.find(t => t.id === pack?.trademarkId)
-      const countryInfo = state.countries.find(c => c.id === pack?.countryId)
+      const trademarkInfo = state.trademarks.find(t => t.id === pack.trademarkId)
+      const countryInfo = state.countries.find(c => c.id === pack.countryId)
       return {
         ...pack,
+        productName: setup.locale === 'en' ? pack.productEname : pack.productName,
+        productDescription: setup.locale === 'en' ? pack.productEdescription : pack.productDescription,
+        name: setup.locale === 'en' ? pack.ename : pack.name,
         trademarkName: setup.locale === 'en' ? trademarkInfo?.ename : trademarkInfo?.name,
         countryName: setup.locale === 'en' ? countryInfo?.ename : countryInfo?.name
       }
     })
   }, [state.packs, state.trademarks, state.countries, props.id])
   useEffect(() => {
-    setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack?.id) ? 1 : -1)
+    pack && setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack.id) ? 1 : -1)
   }, [state.packPrices, state.customerInfo, pack])
   useEffect(() => {
-    setSubPackInfo(() => {
-      if (pack?.subPackId) {
-        const price = Math.round(pack.price / (pack?.subQuantity ?? 0) * (pack?.subPercent ?? 0) * (1 + setup.profit))
-        return `${pack.productName} ${pack?.subPackName}(${(price / 100).toFixed(2)})`
+    pack && setSubPackInfo(() => {
+      if (pack.subPackId) {
+        const price = Math.round(pack.price / (pack.subQuantity ?? 0) * (pack.subPercent ?? 0) * (1 + setup.profit))
+        return `${pack.productName} ${pack.subPackName}(${(price / 100).toFixed(2)})`
       } else {
         return ''
       }  
     })
-    setBonusPackInfo(() => {
-      if (pack?.bonusPackId) {
+    pack && setBonusPackInfo(() => {
+      if (pack.bonusPackId) {
         const price = Math.round(pack.price / (pack.bonusQuantity ?? 0) * (pack.bonusPercent ?? 0) * (1 + setup.profit))
-        return `${pack?.bonusProductName} ${pack.bonusPackName}(${(price / 100).toFixed(2)})`
+        return `${pack.bonusProductName} ${pack.bonusPackName}(${(price / 100).toFixed(2)})`
       } else {
         return ''
       }  
     })
-    setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack?.categoryId && (pa.sales > pack.sales || pa.rating > pack.rating)))
-    setOtherOffers(() => state.packs.filter(pa => pa.productId === pack?.productId && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
-    setOtherPacks(() => state.packs.filter(pa => pa.productId === pack?.productId && pa.weightedPrice < pack.weightedPrice))
+    pack && setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack.categoryId && (pa.sales > pack.sales || pa.rating > pack.rating)))
+    pack && setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
+    pack && setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
   }, [pack, state.packs])
   useEffect(() => {
     if (error) {
@@ -67,6 +70,7 @@ const PackDetails = (props: Props) => {
     }
   }, [error])
   const addToBasket = (packId?: string) => {
+    if (!pack || !packId) return
     try{
       if (state.customerInfo?.isBlocked) {
         throw new Error('blockedUser')
@@ -75,24 +79,23 @@ const PackDetails = (props: Props) => {
         throw new Error('alreadyInBasket')
       }
       let foundPack = pack
-      let price = pack?.price ?? 0
+      let price = pack.price ?? 0
       let maxQuantity
-      if (packId !== pack?.id) {
-        foundPack = state.packs.find(p => p.id === packId)
-        if (packId === pack?.subPackId) {
-          price = Math.round((pack?.price ?? 0) / (pack?.subQuantity ?? 0) * (pack?.subPercent ?? 0) * (1 + setup.profit))
-          maxQuantity = (pack?.subQuantity ?? 0) - 1
-          if (pack?.bonusPackId) maxQuantity++
+      if (packId !== pack.id) {
+        foundPack = state.packs.find(p => p.id === packId)!
+        if (packId === pack.subPackId) {
+          price = Math.round((pack.price ?? 0) / (pack.subQuantity ?? 0) * (pack.subPercent ?? 0) * (1 + setup.profit))
+          maxQuantity = (pack.subQuantity ?? 0) - 1
+          if (pack.bonusPackId) maxQuantity++
         } else  {
-          price = Math.round((pack?.price ?? 0) / (pack?.bonusQuantity ?? 0) * (pack?.bonusPercent ?? 0) * (1 + setup.profit))
-          maxQuantity = pack?.bonusQuantity ?? 0
+          price = Math.round((pack.price ?? 0) / (pack.bonusQuantity ?? 0) * (pack.bonusPercent ?? 0) * (1 + setup.profit))
+          maxQuantity = pack.bonusQuantity ?? 0
         }
       }
       const purchasedPack = {
         ...foundPack,
         price,
-        maxQuantity,
-        offerId: pack?.id
+        maxQuantity
       }
       const orderLimit = state.customerInfo?.orderLimit ?? setup.orderLimit
       const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
@@ -147,7 +150,7 @@ const PackDetails = (props: Props) => {
     try{
       if (state.userInfo && pack) {
         updateFavorites(state.userInfo, pack.productId)
-        showMessage(state.userInfo?.favorites?.includes(pack?.productId) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)  
+        showMessage(state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)  
       }
 		} catch (err){
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
@@ -166,32 +169,33 @@ const PackDetails = (props: Props) => {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
+  if (!pack) return <Page><Preloader /></Page>
   return (
     <Page>
-      <Navbar title={`${pack?.productName}${pack?.productEname ? '-' + pack?.productEname : ''}`} backLink={labels.back} />
+      <Navbar title={pack.productName} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <div className="price">
-            {((pack?.price ?? 0) / 100).toFixed(2)}
+            {((pack.price ?? 0) / 100).toFixed(2)}
           </div>
         </CardHeader>
         <CardContent>
-          <p className="card-title">{`${pack?.name} ${pack?.closeExpired ? '(' + labels.closeExpired + ')' : ''}`}</p>
-          <img src={pack?.imageUrl} className="img-card" alt={labels.noImage} />
-          <p className="card-title">{pack?.productDescription}</p>
+          <p className="card-title">{`${pack.name} ${pack.closeExpired ? '(' + labels.closeExpired + ')' : ''}`}</p>
+          <img src={pack.imageUrl} className="img-card" alt={labels.noImage} />
+          <p className="card-title">{pack.productDescription}</p>
         </CardContent>
         <CardFooter>
-          <p>{productOfText(pack?.trademarkName, pack?.countryName)}</p>
-          <p><RatingStars rating={pack?.rating ?? 0} count={pack?.ratingCount ?? 0} /></p>
+          <p>{productOfText(pack.trademarkName, pack.countryName)}</p>
+          <p><RatingStars rating={pack.rating ?? 0} count={pack.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>
       {props.type === 'c' ? 
         <Fab 
           position="center-bottom" 
           slot="fixed" 
-          text={`${labels.addToBasket}${pack?.isOffer ? '*' : ''}`} 
+          text={`${labels.addToBasket}${pack.isOffer ? '*' : ''}`} 
           color="green" 
-          onClick={() => pack?.isOffer ? offerActions.current?.open() : addToBasket(pack?.id)}
+          onClick={() => pack.isOffer ? offerActions.current?.open() : addToBasket(pack.id)}
         >
           <Icon material="add"></Icon>
         </Fab>
@@ -201,22 +205,22 @@ const PackDetails = (props: Props) => {
           <Icon material="menu"></Icon>
         </Fab>
       : ''}
-      {props.type === 'c' && pack?.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
+      {props.type === 'c' && pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
       <Actions ref={packActions}>
         {props.type === 'c' ? 
           <>
-            <ActionsButton onClick={() => handleFavorite()}>{pack?.productId && state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
-            {pack?.isOffer && state.userInfo?.friends?.find(f => f.status === 'r') ? 
+            <ActionsButton onClick={() => handleFavorite()}>{pack.productId && state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
+            {pack.isOffer && state.userInfo?.friends?.find(f => f.status === 'r') ? 
               <ActionsButton onClick={() => handleNotifyFriends()}>{labels.notifyFriends}</ActionsButton>
             : ''}
             {otherProducts.length === 0 ? '' :
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack?.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
             }
             {otherOffers.length === 0 ? '' :
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack?.id}/type/o`)}>{labels.otherOffers}</ActionsButton>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/o`)}>{labels.otherOffers}</ActionsButton>
             }
             {otherPacks.length === 0 ? '' :
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack?.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
             }
           </>
         : ''}
@@ -229,9 +233,9 @@ const PackDetails = (props: Props) => {
         )}
       </Actions>
       <Actions ref={offerActions}>
-        <ActionsButton onClick={() => addToBasket(pack?.id)}>{labels.allOffer}</ActionsButton>
-        <ActionsButton onClick={() => addToBasket(pack?.subPackId)}>{subPackInfo}</ActionsButton>
-        {pack?.bonusPackId ? <ActionsButton onClick={() => addToBasket(pack?.bonusPackId)}>{bonusPackInfo}</ActionsButton> : ''}
+        <ActionsButton onClick={() => addToBasket(pack.id)}>{labels.allOffer}</ActionsButton>
+        <ActionsButton onClick={() => addToBasket(pack.subPackId)}>{subPackInfo}</ActionsButton>
+        {pack.bonusPackId ? <ActionsButton onClick={() => addToBasket(pack.bonusPackId)}>{bonusPackInfo}</ActionsButton> : ''}
       </Actions>
       <Toolbar bottom>
         <Footer/>

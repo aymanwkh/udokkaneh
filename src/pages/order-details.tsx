@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext, useRef } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Fab, Icon, Actions, ActionsButton, Badge, Toolbar } from 'framework7-react'
+import { f7, Block, Page, Navbar, List, ListItem, Fab, Icon, Actions, ActionsButton, Badge, Toolbar, Preloader } from 'framework7-react'
 import Footer from './footer'
 import { StoreContext } from '../data/store'
 import { cancelOrder, mergeOrders, addOrderRequest, showMessage, showError, getMessage, quantityDetails } from '../data/actions'
 import labels from '../data/labels'
-import { orderPackStatus } from '../data/config'
+import { orderPackStatus, setup } from '../data/config'
 import { Order, OrderPack } from '../data/interfaces'
 
 interface Props {
@@ -25,17 +25,21 @@ const OrderDetails = (props: Props) => {
     setOrder(() => state.orders.find(o => o.id === props.id))
   }, [state.orders, props.id])
   useEffect(() => {
-    setOrderBasket(() => order ? order.basket.map(p => {
+    order && setOrderBasket(() => order.basket.map(p => {
       const priceNote = p.actual && p.actual !== p.price ? `${labels.orderPrice}: ${(p.price / 100).toFixed(2)}, ${labels.currentPrice}: ${(p.actual / 100).toFixed(2)}` : `${labels.unitPrice}: ${(p.price / 100).toFixed(2)}`
-      const statusNote = `${orderPackStatus.find(s => s.id === p.status)?.name} ${p.overPriced ? labels.overPricedNote : ''}`
+      const statusInfo = orderPackStatus.find(s => s.id === p.status)
+      const statusNote = `${setup.locale === 'en' ? statusInfo?.ename : statusInfo?.name} ${p.overPriced ? labels.overPricedNote : ''}`
       return {
         ...p,
+        productName: setup.locale === 'en' ? p.productEname || '' : p.productName,
+        productDescription: setup.locale === 'en' ? p.productEdescription || '' : p.productDescription,
+        packName: setup.locale === 'en' ? p.packEname || '' : p.packName,
         priceNote,
         statusNote
       }
-    }) : [])
-    setLastOrder(() => {
-      const orders = state.orders.filter(o => o.id !== order?.id && !['c', 'm', 'r'].includes(o.status))
+    }))
+    order && setLastOrder(() => {
+      const orders = state.orders.filter(o => o.id !== order.id && !['c', 'm', 'r'].includes(o.status))
       orders.sort((o1, o2) => o2.time! > o1.time! ? -1 : 1)
       return ['n', 'a', 'e'].includes(orders[0]?.status) ? orders[0] : undefined
     })
@@ -52,7 +56,7 @@ const OrderDetails = (props: Props) => {
       if (state.customerInfo?.isBlocked) {
         throw new Error('blockedUser')
       }
-      if (order?.status !== 'n' && order?.requestType) {
+      if (order && order.status !== 'n' && order.requestType) {
         throw new Error('duplicateOrderRequest')
       }
       f7.views.current.router.navigate(`/edit-order/${order?.id}`)
@@ -117,10 +121,11 @@ const OrderDetails = (props: Props) => {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
+  if (!order) return <Page><Preloader /></Page>
   return(
     <Page>
       <Navbar title={labels.orderDetails} backLink={labels.back} />
-      {order && ['n', 'a', 'e'].includes(order.status) && 
+      {['n', 'a', 'e'].includes(order.status) && 
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => orderActions.current?.open()}>
           <Icon material="menu"></Icon>
         </Fab>
@@ -130,7 +135,7 @@ const OrderDetails = (props: Props) => {
           {orderBasket.map(p => 
             <ListItem 
               title={p.productName}
-              subtitle={p.productEname}
+              subtitle={p.productDescription}
               text={p.packName}
               footer={`${labels.status}: ${p.statusNote}`}
               after={(p.gross / 100).toFixed(2)}
@@ -138,37 +143,37 @@ const OrderDetails = (props: Props) => {
             >
               <div className="list-subtext1">{p.priceNote}</div>
               <div className="list-subtext2">{quantityDetails(p)}</div>
-              {p.closeExpired ? <Badge slot="text" color="red">{labels.closeExpired}</Badge> : ''}
+              {p.closeExpired && <Badge slot="text" color="red">{labels.closeExpired}</Badge>}
             </ListItem>
           )}
           <ListItem 
             title={labels.total} 
             className="total"
-            after={((order?.total ?? 0) / 100).toFixed(2)} 
+            after={((order.total ?? 0) / 100).toFixed(2)} 
           />
           <ListItem 
             title={labels.fixedFees} 
             className="fees" 
-            after={(((order?.fixedFees ?? 0) + (order?.deliveryFees ?? 0)) / 100).toFixed(2)} 
+            after={(((order.fixedFees ?? 0) + (order.deliveryFees ?? 0)) / 100).toFixed(2)} 
           />
           <ListItem 
             title={labels.discount} 
             className="discount" 
-            after={(((order?.discount?.value ?? 0) + (order?.fraction ?? 0)) / 100).toFixed(2)} 
+            after={(((order.discount?.value ?? 0) + (order.fraction ?? 0)) / 100).toFixed(2)} 
           /> 
           <ListItem 
             title={labels.net} 
             className="net" 
-            after={(((order?.total ?? 0) + (order?.fixedFees ?? 0) + (order?.deliveryFees ?? 0) - (order?.discount?.value ?? 0) - (order?.fraction ?? 0)) / 100).toFixed(2)} 
+            after={(((order.total ?? 0) + (order.fixedFees ?? 0) + (order.deliveryFees ?? 0) - (order.discount?.value ?? 0) - (order.fraction ?? 0)) / 100).toFixed(2)} 
           />
         </List>
       </Block>
       <Actions ref={orderActions}>
-        <ActionsButton onClick={() => handleEdit()}>{order?.status === 'n' ? labels.editBasket : labels.editBasketRequest}</ActionsButton>
-        <ActionsButton onClick={() => handleDelete()}>{order?.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
-        {order?.status === 'n' && lastOrder ? 
+        <ActionsButton onClick={() => handleEdit()}>{order.status === 'n' ? labels.editBasket : labels.editBasketRequest}</ActionsButton>
+        <ActionsButton onClick={() => handleDelete()}>{order.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
+        {order.status === 'n' && lastOrder && 
           <ActionsButton onClick={() => handleMerge()}>{lastOrder.status === 'n' ? labels.merge : labels.mergeRequest}</ActionsButton>
-        : ''}
+        }
       </Actions>
       <Toolbar bottom>
         <Footer/>

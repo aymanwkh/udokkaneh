@@ -13,13 +13,12 @@ interface Props {
 const Categories = (props: Props) => {
   const { state } = useContext(StoreContext)
   const [categories, setCategories] = useState<Category[]>([])
-  const [currentCategory, setCurrentCategory] = useState<Category | undefined>()
+  const [currentCategory] = useState<Category>(() => state.categories.find(c => c.id === props.id)!)
   useEffect(() => {
     setCategories(() => {
       const categories = state.categories.filter(c => c.parentId === props.id)
       return categories.sort((c1, c2) => c1.ordering - c2.ordering)
     })
-    setCurrentCategory(() => state.categories.find(c => c.id === props.id))
   }, [state.categories, props.id])
   useEffect(() => {
     if (state.packs.length === 0) {
@@ -32,7 +31,7 @@ const Categories = (props: Props) => {
   let i = 0
   return(
     <Page>
-      <Navbar title={setup.locale === 'en' ? currentCategory?.ename : currentCategory?.name} backLink={labels.back} />
+      <Navbar title={setup.locale === 'en' ? currentCategory.ename : currentCategory.name} backLink={labels.back} />
       <Block>
         <Button 
             text={labels.allProducts}

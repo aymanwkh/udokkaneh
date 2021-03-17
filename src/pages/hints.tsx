@@ -28,6 +28,9 @@ const Hints = (props: Props) => {
         const countryInfo = state.countries.find(c => c.id === p.countryId)
         return {
           ...p, 
+          name: setup.locale === 'en' ? p.ename : p.name,
+          productName: setup.locale === 'en' ? p.productEname : p.productName,
+          productDescription: setup.locale === 'en' ? p.productEdescription : p.productDescription,
           categoryName: setup.locale === 'en' ? categoryInfo?.ename : categoryInfo?.name,
           trademarkName: setup.locale === 'en' ? trademarkInfo?.ename : trademarkInfo?.name,
           countryName: setup.locale === 'en' ? countryInfo?.ename : countryInfo?.name,
@@ -47,15 +50,14 @@ const Hints = (props: Props) => {
               <ListItem
                 link={`/pack-details/${p.id}/type/c`}
                 title={p.productName}
-                subtitle={p.productEname}
+                subtitle={p.productDescription}
                 text={p.name}
                 footer={`${labels.category}: ${p.categoryName}`}
                 after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{p.productDescription}</div>
-                <div className="list-subtext2">{productOfText(p.trademarkName, p.countryName)}</div>
+                <div className="list-subtext1">{productOfText(p.trademarkName, p.countryName)}</div>
                 {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge> : ''}
                 {p.closeExpired && <Badge slot="text" color="red">{labels.closeExpired}</Badge>}
               </ListItem>

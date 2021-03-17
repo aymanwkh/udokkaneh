@@ -47,7 +47,7 @@ const PurchasedPacks = () => {
             packId: p.packId,
             productId: p.productId,
             productName: p.productName,
-            productEname: p.productEname,
+            productEname: p.productDescription,
             packName: p.packName,
             imageUrl: p.imageUrl,
             bestPrice: p.actual!,

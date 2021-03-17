@@ -186,12 +186,6 @@
   margin-bottom: -1.5rem;
 }
 
-.hints {
-  position: absolute;
-  left: 0;
-  margin-top: -0.5rem;
-}
-
 .selected {
   background-color: lightskyblue;
 }

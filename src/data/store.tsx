@@ -45,10 +45,12 @@ const Store = ({ children }: { children: ReactElement }) => {
         packs.push({
           id: doc.id,
           name: doc.data().name,
+          ename: doc.data().ename,
           productId: doc.data().productId,
           productName: doc.data().productName,
           productEname: doc.data().productEname,
           productDescription: doc.data().productDescription,
+          productEdescription: doc.data().productEdescription,
           imageUrl: doc.data().imageUrl,
           price: doc.data().price,
           categoryId: doc.data().categoryId,

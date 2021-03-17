@@ -75,7 +75,7 @@ const Basket = () => {
         {basket.map(p => 
           <ListItem
             title={p.productName}
-            subtitle={p.productEname}
+            subtitle={p.productDescription}
             text={p.packName}
             footer={`${labels.totalPrice}:${p.totalPriceText}`}
             key={p.packId}
@@ -94,7 +94,7 @@ const Basket = () => {
                 onStepperMinusClick={() => dispatch({type: 'DECREASE_QUANTITY', payload: p})}
               />
             }
-            {p.otherProducts + p.otherOffers + p.otherPacks === 0 ? '' : <Link className="hints" slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>}
+            {p.otherProducts + p.otherOffers + p.otherPacks === 0 ? '' : <Link slot="footer" iconMaterial="warning" iconColor="red" onClick={()=> handleHints(p)}/>}
           </ListItem>
         )}
       </List>
