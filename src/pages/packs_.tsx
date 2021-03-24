@@ -13,14 +13,25 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowForwardIos from '@material-ui/icons/ArrowForwardIos';
+import { useHistory, useLocation } from 'react-router-dom'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
     },
-    inline: {
-      display: 'inline',
+    detail1: {
+      display: 'block',
+      color: 'red',
+      fontSize: '0.9em'
+    },
+    detail2: {
+      display: 'block',
+      color: 'green',
+      fontSize: '0.9em'
     },
     large: {
       width: theme.spacing(7),
@@ -37,6 +48,7 @@ interface Props {
 const Packs = (props: Props) => {
   const { state } = useContext(StoreContext)
   const classes = useStyles();
+  const history = useHistory()
   const [packs, setPacks] = useState<Pack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === props.id))
   const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))
@@ -84,24 +96,32 @@ const Packs = (props: Props) => {
     }
   }
   return(
-    <Container maxWidth="sm" style={{paddingBottom: 50}}>
+    <Container maxWidth="sm" style={{paddingBottom: 50, paddingTop: 50}}>
       <List className={classes.root}>
         {packs.map(p => (
           <Fragment key={p.id}>
-            <ListItem alignItems="flex-start">
-              <ListItemAvatar>
+            <ListItem alignItems="flex-start" button onClick={() => history.push(`/pack-details/${p.id}/type/c`)}>
+              <ListItemAvatar style={{marginRight: 10}}>
                 <Avatar alt="Remy Sharp" variant="rounded" src={p.imageUrl} className={classes.large}/>
               </ListItemAvatar>
               <ListItemText
                 primary={p.productName}
                 secondary={
-                  <div>
-                    <span>
+                  <>
+                    <span className={classes.detail1}>
                       {p.productDescription}
                     </span>
-                  </div>
+                    <span className={classes.detail2}>
+                      {p.name}
+                    </span>
+                  </>
                 }
               />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="comments">
+                  <ArrowForwardIos />
+                </IconButton>
+              </ListItemSecondaryAction>
             </ListItem>
             <Divider variant="inset" component="li" />
           </Fragment>

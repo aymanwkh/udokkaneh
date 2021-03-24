@@ -12,10 +12,10 @@ const Footer = () => {
   const location = useLocation()
   const { state } = useContext(StoreContext)
   return (
-    <AppBar position="fixed" color="default" style={{top: 'auto', bottom: 0}}>
+    <AppBar position="fixed" color="default" style={{top: 'auto', bottom: 0, height: 40}}>
       <Toolbar>
         <IconButton color="primary">
-          {location.pathname === '/' ? <Search /> : <Home />}
+          {location.pathname === '/' ? <Search /> : <Home style={{fontSize: '1em'}} />}
         </IconButton>
         <span style={{flexGrow: 1}} />
         <IconButton color="primary">
