@@ -1,22 +1,28 @@
-import { App, Panel, View } from 'framework7-react'
-import routes from './routes'
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Store from './data/store'
-import { setup } from './data/config'
+import Home from './pages/home_'
+import Basket from './pages/_basket'
+import Header from './pages/header_'
+import Footer from './pages/footer_'
+import Packs from './pages/packs_'
+
 const app = () => {
-  const f7params = {
-    id: 'io.framework7.dokaneh', 
-    name: 'Dokkaneh', 
-    theme: 'ios',
-    routes,
-  }
   return (
     <Store>
-      <App params={f7params}>
-        <Panel left={setup.locale === 'en'} right={setup.locale === 'ar'} reveal themeDark>
-          <View url="/panel/"/>
-        </Panel>
-        <View id="main-view" url="/" main className="safe-areas" pushState={true} />
-      </App>
+      <>
+        <CssBaseline />
+        <BrowserRouter>
+          <Header />
+          <Footer />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/home" component={Home} />
+            <Route path="/search" component={Packs} />
+            <Route path="/basket" component={Basket} />
+          </Switch>
+        </BrowserRouter>
+      </>
     </Store>
   )
 }

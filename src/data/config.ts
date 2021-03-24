@@ -8,14 +8,14 @@ export const setup = {
 }
 
 export const randomColors = [
-  {id: 0, name: 'red'},
-  {id: 1, name: 'green'},
-  {id: 2, name: 'blue'},
-  {id: 3, name: 'pink'},
-  {id: 4, name: 'yellow'},
-  {id: 5, name: 'orange'},
-  {id: 6, name: 'purple'},
-  {id: 7, name: 'deeppurple'},
+  {id: 0, name: '#FF3B30'},
+  {id: 1, name: '#4CD964'},
+  {id: 2, name: '#2196F3'},
+  {id: 3, name: '#FF2D55'},
+  {id: 4, name: '#FFCC00'},
+  {id: 5, name: '#FF9500'},
+  {id: 6, name: '#9C27B0'},
+  {id: 7, name: '#673AB7'},
   {id: 8, name: 'lightblue'},
   {id: 9, name: 'teal'},
 ]
@@ -74,4 +74,10 @@ export const friendStatus = [
   {id: 's', name: 'ارسلت الدعوة', ename: 'Invitation Sent'},
   {id: 'o', name: 'مدعو سابقا', ename: 'Previously invited'},
   {id: 'r', name: 'مستخدم فعلي', ename: 'Actual User'}
+]
+
+export const pageTitles = [
+  {path: '/', title: 'CRM'},
+  {path: '/search', title: 'كل المنتجات'},
+  
 ]

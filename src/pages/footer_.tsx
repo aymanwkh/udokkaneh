@@ -6,18 +6,16 @@ import Home from '@material-ui/icons/Home';
 import Search from '@material-ui/icons/Search';
 import { StoreContext } from '../data/store'
 import { useContext } from 'react'
+import { useLocation } from 'react-router-dom'
 
-
-interface Props {
-  isHome?: string
-}
-const Footer = (props: Props) => {
+const Footer = () => {
+  const location = useLocation()
   const { state } = useContext(StoreContext)
   return (
-    <AppBar position="fixed" color="transparent" style={{top: 'auto', bottom: 0}}>
+    <AppBar position="fixed" color="default" style={{top: 'auto', bottom: 0}}>
       <Toolbar>
         <IconButton color="primary">
-          {props.isHome === '1' ? <Search /> : <Home />}
+          {location.pathname === '/' ? <Search /> : <Home />}
         </IconButton>
         <span style={{flexGrow: 1}} />
         <IconButton color="primary">
