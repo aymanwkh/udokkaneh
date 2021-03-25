@@ -157,7 +157,7 @@ const Header = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Dokknaeh
+            {state.pageTitle}
           </Typography>
           {state.user ? (location.pathname === '/search' ? <Search /> : <LoginMenu />) : <Button color="inherit" aria-label="login" onClick={() => history.push('/login')}>Login</Button>}
         </Toolbar>

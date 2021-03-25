@@ -75,9 +75,3 @@ export const friendStatus = [
   {id: 'o', name: 'مدعو سابقا', ename: 'Previously invited'},
   {id: 'r', name: 'مستخدم فعلي', ename: 'Actual User'}
 ]
-
-export const pageTitles = [
-  {path: '/', title: 'CRM'},
-  {path: '/search', title: 'كل المنتجات'},
-  
-]

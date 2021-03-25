@@ -161,6 +161,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, passwordRequests: action.payload}
     case 'OPEN_MENU':
       return {...state, menuOpen: !state.menuOpen}
+    case 'SET_PAGE_TITLE':
+      return {...state, pageTitle: action.payload}
     default:
       return state
   }

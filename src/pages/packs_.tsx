@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useRef, Fragment } from 'react'
+import { useContext, useState, useEffect, Fragment } from 'react'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { sortByList, setup } from '../data/config'
@@ -10,13 +10,13 @@ import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
+import Drawer from '@material-ui/core/Drawer';
 import Container from '@material-ui/core/Container';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIos from '@material-ui/icons/ArrowForwardIos';
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,12 +30,22 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     detail2: {
       display: 'block',
+      color: 'blue',
+      fontSize: '0.9em'
+    },
+    detail3: {
+      display: 'block',
+      color: 'purple',
+      fontSize: '0.9em'
+    },
+    detail4: {
+      display: 'block',
       color: 'green',
       fontSize: '0.9em'
     },
     large: {
-      width: theme.spacing(7),
-      height: theme.spacing(7),
+      width: theme.spacing(10),
+      height: theme.spacing(10),
     },
   }),
 );
@@ -46,13 +56,13 @@ interface Props {
 }
 
 const Packs = (props: Props) => {
-  const { state } = useContext(StoreContext)
+  const { state, dispatch } = useContext(StoreContext)
   const classes = useStyles();
   const history = useHistory()
   const [packs, setPacks] = useState<Pack[]>([])
-  const [category] = useState(() => state.categories.find(category => category.id === props.id))
+  const [category] = useState(() => state.categories.find(c => c.id === props.id))
   const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))
-  // const sortList = useRef<Actions>(null)
+  const [openActions, setOpenActions] = useState(false)
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
@@ -74,6 +84,9 @@ const Packs = (props: Props) => {
       return extendedPacks.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries])
+  useEffect(() => {
+    dispatch({type: 'SET_PAGE_TITLE', payload: (setup.locale === 'en' ? category?.ename : category?.name) || (props.type === 'f' ? labels.favorites : labels.allProducts)})
+  }, [dispatch, category, props.type])
   const handleSorting = (sortByValue: string) => {
     setSortBy(() => sortByList.find(s => s.id === sortByValue))
     switch(sortByValue){
@@ -97,36 +110,74 @@ const Packs = (props: Props) => {
   }
   return(
     <Container maxWidth="sm" style={{paddingBottom: 50, paddingTop: 50}}>
-      <List className={classes.root}>
-        {packs.map(p => (
-          <Fragment key={p.id}>
-            <ListItem alignItems="flex-start" button onClick={() => history.push(`/pack-details/${p.id}/type/c`)}>
-              <ListItemAvatar style={{marginRight: 10}}>
-                <Avatar alt="Remy Sharp" variant="rounded" src={p.imageUrl} className={classes.large}/>
-              </ListItemAvatar>
-              <ListItemText
-                primary={p.productName}
-                secondary={
-                  <>
-                    <span className={classes.detail1}>
-                      {p.productDescription}
-                    </span>
-                    <span className={classes.detail2}>
-                      {p.name}
-                    </span>
-                  </>
-                }
-              />
-              <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="comments">
-                  <ArrowForwardIos />
-                </IconButton>
-              </ListItemSecondaryAction>
+      {packs.length > 1 &&
+        <>
+          <List className={classes.root}>
+            <ListItem alignItems="flex-start" button onClick={() => setOpenActions(true)}>
+              <ListItemText primary={labels.sortBy} />
+              <ListItemSecondaryAction>{setup.locale === 'en' ? sortBy?.ename : sortBy?.name}</ListItemSecondaryAction>
             </ListItem>
-            <Divider variant="inset" component="li" />
-          </Fragment>
-        ))}
+          </List>
+          <Divider />
+        </>
+      }
+      <List className={classes.root}>
+        {packs.length === 0 ?
+          <ListItem><ListItemText primary={labels.noData} /></ListItem>
+        : packs.map(p => (
+            <Fragment key={p.id}>
+              <ListItem alignItems="flex-start" button onClick={() => history.push(`/pack-details/${p.id}/type/c`)}>
+                <ListItemAvatar style={{marginRight: 10}}>
+                  <Avatar alt="Remy Sharp" variant="rounded" src={p.imageUrl} className={classes.large}/>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={p.productName}
+                  secondary={
+                    <>
+                      <span className={classes.detail1}>
+                        {p.productDescription}
+                      </span>
+                      <span className={classes.detail2}>
+                        {p.name}
+                      </span>
+                      <span className={classes.detail3}>
+                        {productOfText(p.trademarkName, p.countryName)}
+                      </span>
+                      <span className={classes.detail4}>
+                        {`${labels.category}: ${p.categoryName}`}
+                      </span>
+                    </>
+                  }
+                />
+                <ListItemSecondaryAction>
+                  {p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
+                  <IconButton edge="end">
+                    <ArrowForwardIos />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider variant="inset" component="li" />
+            </Fragment>
+          ))
+        }
       </List>
+      <Drawer anchor="bottom" open={openActions} onClose={() => setOpenActions(false)}>
+        <div
+          style={{width: 'auto'}}
+          onClick={() => setOpenActions(false)}
+          onKeyDown={() => setOpenActions(false)}
+        >
+          <List>
+            {sortByList.map(o => 
+              o.id === sortBy?.id ? ''
+              : <Fragment key={o.id}>
+                  <ListItem button onClick={() => handleSorting(o.id)}><ListItemText style={{textAlign: 'center', color: 'blue'}} primary={setup.locale === 'en' ? o.ename : o.name} /> </ListItem>
+                  <Divider />
+                </Fragment>
+            )}
+          </List>
+        </div>
+      </Drawer>
     </Container>
     //   <Navbar title={(setup.locale === 'en' ? category?.ename : category?.name) || (props.type === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
     //     <NavRight>

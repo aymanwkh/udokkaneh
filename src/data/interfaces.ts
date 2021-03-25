@@ -208,7 +208,8 @@ export interface State {
   countries: Country[],
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
-  orderBasket: OrderPack[]
+  orderBasket: OrderPack[],
+  pageTitle: string
 }
 
 export interface Action {
