@@ -17,8 +17,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useHistory, useLocation } from 'react-router-dom'
 import { StoreContext } from '../data/store'
-import InputBase from '@material-ui/core/InputBase';
-import SearchIcon from '@material-ui/icons/Search';
+import Input from '@material-ui/core/Input';
+import Search from '@material-ui/icons/Search';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -85,7 +85,7 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
   const [drawerOpen, setDrawerOpen] = useState(false)
-
+  const [searchOn, setSearchOn] = useState(false)
   const handleMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -102,6 +102,10 @@ const Header = () => {
   const handleLogin = async () => {
     if (state.user) logout()
     else history.push('/login')
+  }
+  const handleSeachCancel = () => {
+    dispatch({type: 'SET_SEARCH', payload: ''})
+    setSearchOn(false)
   }
   const LoginMenu = () => (
     <div>
@@ -134,20 +138,10 @@ const Header = () => {
       </Menu>
     </div>
   )
-  const Search = () => (
-    <div className={classes.search}>
-      <div className={classes.searchIcon}>
-        <SearchIcon />
-      </div>
-      <InputBase
-        placeholder="Search…"
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput,
-        }}
-        inputProps={{ 'aria-label': 'search' }}
-      />
-    </div>
+  const SearchIcon = () => (
+    <IconButton edge="end" color="inherit" aria-label="search" onClick={() => setSearchOn(true)}>
+      <Search />
+    </IconButton>
   )
   return (
     <div className={classes.root}>
@@ -156,10 +150,31 @@ const Header = () => {
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={() => setDrawerOpen(!drawerOpen)}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          {!searchOn && <Typography variant="h6" className={classes.title}>
             {state.pageTitle}
-          </Typography>
-          {state.user ? (location.pathname === '/search' ? <Search /> : <LoginMenu />) : <Button color="inherit" aria-label="login" onClick={() => history.push('/login')}>Login</Button>}
+          </Typography>}
+          {location.pathname === '/search' ? (!searchOn && <SearchIcon />) : (state.user ? <LoginMenu /> : <Button color="inherit" aria-label="login" onClick={() => history.push('/login')}>Login</Button> )}
+          {searchOn && 
+            <>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <Search />
+                </div>
+                <Input
+                  placeholder="Search…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                  onChange={e => dispatch({type: 'SET_SEARCH', payload: e.target.value})}
+                  // value={state.searchText}
+                  autoFocus
+                />
+              </div>
+              <Button style={{color: 'white'}} onClick={handleSeachCancel}>Cancel</Button>
+            </>
+          }
         </Toolbar>
       </AppBar>
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(!drawerOpen)}>

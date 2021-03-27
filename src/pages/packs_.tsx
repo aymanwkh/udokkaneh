@@ -17,6 +17,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIos from '@material-ui/icons/ArrowForwardIos';
 import { useHistory } from 'react-router-dom'
+import Fuse from "fuse.js";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -63,6 +64,7 @@ const Packs = (props: Props) => {
   const [category] = useState(() => state.categories.find(c => c.id === props.id))
   const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))
   const [openActions, setOpenActions] = useState(false)
+  const [data, setData] = useState<Pack[]>([])
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
@@ -83,10 +85,26 @@ const Packs = (props: Props) => {
       })
       return extendedPacks.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
     })
-  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries])
+  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries, state.searchText])
   useEffect(() => {
     dispatch({type: 'SET_PAGE_TITLE', payload: (setup.locale === 'en' ? category?.ename : category?.name) || (props.type === 'f' ? labels.favorites : labels.allProducts)})
   }, [dispatch, category, props.type])
+  useEffect(() => {
+    if (!state.searchText) {
+      setData(packs)
+      return
+    }
+    const options = {
+      includeScore: true,
+      findAllMatches: true,
+      threshold: 0.1,
+      // Search in `author` and in `tags` array
+      keys: ['productName', 'productDescription', 'categoryName', 'trademarkName', 'countryName']
+    }
+    const fuse = new Fuse(packs, options);
+    const result = fuse.search(state.searchText);
+    setData(result.map(p => p.item));
+  }, [state.searchText, packs])
   const handleSorting = (sortByValue: string) => {
     setSortBy(() => sortByList.find(s => s.id === sortByValue))
     switch(sortByValue){
@@ -110,7 +128,7 @@ const Packs = (props: Props) => {
   }
   return(
     <Container maxWidth="sm" style={{paddingBottom: 50, paddingTop: 50}}>
-      {packs.length > 1 &&
+      {data.length > 1 &&
         <>
           <List className={classes.root}>
             <ListItem alignItems="flex-start" button onClick={() => setOpenActions(true)}>
@@ -122,9 +140,9 @@ const Packs = (props: Props) => {
         </>
       }
       <List className={classes.root}>
-        {packs.length === 0 ?
+        {data.length === 0 ?
           <ListItem><ListItemText primary={labels.noData} /></ListItem>
-        : packs.map(p => (
+        : data.map(p => (
             <Fragment key={p.id}>
               <ListItem alignItems="flex-start" button onClick={() => history.push(`/pack-details/${p.id}/type/c`)}>
                 <ListItemAvatar style={{marginRight: 10}}>
@@ -179,65 +197,6 @@ const Packs = (props: Props) => {
         </div>
       </Drawer>
     </Container>
-    //   <Navbar title={(setup.locale === 'en' ? category?.ename : category?.name) || (props.type === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
-    //     <NavRight>
-    //       <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
-    //     </NavRight>
-    //     <Searchbar
-    //       className="searchbar"
-    //       searchContainer=".search-list"
-    //       searchIn=".item-inner"
-    //       clearButton
-    //       expandable
-    //       placeholder={labels.search}
-    //     />
-    //   </Navbar>
-
-    //   <Block>
-    //     <List className="searchbar-not-found">
-    //       <ListItem title={labels.noData} />
-    //     </List>
-    //     <List mediaList className="search-list searchbar-found">
-    //       {packs.length > 1 &&
-    //         <ListItem 
-    //           title={labels.sortBy} 
-    //           after={setup.locale === 'en' ? sortBy?.ename : sortBy?.name}
-    //           onClick={() => sortList.current?.open()}
-    //         />
-    //       }
-    //       {packs.length === 0 ?
-    //         <ListItem title={labels.noData} />
-    //       : packs.map(p => 
-    //           <ListItem
-    //             link={`/pack-details/${p.id}/type/c`}
-    //             title={p.productName}
-    //             subtitle={p.productDescription}
-    //             text={p.name}
-    //             footer={`${labels.category}: ${p.categoryName}`}
-    //             after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
-    //             key={p.id}
-    //           >
-    //             <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-    //             <div className="list-subtext1">{productOfText(p.trademarkName, p.countryName)}</div>
-    //             {(p.isOffer || p.offerEnd) && <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge>}
-    //             {p.closeExpired && <Badge slot="text" color="red">{labels.closeExpired}</Badge>}
-    //           </ListItem>
-              
-    //         )
-    //       }
-    //     </List>
-    //   </Block>
-    //   <Actions ref={sortList}>
-    //     <ActionsLabel>{labels.sortBy}</ActionsLabel>
-    //     {sortByList.map(o => 
-    //       o.id === sortBy?.id ? ''
-    //       : <ActionsButton key={o.id} onClick={() => handleSorting(o.id)}>{setup.locale === 'en' ? o.ename : o.name}</ActionsButton>
-    //     )}
-    //   </Actions>
-    //   <Toolbar bottom>
-    //     <Footer/>
-    //   </Toolbar>
-    // </Page>
   )
 }
 

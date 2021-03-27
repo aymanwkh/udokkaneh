@@ -209,7 +209,8 @@ export interface State {
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
   orderBasket: OrderPack[],
-  pageTitle: string
+  pageTitle: string,
+  searchText?: string
 }
 
 export interface Action {

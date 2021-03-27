@@ -163,6 +163,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, menuOpen: !state.menuOpen}
     case 'SET_PAGE_TITLE':
       return {...state, pageTitle: action.payload}
+    case 'SET_SEARCH':
+      return {...state, searchText: action.payload}
     default:
       return state
   }
