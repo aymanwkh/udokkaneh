@@ -1,19 +1,82 @@
 import { useContext, useEffect, useState, useRef } from 'react'
-import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Toolbar, Preloader } from 'framework7-react'
-import Footer from './footer'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText, notifyFriends } from '../data/actions'
 import labels from '../data/labels'
 import { setup, alarmTypes } from '../data/config'
 import { Pack } from '../data/interfaces'
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Container from '@material-ui/core/Container';
+import CardMedia from '@material-ui/core/CardMedia';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import { red } from '@material-ui/core/colors';
+import CardContent from '@material-ui/core/CardContent';
+import Divider from '@material-ui/core/Divider';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import { useHistory, useLocation, useParams } from 'react-router-dom'
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Rating from '@material-ui/lab/Rating';
+
+const useStyles = makeStyles((theme) => ({
+  media: {
+    height: '60vh',
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
+  },
+  avatar: {
+    backgroundColor: red[500],
+  },
+  spinner: {
+    display: 'flex',
+    '& > * + *': {
+      marginLeft: theme.spacing(2),
+    },
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  extendedIcon: {
+    marginRight: theme.spacing(1),
+  },
+  fab: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    zIndex: 1
+  }
+}));
 
 interface Props {
   id: string,
   type: string
 }
-const PackDetails = (props: Props) => {
+const PackDetails = () => {
   const { state, dispatch } = useContext(StoreContext)
+  const classes = useStyles();
+  const history = useHistory()
+  const location = useLocation()
+  const props = useParams<Props>()
   const [error, setError] = useState('')
   const [pack, setPack] = useState<Pack>()
   const [isAvailable, setIsAvailable] = useState(-1)
@@ -22,8 +85,11 @@ const PackDetails = (props: Props) => {
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
   const [otherOffers, setOtherOffers] = useState<Pack[]>([])
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
-  const offerActions = useRef<Actions>(null)
-  const packActions = useRef<Actions>(null)
+  const [openActions, setOpenActions] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [currentAlarmTypeId, setCurrentAlarmTypeId] = useState('')
+  // const offerActions = useRef<Actions>(null)
+  // const packActions = useRef<Actions>(null)
   useEffect(() => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
@@ -66,10 +132,13 @@ const PackDetails = (props: Props) => {
   }, [pack, state.packs])
   useEffect(() => {
     if (error) {
-      showError(error)
+      dispatch({type: 'ERROR', payload: error})
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    dispatch({type: 'SET_PAGE_TITLE', payload: pack?.productName})
+  }, [dispatch, pack])
   const addToBasket = (packId?: string) => {
     if (!pack || !packId) return
     try{
@@ -106,34 +175,16 @@ const PackDetails = (props: Props) => {
       }
       dispatch({type: 'ADD_TO_BASKET', payload: purchasedPack})
       showMessage(labels.addToBasketSuccess)
-      f7.views.current.router.back()  
+      history.goBack()  
 		} catch (err){
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
   const handleAddAlarm = (alarmTypeId: string) => {
     try {
       if (alarmTypeId === 'ua') {
-        f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
-          try{
-            if (state.customerInfo?.isBlocked) {
-              throw new Error('blockedUser')
-            }
-            if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
-              throw new Error('duplicateAlarms')
-            }
-            const alarm = {
-              packId: props.id,
-              type: alarmTypeId,
-              status: 'n'
-            }
-            addAlarm(alarm)
-            showMessage(labels.sendSuccess)
-            f7.views.current.router.back()
-          } catch(err) {
-            setError(getMessage(f7.views.current.router.currentRoute.path, err))
-          }
-        })  
+        setCurrentAlarmTypeId(alarmTypeId)
+        setOpenDialog(true)
       } else {
         if (state.customerInfo?.isBlocked) {
           throw new Error('blockedUser')
@@ -141,10 +192,30 @@ const PackDetails = (props: Props) => {
         if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
           throw new Error('duplicateAlarms')
         }
-        f7.views.current.router.navigate(`/add-alarm/${props.id}/type/${alarmTypeId}`)
+        history.push(`/add-alarm/${props.id}/type/${alarmTypeId}`)
       }  
     } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
+    }
+  }
+  const handleConfirm = () => {
+    try{
+      if (state.customerInfo?.isBlocked) {
+        throw new Error('blockedUser')
+      }
+      if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
+        throw new Error('duplicateAlarms')
+      }
+      const alarm = {
+        packId: props.id,
+        type: currentAlarmTypeId,
+        status: 'n'
+      }
+      addAlarm(alarm)
+      showMessage(labels.sendSuccess)
+      history.goBack()
+    } catch(err) {
+      setError(getMessage(location.pathname, err))
     }
   }
   const handleFavorite = () => {
@@ -154,7 +225,7 @@ const PackDetails = (props: Props) => {
         showMessage(state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)  
       }
 		} catch (err){
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
   const handleNotifyFriends = () => {
@@ -167,41 +238,42 @@ const PackDetails = (props: Props) => {
         showMessage(labels.sendSuccess)  
       }
     } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
-  if (!pack) return <Page><Preloader /></Page>
+  if (!pack) return <div className={classes.spinner}><CircularProgress /></div>
   return (
-    <Page>
-      <Navbar title={pack.productName} backLink={labels.back} />
+    <>
       <Card>
-        <CardHeader className="card-header">
-          <div className="price">
-            {((pack.price ?? 0) / 100).toFixed(2)}
+        <CardHeader title={((pack.price ?? 0) / 100).toFixed(2)} style={{backgroundColor: '#f9f9f9'}}/>
+        <CardMedia
+          className={classes.media}
+          image={pack.imageUrl}
+        />
+        <CardContent style={{display: 'flex', flexDirection: 'column'}}>
+        <div style={{display: 'flex'}}>
+          <div style={{flexGrow: 1}}>
+            {`${pack.name} ${pack.closeExpired ? '(' + labels.closeExpired + ')' : ''}`}
           </div>
-        </CardHeader>
-        <CardContent>
-          <p className="card-title">{`${pack.name} ${pack.closeExpired ? '(' + labels.closeExpired + ')' : ''}`}</p>
-          <img src={pack.imageUrl} className="img-card" alt={labels.noImage} />
-          <p className="card-title">{pack.productDescription}</p>
+          <div>
+            {pack.productDescription}
+          </div>
+          </div>
+          <Divider />
+          <div style={{display: 'flex'}}>
+            <div style={{flexGrow: 1}}>{productOfText(pack.trademarkName, pack.countryName)}</div>
+            <div>{pack.ratingCount > 0 ? `(${pack.ratingCount})` : ''} <Rating name="half-rating-read" defaultValue={pack.rating ?? 0} precision={0.5} readOnly /></div>
+          </div>
         </CardContent>
-        <CardFooter>
-          <p>{productOfText(pack.trademarkName, pack.countryName)}</p>
-          <p><RatingStars rating={pack.rating ?? 0} count={pack.ratingCount ?? 0} /></p>
-        </CardFooter>
       </Card>
       {props.type === 'c' ? 
-        <Fab 
-          position="center-bottom" 
-          slot="fixed" 
-          text={`${labels.addToBasket}${pack.isOffer ? '*' : ''}`} 
-          color="green" 
-          onClick={() => pack.isOffer ? offerActions.current?.open() : addToBasket(pack.id)}
+        <Fab color="secondary" aria-label="add" className={classes.fab}
+          onClick={() => pack.isOffer ? setOpenActions(true) : addToBasket(pack.id)}
         >
-          <Icon material="add"></Icon>
+          <AddIcon/>
         </Fab>
       : ''}
-      {state.user ?
+      {/* {state.user ?
         <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => packActions.current?.open()}>
           <Icon material="menu"></Icon>
         </Fab>
@@ -233,15 +305,56 @@ const PackDetails = (props: Props) => {
           : ''
         )}
       </Actions>
+      
       <Actions ref={offerActions}>
         <ActionsButton onClick={() => addToBasket(pack.id)}>{labels.allOffer}</ActionsButton>
         <ActionsButton onClick={() => addToBasket(pack.subPackId)}>{subPackInfo}</ActionsButton>
         {pack.bonusPackId ? <ActionsButton onClick={() => addToBasket(pack.bonusPackId)}>{bonusPackInfo}</ActionsButton> : ''}
-      </Actions>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
-    </Page>
+      </Actions> */}
+      <Drawer anchor="bottom" open={openActions} onClose={() => setOpenActions(false)}>
+        <div
+          style={{width: 'auto'}}
+          onClick={() => setOpenActions(false)}
+          onKeyDown={() => setOpenActions(false)}
+        >
+          <List>
+            <ListItem button onClick={() => addToBasket(pack.id)}>
+              <ListItemText style={{textAlign: 'center', color: 'blue'}} primary={labels.allOffer} /> 
+            </ListItem>
+            <Divider />
+            <ListItem button onClick={() => addToBasket(pack.subPackId)}>
+              <ListItemText style={{textAlign: 'center', color: 'blue'}} primary={subPackInfo} /> 
+            </ListItem>
+            <Divider />
+            <ListItem button onClick={() => addToBasket(pack.bonusPackId)}>
+              <ListItemText style={{textAlign: 'center', color: 'blue'}} primary={bonusPackInfo} /> 
+            </ListItem>
+            <Divider />
+          </List>
+        </div>
+      </Drawer>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{labels.confirmationTitle}</DialogTitle>
+        <DialogContent> 
+          <DialogContentText id="alert-dialog-description">
+            {labels.confirmationText}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirm} color="primary" autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }
 

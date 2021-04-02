@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
@@ -147,9 +148,14 @@ const Header = () => {
     <div className={classes.root}>
       <AppBar position="fixed">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={() => setDrawerOpen(!drawerOpen)}>
-            <MenuIcon />
-          </IconButton>
+          {location.pathname === '/' ? 
+            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={() => setDrawerOpen(!drawerOpen)}>
+              <MenuIcon />
+            </IconButton>
+          : <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="back" onClick={() => history.goBack()}>
+              <ArrowBackIos />
+            </IconButton>
+          }
           {!searchOn && <Typography variant="h6" className={classes.title}>
             {state.pageTitle}
           </Typography>}

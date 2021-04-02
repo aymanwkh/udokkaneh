@@ -1,28 +1,23 @@
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Store from './data/store'
 import Home from './pages/home_'
-import Basket from './pages/_basket'
-import Header from './pages/header_'
-import Footer from './pages/footer_'
 import Packs from './pages/packs_'
+import PackDetails from './pages/pack-details_'
+import Layout from './pages/layout_'
 
 const app = () => {
   return (
     <Store>
-      <>
-        <CssBaseline />
-        <BrowserRouter>
-          <Header />
-          <Footer />
+      <BrowserRouter>
+        <Layout>
           <Switch>
             <Route exact path="/" component={Home} />
             <Route path="/home" component={Home} />
             <Route path="/search" component={Packs} />
-            <Route path="/basket" component={Basket} />
+            <Route path="/pack-details/:id/type/:type" component={PackDetails} />
           </Switch>
-        </BrowserRouter>
-      </>
+        </Layout>
+      </BrowserRouter>
     </Store>
   )
 }

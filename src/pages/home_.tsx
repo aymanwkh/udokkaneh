@@ -24,7 +24,7 @@ const Home = () => {
   }, [state.categories])
 
   return (
-    <Container maxWidth="sm" style={{paddingBottom: 50, paddingTop: 50}}>
+    <Container maxWidth="sm">
       <MainCategories/>
     </Container>
   )

@@ -127,7 +127,7 @@ const Packs = (props: Props) => {
     }
   }
   return(
-    <Container maxWidth="sm" style={{paddingBottom: 50, paddingTop: 50}}>
+    <Container maxWidth="sm">
       {data.length > 1 &&
         <>
           <List className={classes.root}>
