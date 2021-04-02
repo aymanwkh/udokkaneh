@@ -17,8 +17,7 @@ const Store = ({ children }: { children: ReactElement }) => {
     countries: [],
     trademarks: [],
     passwordRequests: [],
-    orderBasket: [],
-    pageTitle: 'Dokaneh'
+    orderBasket: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 

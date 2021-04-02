@@ -193,15 +193,9 @@ export interface PurchasedPack {
   lastQuantity: number,
   lastTime: Date
 }
-export interface Toast {
-  alertType?: 'error' | 'success',
-  alertText?: string,
-  open: boolean
-}
 export interface State {
   user?: firebase.User,
   userInfo?: UserInfo,
-  menuOpen?: boolean,
   customerInfo?: CustomerInfo,
   categories: Category[],
   basket: BasketPack[],
@@ -214,9 +208,6 @@ export interface State {
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
   orderBasket: OrderPack[],
-  pageTitle: string,
-  searchText?: string,
-  toast?: Toast
 }
 
 export interface Action {

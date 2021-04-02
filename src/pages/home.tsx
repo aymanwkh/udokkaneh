@@ -1,10 +1,10 @@
 import { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, Toolbar } from 'framework7-react'
+import { f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, Toolbar, NavTitleLarge } from 'framework7-react'
 import Footer from './footer'
 import MainCategories from './main-categories'
 import { StoreContext } from '../data/store'
 import { Advert, Notification } from '../data/interfaces'
-import { setup } from '../data/config'
+import labels from '../data/labels'
 
 const Home = () => {
   const { state } = useContext(StoreContext)
@@ -26,13 +26,18 @@ const Home = () => {
 
   return (
     <Page>
-      <Navbar>
+      <Navbar large>
         <NavLeft>
-          <Link iconMaterial="menu" panelOpen={setup.locale === 'en' ? 'left' : 'right'} iconBadge={notifications.length} badgeColor="red" />
+          <Link iconMaterial="menu" panelOpen="right" iconBadge={notifications.length} badgeColor="red" />
         </NavLeft>
-        <NavTitle>
-          <img src={setup.locale === 'en' ? '/logo_e.png' : '/logo_a.png'} alt="logo" style={{width: setup.locale === 'en' ? '150px' : '100px'}} />
+        <NavTitle sliding>
+          <img src="/dokaneh_logo.png" alt="logo" className="logo" />
+          <span className='banner'>{labels.banner}</span>
         </NavTitle>
+        <NavTitleLarge>
+          <img src="/dokaneh_logo.png" alt="logo" className="logo" />
+          <span className='banner'>{labels.banner}</span>
+        </NavTitleLarge>
       </Navbar>
       <Block>
       {advert ? <Button href="/advert/" large outline text={advert.title} className="sections" /> : ''}

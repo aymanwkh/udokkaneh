@@ -1,8 +1,7 @@
-import { State, Action, Toast } from './interfaces'
+import { State, Action } from './interfaces'
 
 const Reducer = (state: State, action: Action) => {
   let pack, packIndex, packs, nextQuantity, i
-  let alert: Toast
   const increment = [0.125, 0.25, 0.5, 0.75, 1]
   switch (action.type){
     case 'ADD_TO_BASKET':
@@ -160,20 +159,6 @@ const Reducer = (state: State, action: Action) => {
       return {...state, countries: action.payload}
     case 'SET_PASSWORD_REQUESTS':
       return {...state, passwordRequests: action.payload}
-    case 'OPEN_MENU':
-      return {...state, menuOpen: !state.menuOpen}
-    case 'SET_PAGE_TITLE':
-      return {...state, pageTitle: action.payload}
-    case 'SET_SEARCH':
-      return {...state, searchText: action.payload}
-    case 'CLOSE_ALERT':
-      return {...state, toast: {open: false}}
-    case 'ERROR':
-      alert = {alertText: action.payload, alertType: 'error', open: true}
-      return {...state, toast: alert}
-    case 'MESSAGE':
-      alert = {alertText: action.payload, alertType: 'success', open: true}
-      return {...state, toast: alert}
     default:
       return state
   }

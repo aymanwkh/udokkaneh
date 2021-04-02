@@ -1,23 +1,22 @@
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { App, Panel, View } from 'framework7-react'
+import routes from './routes'
 import Store from './data/store'
-import Home from './pages/home_'
-import Packs from './pages/packs_'
-import PackDetails from './pages/pack-details_'
-import Layout from './pages/layout_'
-
+import { setup } from './data/config'
 const app = () => {
+  const f7params = {
+    id: 'io.framework7.dokaneh', 
+    name: 'Dokkaneh', 
+    theme: 'ios',
+    routes,
+  }
   return (
     <Store>
-      <BrowserRouter>
-        <Layout>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/home" component={Home} />
-            <Route path="/search" component={Packs} />
-            <Route path="/pack-details/:id/type/:type" component={PackDetails} />
-          </Switch>
-        </Layout>
-      </BrowserRouter>
+      <App params={f7params}>
+        <Panel left={setup.locale === 'en'} right={setup.locale === 'ar'} reveal themeDark>
+          <View url="/panel/"/>
+        </Panel>
+        <View id="main-view" url="/" main className="safe-areas" pushState={true} />
+      </App>
     </Store>
   )
 }
