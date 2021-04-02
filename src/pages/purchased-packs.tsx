@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Actions, ActionsButton, Icon, Link, Toolbar } from 'framework7-react'
 import Footer from './footer'
 import { StoreContext } from '../data/store'
@@ -15,7 +15,7 @@ const PurchasedPacks = () => {
 	const [purchasedPacks, setPurchasedPacks] = useState<PurchasedPack[]>([])
   const [deliveredOrders, setDeliveredOrders] = useState<Order[]>([])
   const [currentPack, setCurrentPack] = useState<PurchasedPack | undefined>(undefined)
-  const actionsList = useRef<Actions>(null)
+  const [actionOpened, setActionOpened] = useState(false);
   useEffect(() => {
     if (error) {
       showError(error)
@@ -76,7 +76,7 @@ const PurchasedPacks = () => {
   }
   const handleActions = (pack: PurchasedPack)=> {
     setCurrentPack(pack)
-    actionsList.current?.open()
+    setActionOpened(true)
   }
   let i = 0
   return(
@@ -105,7 +105,7 @@ const PurchasedPacks = () => {
 					}
 				</List>
       </Block>
-      <Actions ref={actionsList}>
+      <Actions opened={actionOpened}>
         <ActionsButton onClick={() => handleRate(5)}>
           {labels.rateGood}
           <Icon material="thumb_up" color="green"></Icon>

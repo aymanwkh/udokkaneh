@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Toolbar, Preloader } from 'framework7-react'
 import Footer from './footer'
 import RatingStars from './rating-stars'
@@ -22,8 +22,8 @@ const PackDetails = (props: Props) => {
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
   const [otherOffers, setOtherOffers] = useState<Pack[]>([])
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
-  const offerActions = useRef<Actions>(null)
-  const packActions = useRef<Actions>(null)
+  const [offerActionOpened, setOfferActionOpened] = useState(false);
+  const [packActionOpened, setPackActionOpened] = useState(false);
   useEffect(() => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
@@ -195,18 +195,18 @@ const PackDetails = (props: Props) => {
           slot="fixed" 
           text={`${labels.addToBasket}${pack.isOffer ? '*' : ''}`} 
           color="green" 
-          onClick={() => pack.isOffer ? offerActions.current?.open() : addToBasket(pack.id)}
+          onClick={() => pack.isOffer ? setOfferActionOpened(true) : addToBasket(pack.id)}
         >
           <Icon material="add"></Icon>
         </Fab>
       : ''}
       {state.user ?
-        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => packActions.current?.open()}>
+        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => setPackActionOpened(true)}>
           <Icon material="menu"></Icon>
         </Fab>
       : ''}
       {props.type === 'c' && pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
-      <Actions ref={packActions}>
+      <Actions opened={packActionOpened}>
         {props.type === 'c' ? 
           <>
             <ActionsButton onClick={() => handleFavorite()}>{pack.productId && state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
@@ -232,7 +232,7 @@ const PackDetails = (props: Props) => {
           : ''
         )}
       </Actions>
-      <Actions ref={offerActions}>
+      <Actions opened={offerActionOpened}>
         <ActionsButton onClick={() => addToBasket(pack.id)}>{labels.allOffer}</ActionsButton>
         <ActionsButton onClick={() => addToBasket(pack.subPackId)}>{subPackInfo}</ActionsButton>
         {pack.bonusPackId ? <ActionsButton onClick={() => addToBasket(pack.bonusPackId)}>{bonusPackInfo}</ActionsButton> : ''}

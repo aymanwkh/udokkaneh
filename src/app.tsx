@@ -2,20 +2,21 @@ import { App, Panel, View } from 'framework7-react'
 import routes from './routes'
 import Store from './data/store'
 import { setup } from './data/config'
+
+const f7params = {
+  id: 'io.framework7.dokaneh', 
+  name: 'Dokkaneh', 
+  theme: 'ios',
+  routes,
+}
 const app = () => {
-  const f7params = {
-    id: 'io.framework7.dokaneh', 
-    name: 'Dokkaneh', 
-    theme: 'ios',
-    routes,
-  }
   return (
     <Store>
-      <App params={f7params}>
-        <Panel left={setup.locale === 'en'} right={setup.locale === 'ar'} reveal themeDark>
+      <App {...f7params}>
+        <Panel right reveal themeDark>
           <View url="/panel/"/>
         </Panel>
-        <View id="main-view" url="/" main className="safe-areas" pushState={true} />
+        <View id="main-view" url="/" main className="safe-areas" browserHistory={true}/>
       </App>
     </Store>
   )

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Fab, Icon, Actions, ActionsButton, Badge, Toolbar, Preloader } from 'framework7-react'
 import Footer from './footer'
 import { StoreContext } from '../data/store'
@@ -20,7 +20,7 @@ const OrderDetails = (props: Props) => {
   const [order, setOrder] = useState(() => state.orders.find(o => o.id === props.id))
   const [orderBasket, setOrderBasket] = useState<ExtendedOrderPack[]>([])
   const [lastOrder, setLastOrder] = useState<Order | undefined>(undefined)
-  const orderActions = useRef<Actions>(null)
+  const [actionOpened, setActionOpened] = useState(false);
   useEffect(() => {
     setOrder(() => state.orders.find(o => o.id === props.id))
   }, [state.orders, props.id])
@@ -126,7 +126,7 @@ const OrderDetails = (props: Props) => {
     <Page>
       <Navbar title={labels.orderDetails} backLink={labels.back} />
       {['n', 'a', 'e'].includes(order.status) && 
-        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => orderActions.current?.open()}>
+        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => setActionOpened(true)}>
           <Icon material="menu"></Icon>
         </Fab>
       }
@@ -168,7 +168,7 @@ const OrderDetails = (props: Props) => {
           />
         </List>
       </Block>
-      <Actions ref={orderActions}>
+      <Actions opened={actionOpened}>
         <ActionsButton onClick={() => handleEdit()}>{order.status === 'n' ? labels.editBasket : labels.editBasketRequest}</ActionsButton>
         <ActionsButton onClick={() => handleDelete()}>{order.status === 'n' ? labels.cancel : labels.cancelRequest}</ActionsButton>
         {order.status === 'n' && lastOrder && 

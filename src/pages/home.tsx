@@ -28,7 +28,7 @@ const Home = () => {
     <Page>
       <Navbar large>
         <NavLeft>
-          <Link iconMaterial="menu" panelOpen="right" iconBadge={notifications.length} badgeColor="red" />
+          <Link iconMaterial="menu" panelOpen="right" iconBadge={notifications.length || undefined} badgeColor="red" />
         </NavLeft>
         <NavTitle sliding>
           <img src="/dokaneh_logo.png" alt="logo" className="logo" />

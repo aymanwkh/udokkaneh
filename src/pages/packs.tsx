@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useRef } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel, Toolbar } from 'framework7-react'
 import Footer from './footer'
 import { StoreContext } from '../data/store'
@@ -16,7 +16,7 @@ const Packs = (props: Props) => {
   const [packs, setPacks] = useState<Pack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === props.id))
   const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))
-  const sortList = useRef<Actions>(null)
+  const [actionOpened, setActionOpened] = useState(false);
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
@@ -84,7 +84,7 @@ const Packs = (props: Props) => {
             <ListItem 
               title={labels.sortBy} 
               after={setup.locale === 'en' ? sortBy?.ename : sortBy?.name}
-              onClick={() => sortList.current?.open()}
+              onClick={() => setActionOpened(true)}
             />
           }
           {packs.length === 0 ?
@@ -109,7 +109,7 @@ const Packs = (props: Props) => {
           }
         </List>
       </Block>
-      <Actions ref={sortList}>
+      <Actions opened={actionOpened}>
         <ActionsLabel>{labels.sortBy}</ActionsLabel>
         {sortByList.map(o => 
           o.id === sortBy?.id ? ''

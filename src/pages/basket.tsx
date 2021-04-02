@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { f7, Block, Fab, Page, Navbar, List, ListItem, Toolbar, Link, Icon, Stepper, Actions, ActionsButton, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { showError, getMessage, quantityText, getBasket } from '../data/actions'
@@ -14,11 +14,11 @@ const Basket = () => {
   const [basket, setBasket] = useState<BigBasketPack[]>([])
   const [totalPrice, setTotalPrice] = useState(0)
   const [weightedPacks, setWeightedPacks] = useState<BigBasketPack[]>([])
+  const [actionOpened, setActionOpened] = useState(false);
   const [customerOrdersTotals] = useState(() => {
     const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
     return activeOrders.reduce((sum, o) => sum + o.total, 0)
   })
-  const hintsList = useRef<Actions>(null)
   useEffect(() => {
     if (state.basket.length === 0) f7.views.current.router.navigate('/home/', {reloadAll: true})
     else setBasket(getBasket(state.basket, state.packs))
@@ -65,7 +65,7 @@ const Basket = () => {
   }
   const handleHints = (pack: BigBasketPack) => {
     setCurrentPack(pack)
-    hintsList.current?.open()
+    setActionOpened(true)
   }
   return(
     <Page>
@@ -108,7 +108,7 @@ const Basket = () => {
         <Icon material="report_problem"></Icon>
       </Fab>
     }
-    <Actions ref={hintsList}>
+    <Actions opened={actionOpened}>
       {currentPack?.otherProducts === 0 ? '' :
         <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${currentPack?.packId}/type/p`)}>{labels.otherProducts}</ActionsButton>
       }
