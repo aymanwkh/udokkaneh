@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from 'react'
 import { Button } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import { randomColors, setup } from '../data/config'
+import { randomColors } from '../data/config'
 import labels from '../data/labels'
 import { Category } from '../data/interfaces'
 
@@ -27,7 +27,7 @@ const MainCategories = () => {
       />
       {categories.map(c => 
         <Button
-          text={setup.locale === 'en' ? c.ename : c.name}
+          text={c.name}
           href={`/categories/${c.id}`} 
           large 
           fill 

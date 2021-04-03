@@ -1,9 +1,8 @@
 import { useContext, useState, useEffect } from 'react'
-import { f7, Button, Block, Page, Navbar, Toolbar } from 'framework7-react'
+import { f7, Button, Block, Page, Navbar } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import Footer from './footer'
 import labels from '../data/labels'
-import { randomColors, setup } from '../data/config'
+import { randomColors } from '../data/config'
 import { Category } from '../data/interfaces'
 
 interface Props {
@@ -31,7 +30,7 @@ const Categories = (props: Props) => {
   let i = 0
   return(
     <Page>
-      <Navbar title={setup.locale === 'en' ? currentCategory.ename : currentCategory.name} backLink={labels.back} />
+      <Navbar title={currentCategory.name} backLink={labels.back} />
       <Block>
         <Button 
             text={labels.allProducts}
@@ -44,7 +43,7 @@ const Categories = (props: Props) => {
         {categories.map(c => {
           return (
             <Button 
-              text={setup.locale === 'en' ? c.ename : c.name}
+              text={c.name}
               large 
               fill 
               className="sections" 
@@ -55,9 +54,6 @@ const Categories = (props: Props) => {
           )
         })}
       </Block>
-      <Toolbar bottom>
-        <Footer isHome="1"/>
-      </Toolbar>
     </Page>
   )
 }

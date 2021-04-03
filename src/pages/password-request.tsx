@@ -3,7 +3,6 @@ import { StoreContext } from '../data/store'
 import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { addPasswordRequest, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
-import { setup } from '../data/config'
 
 const PasswordRequest = () => {
   const { state } = useContext(StoreContext)
@@ -37,7 +36,7 @@ const PasswordRequest = () => {
       addPasswordRequest(mobile)
       showMessage(labels.sendSuccess)
       f7.views.main.router.navigate('/home/')
-      f7.panel.close(setup.locale === 'en' ? 'left' : 'right')
+      f7.panel.close('right')
     } catch (err){
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }

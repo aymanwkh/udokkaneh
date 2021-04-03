@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Actions, ActionsButton, Icon, Link, Toolbar } from 'framework7-react'
-import Footer from './footer'
+import { f7, Block, Page, Navbar, List, ListItem, Actions, ActionsButton, Icon, Link } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import { quantityText, addQuantity } from '../data/actions'
 import labels from '../data/labels'
@@ -47,7 +46,6 @@ const PurchasedPacks = () => {
             packId: p.packId,
             productId: p.productId,
             productName: p.productName,
-            productEname: p.productDescription,
             packName: p.packName,
             imageUrl: p.imageUrl,
             bestPrice: p.actual!,
@@ -88,7 +86,7 @@ const PurchasedPacks = () => {
 						<ListItem title={labels.noData} /> 
 					: purchasedPacks.map(p => 
 							<ListItem
-								title={`${p.productName}${p.productEname ? '-' + p.productEname : ''}`}
+								title={p.productName}
 								subtitle={p.packName}
                 text={`${labels.bestPrice}: ${(p.bestPrice / 100).toFixed(2)}`}
                 footer={`${labels.lastTime}: ${moment(p.lastTime).fromNow()}`}
@@ -119,9 +117,6 @@ const PurchasedPacks = () => {
           <Icon material="thumb_down" color="red"></Icon>
         </ActionsButton>
       </Actions>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
     </Page>
   )
 }

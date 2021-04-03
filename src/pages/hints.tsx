@@ -1,11 +1,9 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Badge, Toolbar } from 'framework7-react'
-import Footer from './footer'
+import { Block, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
 import { Pack } from '../data/interfaces'
-import { setup } from '../data/config'
 
 interface Props {
   id: string,
@@ -28,12 +26,9 @@ const Hints = (props: Props) => {
         const countryInfo = state.countries.find(c => c.id === p.countryId)
         return {
           ...p, 
-          name: setup.locale === 'en' ? p.ename : p.name,
-          productName: setup.locale === 'en' ? p.productEname : p.productName,
-          productDescription: setup.locale === 'en' ? p.productEdescription : p.productDescription,
-          categoryName: setup.locale === 'en' ? categoryInfo?.ename : categoryInfo?.name,
-          trademarkName: setup.locale === 'en' ? trademarkInfo?.ename : trademarkInfo?.name,
-          countryName: setup.locale === 'en' ? countryInfo?.ename : countryInfo?.name,
+          categoryName: categoryInfo?.name,
+          trademarkName: trademarkInfo?.name,
+          countryName: countryInfo?.name
         }
       })
       return extendedPacks.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
@@ -65,9 +60,6 @@ const Hints = (props: Props) => {
           }
         </List>
       </Block>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
     </Page>
   )
 }

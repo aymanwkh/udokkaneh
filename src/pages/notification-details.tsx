@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
-import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toolbar } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Fab, Icon } from 'framework7-react'
 import { StoreContext } from '../data/store'
-import Footer from './footer'
 import labels from '../data/labels'
 import { deleteNotification, getMessage, showError, showMessage } from '../data/actions'
 import moment from 'moment'
@@ -51,9 +50,6 @@ const NotificationDetails = (props: Props) => {
       <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => handleDelete()}>
         <Icon material="delete"></Icon>
       </Fab>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
     </Page>
   )
 }

@@ -1,11 +1,10 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Badge, Toolbar } from 'framework7-react'
-import Footer from './footer'
+import { Block, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import moment from 'moment'
 import 'moment/locale/ar'
 import labels from '../data/labels'
-import { storeSummary, setup } from '../data/config'
+import { storeSummary } from '../data/config'
 import { productOfText } from '../data/actions'
 import { PackPrice } from '../data/interfaces'
 
@@ -24,8 +23,8 @@ const StorePacks = (props: Props) => {
         const countryInfo = state.countries.find(c => c.id === packInfo?.countryId)
         packInfo = {
           ...packInfo,
-          trademarkName: setup.locale === 'en' ? trademarkInfo?.ename : trademarkInfo?.name,
-          countryName: setup.locale === 'en' ? countryInfo?.ename : countryInfo?.name
+          trademarkName: trademarkInfo?.name,
+          countryName: countryInfo?.name
         }
         return {
           ...p,
@@ -50,25 +49,21 @@ const StorePacks = (props: Props) => {
               <ListItem
                 link={`/pack-details/${p.packId}/type/o`}
                 title={p.packInfo?.productName}
-                subtitle={p.packInfo?.productEname}
-                text={p.packInfo?.productDescription}
+                subtitle={p.packInfo?.productDescription}
+                text={p.packInfo?.name}
                 footer={moment(p.time).fromNow()}
                 after={((p.packInfo?.price ?? 0) / 100).toFixed(2)}
                 key={i++}
               >
                 <img src={p.packInfo?.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{p.packInfo?.name}</div>
-                <div className="list-subtext2">{productOfText(p.packInfo?.trademarkName, p.packInfo?.countryName)}</div>
-                {p.price > (p.packInfo?.price ?? 0) && <div className="list-subtext3">{`${labels.myPrice}: ${(p.price / 100).toFixed(2)}`}</div>}
+                <div className="list-subtext1">{productOfText(p.packInfo?.trademarkName, p.packInfo?.countryName)}</div>
+                {p.price > (p.packInfo?.price ?? 0) && <div className="list-subtext2">{`${labels.myPrice}: ${(p.price / 100).toFixed(2)}`}</div>}
                 {p.packInfo?.isOffer && <Badge slot="title" color='green'>{labels.offer}</Badge>}
               </ListItem>
             )
           }
         </List>
       </Block>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
     </Page>
   )
 }

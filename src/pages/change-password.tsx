@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListInput, Button } from 'framework7-react'
 import { changePassword, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
-import { setup } from '../data/config'
 
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('')
@@ -58,7 +57,7 @@ const ChangePassword = () => {
       setInprocess(false)
       showMessage(labels.changePasswordSuccess)
       f7.views.current.router.back()
-      f7.panel.close(setup.locale === 'en' ? 'left' : 'right')  
+      f7.panel.close('right')  
     } catch (err){
       setInprocess(false)
       setError(getMessage(f7.views.current.router.currentRoute.path, err))

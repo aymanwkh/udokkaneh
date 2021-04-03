@@ -3,7 +3,6 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
-import { setup } from './config'
 
 const devConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
@@ -27,6 +26,6 @@ const prodConfig = {
 }
 
 
-firebase.initializeApp((window.location.hostname === 'localhost' || setup.locale === 'en') ? devConfig : prodConfig)
+firebase.initializeApp(window.location.hostname === 'localhost' ? devConfig : prodConfig)
 firebase.firestore().enablePersistence()
 export default firebase

@@ -1,9 +1,8 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel, Toolbar } from 'framework7-react'
-import Footer from './footer'
+import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
-import { sortByList, setup } from '../data/config'
+import { sortByList } from '../data/config'
 import { getChildren, productOfText } from '../data/actions'
 import { Pack } from '../data/interfaces'
 
@@ -27,12 +26,9 @@ const Packs = (props: Props) => {
         const countryInfo = state.countries.find(c => c.id === p.countryId)
         return {
           ...p,
-          name: setup.locale === 'en' ? p.ename : p.name,
-          productName: setup.locale === 'en' ? p.productEname : p.productName,
-          productDescription: setup.locale === 'en' ? p.productEdescription : p.productDescription,
-          categoryName: setup.locale === 'en' ? categoryInfo?.ename : categoryInfo?.name,
-          trademarkName: setup.locale === 'en' ? trademarkInfo?.ename : trademarkInfo?.name,
-          countryName: setup.locale === 'en' ? countryInfo?.ename : countryInfo?.name,
+          categoryName: categoryInfo?.name,
+          trademarkName: trademarkInfo?.name,
+          countryName: countryInfo?.name,
         }
       })
       return extendedPacks.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
@@ -61,7 +57,7 @@ const Packs = (props: Props) => {
   }
   return(
     <Page>
-      <Navbar title={(setup.locale === 'en' ? category?.ename : category?.name) || (props.type === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
+      <Navbar title={category?.name || (props.type === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>
@@ -83,7 +79,7 @@ const Packs = (props: Props) => {
           {packs.length > 1 &&
             <ListItem 
               title={labels.sortBy} 
-              after={setup.locale === 'en' ? sortBy?.ename : sortBy?.name}
+              after={sortBy?.name}
               onClick={() => setActionOpened(true)}
             />
           }
@@ -113,12 +109,9 @@ const Packs = (props: Props) => {
         <ActionsLabel>{labels.sortBy}</ActionsLabel>
         {sortByList.map(o => 
           o.id === sortBy?.id ? ''
-          : <ActionsButton key={o.id} onClick={() => handleSorting(o.id)}>{setup.locale === 'en' ? o.ename : o.name}</ActionsButton>
+          : <ActionsButton key={o.id} onClick={() => handleSorting(o.id)}>{o.name}</ActionsButton>
         )}
       </Actions>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
     </Page>
   )
 }

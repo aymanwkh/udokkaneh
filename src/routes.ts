@@ -6,10 +6,6 @@ import Login from './pages/login'
 import Register from './pages/register'
 import Packs from './pages/packs'
 import PackDetails from './pages/pack-details'
-import Basket from './pages/basket'
-import ConfirmOrder from './pages/confirm-order'
-import OrdersList from './pages/orders-list'
-import OrderDetails from './pages/order-details'
 import AddAlarm from './pages/add-alarm'
 import PasswordRequest from './pages/password-request'
 import InviteFriend from './pages/invite-friend'
@@ -17,13 +13,10 @@ import StoreSummary from './pages/store-summary'
 import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
 import Hints from './pages/hints'
-import Help from './pages/help'
 import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
 import PurchasedPacks from './pages/purchased-packs'
 import Advert from './pages/advert'
-import EditOrder from './pages/edit-order'
-import Friends from './pages/friends'
 
 const routes = [
   {
@@ -85,24 +78,8 @@ const routes = [
     component: AddAlarm,
   },
   {
-    path: '/basket/',
-    component: Basket,
-  },
-  {
-    path: '/confirm-order/',
-    component: ConfirmOrder,
-  },
-  {
     path: '/search/',
     component: Packs,
-  },
-  {
-    path: '/orders-list/',
-    component: OrdersList,
-  },
-  {
-    path: '/order-details/:id',
-    component: OrderDetails,
   },
   {
     path: '/store-summary/',
@@ -115,11 +92,6 @@ const routes = [
   {
     path: '/hints/:id/type/:type',
     component: Hints
-  },
-
-  {
-    path: '/help/:id',
-    component: Help
   },
   {
     path: '/notifications/',
@@ -136,14 +108,6 @@ const routes = [
   {
     path: '/advert/',
     component: Advert
-  },
-  {
-    path: '/edit-order/:id',
-    component: EditOrder
-  },
-  {
-    path: '/friends/',
-    component: Friends
   },
   {
     path: '(.*)',

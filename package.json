@@ -7,7 +7,6 @@
     "@types/node": "^14.14.14",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "@types/react-router-dom": "^5.1.7",
     "firebase": "^8.2.1",
     "framework7": "^6.0.14",
     "framework7-react": "^6.0.14",

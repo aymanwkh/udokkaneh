@@ -1,6 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem, Toolbar } from 'framework7-react'
-import Footer from './footer'
+import { f7, Block, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StoreContext } from '../data/store'
 import labels from '../data/labels'
 import moment from 'moment'
@@ -54,9 +53,6 @@ const Notifications = () => {
           }
         </List>
       </Block>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
     </Page>
   )
 }

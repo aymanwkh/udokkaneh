@@ -288,12 +288,6 @@ export const deleteNotification = (user: UserInfo, notificationId: string) => {
   }
 }
 
-export const notifyFriends = (offerId: string) => {
-  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-    notifyFriends: firebase.firestore.FieldValue.arrayUnion(offerId)
-  })
-}
-
 export const deleteFriend = (user: UserInfo, mobile: string) => {
   const friends = user.friends?.slice()
   if (friends) {

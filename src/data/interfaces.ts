@@ -6,7 +6,6 @@ export interface Label {
 export interface Category {
   id: string,
   name: string,
-  ename?: string,
   parentId: string,
   ordering: number,
   isLeaf: boolean
@@ -18,12 +17,9 @@ export interface Error {
 export interface Pack {
   id: string,
   name: string,
-  ename: string,
   productId: string,
   productName: string,
-  productEname: string,
   productDescription?: string,
-  productEdescription?: string,
   imageUrl: string,
   price: number,
   categoryId: string,
@@ -103,11 +99,8 @@ export interface BasketPack {
   packId: string,
   productId: string,
   productName: string,
-  productEname?: string,
   productDescription: string,
-  productEdescription?: string,
   packName: string,
-  packEname?: string,
   imageUrl: string,
   price: number,
   quantity: number,
@@ -165,12 +158,10 @@ export interface Location {
 export interface Country {
   id: string,
   name: string,
-  ename?: string
 }
 export interface Trademark {
   id: string,
   name: string,
-  ename?: string
 }
 export interface PasswordRequest {
   id: string,
@@ -184,7 +175,6 @@ export interface PurchasedPack {
   packId: string,
   productId: string,
   productName: string,
-  productEname: string,
   packName: string,
   imageUrl: string,
   bestPrice: number,

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7-react'
 import { login, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
-import { setup } from '../data/config'
 
 const Login = () => {
   const [password, setPassword] = useState('')
@@ -58,7 +57,7 @@ const Login = () => {
       setInprocess(false)
       showMessage(labels.loginSuccess)
       f7.views.current.router.back()
-      f7.panel.close(setup.locale === 'en' ? 'left' : 'right') 
+      f7.panel.close('right') 
     } catch (err){
       setInprocess(false)
       setError(getMessage(f7.views.current.router.currentRoute.path, err))

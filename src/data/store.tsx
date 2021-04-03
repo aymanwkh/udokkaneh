@@ -1,11 +1,14 @@
-import { createContext, useReducer, useEffect, ReactElement } from 'react'
+import { createContext, useReducer, useEffect } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Order } from './interfaces'
 
 export const StoreContext = createContext({} as Context)
 
-const Store = ({ children }: { children: ReactElement }) => {
+interface Props {
+  children: React.ReactElement
+}
+const Store = ({ children }: Props) => {
   const initState: State = {
     categories: [], 
     basket: [], 
@@ -28,7 +31,6 @@ const Store = ({ children }: { children: ReactElement }) => {
         categories.push({
           id: doc.id,
           name: doc.data().name,
-          ename: doc.data().ename,
           parentId: doc.data().parentId,
           ordering: doc.data().ordering,
           isLeaf: doc.data().isLeaf
@@ -45,12 +47,9 @@ const Store = ({ children }: { children: ReactElement }) => {
         packs.push({
           id: doc.id,
           name: doc.data().name,
-          ename: doc.data().ename,
           productId: doc.data().productId,
           productName: doc.data().productName,
-          productEname: doc.data().productEname,
           productDescription: doc.data().productDescription,
-          productEdescription: doc.data().productEdescription,
           imageUrl: doc.data().imageUrl,
           price: doc.data().price,
           categoryId: doc.data().categoryId,

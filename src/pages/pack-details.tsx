@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
-import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Toolbar, Preloader } from 'framework7-react'
-import Footer from './footer'
+import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader } from 'framework7-react'
 import RatingStars from './rating-stars'
 import { StoreContext } from '../data/store'
-import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText, notifyFriends } from '../data/actions'
+import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText } from '../data/actions'
 import labels from '../data/labels'
-import { setup, alarmTypes } from '../data/config'
+import { alarmTypes, setup } from '../data/config'
 import { Pack } from '../data/interfaces'
 
 interface Props {
@@ -22,8 +21,7 @@ const PackDetails = (props: Props) => {
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
   const [otherOffers, setOtherOffers] = useState<Pack[]>([])
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
-  const [offerActionOpened, setOfferActionOpened] = useState(false);
-  const [packActionOpened, setPackActionOpened] = useState(false);
+  const [actionOpened, setActionOpened] = useState(false);
   useEffect(() => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
@@ -31,11 +29,8 @@ const PackDetails = (props: Props) => {
       const countryInfo = state.countries.find(c => c.id === pack.countryId)
       return {
         ...pack,
-        productName: setup.locale === 'en' ? pack.productEname : pack.productName,
-        productDescription: setup.locale === 'en' ? pack.productEdescription : pack.productDescription,
-        name: setup.locale === 'en' ? pack.ename : pack.name,
-        trademarkName: setup.locale === 'en' ? trademarkInfo?.ename : trademarkInfo?.name,
-        countryName: setup.locale === 'en' ? countryInfo?.ename : countryInfo?.name
+        trademarkName: trademarkInfo?.name,
+        countryName: countryInfo?.name
       }
     })
   }, [state.packs, state.trademarks, state.countries, props.id])
@@ -69,47 +64,7 @@ const PackDetails = (props: Props) => {
       setError('')
     }
   }, [error])
-  const addToBasket = (packId?: string) => {
-    if (!pack || !packId) return
-    try{
-      if (state.customerInfo?.isBlocked) {
-        throw new Error('blockedUser')
-      }
-      if (state.basket.find(p => p.packId === packId)) {
-        throw new Error('alreadyInBasket')
-      }
-      let foundPack = pack
-      let price = pack.price ?? 0
-      let maxQuantity
-      if (packId !== pack.id) {
-        foundPack = state.packs.find(p => p.id === packId)!
-        if (packId === pack.subPackId) {
-          price = Math.round((pack.price ?? 0) / (pack.subQuantity ?? 0) * (pack.subPercent ?? 0) * (1 + setup.profit))
-          maxQuantity = (pack.subQuantity ?? 0) - 1
-          if (pack.bonusPackId) maxQuantity++
-        } else  {
-          price = Math.round((pack.price ?? 0) / (pack.bonusQuantity ?? 0) * (pack.bonusPercent ?? 0) * (1 + setup.profit))
-          maxQuantity = pack.bonusQuantity ?? 0
-        }
-      }
-      const purchasedPack = {
-        ...foundPack,
-        price,
-        maxQuantity
-      }
-      const orderLimit = state.customerInfo?.orderLimit ?? setup.orderLimit
-      const activeOrders = state.orders.filter(o => ['n', 'a', 'e', 'f', 'p'].includes(o.status))
-      const activeOrdersTotal = activeOrders.reduce((sum, o) => sum + o.total, 0)
-      if (activeOrdersTotal + purchasedPack.price > orderLimit) {
-        throw new Error('limitOverFlow')
-      }
-      dispatch({type: 'ADD_TO_BASKET', payload: purchasedPack})
-      showMessage(labels.addToBasketSuccess)
-      f7.views.current.router.back()  
-		} catch (err){
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
-    }
-  }
+
   const handleAddAlarm = (alarmTypeId: string) => {
     try {
       if (alarmTypeId === 'ua') {
@@ -156,19 +111,6 @@ const PackDetails = (props: Props) => {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
-  const handleNotifyFriends = () => {
-    try{
-      if (state.customerInfo?.isBlocked) {
-        throw new Error('blockedUser')
-      }
-      if (pack) {
-        notifyFriends(pack.id)
-        showMessage(labels.sendSuccess)  
-      }
-    } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
-    }
-  }
   if (!pack) return <Page><Preloader /></Page>
   return (
     <Page>
@@ -189,30 +131,16 @@ const PackDetails = (props: Props) => {
           <p><RatingStars rating={pack.rating ?? 0} count={pack.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>
-      {props.type === 'c' ? 
-        <Fab 
-          position="center-bottom" 
-          slot="fixed" 
-          text={`${labels.addToBasket}${pack.isOffer ? '*' : ''}`} 
-          color="green" 
-          onClick={() => pack.isOffer ? setOfferActionOpened(true) : addToBasket(pack.id)}
-        >
-          <Icon material="add"></Icon>
-        </Fab>
-      : ''}
       {state.user ?
-        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => setPackActionOpened(true)}>
+        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => setActionOpened(true)}>
           <Icon material="menu"></Icon>
         </Fab>
       : ''}
       {props.type === 'c' && pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
-      <Actions opened={packActionOpened}>
+      <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
         {props.type === 'c' ? 
           <>
             <ActionsButton onClick={() => handleFavorite()}>{pack.productId && state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
-            {pack.isOffer && state.userInfo?.friends?.find(f => f.status === 'r') ? 
-              <ActionsButton onClick={() => handleNotifyFriends()}>{labels.notifyFriends}</ActionsButton>
-            : ''}
             {otherProducts.length === 0 ? '' :
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
             }
@@ -232,14 +160,6 @@ const PackDetails = (props: Props) => {
           : ''
         )}
       </Actions>
-      <Actions opened={offerActionOpened}>
-        <ActionsButton onClick={() => addToBasket(pack.id)}>{labels.allOffer}</ActionsButton>
-        <ActionsButton onClick={() => addToBasket(pack.subPackId)}>{subPackInfo}</ActionsButton>
-        {pack.bonusPackId ? <ActionsButton onClick={() => addToBasket(pack.bonusPackId)}>{bonusPackInfo}</ActionsButton> : ''}
-      </Actions>
-      <Toolbar bottom>
-        <Footer/>
-      </Toolbar>
     </Page>
   )
 }

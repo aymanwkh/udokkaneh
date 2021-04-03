@@ -3,7 +3,6 @@ import { StoreContext } from '../data/store'
 import { f7, Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
-import { setup } from '../data/config'
 
 interface Props {
   type: string
@@ -94,9 +93,9 @@ const StoreOwner = (props: Props) => {
       setInprocess(true)
       await registerUser(mobile, name, storeName, locationId, password)
       setInprocess(false)
-      showMessage(labels.registerSuccess)
+      showMessage(props.type === 'o' ? labels.registerStoreOwnerSuccess : labels.registerSuccess)
       f7.views.current.router.back()
-      f7.panel.close(setup.locale === 'en' ? 'left' : 'right') 
+      f7.panel.close('right') 
     } catch (err){
       setInprocess(false)
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
@@ -160,8 +159,9 @@ const StoreOwner = (props: Props) => {
         <ListItem
           title={labels.location}
           smartSelect
+          id="locations"
           smartSelectParams={{
-            el: 'locationId',
+            el: '#locations',
             openIn: 'popup', 
             closeOnSelect: true, 
             searchbar: true, 

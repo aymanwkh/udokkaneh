@@ -1,6 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, Toolbar, NavTitleLarge } from 'framework7-react'
-import Footer from './footer'
+import { f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge } from 'framework7-react'
 import MainCategories from './main-categories'
 import { StoreContext } from '../data/store'
 import { Advert, Notification } from '../data/interfaces'
@@ -40,12 +39,9 @@ const Home = () => {
         </NavTitleLarge>
       </Navbar>
       <Block>
-      {advert ? <Button href="/advert/" large outline text={advert.title} className="sections" /> : ''}
-      <MainCategories/>
+        {advert ? <Button href="/advert/" large outline text={advert.title} className="sections" /> : ''}
+        <MainCategories/>
       </Block>
-      <Toolbar bottom>
-        <Footer isHome="1"/>
-      </Toolbar>
     </Page>
   )
 }
