@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader } from 'framework7-react'
 import RatingStars from './rating-stars'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText } from '../data/actions'
 import labels from '../data/labels'
 import { alarmTypes, setup } from '../data/config'
@@ -12,7 +12,7 @@ interface Props {
   type: string
 }
 const PackDetails = (props: Props) => {
-  const { state, dispatch } = useContext(StoreContext)
+  const { state, dispatch } = useContext(StateContext)
   const [error, setError] = useState('')
   const [pack, setPack] = useState<Pack>()
   const [isAvailable, setIsAvailable] = useState(-1)

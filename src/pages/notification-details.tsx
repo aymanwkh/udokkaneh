@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { f7, Page, Navbar, List, ListInput, Fab, Icon } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { deleteNotification, getMessage, showError, showMessage } from '../data/actions'
 import moment from 'moment'
@@ -10,7 +10,7 @@ interface Props {
   id: string
 }
 const NotificationDetails = (props: Props) => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [error, setError] = useState('')
   const [notification] = useState(() => state.userInfo?.notifications?.find(n => n.id === props.id))
   useEffect(() => {

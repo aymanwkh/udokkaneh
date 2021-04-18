@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, Button } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { randomColors, storeSummary } from '../data/config'
 
@@ -10,7 +10,7 @@ interface ExtendedSections {
   count: number
 }
 const StoreSummary = () => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [sections, setSections] = useState<ExtendedSections[]>([])
   useEffect(() => {
     setSections(() => {

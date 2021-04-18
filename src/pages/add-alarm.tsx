@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 import { alarmTypes } from '../data/config'
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const AddAlarm = (props: Props) => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.packId))
   const [price, setPrice] = useState('')

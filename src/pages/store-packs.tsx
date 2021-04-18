@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import moment from 'moment'
 import 'moment/locale/ar'
 import labels from '../data/labels'
@@ -12,7 +12,7 @@ interface Props {
   type: string
 }
 const StorePacks = (props: Props) => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [storePacks, setStorePacks] = useState<PackPrice[]>([])
   useEffect(() => {
     setStorePacks(() => {

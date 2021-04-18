@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem, Actions, ActionsButton, Icon, Link } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import { quantityText, addQuantity } from '../data/actions'
 import labels from '../data/labels'
 import moment from 'moment'
@@ -9,7 +9,7 @@ import { showMessage, showError, getMessage, rateProduct } from '../data/actions
 import { Order, PurchasedPack } from '../data/interfaces'
 
 const PurchasedPacks = () => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [error, setError] = useState('')
 	const [purchasedPacks, setPurchasedPacks] = useState<PurchasedPack[]>([])
   const [deliveredOrders, setDeliveredOrders] = useState<Order[]>([])

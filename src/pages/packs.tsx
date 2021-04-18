@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
 import { getChildren, productOfText } from '../data/actions'
@@ -11,7 +11,7 @@ interface Props {
   type: string
 }
 const Packs = (props: Props) => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [packs, setPacks] = useState<Pack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === props.id))
   const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))

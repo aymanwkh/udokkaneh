@@ -3,12 +3,12 @@ import Reducer from './reducer'
 import firebase from './firebase'
 import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Order } from './interfaces'
 
-export const StoreContext = createContext({} as Context)
+export const StateContext = createContext({} as Context)
 
 interface Props {
   children: React.ReactElement
 }
-const Store = ({ children }: Props) => {
+const StateProvider = ({ children }: Props) => {
   const initState: State = {
     categories: [], 
     basket: [], 
@@ -163,11 +163,11 @@ const Store = ({ children }: Props) => {
     })
   }, [])
   return (
-    <StoreContext.Provider value={{state, dispatch}}>
+    <StateContext.Provider value={{state, dispatch}}>
       {children}
-    </StoreContext.Provider>
+    </StateContext.Provider>
   )
 }
  
-export default Store
+export default StateProvider
 

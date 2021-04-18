@@ -1,10 +1,10 @@
 import { useContext, useState } from 'react'
 import { Page, Navbar, Card, CardContent, CardFooter } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 
 const Advert = () => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [advert] = useState(state.adverts[0])
   return (
     <Page>

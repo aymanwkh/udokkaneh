@@ -1,12 +1,12 @@
 import { useContext, useState, useEffect } from 'react'
 import { f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge } from 'framework7-react'
 import MainCategories from './main-categories'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import { Advert, Notification } from '../data/interfaces'
 import labels from '../data/labels'
 
 const Home = () => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [advert, setAdvert] = useState<Advert | undefined>(undefined)
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {

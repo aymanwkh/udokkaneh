@@ -1,12 +1,12 @@
 import { useContext, useState, useEffect } from 'react'
 import { f7, Page, Navbar, List, ListItem } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import { logout } from '../data/actions'
 import labels from '../data/labels'
 import { Notification } from '../data/interfaces'
 
 const Panel = () => {
-  const { state, dispatch } = useContext(StoreContext)
+  const { state, dispatch } = useContext(StateContext)
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
     setNotifications(() => state.userInfo?.notifications?.filter(n => n.status === 'n') || [])

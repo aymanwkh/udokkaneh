@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { f7, Block, Page, Navbar, List, ListItem } from 'framework7-react'
-import { StoreContext } from '../data/store'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
@@ -8,7 +8,7 @@ import { readNotification, getMessage, showError } from '../data/actions'
 import { Notification } from '../data/interfaces'
 
 const Notifications = () => {
-  const { state } = useContext(StoreContext)
+  const { state } = useContext(StateContext)
   const [error, setError] = useState('')
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
