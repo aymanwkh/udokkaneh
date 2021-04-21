@@ -1,4 +1,4 @@
-import { State, Action } from './interfaces'
+import { State, Action } from './types'
 
 const Reducer = (state: State, action: Action) => {
   let pack, packIndex, packs, nextQuantity, i

@@ -6,7 +6,7 @@ import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { showMessage, showError, getMessage, rateProduct } from '../data/actions'
-import { Order, PurchasedPack } from '../data/interfaces'
+import { Order, PurchasedPack } from '../data/types'
 
 const PurchasedPacks = () => {
   const { state } = useContext(StateContext)

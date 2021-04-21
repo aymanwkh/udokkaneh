@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import { randomColors, setup } from './config'
-import { Error, OrderPack, BasketPack, Category, Order, UserInfo, Alarm, Pack } from './interfaces'
+import { Error, OrderPack, BasketPack, Category, Order, UserInfo, Alarm, Pack } from './types'
 import { f7 } from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {

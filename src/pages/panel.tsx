@@ -3,7 +3,7 @@ import { f7, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import { logout } from '../data/actions'
 import labels from '../data/labels'
-import { Notification } from '../data/interfaces'
+import { Notification } from '../data/types'
 
 const Panel = () => {
   const { state, dispatch } = useContext(StateContext)

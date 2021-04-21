@@ -6,9 +6,9 @@ import 'moment/locale/ar'
 import labels from '../data/labels'
 import { storeSummary } from '../data/config'
 import { productOfText } from '../data/actions'
-import { PackPrice } from '../data/interfaces'
+import { PackPrice } from '../data/types'
 
-interface Props {
+type Props = {
   type: string
 }
 const StorePacks = (props: Props) => {

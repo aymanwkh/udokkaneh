@@ -6,7 +6,7 @@ import { deleteNotification, getMessage, showError, showMessage } from '../data/
 import moment from 'moment'
 import 'moment/locale/ar'
 
-interface Props {
+type Props = {
   id: string
 }
 const NotificationDetails = (props: Props) => {

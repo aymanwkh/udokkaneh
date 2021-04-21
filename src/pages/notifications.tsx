@@ -5,7 +5,7 @@ import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { readNotification, getMessage, showError } from '../data/actions'
-import { Notification } from '../data/interfaces'
+import { Notification } from '../data/types'
 
 const Notifications = () => {
   const { state } = useContext(StateContext)

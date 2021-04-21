@@ -5,9 +5,9 @@ import { StateContext } from '../data/state-provider'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText } from '../data/actions'
 import labels from '../data/labels'
 import { alarmTypes, setup } from '../data/config'
-import { Pack } from '../data/interfaces'
+import { Pack } from '../data/types'
 
-interface Props {
+type Props = {
   id: string,
   type: string
 }

@@ -4,9 +4,9 @@ import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
 import { getChildren, productOfText } from '../data/actions'
-import { Pack } from '../data/interfaces'
+import { Pack } from '../data/types'
 
-interface Props {
+type Props = {
   id: string,
   type: string
 }

@@ -1,20 +1,20 @@
 import firebase from './firebase'
 
-export interface Label {
+export type Label = {
     [key: string]: string
 }
-export interface Category {
+export type Category = {
   id: string,
   name: string,
   parentId: string,
   ordering: number,
   isLeaf: boolean
 }
-export interface Error {
+export type Error = {
   code: string,
   message: string
 }
-export interface Pack {
+export type Pack = {
   id: string,
   name: string,
   productId: string,
@@ -47,29 +47,29 @@ export interface Pack {
   trademarkName?: string,
   countryName?: string
 }
-export interface PackPrice {
+export type PackPrice = {
   storeId: string,
   packId: string,
   price: number,
   packInfo?: Pack
   time: Date
 }
-export interface Notification {
+export type Notification = {
   id: string,
   title: string,
   message: string,
   status: string,
   time: Date
 }
-export interface Friend {
+export type Friend = {
   mobile: string,
   name: string,
   status: string
 }
-export interface Rating {
+export type Rating = {
   productId: string
 }
-export interface Alarm {
+export type Alarm = {
   packId?: string,
   type: string,
   price?: number,
@@ -78,7 +78,7 @@ export interface Alarm {
   offerDays?: number,
   status: string
 }
-export interface UserInfo {
+export type UserInfo = {
   mobile: string,
   locationId: string,
   notifications?: Notification[],
@@ -87,7 +87,7 @@ export interface UserInfo {
   favorites?: string[],
   alarms?: Alarm[]
 }
-export interface CustomerInfo {
+export type CustomerInfo = {
   storeId: string,
   isBlocked: boolean,
   orderLimit: number,
@@ -95,7 +95,7 @@ export interface CustomerInfo {
   discounts: number,
   specialDiscount: number
 }
-export interface BasketPack {
+export type BasketPack = {
   packId: string,
   productId: string,
   productName: string,
@@ -111,7 +111,7 @@ export interface BasketPack {
   purchased?: number,
   returned?: number
 }
-export interface OrderPack extends BasketPack {
+export type OrderPack = BasketPack & {
   gross: number,
   purchased: number,
   status: string,
@@ -120,7 +120,7 @@ export interface OrderPack extends BasketPack {
   packInfo?: Pack,
   oldQuantity?: number
 }
-export interface BigBasketPack extends BasketPack {
+export type BigBasketPack = BasketPack & {
   packInfo?: Pack,
   totalPriceText: string,
   priceText: string,
@@ -128,7 +128,7 @@ export interface BigBasketPack extends BasketPack {
   otherOffers: number,
   otherPacks: number
 }
-export interface Order {
+export type Order = {
   id?: string,
   basket: OrderPack[],
   status: string,
@@ -141,7 +141,7 @@ export interface Order {
   requestType?: string,
   time?: Date
 }
-export interface Advert {
+export type Advert = {
   id: string,
   type: string,
   title: string,
@@ -149,29 +149,29 @@ export interface Advert {
   isActive: boolean,
   imageUrl?: string
 }
-export interface Location {
+export type Location = {
   id: string,
   name: string,
   fees: number,
   ordering: number
 }
-export interface Country {
+export type Country = {
   id: string,
   name: string,
 }
-export interface Trademark {
+export type Trademark = {
   id: string,
   name: string,
 }
-export interface PasswordRequest {
+export type PasswordRequest = {
   id: string,
   mobile: string
 }
-export interface Discount {
+export type Discount = {
   value: number,
   type: string
 }
-export interface PurchasedPack {
+export type PurchasedPack = {
   packId: string,
   productId: string,
   productName: string,
@@ -183,7 +183,7 @@ export interface PurchasedPack {
   lastQuantity: number,
   lastTime: Date
 }
-export interface State {
+export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
   customerInfo?: CustomerInfo,
@@ -200,12 +200,12 @@ export interface State {
   orderBasket: OrderPack[],
 }
 
-export interface Action {
+export type Action = {
   type: string
   payload?: any
 }
 
-export interface Context {
+export type Context = {
   state: State;
   dispatch: React.Dispatch<Action>
 }

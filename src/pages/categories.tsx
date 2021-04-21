@@ -3,9 +3,9 @@ import { f7, Button, Block, Page, Navbar } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { randomColors } from '../data/config'
-import { Category } from '../data/interfaces'
+import { Category } from '../data/types'
 
-interface Props {
+type Props = {
   id: string
 } 
 

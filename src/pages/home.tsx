@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 import { f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge } from 'framework7-react'
 import MainCategories from './main-categories'
 import { StateContext } from '../data/state-provider'
-import { Advert, Notification } from '../data/interfaces'
+import { Advert, Notification } from '../data/types'
 import labels from '../data/labels'
 
 const Home = () => {

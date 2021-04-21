@@ -3,7 +3,7 @@ import { Button } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import { randomColors } from '../data/config'
 import labels from '../data/labels'
-import { Category } from '../data/interfaces'
+import { Category } from '../data/types'
 
 const MainCategories = () => {
   const { state } = useContext(StateContext)

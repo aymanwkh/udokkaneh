@@ -5,7 +5,7 @@ import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 import { alarmTypes } from '../data/config'
 
-interface Props {
+type Props = {
   alarmType: string,
   packId: string
 }

@@ -4,7 +4,7 @@ import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { randomColors, storeSummary } from '../data/config'
 
-interface ExtendedSections {
+type ExtendedSections = {
   id: string,
   name: string,
   count: number

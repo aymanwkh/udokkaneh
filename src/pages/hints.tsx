@@ -3,9 +3,9 @@ import { Block, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
-import { Pack } from '../data/interfaces'
+import { Pack } from '../data/types'
 
-interface Props {
+type Props = {
   id: string,
   type: string
 }

@@ -4,7 +4,7 @@ import { f7, Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
-interface Props {
+type Props = {
   type: string
 }
 const StoreOwner = (props: Props) => {
