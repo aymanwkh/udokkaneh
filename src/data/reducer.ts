@@ -77,64 +77,6 @@ const Reducer = (state: State, action: Action) => {
       return {...state, basket: []}
     case 'SET_BASKET':
       return {...state, basket: action.payload}
-    case 'LOAD_ORDER_BASKET':
-      return {...state, orderBasket: action.payload.basket}
-    case 'CLEAR_ORDER_BASKET':
-      return {...state, orderBasket: []}
-    case 'INCREASE_ORDER_QUANTITY':
-      if (action.payload.packInfo.isDivided) {
-        if (action.payload.quantity >= 1) {
-          nextQuantity = action.payload.quantity + 0.5
-        } else {
-          i = increment.indexOf(action.payload.quantity)
-          nextQuantity = increment[++i]  
-        }
-      } else {
-        nextQuantity = action.payload.quantity + 1
-      }
-      pack = {
-        ...action.payload,
-        quantity: nextQuantity,
-        gross: Math.round(action.payload.price * nextQuantity)
-      }
-      packs = state.orderBasket.slice()
-      packIndex = packs.findIndex(p => p.packId === action.payload.packId)
-      packs.splice(packIndex, 1, pack)
-      return {...state, orderBasket: packs}
-    case 'DECREASE_ORDER_QUANTITY':
-      if (action.payload.weight) {
-        if (action.payload.packInfo.isDivided) {
-          if (action.payload.quantity > action.payload.weight) {
-            nextQuantity = action.payload.weight
-          } else {
-            nextQuantity = 0
-          }  
-        } else {
-          if (action.payload.quantity > action.payload.purchased) {
-            nextQuantity = action.payload.purchased
-          } else {
-            nextQuantity = 0
-          }  
-        }
-      } else if (action.payload.packInfo.isDivided) {
-        if (action.payload.quantity > 1) {
-          nextQuantity = action.payload.quantity - 0.5
-        } else {
-          i = increment.indexOf(action.payload.quantity)
-          nextQuantity = i === 0 ? increment[0] : increment[--i]  
-        }
-      } else {
-        nextQuantity = action.payload.quantity - 1
-      }
-      pack = {
-        ...action.payload,
-        quantity: nextQuantity,
-        gross: Math.round(action.payload.price * nextQuantity)
-      }  
-      packs = state.orderBasket?.slice()
-      packIndex = packs.findIndex(p => p.packId === action.payload.packId)
-      packs.splice(packIndex, 1, pack)
-      return {...state, orderBasket: packs}
     case 'LOGIN':
       return {...state, user: action.payload}
     case 'LOGOUT':

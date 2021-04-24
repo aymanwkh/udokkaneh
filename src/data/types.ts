@@ -111,15 +111,6 @@ export type BasketPack = {
   purchased?: number,
   returned?: number
 }
-export type OrderPack = BasketPack & {
-  gross: number,
-  purchased: number,
-  status: string,
-  actual?: number,
-  overPriced?: boolean,
-  packInfo?: Pack,
-  oldQuantity?: number
-}
 export type BigBasketPack = BasketPack & {
   packInfo?: Pack,
   totalPriceText: string,
@@ -158,18 +149,6 @@ export type Discount = {
   value: number,
   type: string
 }
-export type PurchasedPack = {
-  packId: string,
-  productId: string,
-  productName: string,
-  packName: string,
-  imageUrl: string,
-  bestPrice: number,
-  lastPrice: number,
-  quantity: number,
-  lastQuantity: number,
-  lastTime: Date
-}
 export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
@@ -183,7 +162,6 @@ export type State = {
   countries: Country[],
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
-  orderBasket: OrderPack[],
 }
 
 export type Action = {

@@ -19,7 +19,6 @@ const StateProvider = ({ children }: Props) => {
     countries: [],
     trademarks: [],
     passwordRequests: [],
-    orderBasket: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
