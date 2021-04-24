@@ -1,7 +1,7 @@
 import { createContext, useReducer, useEffect } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Order } from './types'
+import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest } from './types'
 
 export const StateContext = createContext({} as Context)
 
@@ -12,7 +12,6 @@ const StateProvider = ({ children }: Props) => {
   const initState: State = {
     categories: [], 
     basket: [], 
-    orders: [],
     packs: [],
     packPrices: [],
     adverts: [],
@@ -135,26 +134,6 @@ const StateProvider = ({ children }: Props) => {
         }, err => {
           unsubscribeCustomer()
         })  
-        const unsubscribeOrders = firebase.firestore().collection('orders').where('userId', '==', user.uid).onSnapshot(docs => {
-          let orders: Order[] = []
-          docs.forEach(doc => {
-            orders.push({
-              id: doc.id,
-              basket: doc.data().basket,
-              status: doc.data().status,
-              total: doc.data().total,
-              fixedFees: doc.data().fixedFees,
-              deliveryFees: doc.data().deliveryFees,
-              discount: doc.data().discount,
-              fraction: doc.data().fraction,
-              requestType: doc.data().requestType,
-              time: doc.data().time
-            })
-          })
-          dispatch({type: 'SET_ORDERS', payload: orders})
-        }, err => {
-          unsubscribeOrders()
-        }) 
       } else {
         dispatch({type: 'CLEAR_USER_INFO'})
         dispatch({type: 'CLEAR_CUSTOMER_INFO'})

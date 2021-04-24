@@ -143,8 +143,6 @@ const Reducer = (state: State, action: Action) => {
       return {...state, userInfo: action.payload}
     case 'SET_CUSTOMER_INFO':
       return {...state, customerInfo: action.payload}
-    case 'SET_ORDERS':
-      return {...state, orders: action.payload}
     case 'SET_PACKS':
       return {...state, packs: action.payload}
     case 'SET_CATEGORIES':

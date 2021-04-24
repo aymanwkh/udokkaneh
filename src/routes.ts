@@ -15,7 +15,6 @@ import ChangePassword from './pages/change-password'
 import Hints from './pages/hints'
 import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
-import PurchasedPacks from './pages/purchased-packs'
 import Advert from './pages/advert'
 
 const routes = [
@@ -100,10 +99,6 @@ const routes = [
   {
     path: '/notification-details/:id',
     component: NotificationDetails
-  },
-  {
-    path: '/purchased-packs/',
-    component: PurchasedPacks
   },
   {
     path: '/advert/',

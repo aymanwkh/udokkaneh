@@ -128,19 +128,6 @@ export type BigBasketPack = BasketPack & {
   otherOffers: number,
   otherPacks: number
 }
-export type Order = {
-  id?: string,
-  basket: OrderPack[],
-  status: string,
-  statusName?: string,
-  total: number,
-  fixedFees: number,
-  deliveryFees: number,
-  discount?: Discount,
-  fraction: number,
-  requestType?: string,
-  time?: Date
-}
 export type Advert = {
   id: string,
   type: string,
@@ -189,7 +176,6 @@ export type State = {
   customerInfo?: CustomerInfo,
   categories: Category[],
   basket: BasketPack[],
-  orders: Order[],
   packs: Pack[],
   packPrices: PackPrice[],
   adverts: Advert[],
