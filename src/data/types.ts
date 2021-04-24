@@ -14,26 +14,28 @@ export type Error = {
   code: string,
   message: string
 }
+export type Product = {
+  id: string,
+  name: string,
+  alias?: string,
+  description?: string,
+  categoryId: string,
+  countryId: string,
+  trademarkId?: string,
+  rating: number,
+  ratingCount: number
+}
 export type Pack = {
   id: string,
   name: string,
-  productId: string,
-  productName: string,
-  productDescription?: string,
+  product: Product,
   imageUrl: string,
   price: number,
-  categoryId: string,
-  rating: number,
   subPackId?: string,
   subQuantity?: number,
-  subPercent?: number,
-  subPackName?: string,
   isOffer: boolean,
-  offerEnd: Date,
+  offerEnd?: Date,
   weightedPrice: number,
-  trademarkId?: string,
-  countryId: string,
-  ratingCount: number,
 }
 export type PackPrice = {
   storeId: string,

@@ -24,11 +24,11 @@ const Packs = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo?.favorites?.includes(p.productId)) || children.includes(p.categoryId))
+      const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo?.favorites?.includes(p.product.id)) || children.includes(p.product.categoryId))
       let extendedPacks = packs.map(p => {
-        const categoryInfo = state.categories.find(c => c.id === p.categoryId)!
-        const trademarkInfo = state.trademarks.find(t => t.id === p.trademarkId)
-        const countryInfo = state.countries.find(c => c.id === p.countryId)!
+        const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
+        const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
+        const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
         return {
           ...p,
           categoryName: categoryInfo.name,
@@ -46,7 +46,7 @@ const Packs = (props: Props) => {
         setPacks([...packs].sort((p1, p2) => p1.price - p2.price))
         break
       case 'r':
-        setPacks([...packs].sort((p1, p2) => p2.rating - p1.rating))
+        setPacks([...packs].sort((p1, p2) => p2.product.rating - p1.product.rating))
         break
       case 'o':
         setPacks([...packs].sort((p1, p2) => (p2.isOffer || p2.offerEnd ? 1 : 0) - (p1.isOffer || p1.offerEnd ? 1 : 0)))
@@ -90,8 +90,8 @@ const Packs = (props: Props) => {
           : packs.map(p => 
               <ListItem
                 link={`/pack-details/${p.id}/type/c`}
-                title={p.productName}
-                subtitle={p.productDescription}
+                title={p.product.name}
+                subtitle={p.product.description}
                 text={p.name}
                 footer={`${labels.category}: ${p.categoryName}`}
                 after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}

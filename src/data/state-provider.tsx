@@ -2,6 +2,7 @@ import { createContext, useReducer, useEffect } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest } from './types'
+import { flattenDiagnosticMessageText } from 'typescript'
 
 export const StateContext = createContext({} as Context)
 
@@ -38,26 +39,19 @@ const StateProvider = ({ children }: Props) => {
     }, err => {
       unsubscribeCategories()
     })  
-    const unsubscribePacks = firebase.firestore().collection('packs').where('price', '>', 0).onSnapshot(docs => {
+    const unsubscribePacks = firebase.firestore().collection('packs').where('isArchived', '==', false).onSnapshot(docs => {
       let packs: Pack[] = []
       let packPrices: PackPrice[] = []
       docs.forEach(doc => {
         packs.push({
           id: doc.id,
           name: doc.data().name,
-          productId: doc.data().productId,
-          productName: doc.data().productName,
-          productDescription: doc.data().productDescription,
+          product: doc.data().product,
           imageUrl: doc.data().imageUrl,
           price: doc.data().price,
-          categoryId: doc.data().categoryId,
-          rating: doc.data().rating,
-          ratingCount: doc.data().ratingCount,
           isOffer: doc.data().isOffer,
           offerEnd: doc.data().offerEnd,
           weightedPrice: doc.data().weightedPrice,
-          trademarkId: doc.data().trademarkId,
-          countryId: doc.data().countryId,
         })
         if (doc.data().prices) {
           doc.data().prices.forEach((p: PackPrice) => {

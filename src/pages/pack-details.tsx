@@ -27,8 +27,8 @@ const PackDetails = (props: Props) => {
   useEffect(() => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
-      const trademarkInfo = state.trademarks.find(t => t.id === pack.trademarkId)
-      const countryInfo = state.countries.find(c => c.id === pack.countryId)!
+      const trademarkInfo = state.trademarks.find(t => t.id === pack.product.trademarkId)
+      const countryInfo = state.countries.find(c => c.id === pack.product.countryId)!
       return {
         ...pack,
         trademarkName: trademarkInfo?.name,
@@ -40,9 +40,9 @@ const PackDetails = (props: Props) => {
     pack && setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack.id) ? 1 : -1)
   }, [state.packPrices, state.customerInfo, pack])
   useEffect(() => {
-    pack && setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack.categoryId && pa.rating > pack.rating))
-    pack && setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
-    pack && setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
+    pack && setOtherProducts(() => state.packs.filter(pa => pa.product.categoryId === pack.product.categoryId && pa.product.rating > pack.product.rating))
+    pack && setOtherOffers(() => state.packs.filter(pa => pa.product.id === pack.product.id && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
+    pack && setOtherPacks(() => state.packs.filter(pa => pa.product.id === pack.product.id && pa.weightedPrice < pack.weightedPrice))
   }, [pack, state.packs])
   useEffect(() => {
     if (error) {
@@ -90,8 +90,8 @@ const PackDetails = (props: Props) => {
   const handleFavorite = () => {
     try{
       if (state.userInfo && pack) {
-        updateFavorites(state.userInfo, pack.productId)
-        showMessage(state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)  
+        updateFavorites(state.userInfo, pack.product.id)
+        showMessage(state.userInfo?.favorites?.includes(pack.product.id) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)  
       }
 		} catch (err){
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
@@ -100,7 +100,7 @@ const PackDetails = (props: Props) => {
   if (!pack) return <Page><Preloader /></Page>
   return (
     <Page>
-      <Navbar title={pack.productName} backLink={labels.back} />
+      <Navbar title={pack.product.name} backLink={labels.back} />
       <Card>
         <CardHeader className="card-header">
           <div className="price">
@@ -110,11 +110,11 @@ const PackDetails = (props: Props) => {
         <CardContent>
           <p className="card-title">{pack.name}</p>
           <img src={pack.imageUrl} className="img-card" alt={labels.noImage} />
-          <p className="card-title">{pack.productDescription}</p>
+          <p className="card-title">{pack.product.description}</p>
         </CardContent>
         <CardFooter>
           <p>{productOfText(pack.countryName, pack.trademarkName)}</p>
-          <p><RatingStars rating={pack.rating ?? 0} count={pack.ratingCount ?? 0} /></p>
+          <p><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>
       {state.user ?
@@ -126,7 +126,7 @@ const PackDetails = (props: Props) => {
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
         {props.type === 'c' ? 
           <>
-            <ActionsButton onClick={() => handleFavorite()}>{pack.productId && state.userInfo?.favorites?.includes(pack.productId) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
+            <ActionsButton onClick={() => handleFavorite()}>{pack.product.id && state.userInfo?.favorites?.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
             {otherProducts.length === 0 ? '' :
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
             }

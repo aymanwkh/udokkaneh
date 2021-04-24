@@ -24,8 +24,8 @@ const StorePacks = (props: Props) => {
       const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo?.storeId)
       const extendedStorePacks = storePacks.map(p => {
         const packInfo = state.packs.find(pa => pa.id === p.packId)!
-        const trademarkInfo = state.trademarks.find(t => t.id === packInfo.trademarkId)
-        const countryInfo = state.countries.find(c => c.id === packInfo.countryId)!
+        const trademarkInfo = state.trademarks.find(t => t.id === packInfo.product.trademarkId)
+        const countryInfo = state.countries.find(c => c.id === packInfo.product.countryId)!
         return {
           ...p,
           packInfo,
@@ -50,8 +50,8 @@ const StorePacks = (props: Props) => {
           : storePacks.map(p => 
               <ListItem
                 link={`/pack-details/${p.packId}/type/o`}
-                title={p.packInfo?.productName}
-                subtitle={p.packInfo?.productDescription}
+                title={p.packInfo?.product.name}
+                subtitle={p.packInfo?.product.description}
                 text={p.packInfo?.name}
                 footer={moment(p.time).fromNow()}
                 after={((p.packInfo?.price ?? 0) / 100).toFixed(2)}

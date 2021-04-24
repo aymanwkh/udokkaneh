@@ -21,14 +21,14 @@ const Hints = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
-        (props.type === 'p' && p.categoryId === pack?.categoryId && p.rating > pack.rating) ||
-        (props.type === 'o' && p.productId === pack?.productId && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
-        (props.type === 'w' && p.productId === pack?.productId && p.weightedPrice < pack.weightedPrice)
+        (props.type === 'p' && p.product.categoryId === pack?.product.categoryId && p.product.rating > pack.product.rating) ||
+        (props.type === 'o' && p.product.id === pack?.product.id && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
+        (props.type === 'w' && p.product.id === pack?.product.id && p.weightedPrice < pack.weightedPrice)
       )
       let extendedPacks = packs.map(p => {
-        const categoryInfo = state.categories.find(c => c.id === p.categoryId)!
-        const trademarkInfo = state.trademarks.find(t => t.id === p.trademarkId)
-        const countryInfo = state.countries.find(c => c.id === p.countryId)!
+        const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
+        const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
+        const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
         return {
           ...p, 
           categoryName: categoryInfo.name,
@@ -49,8 +49,8 @@ const Hints = (props: Props) => {
           : packs.map(p => 
               <ListItem
                 link={`/pack-details/${p.id}/type/c`}
-                title={p.productName}
-                subtitle={p.productDescription}
+                title={p.product.name}
+                subtitle={p.product.description}
                 text={p.name}
                 footer={`${labels.category}: ${p.categoryName}`}
                 after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}

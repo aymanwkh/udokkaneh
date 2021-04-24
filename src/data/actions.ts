@@ -1,6 +1,6 @@
 import firebase from './firebase'
 import labels from './labels'
-import { randomColors, setup } from './config'
+import { randomColors } from './config'
 import { Error, BasketPack, Category, UserInfo, Alarm, Pack } from './types'
 import { f7 } from 'framework7-react'
 
@@ -204,15 +204,15 @@ export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
     let lastPrice
     if (p.offerId) {
       const offerInfo = packs.find(pa => pa.id === p.offerId)!
-      lastPrice = Math.round(offerInfo.price / (offerInfo.subQuantity ?? 0) * (offerInfo.subPercent ?? 0) * (1 + setup.profit))
+      lastPrice = Math.round(offerInfo.price / offerInfo.subQuantity!)
     } else {
       lastPrice = packInfo?.price ?? 0
     }
     const totalPriceText = `${(Math.round(lastPrice * p.quantity) / 100).toFixed(2)}${p.byWeight ? '*' : ''}`
     const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 100).toFixed(2)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 100).toFixed(2)}, ${labels.newPrice}: ${(lastPrice / 100).toFixed(2)}`)
-    const otherProducts = packs.filter(pa => pa.categoryId === packInfo?.categoryId && pa.rating > packInfo.rating)
-    const otherOffers = packs.filter(pa => pa.productId === packInfo?.productId && pa.id !== packInfo.id && (pa.isOffer || pa.offerEnd))
-    const otherPacks = packs.filter(pa => pa.productId === packInfo?.productId && pa.weightedPrice < packInfo.weightedPrice)
+    const otherProducts = packs.filter(pa => pa.product.categoryId === packInfo?.product.categoryId && pa.product.rating > packInfo.product.rating)
+    const otherOffers = packs.filter(pa => pa.product.id === packInfo?.product.id && pa.id !== packInfo.id && (pa.isOffer || pa.offerEnd))
+    const otherPacks = packs.filter(pa => pa.product.id === packInfo?.product.id && pa.weightedPrice < packInfo.weightedPrice)
     return {
       ...p,
       price: lastPrice,
