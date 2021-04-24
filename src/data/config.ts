@@ -21,7 +21,6 @@ export const randomColors = [
 
 export const sortByList = [
   {id: 'p', name: 'اﻷقل سعرا', ename: 'Least Price'},
-  {id: 's', name: 'اﻷكثر مبيعا', ename: 'Best Seller'},
   {id: 'r', name: 'اﻷفضل في التقييم', ename: 'Best Rating'},
   {id: 'o', name: 'العروض أولا', ename: 'Offers First'},
   {id: 'v', name: 'اﻷفضل قيمة (السعر/الوزن)', ename: 'Best Value'},

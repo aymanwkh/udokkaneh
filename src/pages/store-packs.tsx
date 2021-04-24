@@ -33,8 +33,8 @@ const StorePacks = (props: Props) => {
       })
       return extendedStorePacks.filter(p => (props.type === 'a')
                             || (props.type === 'o' && p.price > (p.packInfo?.price ?? 0)) 
-                            || (props.type === 'n' && p.price === (p.packInfo?.price ?? 0) && p.storeId !== p.packInfo?.minStoreId)
-                            || (props.type === 'l' && p.price === (p.packInfo?.price ?? 0) && p.storeId === p.packInfo?.minStoreId))
+                            || (props.type === 'n' && p.price === (p.packInfo?.price ?? 0))
+                            || (props.type === 'l' && p.price === (p.packInfo?.price ?? 0)))
     })
   }, [state.packPrices, state.packs, state.customerInfo, state.trademarks, state.countries, props.type])
   let i = 0

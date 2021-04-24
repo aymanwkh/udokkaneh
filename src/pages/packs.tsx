@@ -40,9 +40,6 @@ const Packs = (props: Props) => {
       case 'p':
         setPacks([...packs].sort((p1, p2) => p1.price - p2.price))
         break
-      case 's':
-        setPacks([...packs].sort((p1, p2) => p2.sales - p1.sales))
-        break
       case 'r':
         setPacks([...packs].sort((p1, p2) => p2.rating - p1.rating))
         break
@@ -98,7 +95,6 @@ const Packs = (props: Props) => {
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.trademarkName, p.countryName)}</div>
                 {(p.isOffer || p.offerEnd) && <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge>}
-                {p.closeExpired && <Badge slot="text" color="red">{labels.closeExpired}</Badge>}
               </ListItem>
               
             )

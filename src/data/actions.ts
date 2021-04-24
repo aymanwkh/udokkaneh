@@ -203,20 +203,14 @@ export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
     const packInfo = packs.find(pa => pa.id === p.packId)
     let lastPrice
     if (p.offerId) {
-      const offerInfo = packs.find(pa => pa.id === p.offerId)
-      if (!offerInfo) {
-        lastPrice = 0
-      } else if (offerInfo.subPackId === p.packId) {
-        lastPrice = Math.round(offerInfo.price / (offerInfo.subQuantity ?? 0) * (offerInfo.subPercent ?? 0) * (1 + setup.profit))
-      } else {
-        lastPrice = Math.round(offerInfo.price / (offerInfo.bonusQuantity ?? 0) * (offerInfo.bonusPercent ?? 0) * (1 + setup.profit))
-      }
+      const offerInfo = packs.find(pa => pa.id === p.offerId)!
+      lastPrice = Math.round(offerInfo.price / (offerInfo.subQuantity ?? 0) * (offerInfo.subPercent ?? 0) * (1 + setup.profit))
     } else {
       lastPrice = packInfo?.price ?? 0
     }
     const totalPriceText = `${(Math.round(lastPrice * p.quantity) / 100).toFixed(2)}${p.byWeight ? '*' : ''}`
     const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 100).toFixed(2)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 100).toFixed(2)}, ${labels.newPrice}: ${(lastPrice / 100).toFixed(2)}`)
-    const otherProducts = packs.filter(pa => pa.categoryId === packInfo?.categoryId && (pa.sales > packInfo.sales || pa.rating > packInfo.rating))
+    const otherProducts = packs.filter(pa => pa.categoryId === packInfo?.categoryId && pa.rating > packInfo.rating)
     const otherOffers = packs.filter(pa => pa.productId === packInfo?.productId && pa.id !== packInfo.id && (pa.isOffer || pa.offerEnd))
     const otherPacks = packs.filter(pa => pa.productId === packInfo?.productId && pa.weightedPrice < packInfo.weightedPrice)
     return {

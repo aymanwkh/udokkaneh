@@ -16,7 +16,7 @@ const Hints = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
-        (props.type === 'p' && p.categoryId === pack?.categoryId && (p.sales > pack.sales || p.rating > pack.rating)) ||
+        (props.type === 'p' && p.categoryId === pack?.categoryId && p.rating > pack.rating) ||
         (props.type === 'o' && p.productId === pack?.productId && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
         (props.type === 'w' && p.productId === pack?.productId && p.weightedPrice < pack.weightedPrice)
       )
@@ -54,7 +54,6 @@ const Hints = (props: Props) => {
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.trademarkName, p.countryName)}</div>
                 {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge> : ''}
-                {p.closeExpired && <Badge slot="text" color="red">{labels.closeExpired}</Badge>}
               </ListItem>
             )
           }

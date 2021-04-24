@@ -25,8 +25,8 @@ const StoreSummary = () => {
       const sections = storeSummary.map(s => {
         const packs = extendedStorePacks.filter(p => (s.id === 'a') 
                                           || (s.id === 'o' && p.price > (p.packInfo?.price ?? 0)) 
-                                          || (s.id === 'n' && p.price === (p.packInfo?.price ?? 0) && p.storeId !== p.packInfo?.minStoreId)
-                                          || (s.id === 'l' && p.price === (p.packInfo?.price ?? 0) && p.storeId === p.packInfo?.minStoreId))
+                                          || (s.id === 'n' && p.price === (p.packInfo?.price ?? 0))
+                                          || (s.id === 'l' && p.price === (p.packInfo?.price ?? 0)))
         return {
           ...s,
           count: packs.length

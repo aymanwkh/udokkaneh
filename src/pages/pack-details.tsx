@@ -4,7 +4,7 @@ import RatingStars from './rating-stars'
 import { StateContext } from '../data/state-provider'
 import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText } from '../data/actions'
 import labels from '../data/labels'
-import { alarmTypes, setup } from '../data/config'
+import { alarmTypes } from '../data/config'
 import { Pack } from '../data/types'
 
 type Props = {
@@ -12,12 +12,10 @@ type Props = {
   type: string
 }
 const PackDetails = (props: Props) => {
-  const { state, dispatch } = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [error, setError] = useState('')
   const [pack, setPack] = useState<Pack>()
   const [isAvailable, setIsAvailable] = useState(-1)
-  const [subPackInfo, setSubPackInfo] = useState('')
-  const [bonusPackInfo, setBonusPackInfo] = useState('')
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
   const [otherOffers, setOtherOffers] = useState<Pack[]>([])
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
@@ -38,23 +36,7 @@ const PackDetails = (props: Props) => {
     pack && setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack.id) ? 1 : -1)
   }, [state.packPrices, state.customerInfo, pack])
   useEffect(() => {
-    pack && setSubPackInfo(() => {
-      if (pack.subPackId) {
-        const price = Math.round(pack.price / (pack.subQuantity ?? 0) * (pack.subPercent ?? 0) * (1 + setup.profit))
-        return `${pack.productName} ${pack.subPackName}(${(price / 100).toFixed(2)})`
-      } else {
-        return ''
-      }  
-    })
-    pack && setBonusPackInfo(() => {
-      if (pack.bonusPackId) {
-        const price = Math.round(pack.price / (pack.bonusQuantity ?? 0) * (pack.bonusPercent ?? 0) * (1 + setup.profit))
-        return `${pack.bonusProductName} ${pack.bonusPackName}(${(price / 100).toFixed(2)})`
-      } else {
-        return ''
-      }  
-    })
-    pack && setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack.categoryId && (pa.sales > pack.sales || pa.rating > pack.rating)))
+    pack && setOtherProducts(() => state.packs.filter(pa => pa.categoryId === pack.categoryId && pa.rating > pack.rating))
     pack && setOtherOffers(() => state.packs.filter(pa => pa.productId === pack.productId && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
     pack && setOtherPacks(() => state.packs.filter(pa => pa.productId === pack.productId && pa.weightedPrice < pack.weightedPrice))
   }, [pack, state.packs])
@@ -122,7 +104,7 @@ const PackDetails = (props: Props) => {
           </div>
         </CardHeader>
         <CardContent>
-          <p className="card-title">{`${pack.name} ${pack.closeExpired ? '(' + labels.closeExpired + ')' : ''}`}</p>
+          <p className="card-title">{pack.name}</p>
           <img src={pack.imageUrl} className="img-card" alt={labels.noImage} />
           <p className="card-title">{pack.productDescription}</p>
         </CardContent>
