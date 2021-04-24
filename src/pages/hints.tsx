@@ -9,10 +9,15 @@ type Props = {
   id: string,
   type: string
 }
+type ExtendedPack = Pack & {
+  categoryName: string,
+  countryName: string,
+  trademarkName?: string
+}
 const Hints = (props: Props) => {
   const { state } = useContext(StateContext)
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
-  const [packs, setPacks] = useState<Pack[]>([])
+  const [packs, setPacks] = useState<ExtendedPack[]>([])
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
@@ -21,14 +26,14 @@ const Hints = (props: Props) => {
         (props.type === 'w' && p.productId === pack?.productId && p.weightedPrice < pack.weightedPrice)
       )
       let extendedPacks = packs.map(p => {
-        const categoryInfo = state.categories.find(c => c.id === p.categoryId)
+        const categoryInfo = state.categories.find(c => c.id === p.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.trademarkId)
-        const countryInfo = state.countries.find(c => c.id === p.countryId)
+        const countryInfo = state.countries.find(c => c.id === p.countryId)!
         return {
           ...p, 
-          categoryName: categoryInfo?.name,
-          trademarkName: trademarkInfo?.name,
-          countryName: countryInfo?.name
+          categoryName: categoryInfo.name,
+          countryName: countryInfo.name,
+          trademarkName: trademarkInfo?.name
         }
       })
       return extendedPacks.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
@@ -52,7 +57,7 @@ const Hints = (props: Props) => {
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{productOfText(p.trademarkName, p.countryName)}</div>
+                <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
                 {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge> : ''}
               </ListItem>
             )

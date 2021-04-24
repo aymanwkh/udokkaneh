@@ -34,15 +34,11 @@ export type Pack = {
   trademarkId?: string,
   countryId: string,
   ratingCount: number,
-  categoryName?: string,
-  trademarkName?: string,
-  countryName?: string
 }
 export type PackPrice = {
   storeId: string,
   packId: string,
   price: number,
-  packInfo?: Pack
   time: Date
 }
 export type Notification = {
@@ -101,14 +97,6 @@ export type BasketPack = {
   weight?: number,
   purchased?: number,
   returned?: number
-}
-export type BigBasketPack = BasketPack & {
-  packInfo?: Pack,
-  totalPriceText: string,
-  priceText: string,
-  otherProducts: number,
-  otherOffers: number,
-  otherPacks: number
 }
 export type Advert = {
   id: string,

@@ -53,7 +53,7 @@ export const addQuantity = (q1: number, q2: number, q3 = 0) => {
   return Math.trunc(q1 * 1000 + q2 * 1000 + q3 * 1000) / 1000
 }
 
-export const productOfText = (trademarkName: string | undefined, countryName: string | undefined) => {
+export const productOfText = (countryName: string, trademarkName?: string) => {
   return trademarkName ? `${labels.productFrom} ${trademarkName}-${countryName}` : `${labels.productOf} ${countryName}`
 }
 

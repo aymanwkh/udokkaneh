@@ -6,35 +6,37 @@ import 'moment/locale/ar'
 import labels from '../data/labels'
 import { storeSummary } from '../data/config'
 import { productOfText } from '../data/actions'
-import { PackPrice } from '../data/types'
+import { PackPrice, Pack } from '../data/types'
 
 type Props = {
   type: string
 }
+type ExtendedPackPrice = PackPrice & {
+  packInfo: Pack,
+  countryName: string,
+  trademarkName?: string
+}
 const StorePacks = (props: Props) => {
   const { state } = useContext(StateContext)
-  const [storePacks, setStorePacks] = useState<PackPrice[]>([])
+  const [storePacks, setStorePacks] = useState<ExtendedPackPrice[]>([])
   useEffect(() => {
     setStorePacks(() => {
       const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo?.storeId)
       const extendedStorePacks = storePacks.map(p => {
-        let packInfo = state.packs.find(pa => pa.id === p.packId)!
-        const trademarkInfo = state.trademarks.find(t => t.id === packInfo?.trademarkId)
-        const countryInfo = state.countries.find(c => c.id === packInfo?.countryId)
-        packInfo = {
-          ...packInfo,
-          trademarkName: trademarkInfo?.name,
-          countryName: countryInfo?.name
-        }
+        const packInfo = state.packs.find(pa => pa.id === p.packId)!
+        const trademarkInfo = state.trademarks.find(t => t.id === packInfo.trademarkId)
+        const countryInfo = state.countries.find(c => c.id === packInfo.countryId)!
         return {
           ...p,
-          packInfo
+          packInfo,
+          countryName: countryInfo.name,
+          trademarkName: trademarkInfo?.name
         }
       })
       return extendedStorePacks.filter(p => (props.type === 'a')
-                            || (props.type === 'o' && p.price > (p.packInfo?.price ?? 0)) 
-                            || (props.type === 'n' && p.price === (p.packInfo?.price ?? 0))
-                            || (props.type === 'l' && p.price === (p.packInfo?.price ?? 0)))
+                            || (props.type === 'o' && p.price > p.packInfo.price) 
+                            || (props.type === 'n' && p.price === p.packInfo.price)
+                            || (props.type === 'l' && p.price === p.packInfo.price))
     })
   }, [state.packPrices, state.packs, state.customerInfo, state.trademarks, state.countries, props.type])
   let i = 0
@@ -56,7 +58,7 @@ const StorePacks = (props: Props) => {
                 key={i++}
               >
                 <img src={p.packInfo?.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{productOfText(p.packInfo?.trademarkName, p.packInfo?.countryName)}</div>
+                <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
                 {p.price > (p.packInfo?.price ?? 0) && <div className="list-subtext2">{`${labels.myPrice}: ${(p.price / 100).toFixed(2)}`}</div>}
                 {p.packInfo?.isOffer && <Badge slot="title" color='green'>{labels.offer}</Badge>}
               </ListItem>

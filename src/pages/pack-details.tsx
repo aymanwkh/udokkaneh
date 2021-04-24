@@ -11,10 +11,14 @@ type Props = {
   id: string,
   type: string
 }
+type ExtendedPack = Pack & {
+  countryName: string,
+  trademarkName?: string
+}
 const PackDetails = (props: Props) => {
   const { state } = useContext(StateContext)
   const [error, setError] = useState('')
-  const [pack, setPack] = useState<Pack>()
+  const [pack, setPack] = useState<ExtendedPack>()
   const [isAvailable, setIsAvailable] = useState(-1)
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
   const [otherOffers, setOtherOffers] = useState<Pack[]>([])
@@ -24,11 +28,11 @@ const PackDetails = (props: Props) => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
       const trademarkInfo = state.trademarks.find(t => t.id === pack.trademarkId)
-      const countryInfo = state.countries.find(c => c.id === pack.countryId)
+      const countryInfo = state.countries.find(c => c.id === pack.countryId)!
       return {
         ...pack,
         trademarkName: trademarkInfo?.name,
-        countryName: countryInfo?.name
+        countryName: countryInfo.name
       }
     })
   }, [state.packs, state.trademarks, state.countries, props.id])
@@ -109,7 +113,7 @@ const PackDetails = (props: Props) => {
           <p className="card-title">{pack.productDescription}</p>
         </CardContent>
         <CardFooter>
-          <p>{productOfText(pack.trademarkName, pack.countryName)}</p>
+          <p>{productOfText(pack.countryName, pack.trademarkName)}</p>
           <p><RatingStars rating={pack.rating ?? 0} count={pack.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>
