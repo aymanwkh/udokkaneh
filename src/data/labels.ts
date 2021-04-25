@@ -163,7 +163,12 @@ const labels: Label = {
   mergeSuccess: 'تم الدمج',
   delete: 'حذف',
   noPurchase: 'عدم الشراء',
-  closeExpired: 'صلاحية قصيرة'
+  closeExpired: 'صلاحية قصيرة',
+  addProductRequest: 'طلب اضافة منتج',
+  weightVolume: 'الوزن/الحجم',
+  country: 'بلد المنشأ',
+  sendRequestSuccess: 'تم ارسال الطلب بنجاح'
+
 }
 
 export default labels

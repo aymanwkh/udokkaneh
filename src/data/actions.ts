@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import { randomColors } from './config'
-import { Error, BasketPack, Category, UserInfo, Alarm, Pack } from './types'
+import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest } from './types'
 import { f7 } from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
@@ -197,4 +197,21 @@ export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
     }
   })
   return basket
+}
+
+export const addProductRequest = async (productRequest: ProductRequest, image?: File) => {
+  const productRequestRef = firebase.firestore().collection('product-requests').doc()
+  let imageUrl = ''
+  if (image) {
+    const filename = image.name
+    const ext = filename.slice(filename.lastIndexOf('.'))
+    const fileData = await firebase.storage().ref().child('product-requests/' + productRequestRef.id + ext).put(image)
+    imageUrl = await firebase.storage().ref().child(fileData.metadata.fullPath).getDownloadURL()
+  }
+  productRequest['imageUrl'] = imageUrl
+  productRequestRef.set({
+    ...productRequest,
+    userId: firebase.auth().currentUser?.uid,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  })
 }

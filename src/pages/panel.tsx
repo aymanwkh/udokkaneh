@@ -29,6 +29,7 @@ const Panel = () => {
         {state.user && <ListItem link="/packs/0/type/f" title={labels.favorites} view="#main-view" panelClose />}
         {state.user && state.userInfo?.storeId && <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose />}
         {!state.user && <ListItem link="/register/o" title={labels.registerStoreOwner} />}
+        {state.user && state.userInfo?.storeId && <ListItem link="/add-product-request/" title={labels.addProductRequest} view="#main-view" panelClose />}
       </List>
     </Page>
   )

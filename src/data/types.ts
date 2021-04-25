@@ -14,6 +14,12 @@ export type Error = {
   code: string,
   message: string
 }
+export type ProductRequest = {
+  name: string,
+  country: string,
+  weight: string,
+  imageUrl: string
+}
 export type Product = {
   id: string,
   name: string,

@@ -15,6 +15,7 @@ import Hints from './pages/hints'
 import Notifications from './pages/notifications'
 import NotificationDetails from './pages/notification-details'
 import Advert from './pages/advert'
+import AddProductRequest from './pages/add-product-request'
 
 const routes = [
   {
@@ -98,6 +99,10 @@ const routes = [
   {
     path: '/advert/',
     component: Advert
+  },
+  {
+    path: '/add-product-request/',
+    component: AddProductRequest
   },
   {
     path: '(.*)',
