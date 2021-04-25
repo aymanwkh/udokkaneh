@@ -66,10 +66,3 @@ export const storeSummary = [
   {id: 'n', name: 'منتجات مساوية للسوق', ename: 'Equal Price'},
   {id: 'l', name: 'منتجات أقل سعر في السوق', ename: 'Under Priced'}
 ]
-
-export const friendStatus = [
-  {id: 'n', name: 'قيد الموافقة', ename: 'New'},
-  {id: 's', name: 'ارسلت الدعوة', ename: 'Invitation Sent'},
-  {id: 'o', name: 'مدعو سابقا', ename: 'Previously invited'},
-  {id: 'r', name: 'مستخدم فعلي', ename: 'Actual User'}
-]

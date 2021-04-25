@@ -8,7 +8,6 @@ import Packs from './pages/packs'
 import PackDetails from './pages/pack-details'
 import AddAlarm from './pages/add-alarm'
 import PasswordRequest from './pages/password-request'
-import InviteFriend from './pages/invite-friend'
 import StoreSummary from './pages/store-summary'
 import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
@@ -55,10 +54,6 @@ const routes = [
     // options: {
     //   reloadCurrent: true,
     // },
-  },
-  {
-    path: '/invite-friend/',
-    component: InviteFriend
   },
   {
     path: '/categories/:id',

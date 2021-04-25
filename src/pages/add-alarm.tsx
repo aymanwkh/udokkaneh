@@ -26,12 +26,12 @@ const AddAlarm = (props: Props) => {
   useEffect(() => {
     setCurrentPrice(() => {
       if (props.alarmType === 'cp') {
-        return state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack?.id)?.price
+        return state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)?.price
       } else {
         return pack?.price
       }
     })
-  }, [state.packPrices, props.alarmType, state.customerInfo, pack])
+  }, [state.packPrices, props.alarmType, state.userInfo, pack])
   useEffect(() => {
     const validatePrice = (value: string) => {
       if (Number(value) > 0 && Number(value) * 100 !== Number(currentPrice)) {
@@ -70,15 +70,12 @@ const AddAlarm = (props: Props) => {
     || priceErrorMessage
     || alternativeErrorMessage) setButtonVisisble(false)
     else setButtonVisisble(true)
-  }, [props.alarmType, price, isOffer, offerDays, alternative, quantity, state.customerInfo, priceErrorMessage, alternativeErrorMessage])
+  }, [props.alarmType, price, isOffer, offerDays, alternative, quantity, state.userInfo, priceErrorMessage, alternativeErrorMessage])
   const formatPrice = (value: string) => {
     return Number(value).toFixed(2)
   } 
   const handleSubmit = () => {
     try{
-      if (state.customerInfo?.isBlocked) {
-        throw new Error('blockedUser')
-      }
       if (offerDays && Number(offerDays) <= 0) {
         throw new Error('invalidPeriod')
       }

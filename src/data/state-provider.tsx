@@ -122,17 +122,8 @@ const StateProvider = ({ children }: Props) => {
         }, err => {
           unsubscribeUser()
         })  
-        const unsubscribeCustomer = firebase.firestore().collection('customers').doc(user.uid).onSnapshot(doc => {
-          if (doc.exists){
-            dispatch({type: 'SET_CUSTOMER_INFO', payload: doc.data()})
-          }
-        }, err => {
-          unsubscribeCustomer()
-        })  
       } else {
         dispatch({type: 'CLEAR_USER_INFO'})
-        dispatch({type: 'CLEAR_CUSTOMER_INFO'})
-        dispatch({type: 'SET_ORDERS', payload: []})
       }
     })
   }, [])

@@ -73,6 +73,7 @@ const Login = () => {
           placeholder={labels.mobilePlaceholder}
           name="mobile"
           clearButton
+          autofocus
           errorMessage={mobileErrorMessage}
           errorMessageForce
           onChange={e => setMobile(e.target.value)}

@@ -37,8 +37,8 @@ const PackDetails = (props: Props) => {
     })
   }, [state.packs, state.trademarks, state.countries, props.id])
   useEffect(() => {
-    pack && setIsAvailable(() => state.packPrices.find(p => p.storeId === state.customerInfo?.storeId && p.packId === pack.id) ? 1 : -1)
-  }, [state.packPrices, state.customerInfo, pack])
+    pack && setIsAvailable(() => state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack.id) ? 1 : -1)
+  }, [state.packPrices, state.userInfo, pack])
   useEffect(() => {
     pack && setOtherProducts(() => state.packs.filter(pa => pa.product.categoryId === pack.product.categoryId && pa.product.rating > pack.product.rating))
     pack && setOtherOffers(() => state.packs.filter(pa => pa.product.id === pack.product.id && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
@@ -56,9 +56,6 @@ const PackDetails = (props: Props) => {
       if (alarmTypeId === 'ua') {
         f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
           try{
-            if (state.customerInfo?.isBlocked) {
-              throw new Error('blockedUser')
-            }
             if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
               throw new Error('duplicateAlarms')
             }
@@ -75,9 +72,6 @@ const PackDetails = (props: Props) => {
           }
         })  
       } else {
-        if (state.customerInfo?.isBlocked) {
-          throw new Error('blockedUser')
-        }
         if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
           throw new Error('duplicateAlarms')
         }

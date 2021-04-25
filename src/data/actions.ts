@@ -33,20 +33,8 @@ export const showError = (messageText: string) => {
   message.open()
 }
 
-
 export const quantityText = (quantity: number, weight?: number): string => {
   return weight && weight !== quantity ? `${quantityText(quantity)}(${quantityText(weight)})` : quantity === Math.trunc(quantity) ? quantity.toString() : quantity.toFixed(3)
-}
-
-export const quantityDetails = (basketPack: BasketPack) => {
-  let text = `${labels.requested}: ${quantityText(basketPack.quantity)}`
-  if ((basketPack.purchased ?? 0) > 0) {
-    text += `, ${labels.purchased}: ${quantityText(basketPack.purchased ?? 0, basketPack.weight)}`
-  }
-  if ((basketPack.returned ?? 0) > 0) {
-    text += `, ${labels.returned}: ${quantityText(basketPack.returned ?? 0)}`
-  }
-  return text
 }
 
 export const addQuantity = (q1: number, q2: number, q3 = 0) => {
@@ -144,16 +132,6 @@ export const addAlarm = (alarm: Alarm) => {
   })
 }
 
-export const inviteFriend = (mobile: string, name: string) => {
-  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-    friends: firebase.firestore.FieldValue.arrayUnion({
-      mobile,
-      name,
-      status: 'n'
-    })
-  })
-}
-
 export const readNotification = (user: UserInfo, notificationId: string) => {
   const notifications = user.notifications?.slice()
   if (notifications) {
@@ -189,17 +167,6 @@ export const deleteNotification = (user: UserInfo, notificationId: string) => {
     firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
       notifications
     })  
-  }
-}
-
-export const deleteFriend = (user: UserInfo, mobile: string) => {
-  const friends = user.friends?.slice()
-  if (friends) {
-    const friendIndex = friends.findIndex(f => f.mobile === mobile)
-    friends.splice(friendIndex, 1)
-    firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-      friends
-    })
   }
 }
 

@@ -129,6 +129,7 @@ const StoreOwner = (props: Props) => {
           placeholder={labels.namePlaceholder}
           name="name"
           clearButton
+          autofocus
           value={name}
           errorMessage={nameErrorMessage}
           errorMessageForce

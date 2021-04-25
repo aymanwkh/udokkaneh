@@ -21,7 +21,7 @@ const StorePacks = (props: Props) => {
   const [storePacks, setStorePacks] = useState<ExtendedPackPrice[]>([])
   useEffect(() => {
     setStorePacks(() => {
-      const storePacks = state.packPrices.filter(p => p.storeId === state.customerInfo?.storeId)
+      const storePacks = state.packPrices.filter(p => p.storeId === state.userInfo?.storeId)
       const extendedStorePacks = storePacks.map(p => {
         const packInfo = state.packs.find(pa => pa.id === p.packId)!
         const trademarkInfo = state.trademarks.find(t => t.id === packInfo.product.trademarkId)
@@ -38,7 +38,7 @@ const StorePacks = (props: Props) => {
                             || (props.type === 'n' && p.price === p.packInfo.price)
                             || (props.type === 'l' && p.price === p.packInfo.price))
     })
-  }, [state.packPrices, state.packs, state.customerInfo, state.trademarks, state.countries, props.type])
+  }, [state.packPrices, state.packs, state.userInfo, state.trademarks, state.countries, props.type])
   let i = 0
   return(
     <Page>
