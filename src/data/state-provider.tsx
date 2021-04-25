@@ -2,7 +2,6 @@ import { createContext, useReducer, useEffect } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest } from './types'
-import { flattenDiagnosticMessageText } from 'typescript'
 
 export const StateContext = createContext({} as Context)
 
@@ -43,15 +42,20 @@ const StateProvider = ({ children }: Props) => {
       let packs: Pack[] = []
       let packPrices: PackPrice[] = []
       docs.forEach(doc => {
+        let prices, minPrice = 0
+        if (doc.data().prices) {
+          prices = doc.data().prices.map((p: PackPrice) => p.price)
+          minPrice = prices.length > 0 ? Math.min(...prices) : 0
+        }
         packs.push({
           id: doc.id,
           name: doc.data().name,
           product: doc.data().product,
           imageUrl: doc.data().imageUrl,
-          price: doc.data().price,
+          price: minPrice,
           isOffer: doc.data().isOffer,
           offerEnd: doc.data().offerEnd,
-          weightedPrice: doc.data().weightedPrice,
+          weightedPrice: Math.floor(minPrice / doc.data().standardUnits),
         })
         if (doc.data().prices) {
           doc.data().prices.forEach((p: PackPrice) => {
@@ -59,6 +63,7 @@ const StateProvider = ({ children }: Props) => {
           })
         }
       })
+      console.log('packs = ', packs)
       dispatch({type: 'SET_PACKS', payload: packs})
       dispatch({type: 'SET_PACK_PRICES', payload: packPrices})
     }, err => {

@@ -91,7 +91,24 @@ const StoreOwner = (props: Props) => {
   const handleRegister = async () => {
     try{
       setInprocess(true)
-      await registerUser(mobile, name, storeName, locationId, password)
+      let user 
+      if (props.type === 'o') {
+        user = {
+          mobile,
+          name,
+          storeName,
+          locationId,
+          password
+        }
+      } else {
+        user = {
+          mobile,
+          name,
+          locationId,
+          password,
+        }
+      }
+      await registerUser(user)
       setInprocess(false)
       showMessage(props.type === 'o' ? labels.registerStoreOwnerSuccess : labels.registerSuccess)
       f7.views.current.router.back()
@@ -142,7 +159,7 @@ const StoreOwner = (props: Props) => {
           onChange={e => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
-        {props.type === 'o' ? 
+        {props.type === 'o' &&
           <ListInput
             label={labels.storeName}
             type="text"
@@ -155,13 +172,13 @@ const StoreOwner = (props: Props) => {
             onChange={e => setStoreName(e.target.value)}
             onInputClear={() => setStoreName('')}
           />
-        : ''}
+        }
         <ListItem
           title={labels.location}
           smartSelect
-          id="locations"
+          // @ts-ignore
           smartSelectParams={{
-            el: '#locations',
+            // el: '#locations',
             openIn: 'popup', 
             closeOnSelect: true, 
             searchbar: true, 

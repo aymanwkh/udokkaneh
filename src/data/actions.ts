@@ -92,17 +92,22 @@ export const addPasswordRequest = (mobile: string) => {
   })
 }
 
-export const registerUser = async (mobile: string, name: string, storeName: string, locationId: string, password: string) => {
-  await firebase.auth().createUserWithEmailAndPassword(mobile + '@gmail.com', mobile.substring(9, 2) + password)
+type registerData = {
+  mobile: string,
+  name: string,
+  locationId: string,
+  password: string,
+  storeName?: string,
+  address?: string
+}
+export const registerUser = async (user: registerData) => {
+  await firebase.auth().createUserWithEmailAndPassword(user.mobile + '@gmail.com', user.mobile.substring(9, 2) + user.password)
   let colors = []
   for (var i = 0; i < 4; i++){
-    colors.push(randomColors[Number(password.charAt(i))].name)
+    colors.push(randomColors[Number(user.password.charAt(i))].name)
   }
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).set({
-    mobile,
-    name,
-    storeName,
-    locationId,
+    ...user,
     colors,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
