@@ -1,6 +1,5 @@
-import { useContext, useState, useEffect } from 'react'
-import { StateContext } from '../data/state-provider'
-import { f7, Page, Navbar, List, ListInput, Button, ListItem } from 'framework7-react'
+import { useState, useEffect } from 'react'
+import { f7, Page, Navbar, List, ListInput, Button, ListButton } from 'framework7-react'
 import { registerUser, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
@@ -8,19 +7,17 @@ type Props = {
   type: string
 }
 const StoreOwner = (props: Props) => {
-  const { state } = useContext(StateContext)
   const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
   const [storeName, setStoreName] = useState('')
-  const [locationId, setLocationId] = useState('')
   const [nameErrorMessage, setNameErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
-  const [locations] = useState(() => [...state.locations].sort((l1, l2) => l1.ordering - l2.ordering))
+  const [position, setPosition] = useState({lat: 0, lng: 0})
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -87,7 +84,17 @@ const StoreOwner = (props: Props) => {
     }  
     if (storeName) validateStoreName(storeName)
   }, [storeName])
-
+  const handleSetPosition = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => null
+    );
+  }
   const handleRegister = async () => {
     try{
       setInprocess(true)
@@ -97,15 +104,15 @@ const StoreOwner = (props: Props) => {
           mobile,
           name,
           storeName,
-          locationId,
-          password
+          password,
+          position
         }
       } else {
         user = {
           mobile,
           name,
-          locationId,
           password,
+          position
         }
       }
       await registerUser(user)
@@ -174,28 +181,12 @@ const StoreOwner = (props: Props) => {
             onInputClear={() => setStoreName('')}
           />
         }
-        <ListItem
-          title={labels.location}
-          smartSelect
-          // @ts-ignore
-          smartSelectParams={{
-            // el: '#locations',
-            openIn: 'popup', 
-            closeOnSelect: true, 
-            searchbar: true, 
-            searchbarPlaceholder: labels.search,
-            popupCloseLinkText: labels.close
-          }}
-        >
-          <select name="locationId" value={locationId} onChange={e => setLocationId(e.target.value)}>
-            <option value=""></option>
-            {locations.map(l => 
-              <option key={l.id} value={l.id}>{l.name}</option>
-            )}
-          </select>
-        </ListItem>
+        <ListButton 
+          title={labels.setPosition} 
+          onClick={handleSetPosition}
+        />
       </List>
-      {!name || !mobile || !password || !locationId || (props.type === 'o' && !storeName) || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
+      {!name || !mobile || !password || !position.lat || !position.lng || (props.type === 'o' && !storeName) || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
         <Button text={labels.register} large onClick={() => handleRegister()} />
       }
     </Page>

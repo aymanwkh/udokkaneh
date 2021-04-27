@@ -167,7 +167,9 @@ const labels: Label = {
   addProductRequest: 'طلب اضافة منتج',
   weightVolume: 'الوزن/الحجم',
   country: 'بلد المنشأ',
-  sendRequestSuccess: 'تم ارسال الطلب بنجاح'
+  sendRequestSuccess: 'تم ارسال الطلب بنجاح',
+  setImage: 'حمل الصورة',
+  setPosition: 'حدد موقعك'
 
 }
 

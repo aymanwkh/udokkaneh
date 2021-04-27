@@ -1,5 +1,5 @@
-import { useState, useEffect, ChangeEvent } from 'react'
-import { f7, Page, Navbar, List, ListInput, Fab, Icon } from 'framework7-react'
+import { useState, useEffect, ChangeEvent, useRef } from 'react'
+import { f7, Page, Navbar, List, ListInput, Fab, Icon, ListButton } from 'framework7-react'
 import { addProductRequest, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
 
@@ -12,14 +12,19 @@ const AddProductRequest = (props: Props) => {
   const [country, setCountry] = useState('')
   const [weight, setWeight] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  const [price, setPrice] = useState(0)
   const [image, setImage] = useState<File>()
+  const inputEl = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
     if (error) {
       showError(error)
       setError('')
     }
   }, [error])
-
+  const onButtonClick = () => {
+    // `current` points to the mounted text input element
+    if (inputEl.current) inputEl.current.click();
+  };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
@@ -41,6 +46,7 @@ const AddProductRequest = (props: Props) => {
         name,
         country,
         weight,
+        price: +price,
         imageUrl
       }
       addProductRequest(productRequest, image)
@@ -83,15 +89,25 @@ const AddProductRequest = (props: Props) => {
           onInputClear={() => setCountry('')}
         />
         <ListInput 
-          name="image" 
-          label={labels.image} 
+          name="price" 
+          label={labels.price}
+          value={price}
+          clearButton
+          type="number" 
+          onChange={e => setPrice(e.target.value)}
+          onInputClear={() => setPrice(0)}
+        />
+        <input 
+          ref={inputEl}
           type="file" 
           accept="image/*" 
+          style={{ display: "none" }}
           onChange={e => handleFileChange(e)}
         />
+        <ListButton title={labels.setImage} onClick={onButtonClick} />
         <img src={imageUrl} className="img-card" alt={labels.noImage} />
       </List>
-      {name && country && weight && imageUrl &&
+      {name && country && weight && price && imageUrl &&
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>

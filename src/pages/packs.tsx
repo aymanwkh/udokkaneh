@@ -76,6 +76,7 @@ const Packs = (props: Props) => {
       <Block>
         <List className="searchbar-not-found">
           <ListItem title={labels.noData} />
+          {state.user && state.userInfo?.storeId && <h3 className="center"><a href="/add-product-request/">{labels.addProductRequest}</a></h3>}
         </List>
         <List mediaList className="search-list searchbar-found">
           {packs.length > 1 &&

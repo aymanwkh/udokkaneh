@@ -83,10 +83,9 @@ export const addPasswordRequest = (mobile: string) => {
 type registerData = {
   mobile: string,
   name: string,
-  locationId: string,
   password: string,
   storeName?: string,
-  address?: string
+  position: {lat: number, lng: number}
 }
 export const registerUser = async (user: registerData) => {
   await firebase.auth().createUserWithEmailAndPassword(user.mobile + '@gmail.com', user.mobile.substring(9, 2) + user.password)
@@ -201,6 +200,7 @@ export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
 
 export const addProductRequest = async (productRequest: ProductRequest, image?: File) => {
   const productRequestRef = firebase.firestore().collection('product-requests').doc()
+  console.log('ppppp == ', productRequest)
   let imageUrl = ''
   if (image) {
     const filename = image.name
