@@ -55,7 +55,7 @@ export type Notification = {
   title: string,
   message: string,
   status: string,
-  time: Date
+  time: string
 }
 export type Rating = {
   productId: string
@@ -69,9 +69,13 @@ export type Alarm = {
   offerDays?: number,
   status: string
 }
+export type Position = {
+  lat: number, 
+  lng: number
+}
 export type UserInfo = {
   mobile: string,
-  locationId: string,
+  position: Position,
   storeId?: string,
   notifications?: Notification[],
   ratings?: Rating[],
@@ -133,6 +137,7 @@ export type State = {
   countries: Country[],
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
+  notifications: Notification[]
 }
 
 export type Action = {

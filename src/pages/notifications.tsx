@@ -12,11 +12,8 @@ const Notifications = () => {
   const [error, setError] = useState('')
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
-    const notifications = state.userInfo?.notifications?.slice()
-    if (notifications) {
-      setNotifications(() => notifications.sort((n1, n2) => n2.time > n1.time ? -1 : 1))
-    }
-  }, [state.userInfo])
+    setNotifications(() => [...state.notifications].sort((n1, n2) => n1.time > n2.time ? -1 : 1))
+  }, [state.notifications])
   useEffect(() => {
     if (error) {
       showError(error)

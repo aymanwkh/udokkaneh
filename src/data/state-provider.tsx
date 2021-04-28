@@ -1,13 +1,14 @@
 import { createContext, useReducer, useEffect } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest } from './types'
+import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification } from './types'
 
 export const StateContext = createContext({} as Context)
 
 type Props = {
   children: React.ReactElement
 }
+
 const StateProvider = ({ children }: Props) => {
   const initState: State = {
     categories: [], 
@@ -19,6 +20,7 @@ const StateProvider = ({ children }: Props) => {
     countries: [],
     trademarks: [],
     passwordRequests: [],
+    notifications: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -114,8 +116,19 @@ const StateProvider = ({ children }: Props) => {
         const basket = localData ? JSON.parse(localData) : []
         if (basket) dispatch({type: 'SET_BASKET', payload: basket}) 
         const unsubscribeUser = firebase.firestore().collection('users').doc(user.uid).onSnapshot(doc => {
+          const notifications: Notification[] = []
           if (doc.exists){
             dispatch({type: 'SET_USER_INFO', payload: doc.data()})
+            doc.data()?.notifications.forEach((n: any) => {
+              notifications.push({
+                id: n.id,
+                message: n.message,
+                status: n.status,
+                title: n.title,
+                time: n.time.toDate()
+              })
+            })
+            dispatch({type: 'SET_NOTIFICATIONS', payload: notifications})
           } else {
             firebase.auth().signOut()
           }

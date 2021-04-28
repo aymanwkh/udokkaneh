@@ -12,7 +12,7 @@ type Props = {
 const NotificationDetails = (props: Props) => {
   const { state } = useContext(StateContext)
   const [error, setError] = useState('')
-  const [notification] = useState(() => state.userInfo?.notifications?.find(n => n.id === props.id))
+  const [notification] = useState(() => state.notifications?.find(n => n.id === props.id))
   useEffect(() => {
     if (error) {
       showError(error)

@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import { randomColors } from './config'
-import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest } from './types'
+import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest, Position } from './types'
 import { f7 } from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
@@ -85,7 +85,7 @@ type registerData = {
   name: string,
   password: string,
   storeName?: string,
-  position: {lat: number, lng: number}
+  position: Position
 }
 export const registerUser = async (user: registerData) => {
   await firebase.auth().createUserWithEmailAndPassword(user.mobile + '@gmail.com', user.mobile.substring(9, 2) + user.password)
@@ -93,11 +93,16 @@ export const registerUser = async (user: registerData) => {
   for (var i = 0; i < 4; i++){
     colors.push(randomColors[Number(user.password.charAt(i))].name)
   }
+  const { password, ...others } = user
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).set({
-    ...user,
+    ...others,
     colors,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
+  return firebase.auth().currentUser?.updateProfile({
+    displayName: 'o'
+  })
+
 }
 
 export const changePassword = async (oldPassword: string, newPassword: string) => {
