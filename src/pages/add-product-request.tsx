@@ -21,8 +21,7 @@ const AddProductRequest = (props: Props) => {
       setError('')
     }
   }, [error])
-  const onButtonClick = () => {
-    // `current` points to the mounted text input element
+  const onUploadClick = () => {
     if (inputEl.current) inputEl.current.click();
   };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +103,7 @@ const AddProductRequest = (props: Props) => {
           style={{ display: "none" }}
           onChange={e => handleFileChange(e)}
         />
-        <ListButton title={labels.setImage} onClick={onButtonClick} />
+        <ListButton title={labels.setImage} onClick={onUploadClick} />
         <img src={imageUrl} className="img-card" alt={labels.noImage} />
       </List>
       {name && country && weight && price && imageUrl &&

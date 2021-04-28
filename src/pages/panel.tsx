@@ -20,7 +20,7 @@ const Panel = () => {
   }
   return(
     <Page>
-      <Navbar title={labels.mainPanelTitle} />
+      <Navbar title={state.user ? `${labels.loginSuccess} ${state.userInfo?.name}${state.userInfo?.storeId ? '/' + state.userInfo?.storeName : ''}` : labels.mainPanelTitle} />
       <List>
         {state.user ? <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
         : <ListItem link="/panel-login/" title={labels.login} />}

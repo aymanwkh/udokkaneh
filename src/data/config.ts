@@ -56,7 +56,6 @@ export const alarmTypes = [
   {id: 'av', name: 'الابلاغ عن توفر هذا المنتج/العرض', ename: 'Availability', isAvailable: -1},
   {id: 'ua', name: 'الابلاغ عن عدم توفر هذا المنتج/العرض', ename: 'Not Available', isAvailable: 1},
   {id: 'aa', name: 'الابلاغ عن توفر بديل', ename: 'Alternative Available', isAvailable: 0},
-  {id: 'eo', name: 'الابلاغ عن عرض لقرب انتهاء الصلاحية', ename: 'Expiry Offers', isAvailable: 0},
   {id: 'go', name: 'الابلاغ عن عرض لمجموعة', ename: 'Group Offers', isAvailable: 0},
 ]
 

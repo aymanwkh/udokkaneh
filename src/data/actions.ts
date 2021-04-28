@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import { randomColors } from './config'
-import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest, Position } from './types'
+import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest, Position, PackPrice } from './types'
 import { f7 } from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
@@ -219,4 +219,22 @@ export const addProductRequest = async (productRequest: ProductRequest, image?: 
     userId: firebase.auth().currentUser?.uid,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
+}
+
+export const changePrice = (storePack: PackPrice, packPrices: PackPrice[], batch?: firebase.firestore.WriteBatch) => {
+  const newBatch = batch || firebase.firestore().batch()
+  const packStores = packPrices.filter(p => p.packId === storePack.packId)
+  const otherStores = packStores.filter(p => p.storeId !== storePack.storeId)
+  otherStores.push(storePack)
+  const prices = otherStores.map(p => {
+    const { packId, ...others } = p
+    return others
+  })
+  let packRef = firebase.firestore().collection('packs').doc(storePack.packId)
+  newBatch.update(packRef, {
+    prices
+  })
+  if (!batch) {
+    newBatch.commit()
+  }
 }

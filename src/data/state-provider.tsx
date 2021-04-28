@@ -60,8 +60,14 @@ const StateProvider = ({ children }: Props) => {
           weightedPrice: Math.floor(minPrice / doc.data().standardUnits),
         })
         if (doc.data().prices) {
-          doc.data().prices.forEach((p: PackPrice) => {
-            packPrices.push({...p, packId: doc.id})
+          doc.data().prices.forEach((p: any) => {
+            packPrices.push({
+              packId: doc.id,
+              storeId: p.storeId,
+              price: p.price,
+              offerEnd: p.offerEnd?.toDate(),
+              time: p.time.toDate()
+            })
           })
         }
       })
@@ -119,7 +125,7 @@ const StateProvider = ({ children }: Props) => {
           const notifications: Notification[] = []
           if (doc.exists){
             dispatch({type: 'SET_USER_INFO', payload: doc.data()})
-            doc.data()?.notifications.forEach((n: any) => {
+            doc.data()?.notifications?.forEach((n: any) => {
               notifications.push({
                 id: n.id,
                 message: n.message,

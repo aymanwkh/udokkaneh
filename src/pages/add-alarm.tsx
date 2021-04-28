@@ -121,11 +121,11 @@ const AddAlarm = (props: Props) => {
         <ListInput 
           name="currentPrice" 
           label={labels.currentPrice}
-          value={((currentPrice || 0) / 100).toFixed(2)}
+          value={currentPrice?.toFixed(2)}
           type="number" 
           readonly
         />
-        {props.alarmType === 'aa' ?
+        {props.alarmType === 'aa' &&
           <ListInput 
             name="alternative" 
             label={labels.alternative}
@@ -138,7 +138,7 @@ const AddAlarm = (props: Props) => {
             onChange={e => setAlternative(e.target.value)}
             onInputClear={() => setAlternative('')}
           />
-        : ''}
+        }
         <ListInput 
           name="price" 
           label={labels.price}
@@ -152,7 +152,7 @@ const AddAlarm = (props: Props) => {
           onInputClear={() => setPrice('')}
           onBlur={e => setPrice(formatPrice(e.target.value))}
         />
-        {['eo', 'go'].includes(props.alarmType) ? 
+        {props.alarmType === 'go' &&
           <ListInput 
             name="quantity" 
             label={labels.quantity}
@@ -163,7 +163,7 @@ const AddAlarm = (props: Props) => {
             onChange={e => setQuantity(e.target.value)}
             onInputClear={() => setQuantity('')}
           />
-        : ''}
+        }
         <ListItem>
           <span>{labels.isOffer}</span>
           <Toggle 
@@ -186,11 +186,11 @@ const AddAlarm = (props: Props) => {
           />
         : ''}
       </List>
-      {buttonVisible ?
+      {buttonVisible &&
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>
-      : ''}
+      }
     </Page>
   )
 }

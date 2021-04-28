@@ -169,7 +169,8 @@ const labels: Label = {
   country: 'بلد المنشأ',
   sendRequestSuccess: 'تم ارسال الطلب بنجاح',
   setImage: 'حمل الصورة',
-  setPosition: 'حدد موقعك'
+  setPosition: 'حدد موقعك',
+  changePrice: 'تغيير سعر'
 
 }
 

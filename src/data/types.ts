@@ -48,6 +48,7 @@ export type PackPrice = {
   storeId: string,
   packId: string,
   price: number,
+  offerEnd?: Date,
   time: Date
 }
 export type Notification = {
@@ -74,9 +75,11 @@ export type Position = {
   lng: number
 }
 export type UserInfo = {
+  name: string,
   mobile: string,
   position: Position,
   storeId?: string,
+  storeName?: string,
   notifications?: Notification[],
   ratings?: Rating[],
   favorites?: string[],

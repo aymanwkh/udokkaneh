@@ -54,7 +54,7 @@ const StorePacks = (props: Props) => {
                 subtitle={p.packInfo?.product.description}
                 text={p.packInfo?.name}
                 footer={moment(p.time).fromNow()}
-                after={((p.packInfo?.price ?? 0) / 100).toFixed(2)}
+                after={p.packInfo?.price.toFixed(2)}
                 key={i++}
               >
                 <img src={p.packInfo?.imageUrl} slot="media" className="img-list" alt={labels.noImage} />

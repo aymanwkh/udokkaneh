@@ -98,7 +98,7 @@ const PackDetails = (props: Props) => {
       <Card>
         <CardHeader className="card-header">
           <div className="price">
-            {((pack.price ?? 0) / 100).toFixed(2)}
+            {pack.price.toFixed(2)}
           </div>
         </CardHeader>
         <CardContent>
@@ -111,14 +111,14 @@ const PackDetails = (props: Props) => {
           <p><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>
-      {state.user ?
+      {state.user &&
         <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => setActionOpened(true)}>
           <Icon material="menu"></Icon>
         </Fab>
-      : ''}
+      }
       {props.type === 'c' && pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
-        {props.type === 'c' ? 
+        {props.type === 'c' &&
           <>
             <ActionsButton onClick={() => handleFavorite()}>{pack.product.id && state.userInfo?.favorites?.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
             {otherProducts.length === 0 ? '' :
@@ -131,7 +131,10 @@ const PackDetails = (props: Props) => {
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
             }
           </>
-        : ''}
+        }
+        <ActionsButton onClick={() => f7.views.current.router.navigate(`/change-price/${props.id}`)}>
+          {labels.changePrice}
+        </ActionsButton>
         {props.type === 'o' && alarmTypes.map(p =>
           p.isAvailable === 0 || p.isAvailable === isAvailable ?
             <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>
