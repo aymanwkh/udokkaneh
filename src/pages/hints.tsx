@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
@@ -22,7 +22,6 @@ const Hints = (props: Props) => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
         (props.type === 'p' && p.product.categoryId === pack?.product.categoryId && p.product.rating > pack.product.rating) ||
-        (props.type === 'o' && p.product.id === pack?.product.id && p.id !== pack.id && (p.isOffer || p.offerEnd)) ||
         (props.type === 'w' && p.product.id === pack?.product.id && p.weightedPrice < pack.weightedPrice)
       )
       let extendedPacks = packs.map(p => {
@@ -53,12 +52,11 @@ const Hints = (props: Props) => {
                 subtitle={p.product.description}
                 text={p.name}
                 footer={`${labels.category}: ${p.categoryName}`}
-                after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
+                after={p.price.toFixed(2)}
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
-                {p.isOffer || p.offerEnd ? <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge> : ''}
               </ListItem>
             )
           }

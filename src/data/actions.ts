@@ -187,7 +187,6 @@ export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
     const totalPriceText = `${(Math.round(lastPrice * p.quantity) / 100).toFixed(2)}${p.byWeight ? '*' : ''}`
     const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 100).toFixed(2)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 100).toFixed(2)}, ${labels.newPrice}: ${(lastPrice / 100).toFixed(2)}`)
     const otherProducts = packs.filter(pa => pa.product.categoryId === packInfo?.product.categoryId && pa.product.rating > packInfo.product.rating)
-    const otherOffers = packs.filter(pa => pa.product.id === packInfo?.product.id && pa.id !== packInfo.id && (pa.isOffer || pa.offerEnd))
     const otherPacks = packs.filter(pa => pa.product.id === packInfo?.product.id && pa.weightedPrice < packInfo.weightedPrice)
     return {
       ...p,
@@ -196,7 +195,6 @@ export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
       totalPriceText,
       priceText,
       otherProducts: otherProducts.length,
-      otherOffers: otherOffers.length,
       otherPacks: otherPacks.length
     }
   })
@@ -205,7 +203,6 @@ export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
 
 export const addProductRequest = async (productRequest: ProductRequest, image?: File) => {
   const productRequestRef = firebase.firestore().collection('product-requests').doc()
-  console.log('ppppp == ', productRequest)
   let imageUrl = ''
   if (image) {
     const filename = image.name

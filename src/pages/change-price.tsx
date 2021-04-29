@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Fab, Icon } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import { changePrice, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
@@ -16,15 +16,13 @@ const ChangePrice = (props: Props) => {
   const [storePack] = useState(() => state.packPrices.find(p => p.packId === props.packId && p.storeId === state.userInfo?.storeId)!)
   const [price, setPrice] = useState(0)
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
-  const [offerDays, setOfferDays] = useState('')
-  const [isOffer, setIsOffer] = useState(false)
   useEffect(() => {
     const validatePrice = (value: number) => {
       if (value > 0 && value !== pack?.price) {
         setPriceErrorMessage('')
       } else {
         setPriceErrorMessage(labels.invalidPrice)
-      }  
+      } 
     }
     if (price) validatePrice(price)
   }, [price, pack])
@@ -39,20 +37,11 @@ const ChangePrice = (props: Props) => {
   } 
   const handleSubmit = () => {
     try{
-      if (offerDays && Number(offerDays) <= 0) {
-        throw new Error('invalidPeriod')
-      }
       const newStorePack: PackPrice = {
         packId: props.packId,
         storeId: state.userInfo?.storeId!,
         price: +price,
         time: new Date()
-      }
-      let offerEnd
-      if (offerDays) {
-        offerEnd = new Date()
-        offerEnd.setDate(offerEnd.getDate() + Number(offerDays))
-        newStorePack.offerEnd = offerEnd
       }
       changePrice(newStorePack, state.packPrices)
       showMessage(labels.editSuccess)
@@ -102,29 +91,8 @@ const ChangePrice = (props: Props) => {
           onInputClear={() => setPrice(0)}
           onBlur={e => setPrice(formatPrice(e.target.value))}
         />
-        <ListItem>
-          <span>{labels.isOffer}</span>
-          <Toggle 
-            name="isOffer" 
-            color="green" 
-            checked={isOffer} 
-            onToggleChange={() => setIsOffer(!isOffer)}
-          />
-        </ListItem>
-        {isOffer &&
-          <ListInput 
-            name="offerDays" 
-            label={labels.offerDays}
-            value={offerDays}
-            clearButton 
-            floatingLabel 
-            type="number" 
-            onChange={e => setOfferDays(e.target.value)}
-            onInputClear={() => setOfferDays('')}
-          />
-        }
       </List>
-      {!price || (isOffer && !offerDays) || priceErrorMessage ? '' :
+      {!price || priceErrorMessage ? '' :
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>

@@ -170,7 +170,8 @@ const labels: Label = {
   sendRequestSuccess: 'تم ارسال الطلب بنجاح',
   setImage: 'حمل الصورة',
   setPosition: 'حدد موقعك',
-  changePrice: 'تغيير سعر'
+  changePrice: 'تغيير سعر',
+  invalidOffer: 'العروض للسعر الاقل'
 
 }
 

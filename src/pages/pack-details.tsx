@@ -21,7 +21,6 @@ const PackDetails = (props: Props) => {
   const [pack, setPack] = useState<ExtendedPack>()
   const [isAvailable, setIsAvailable] = useState(-1)
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
-  const [otherOffers, setOtherOffers] = useState<Pack[]>([])
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
   const [actionOpened, setActionOpened] = useState(false);
   useEffect(() => {
@@ -41,7 +40,6 @@ const PackDetails = (props: Props) => {
   }, [state.packPrices, state.userInfo, pack])
   useEffect(() => {
     pack && setOtherProducts(() => state.packs.filter(pa => pa.product.categoryId === pack.product.categoryId && pa.product.rating > pack.product.rating))
-    pack && setOtherOffers(() => state.packs.filter(pa => pa.product.id === pack.product.id && pa.id !== pack.id && (pa.isOffer || pa.offerEnd)))
     pack && setOtherPacks(() => state.packs.filter(pa => pa.product.id === pack.product.id && pa.weightedPrice < pack.weightedPrice))
   }, [pack, state.packs])
   useEffect(() => {
@@ -116,18 +114,14 @@ const PackDetails = (props: Props) => {
           <Icon material="menu"></Icon>
         </Fab>
       }
-      {props.type === 'c' && pack.isOffer ? <p className="note">{labels.offerHint}</p> : ''}
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
         {props.type === 'c' &&
           <>
             <ActionsButton onClick={() => handleFavorite()}>{pack.product.id && state.userInfo?.favorites?.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
-            {otherProducts.length === 0 ? '' :
+            {otherProducts.length > 0 &&
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
             }
-            {otherOffers.length === 0 ? '' :
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/o`)}>{labels.otherOffers}</ActionsButton>
-            }
-            {otherPacks.length === 0 ? '' :
+            {otherPacks.length > 0 &&
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
             }
           </>

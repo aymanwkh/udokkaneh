@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Badge, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import { sortByList } from '../data/config'
@@ -48,9 +48,6 @@ const Packs = (props: Props) => {
       case 'r':
         setPacks([...packs].sort((p1, p2) => p2.product.rating - p1.product.rating))
         break
-      case 'o':
-        setPacks([...packs].sort((p1, p2) => (p2.isOffer || p2.offerEnd ? 1 : 0) - (p1.isOffer || p1.offerEnd ? 1 : 0)))
-        break
       case 'v':
         setPacks([...packs].sort((p1, p2) => p1.weightedPrice - p2.weightedPrice))
         break
@@ -95,12 +92,11 @@ const Packs = (props: Props) => {
                 subtitle={p.product.description}
                 text={p.name}
                 footer={`${labels.category}: ${p.categoryName}`}
-                after={p.isOffer || p.offerEnd ? '' : (p.price / 100).toFixed(2)}
+                after={p.price.toFixed(2)}
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
-                {(p.isOffer || p.offerEnd) && <Badge slot="after" color="green">{(p.price / 100).toFixed(2)}</Badge>}
               </ListItem>
               
             )

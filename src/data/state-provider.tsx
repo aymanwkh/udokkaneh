@@ -55,8 +55,6 @@ const StateProvider = ({ children }: Props) => {
           product: doc.data().product,
           imageUrl: doc.data().imageUrl,
           price: minPrice,
-          isOffer: doc.data().isOffer,
-          offerEnd: doc.data().offerEnd,
           weightedPrice: Math.floor(minPrice / doc.data().standardUnits),
         })
         if (doc.data().prices) {
@@ -65,13 +63,11 @@ const StateProvider = ({ children }: Props) => {
               packId: doc.id,
               storeId: p.storeId,
               price: p.price,
-              offerEnd: p.offerEnd?.toDate(),
               time: p.time.toDate()
             })
           })
         }
       })
-      console.log('packs = ', packs)
       dispatch({type: 'SET_PACKS', payload: packs})
       dispatch({type: 'SET_PACK_PRICES', payload: packPrices})
     }, err => {

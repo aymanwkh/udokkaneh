@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Badge } from 'framework7-react'
+import { Block, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import moment from 'moment'
 import 'moment/locale/ar'
@@ -60,7 +60,6 @@ const StorePacks = (props: Props) => {
                 <img src={p.packInfo?.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
                 {p.price > (p.packInfo?.price ?? 0) && <div className="list-subtext2">{`${labels.myPrice}: ${(p.price / 100).toFixed(2)}`}</div>}
-                {p.packInfo?.isOffer && <Badge slot="title" color='green'>{labels.offer}</Badge>}
               </ListItem>
             )
           }

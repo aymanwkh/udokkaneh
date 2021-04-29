@@ -40,15 +40,12 @@ export type Pack = {
   price: number,
   subPackId?: string,
   subQuantity?: number,
-  isOffer: boolean,
-  offerEnd?: Date,
   weightedPrice: number,
 }
 export type PackPrice = {
   storeId: string,
   packId: string,
   price: number,
-  offerEnd?: Date,
   time: Date
 }
 export type Notification = {
