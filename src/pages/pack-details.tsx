@@ -129,6 +129,12 @@ const PackDetails = (props: Props) => {
         <ActionsButton onClick={() => f7.views.current.router.navigate(`/change-price/${props.id}`)}>
           {labels.changePrice}
         </ActionsButton>
+        <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>
+          {labels.addPack}
+        </ActionsButton>
+        <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-group/${props.id}`)}>
+          {labels.addGroup}
+        </ActionsButton>
         {props.type === 'o' && alarmTypes.map(p =>
           p.isAvailable === 0 || p.isAvailable === isAvailable ?
             <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>

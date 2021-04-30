@@ -170,7 +170,7 @@ const AddAlarm = (props: Props) => {
             name="isOffer" 
             color="green" 
             checked={isOffer} 
-            onToggleChange={() => setIsOffer(!isOffer)}
+            onToggleChange={() => setIsOffer(s => !s)}
           />
         </ListItem>
         {isOffer ? 

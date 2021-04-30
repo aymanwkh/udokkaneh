@@ -20,7 +20,8 @@ const StateProvider = ({ children }: Props) => {
     countries: [],
     trademarks: [],
     passwordRequests: [],
-    notifications: []
+    notifications: [],
+    units: [],
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -54,6 +55,12 @@ const StateProvider = ({ children }: Props) => {
           name: doc.data().name,
           product: doc.data().product,
           imageUrl: doc.data().imageUrl,
+          typeUnits: doc.data().typeUnits,
+          standardUnits: doc.data().standardUnits,
+          unitId: doc.data().unitId,
+          byWeight: doc.data().byWeight,
+          subPackId: doc.data().subPackId,
+          subQuantity: doc.data().subQuantity,
           price: minPrice,
           weightedPrice: Math.floor(minPrice / doc.data().standardUnits),
         })
@@ -99,6 +106,11 @@ const StateProvider = ({ children }: Props) => {
     }, err => {
       unsubscribeCountries()
     })  
+    const unsubscribeUnints = firebase.firestore().collection('lookups').doc('u').onSnapshot(doc => {
+      dispatch({type: 'SET_UNITS', payload: doc.data()?.values})
+    }, err => {
+      unsubscribeUnints()
+    }) 
     const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
       let passwordRequests: PasswordRequest[] = []
       docs.forEach(doc => {

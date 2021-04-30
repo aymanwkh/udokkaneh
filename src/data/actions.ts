@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import { randomColors } from './config'
-import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest, Position, PackPrice } from './types'
+import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest, Position, PackPrice, Product } from './types'
 import { f7 } from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
@@ -234,4 +234,21 @@ export const changePrice = (storePack: PackPrice, packPrices: PackPrice[], batch
   if (!batch) {
     newBatch.commit()
   }
+}
+
+type newPack = {
+  name: string,
+  product: Product,
+  prices: {storeId: string, price: number, time: Date}[],
+  typeUnits: number,
+  standardUnits: number,
+  unitId: string,
+  byWeight: boolean,
+  isArchived: boolean,
+  specialImage: boolean,
+  imageUrl: string
+}
+export const addPack = (pack: newPack) => {
+  const packRef = firebase.firestore().collection('packs').doc()
+  packRef.set(pack)
 }

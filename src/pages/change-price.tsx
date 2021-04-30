@@ -6,14 +6,14 @@ import labels from '../data/labels'
 import { PackPrice } from '../data/types'
 
 type Props = {
-  packId: string
+  id: string
 }
 
 const ChangePrice = (props: Props) => {
   const { state } = useContext(StateContext)
   const [error, setError] = useState('')
-  const [pack] = useState(() => state.packs.find(p => p.id === props.packId))
-  const [storePack] = useState(() => state.packPrices.find(p => p.packId === props.packId && p.storeId === state.userInfo?.storeId)!)
+  const [pack] = useState(() => state.packs.find(p => p.id === props.id))
+  const [storePack] = useState(() => state.packPrices.find(p => p.packId === props.id && p.storeId === state.userInfo?.storeId)!)
   const [price, setPrice] = useState(0)
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   useEffect(() => {
@@ -38,7 +38,7 @@ const ChangePrice = (props: Props) => {
   const handleSubmit = () => {
     try{
       const newStorePack: PackPrice = {
-        packId: props.packId,
+        packId: props.id,
         storeId: state.userInfo?.storeId!,
         price: +price,
         time: new Date()

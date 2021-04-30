@@ -29,11 +29,12 @@ export type Product = {
   categoryId: string,
   countryId: string,
   trademarkId?: string,
+  unitType: string,
   rating: number,
   ratingCount: number
 }
 export type Pack = {
-  id: string,
+  id?: string,
   name: string,
   product: Product,
   imageUrl: string,
@@ -41,6 +42,10 @@ export type Pack = {
   subPackId?: string,
   subQuantity?: number,
   weightedPrice: number,
+  typeUnits: number,
+  standardUnits: number,
+  unitId: string,
+  byWeight: boolean
 }
 export type PackPrice = {
   storeId: string,
@@ -125,6 +130,12 @@ export type Discount = {
   value: number,
   type: string
 }
+export type Unit = {
+  id: string,
+  name: string,
+  type: string,
+  factor: number
+}
 export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
@@ -137,7 +148,8 @@ export type State = {
   countries: Country[],
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
-  notifications: Notification[]
+  notifications: Notification[],
+  units: Unit[],
 }
 
 export type Action = {

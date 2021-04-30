@@ -50,6 +50,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, locations: action.payload}
     case 'SET_COUNTRIES':
       return {...state, countries: action.payload}
+    case 'SET_UNITS':
+      return {...state, units: action.payload}
     case 'SET_PASSWORD_REQUESTS':
       return {...state, passwordRequests: action.payload}
     default:

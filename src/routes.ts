@@ -17,6 +17,8 @@ import NotificationDetails from './pages/notification-details'
 import Advert from './pages/advert'
 import AddProductRequest from './pages/add-product-request'
 import ChangePrice from './pages/change-price'
+import AddPack from './pages/add-pack'
+import AddGroup from './pages/add-group'
 
 const routes = [
   {
@@ -106,8 +108,16 @@ const routes = [
     component: AddProductRequest
   },
   {
-    path: '/change-price/:packId',
+    path: '/change-price/:id',
     component: ChangePrice,
+  },
+  {
+    path: '/add-pack/:id',
+    component: AddPack,
+  },
+  {
+    path: '/add-group/:id',
+    component: AddGroup,
   },
   {
     path: '(.*)',
