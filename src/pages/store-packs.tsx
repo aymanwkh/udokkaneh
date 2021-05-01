@@ -1,65 +1,75 @@
 import { useContext, useState, useEffect } from 'react'
 import { Block, Page, Navbar, List, ListItem } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
-import moment from 'moment'
 import 'moment/locale/ar'
 import labels from '../data/labels'
-import { storeSummary } from '../data/config'
 import { productOfText } from '../data/actions'
-import { PackPrice, Pack } from '../data/types'
+import { Pack } from '../data/types'
 
 type Props = {
   type: string
 }
-type ExtendedPackPrice = PackPrice & {
-  packInfo: Pack,
+type ExtendedPack = Pack & {
   countryName: string,
-  trademarkName?: string
+  trademarkName?: string,
+  storePrice: number,
+  stores: number,
+  nearStores: number,
+  bestPriceStores: number,
+  bestPriceNearStores: number
 }
+
 const StorePacks = (props: Props) => {
   const { state } = useContext(StateContext)
-  const [storePacks, setStorePacks] = useState<ExtendedPackPrice[]>([])
+  const [storeLocation] = useState(() => state.stores.find(s => s.id === state.userInfo?.storeId)?.locationId)
+  const [packs, setPacks] = useState<ExtendedPack[]>([])
   useEffect(() => {
-    setStorePacks(() => {
-      const storePacks = state.packPrices.filter(p => p.storeId === state.userInfo?.storeId)
-      const extendedStorePacks = storePacks.map(p => {
-        const packInfo = state.packs.find(pa => pa.id === p.packId)!
-        const trademarkInfo = state.trademarks.find(t => t.id === packInfo.product.trademarkId)
-        const countryInfo = state.countries.find(c => c.id === packInfo.product.countryId)!
+    setPacks(() => {
+      const packs = state.packs.filter(p => props.type === 'r' ? state.packRequests.find(r => r.packId === p.id && r.storeId === state.userInfo?.storeId) : state.packPrices.find(pr => pr.packId === p.id && pr.storeId === state.userInfo?.storeId))
+      const results = packs.map(p => {
+        const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
+        const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
+        const storePrice = props.type === 'r' ? 0 : state.packPrices.find(pr => pr.packId === p.id && pr.storeId === state.userInfo?.storeId)?.price!
+        const stores = state.packPrices.filter(pr => pr.packId === p.id).length
+        const nearStores = state.packPrices.filter(pr => pr.packId === p.id && state.stores.find(s => s.id === pr.storeId)?.locationId === storeLocation).length
+        const bestPriceStores = state.packPrices.filter(pr => pr.packId === p.id && pr.price === p.price).length
+        const bestPriceNearStores = state.packPrices.filter(pr => pr.packId === p.id && pr.price === p.price && state.stores.find(s => s.id === pr.storeId)?.locationId === storeLocation).length
         return {
           ...p,
-          packInfo,
           countryName: countryInfo.name,
-          trademarkName: trademarkInfo?.name
+          trademarkName: trademarkInfo?.name,
+          storePrice,
+          stores,
+          nearStores,
+          bestPriceStores,
+          bestPriceNearStores
         }
       })
-      return extendedStorePacks.filter(p => (props.type === 'a')
-                            || (props.type === 'o' && p.price > p.packInfo.price) 
-                            || (props.type === 'n' && p.price === p.packInfo.price)
-                            || (props.type === 'l' && p.price === p.packInfo.price))
+      return results.sort((r1, r2) => r1.name > r2.name ? 1 : -1)
     })
-  }, [state.packPrices, state.packs, state.userInfo, state.trademarks, state.countries, props.type])
+  }, [state.packPrices, state.packs, state.userInfo, state.trademarks, state.countries, state.packRequests, state.stores, storeLocation, props.type])
   let i = 0
   return(
     <Page>
-      <Navbar title={storeSummary.find(s => s.id === props.type)?.name} backLink={labels.back} />
+      <Navbar title={props.type === 'r' ? labels.packRequests : labels.myPacks} backLink={labels.back} />
       <Block>
         <List mediaList>
-          {storePacks.length === 0 ? 
+          {packs.length === 0 ? 
             <ListItem title={labels.noData} /> 
-          : storePacks.map(p => 
+          : packs.map(p => 
               <ListItem
-                link={`/pack-details/${p.packId}/type/o`}
-                title={p.packInfo?.product.name}
-                subtitle={p.packInfo?.product.description}
-                text={p.packInfo?.name}
-                footer={moment(p.time).fromNow()}
-                after={p.packInfo?.price.toFixed(2)}
+                link={`/pack-details/${p.id}`}
+                title={p.product.name}
+                subtitle={p.product.description}
+                text={p.name}
+                footer={`${labels.bestPrice}: ${p.price.toFixed(2)}`}
+                after={p.storePrice > 0 ? p.storePrice.toFixed(2): ''}
                 key={i++}
               >
-                <img src={p.packInfo?.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
+                <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
-                {p.price > (p.packInfo?.price ?? 0) && <div className="list-subtext2">{`${labels.myPrice}: ${(p.price / 100).toFixed(2)}`}</div>}
+                <div className="list-subtext2">{`${labels.storesCount}: ${p.stores}, ${labels.nearBy}: ${p.nearStores}`}</div>
+                <div className="list-subtext3">{`${labels.bestStoresCount}: ${p.bestPriceStores}, ${labels.nearBy}: ${p.bestPriceNearStores}`}</div>
               </ListItem>
             )
           }

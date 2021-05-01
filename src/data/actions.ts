@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import { randomColors } from './config'
-import { Error, BasketPack, Category, UserInfo, Alarm, Pack, ProductRequest, Position, PackPrice, Product } from './types'
+import { Error, Category, UserInfo, Alarm, Pack, ProductRequest, Position, PackPrice, Product } from './types'
 import { f7 } from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
@@ -174,33 +174,6 @@ export const deleteNotification = (user: UserInfo, notificationId: string) => {
   }
 }
 
-export const getBasket = (stateBasket: BasketPack[], packs: Pack[]) => {
-  const basket = stateBasket.map(p => {
-    const packInfo = packs.find(pa => pa.id === p.packId)
-    let lastPrice
-    if (p.offerId) {
-      const offerInfo = packs.find(pa => pa.id === p.offerId)!
-      lastPrice = Math.round(offerInfo.price / offerInfo.subQuantity!)
-    } else {
-      lastPrice = packInfo?.price ?? 0
-    }
-    const totalPriceText = `${(Math.round(lastPrice * p.quantity) / 100).toFixed(2)}${p.byWeight ? '*' : ''}`
-    const priceText = lastPrice === 0 ? labels.itemNotAvailable : (lastPrice === p.price ? `${labels.price}: ${(p.price / 100).toFixed(2)}` : `${labels.priceHasChanged}, ${labels.oldPrice}: ${(p.price / 100).toFixed(2)}, ${labels.newPrice}: ${(lastPrice / 100).toFixed(2)}`)
-    const otherProducts = packs.filter(pa => pa.product.categoryId === packInfo?.product.categoryId && pa.product.rating > packInfo.product.rating)
-    const otherPacks = packs.filter(pa => pa.product.id === packInfo?.product.id && pa.weightedPrice < packInfo.weightedPrice)
-    return {
-      ...p,
-      price: lastPrice,
-      packInfo,
-      totalPriceText,
-      priceText,
-      otherProducts: otherProducts.length,
-      otherPacks: otherPacks.length
-    }
-  })
-  return basket
-}
-
 export const addProductRequest = async (productRequest: ProductRequest, image?: File) => {
   const productRequestRef = firebase.firestore().collection('product-requests').doc()
   let imageUrl = ''
@@ -251,4 +224,51 @@ type newPack = {
 export const addPack = (pack: newPack) => {
   const packRef = firebase.firestore().collection('packs').doc()
   packRef.set(pack)
+}
+
+export const deleteStorePack = (storePack: PackPrice, packPrices: PackPrice[], packs: Pack[], withRequest: boolean) => {
+  const batch = firebase.firestore().batch()
+  const pack = packs.find(p => p.id === storePack.packId)!
+  const packStores = packPrices.filter(p => p.packId === storePack.packId)
+  const otherStores = packStores.filter(p => p.storeId !== storePack.storeId)
+  const prices = otherStores.map(p => {
+    const { packId, ...others } = p
+    return others
+  })
+  const packRef = firebase.firestore().collection('packs').doc(pack.id)
+  batch.update(packRef, {
+    prices
+  })
+  if (withRequest) {
+    const requestRef = firebase.firestore().collection('pack-requests').doc()
+    batch.set(requestRef, {
+      storeId: storePack.storeId,
+      packId: storePack.packId,
+      time: firebase.firestore.FieldValue.serverTimestamp()
+    })
+  }
+  batch.commit()
+}
+
+export const addPackPrice = (storePack: PackPrice, packs: Pack[]) => {
+  const { packId, ...others } = storePack
+  const pack = packs.find(p => p.id === packId)!
+  const packRef = firebase.firestore().collection('packs').doc(pack.id)
+  packRef.update({
+    prices: firebase.firestore.FieldValue.arrayUnion(others)
+  })
+}
+
+export const addPackRequest = (storeId: string, packId: string) => {
+  const requestRef = firebase.firestore().collection('pack-requests').doc()
+  requestRef.set({
+    storeId,
+    packId,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  })
+}
+
+export const deletePackRequest = (storeId: string, packId: string) => {
+  const requestRef = firebase.firestore().collection('pack-requests').doc()
+  requestRef.delete()
 }

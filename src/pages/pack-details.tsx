@@ -2,9 +2,8 @@ import { useContext, useEffect, useState } from 'react'
 import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader } from 'framework7-react'
 import RatingStars from './rating-stars'
 import { StateContext } from '../data/state-provider'
-import { addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText } from '../data/actions'
+import { addPackPrice, changePrice, deleteStorePack, deletePackRequest, addPackRequest, addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText } from '../data/actions'
 import labels from '../data/labels'
-import { alarmTypes } from '../data/config'
 import { Pack } from '../data/types'
 
 type Props = {
@@ -19,7 +18,7 @@ const PackDetails = (props: Props) => {
   const { state } = useContext(StateContext)
   const [error, setError] = useState('')
   const [pack, setPack] = useState<ExtendedPack>()
-  const [isAvailable, setIsAvailable] = useState(-1)
+  const [isAvailable, setIsAvailable] = useState(false)
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
   const [actionOpened, setActionOpened] = useState(false);
@@ -36,11 +35,11 @@ const PackDetails = (props: Props) => {
     })
   }, [state.packs, state.trademarks, state.countries, props.id])
   useEffect(() => {
-    pack && setIsAvailable(() => state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack.id) ? 1 : -1)
+    setIsAvailable(() => Boolean(state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packPrices, state.userInfo, pack])
   useEffect(() => {
-    pack && setOtherProducts(() => state.packs.filter(pa => pa.product.categoryId === pack.product.categoryId && pa.product.rating > pack.product.rating))
-    pack && setOtherPacks(() => state.packs.filter(pa => pa.product.id === pack.product.id && pa.weightedPrice < pack.weightedPrice))
+    setOtherProducts(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
+    setOtherPacks(() => state.packs.filter(pa => pa.id !== pack?.id && pa.product.id === pack?.product.id))
   }, [pack, state.packs])
   useEffect(() => {
     if (error) {
@@ -48,6 +47,61 @@ const PackDetails = (props: Props) => {
       setError('')
     }
   }, [error])
+  const deletePrice = (flag: boolean) => {
+    try{
+      const storePack = state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
+      deleteStorePack(storePack, state.packPrices, state.packs, flag)
+      showMessage(flag ? labels.addSuccess : labels.deleteSuccess)
+      f7.views.current.router.back()
+    } catch(err) {
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+    }
+  }
+  const handleUnAvailable = () => {
+    f7.dialog.confirm(labels.newRequestText, labels.newRequestTitle, () => deletePrice(true), () => deletePrice(false))
+  }
+  const handleNewRequest = () => {
+    try{
+      addPackRequest(state.userInfo?.storeId!, pack?.id!)
+      showMessage(labels.addSuccess)
+      f7.views.current.router.back()
+    } catch(err) {
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+    }
+  }
+  const handleRemoveRequest = () => {
+    try{
+      deletePackRequest(state.userInfo?.storeId!, pack?.id!)
+      showMessage(labels.deleteSuccess)
+      f7.views.current.router.back()
+    } catch(err) {
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+    }
+  }
+  const handleAvailable = (type: string) => {
+    f7.dialog.prompt(labels.price, labels.enterPrice, value => {
+      try{
+        if (Number(value) !== Number(Number(value).toFixed(2))) {
+          throw new Error('invalidPrice')
+        }
+        if (Number(value) <= 0) {
+          throw new Error('invalidPrice')
+        }
+        const storePack = {
+          packId: pack?.id!,
+          storeId: state.userInfo?.storeId!,
+          price: +value,
+          time: new Date()
+        }
+        if (type === 'n') addPackPrice(storePack, state.packs)
+        else changePrice(storePack, state.packPrices)
+        showMessage(type === 'n' ? labels.addSuccess : labels.editSuccess)
+        f7.views.current.router.back()
+        } catch(err) {
+          setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      }
+    })
+  }
 
   const handleAddAlarm = (alarmTypeId: string) => {
     try {
@@ -115,7 +169,7 @@ const PackDetails = (props: Props) => {
         </Fab>
       }
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
-        {props.type === 'c' &&
+        {!state.userInfo?.storeId &&
           <>
             <ActionsButton onClick={() => handleFavorite()}>{pack.product.id && state.userInfo?.favorites?.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
             {otherProducts.length > 0 &&
@@ -126,22 +180,37 @@ const PackDetails = (props: Props) => {
             }
           </>
         }
-        <ActionsButton onClick={() => f7.views.current.router.navigate(`/change-price/${props.id}`)}>
-          {labels.changePrice}
-        </ActionsButton>
-        <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>
-          {labels.addPack}
-        </ActionsButton>
-        <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-group/${props.id}`)}>
-          {labels.addGroup}
-        </ActionsButton>
-        {props.type === 'o' && alarmTypes.map(p =>
-          p.isAvailable === 0 || p.isAvailable === isAvailable ?
-            <ActionsButton key={p.id} onClick={() => handleAddAlarm(p.id)}>
-              {p.name}
-            </ActionsButton>
-          : ''
-        )}
+        {state.userInfo?.storeId && isAvailable && <>
+          <ActionsButton onClick={handleUnAvailable}>
+            {labels.unAvailable}
+          </ActionsButton>
+          <ActionsButton onClick={() => handleAvailable('c')}>
+            {labels.changePrice}
+          </ActionsButton>
+        </>}
+        {state.userInfo?.storeId && !isAvailable &&
+          <ActionsButton onClick={() => handleAvailable('n')}>
+            {labels.available}
+          </ActionsButton>
+        }
+        {state.userInfo?.storeId && !isAvailable && state.packRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) && 
+          <ActionsButton onClick={handleRemoveRequest}>
+            {labels.removeRequest}
+          </ActionsButton>
+        }
+        {state.userInfo?.storeId && !isAvailable && !state.packRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) && 
+          <ActionsButton onClick={handleNewRequest}>
+            {labels.newRequest}
+          </ActionsButton>
+        }
+        {state.userInfo?.storeId && <>
+          <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>
+            {labels.addPack}
+          </ActionsButton>
+          <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-group/${props.id}`)}>
+            {labels.addGroup}
+          </ActionsButton>
+        </>}
       </Actions>
     </Page>
   )

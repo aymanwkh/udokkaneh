@@ -20,48 +20,9 @@ export const randomColors = [
 ]
 
 export const sortByList = [
-  {id: 'p', name: 'اﻷقل سعرا', ename: 'Least Price'},
-  {id: 'r', name: 'اﻷفضل في التقييم', ename: 'Best Rating'},
-  {id: 'o', name: 'العروض أولا', ename: 'Offers First'},
-  {id: 'v', name: 'اﻷفضل قيمة (السعر/الوزن)', ename: 'Best Value'},
+  {id: 'p', name: 'اﻷقل سعرا'},
+  {id: 'r', name: 'اﻷفضل في التقييم'},
+  {id: 'o', name: 'العروض أولا'},
+  {id: 'v', name: 'اﻷفضل قيمة (السعر/الوزن)'},
 ]
 
-export const orderStatus = [
-  {id: 'n', name: 'قيد الموافقة', ename: 'New'},
-  {id: 'a', name: 'تمت الموافقة', ename: 'Approved'},
-  {id: 's', name: 'معلق', ename: 'Suspended'},
-  {id: 'r', name: 'مرفوض', ename: 'Rejected'},
-  {id: 'e', name: 'قيد التنفيذ', ename: 'Processing'},
-  {id: 'f', name: 'تم التنفيذ', ename: 'Finished'},
-  {id: 'p', name: 'جاهز', ename: 'Processed'},
-  {id: 'd', name: 'مستلم', ename: 'Delivered'},
-  {id: 'c', name: 'ملغي', ename: 'Canceled'},
-  {id: 'u', name: 'غير متوفر', ename: 'Unavailable'},
-  {id: 'i', name: 'استيداع', ename: 'in-stock'},
-  {id: 'm', name: 'مدمج', ename: 'Merged'}
-]  
-
-export const orderPackStatus = [
-  {id: 'n', name: 'قيد الشراء', ename: 'New'},
-  {id: 'p', name: 'شراء جزئي', ename: 'Purchasing'},
-  {id: 'f', name: 'تم الشراء', ename: 'Finished'},
-  {id: 'u', name: 'غير متوفر', ename: 'Unavailable'},
-  {id: 'pu', name: 'شراء جزئي والباقي غير متوفر', ename: 'Partial Purchased'},
-  {id: 'r', name: 'مرتجع', ename: 'Returned'},
-  {id: 'pr', name: 'مرتجع جزئي', ename: 'Partial Returned'}
-]
-
-export const alarmTypes = [
-  {id: 'cp', name: 'الابلاغ عن تغيير السعر', ename: 'Price Changes', isAvailable: 1},
-  {id: 'av', name: 'الابلاغ عن توفر هذا المنتج/العرض', ename: 'Availability', isAvailable: -1},
-  {id: 'ua', name: 'الابلاغ عن عدم توفر هذا المنتج/العرض', ename: 'Not Available', isAvailable: 1},
-  {id: 'aa', name: 'الابلاغ عن توفر بديل', ename: 'Alternative Available', isAvailable: 0},
-  {id: 'go', name: 'الابلاغ عن عرض لمجموعة', ename: 'Group Offers', isAvailable: 0},
-]
-
-export const storeSummary = [
-  {id: 'a', name: 'كل المنتجات', ename: 'All Products'},
-  {id: 'o', name: 'منتجات اعلى من السوق', ename: 'Over Priced'},
-  {id: 'n', name: 'منتجات مساوية للسوق', ename: 'Equal Price'},
-  {id: 'l', name: 'منتجات أقل سعر في السوق', ename: 'Under Priced'}
-]

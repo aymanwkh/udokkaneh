@@ -1,7 +1,7 @@
 import { createContext, useReducer, useEffect } from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification } from './types'
+import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification, Store, PackRequest } from './types'
 
 export const StateContext = createContext({} as Context)
 
@@ -22,6 +22,8 @@ const StateProvider = ({ children }: Props) => {
     passwordRequests: [],
     notifications: [],
     units: [],
+    packRequests: [],
+    stores: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -145,12 +147,44 @@ const StateProvider = ({ children }: Props) => {
             dispatch({type: 'SET_NOTIFICATIONS', payload: notifications})
           } else {
             firebase.auth().signOut()
+            dispatch({type: 'LOGOUT'})
           }
         }, err => {
           unsubscribeUser()
-        })  
+        })
+        if (user.displayName === 'o') {
+          const unsubscribeRequests = firebase.firestore().collection('pack-requests').onSnapshot(docs => {
+            let packRequests: PackRequest[] = []
+            docs.forEach(doc => {
+              packRequests.push({
+                packId: doc.data().packId,
+                storeId: doc.data().storeId
+              })
+            })
+            dispatch({type: 'SET_PACK_REQUESTS', payload: packRequests})
+          }, err => {
+            unsubscribeRequests()
+          }) 
+        }
+        const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
+          let stores: Store[] = []
+          docs.forEach(doc => {
+            stores.push({
+              id: doc.id,
+              name: doc.data().name,
+              locationId: doc.data().locationId,
+              address: doc.data().address,
+              position: doc.data().position,
+              mobile: doc.data().mobile,
+            })
+          })
+          dispatch({type: 'SET_STORES', payload: stores})
+        }, err => {
+          unsubscribeStores()
+        }) 
       } else {
         dispatch({type: 'CLEAR_USER_INFO'})
+        dispatch({type: 'LOGOUT'})
       }
     })
   }, [])

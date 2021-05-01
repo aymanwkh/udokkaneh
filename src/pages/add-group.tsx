@@ -1,6 +1,6 @@
-import { useState, useContext, useEffect, ChangeEvent } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { addPack, showMessage, showError, getMessage } from '../data/actions'
-import { f7, Page, Navbar, List, ListItem, ListInput, Fab, Icon, Toggle } from 'framework7-react'
+import { f7, Page, Navbar, List, ListInput, Fab, Icon } from 'framework7-react'
 import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 

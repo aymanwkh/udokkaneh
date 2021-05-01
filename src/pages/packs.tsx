@@ -24,7 +24,7 @@ const Packs = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => !props.id || (props.type === 'f' && state.userInfo?.favorites?.includes(p.product.id)) || children.includes(p.product.categoryId))
+      const packs = state.packs.filter(p => p.price > 0 &&  (!props.id || (props.type === 'f' && state.userInfo?.favorites?.includes(p.product.id)) || children.includes(p.product.categoryId)))
       let extendedPacks = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
@@ -87,7 +87,7 @@ const Packs = (props: Props) => {
             <ListItem title={labels.noData} />
           : packs.map(p => 
               <ListItem
-                link={`/pack-details/${p.id}/type/c`}
+                link={`/pack-details/${p.id}`}
                 title={p.product.name}
                 subtitle={p.product.description}
                 text={p.name}

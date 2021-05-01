@@ -3,7 +3,6 @@ import { f7, Page, Navbar, List, ListInput, Fab, Icon, Toggle, ListItem } from '
 import { StateContext } from '../data/state-provider'
 import { addAlarm, showMessage, showError, getMessage } from '../data/actions'
 import labels from '../data/labels'
-import { alarmTypes } from '../data/config'
 
 type Props = {
   alarmType: string,
@@ -102,7 +101,7 @@ const AddAlarm = (props: Props) => {
   if (!state.user) return <Page><h3 className="center"><a href="/login/">{labels.relogin}</a></h3></Page>
   return (
     <Page>
-      <Navbar title={alarmTypes.find(t => t.id === props.alarmType)?.name} backLink={labels.back} />
+      <Navbar title={labels.addAlarm} backLink={labels.back} />
       <List form>
         <ListInput 
           name="productName" 

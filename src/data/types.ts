@@ -136,6 +136,18 @@ export type Unit = {
   type: string,
   factor: number
 }
+export type Store = {
+  id?: string,
+  name: string,
+  mobile: string,
+  address: string,
+  position: Position,
+  locationId?: string
+}
+export type PackRequest = {
+  storeId: string,
+  packId: string
+}
 export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
@@ -150,6 +162,8 @@ export type State = {
   passwordRequests: PasswordRequest[],
   notifications: Notification[],
   units: Unit[],
+  packRequests: PackRequest[],
+  stores: Store[]
 }
 
 export type Action = {
