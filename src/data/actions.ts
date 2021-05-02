@@ -128,11 +128,7 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
 
 export const addAlarm = (alarm: Alarm) => {
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-    alarms: firebase.firestore.FieldValue.arrayUnion({
-      ...alarm,
-      id: Math.random().toString(),
-      time: new Date()  
-    })
+    alarms: firebase.firestore.FieldValue.arrayUnion(alarm)
   })
 }
 

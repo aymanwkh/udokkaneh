@@ -6,7 +6,6 @@ import Login from './pages/login'
 import Register from './pages/register'
 import Packs from './pages/packs'
 import PackDetails from './pages/pack-details'
-import AddAlarm from './pages/add-alarm'
 import PasswordRequest from './pages/password-request'
 import StoreSummary from './pages/store-summary'
 import StorePacks from './pages/store-packs'
@@ -18,6 +17,7 @@ import Advert from './pages/advert'
 import AddProductRequest from './pages/add-product-request'
 import AddPack from './pages/add-pack'
 import AddGroup from './pages/add-group'
+import StoreDetails from './pages/store-details'
 
 const routes = [
   {
@@ -71,10 +71,6 @@ const routes = [
     component: PackDetails,
   },
   {
-    path: '/add-alarm/:packId/type/:alarmType',
-    component: AddAlarm,
-  },
-  {
     path: '/search/',
     component: Packs,
   },
@@ -113,6 +109,10 @@ const routes = [
   {
     path: '/add-group/:id',
     component: AddGroup,
+  },
+  {
+    path: '/store-details/:id',
+    component: StoreDetails
   },
   {
     path: '(.*)',

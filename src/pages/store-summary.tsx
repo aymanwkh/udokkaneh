@@ -37,7 +37,7 @@ const StoreSummary = () => {
           fill 
           className="sections" 
           color={randomColors[i++ % 10].name} 
-          href={'/add-product-request/'} 
+          href="/add-product-request/"
         />
       </Block>
     </Page>

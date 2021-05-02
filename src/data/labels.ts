@@ -173,6 +173,8 @@ const labels: Label = {
   storesCount: 'عدد المحلات',
   bestStoresCount: 'المحلات بأفضل سعر',
   nearBy: 'القريبة',
+  showPackPrices: 'سجل معنا لتظهر لك المحلات',
+  storeDetails: 'تفاصيل المحل'
 }
 
 export default labels

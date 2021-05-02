@@ -118,14 +118,13 @@ const StoreOwner = (props: Props) => {
       await registerUser(user)
       setInprocess(false)
       showMessage(props.type === 'o' ? labels.registerStoreOwnerSuccess : labels.registerSuccess)
-      f7.views.current.router.back()
+      f7.views.current.router.navigate('/home/')
       f7.panel.close('right') 
     } catch (err){
       setInprocess(false)
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
-
   return (
     <Page>
       <Navbar title={labels.newUser} backLink={labels.back} />

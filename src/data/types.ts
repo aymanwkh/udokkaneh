@@ -64,12 +64,8 @@ export type Rating = {
   productId: string
 }
 export type Alarm = {
-  packId?: string,
-  type: string,
-  price?: number,
-  quantity?: number,
-  alternative?: string,
-  offerDays?: number,
+  packId: string,
+  storeId: string,
   status: string
 }
 export type Position = {

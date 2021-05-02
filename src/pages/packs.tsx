@@ -25,7 +25,7 @@ const Packs = (props: Props) => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
       const packs = state.packs.filter(p => p.price > 0 &&  (!props.id || (props.type === 'f' && state.userInfo?.favorites?.includes(p.product.id)) || children.includes(p.product.categoryId)))
-      let extendedPacks = packs.map(p => {
+      const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
         const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
@@ -36,7 +36,7 @@ const Packs = (props: Props) => {
           countryName: countryInfo.name,
         }
       })
-      return extendedPacks.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
+      return results.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries])
   const handleSorting = (sortByValue: string) => {
@@ -73,7 +73,6 @@ const Packs = (props: Props) => {
       <Block>
         <List className="searchbar-not-found">
           <ListItem title={labels.noData} />
-          {state.user && state.userInfo?.storeId && <h3 className="center"><a href="/add-product-request/">{labels.addProductRequest}</a></h3>}
         </List>
         <List mediaList className="search-list searchbar-found">
           {packs.length > 1 &&
@@ -91,7 +90,7 @@ const Packs = (props: Props) => {
                 title={p.product.name}
                 subtitle={p.product.description}
                 text={p.name}
-                footer={`${labels.category}: ${p.categoryName}`}
+                footer={p.categoryName}
                 after={p.price.toFixed(2)}
                 key={p.id}
               >

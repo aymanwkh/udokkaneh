@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
-import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader } from 'framework7-react'
+import { f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader, List, ListItem, Button } from 'framework7-react'
 import RatingStars from './rating-stars'
 import { StateContext } from '../data/state-provider'
 import { addPackPrice, changePrice, deleteStorePack, deletePackRequest, addPackRequest, addAlarm, showMessage, showError, getMessage, updateFavorites, productOfText } from '../data/actions'
 import labels from '../data/labels'
-import { Pack } from '../data/types'
+import { Pack, PackPrice, Store } from '../data/types'
 
 type Props = {
   id: string,
@@ -14,6 +14,10 @@ type ExtendedPack = Pack & {
   countryName: string,
   trademarkName?: string
 }
+type ExtendedPackPrice = PackPrice & {
+  storeInfo: Store,
+  storeLocation?: string
+}
 const PackDetails = (props: Props) => {
   const { state } = useContext(StateContext)
   const [error, setError] = useState('')
@@ -22,6 +26,7 @@ const PackDetails = (props: Props) => {
   const [otherProducts, setOtherProducts] = useState<Pack[]>([])
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
   const [actionOpened, setActionOpened] = useState(false);
+  const [packPrices, setPackPrices] = useState<ExtendedPackPrice[]>([])
   useEffect(() => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
@@ -34,6 +39,21 @@ const PackDetails = (props: Props) => {
       }
     })
   }, [state.packs, state.trademarks, state.countries, props.id])
+  useEffect(() => {
+    setPackPrices(() => {
+      const packPrices = state.packPrices.filter(p => p.packId === pack?.id)
+      const results = packPrices.map(p => {
+        const storeInfo = state.stores.find(s => s.id === p.storeId)!
+        const storeLocation = state.locations.find(l => l.id === storeInfo.locationId)?.name
+        return {
+          ...p,
+          storeInfo,
+          storeLocation
+        }
+      })
+      return results.sort((r1, r2) => r1.price > r2.price ? 1 : -1)
+    })
+  }, [state.packPrices, state.stores, pack])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packPrices, state.userInfo, pack])
@@ -103,36 +123,6 @@ const PackDetails = (props: Props) => {
     })
   }
 
-  const handleAddAlarm = (alarmTypeId: string) => {
-    try {
-      if (alarmTypeId === 'ua') {
-        f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
-          try{
-            if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
-              throw new Error('duplicateAlarms')
-            }
-            const alarm = {
-              packId: props.id,
-              type: alarmTypeId,
-              status: 'n'
-            }
-            addAlarm(alarm)
-            showMessage(labels.sendSuccess)
-            f7.views.current.router.back()
-          } catch(err) {
-            setError(getMessage(f7.views.current.router.currentRoute.path, err))
-          }
-        })  
-      } else {
-        if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
-          throw new Error('duplicateAlarms')
-        }
-        f7.views.current.router.navigate(`/add-alarm/${props.id}/type/${alarmTypeId}`)
-      }  
-    } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
-    }
-  }
   const handleFavorite = () => {
     try{
       if (state.userInfo && pack) {
@@ -163,20 +153,49 @@ const PackDetails = (props: Props) => {
           <p><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>
-      {state.user &&
+      {state.user && 
         <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => setActionOpened(true)}>
           <Icon material="menu"></Icon>
         </Fab>
       }
+      {!state.user && 
+        <Button 
+          text={labels.showPackPrices}
+          large 
+          fill 
+          className="sections"
+          color="green"
+          href="/login/"
+        />
+      }
+      {state.user && !state.userInfo?.storeId &&
+        <List mediaList>
+          {packPrices.map((p, i) => 
+            <ListItem 
+              link={`/store-details/${p.storeId}`}
+              title={p.storeInfo.name}
+              subtitle={p.storeLocation || p.storeInfo.address}
+              after={p.price.toFixed(2)} 
+              key={i} 
+            />
+          )}
+        </List>
+      }
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
         {!state.userInfo?.storeId &&
           <>
-            <ActionsButton onClick={() => handleFavorite()}>{pack.product.id && state.userInfo?.favorites?.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}</ActionsButton>
+            <ActionsButton onClick={handleFavorite}>
+              {pack.product.id && state.userInfo?.favorites?.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}
+            </ActionsButton>
             {otherProducts.length > 0 &&
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>{labels.otherProducts}</ActionsButton>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>
+                {labels.otherProducts}
+              </ActionsButton>
             }
             {otherPacks.length > 0 &&
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/w`)}>{labels.otherPacks}</ActionsButton>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/w`)}>
+                {labels.otherPacks}
+              </ActionsButton>
             }
           </>
         }
