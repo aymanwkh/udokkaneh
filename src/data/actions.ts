@@ -1,8 +1,8 @@
 import firebase from './firebase'
 import labels from './labels'
-import { randomColors } from './config'
-import { Error, Category, UserInfo, Alarm, Pack, ProductRequest, Position, PackPrice, Product } from './types'
-import { f7 } from 'framework7-react'
+import {randomColors} from './config'
+import {Error, Category, Alarm, Pack, ProductRequest, PackPrice, Product, Notification, UserInfo} from './types'
+import {f7} from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -55,14 +55,35 @@ export const getChildren = (categoryId: string, categories: Category[]) => {
   return childrenArray
 }
 
-export const rateProduct = (productId: string, value: number) => {
-  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
+export const rateProduct = (product: Product, value: number, packs: Pack[]) => {
+  const batch = firebase.firestore().batch()
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  batch.update(userRef, {
     ratings: firebase.firestore.FieldValue.arrayUnion({
-      productId,
-      value,
-      status: 'n'  
+      productId: product.id,
+      value
     })
   })
+  const oldRating = product.rating ?? 0
+  const ratingCount = product.ratingCount ?? 0
+  const newRating = Math.round((oldRating * ratingCount + value) / (ratingCount + 1))
+  const productRef = firebase.firestore().collection('products').doc(product.id)
+  batch.update(productRef, {
+    rating: newRating,
+    ratingCount: ratingCount + 1
+  })
+  const affectedPacks = packs.filter(p => p.product.id === product.id)
+  affectedPacks.forEach(p => {
+    const packRef = firebase.firestore().collection('packs').doc(p.id)
+    batch.update(packRef, {
+      product: {
+        ...product,
+        rating: newRating,
+        ratingCount: ratingCount + 1
+      }
+    })
+  })
+  batch.commit()
 }
 
 export const login = (mobile: string, password: string) => {
@@ -80,20 +101,13 @@ export const addPasswordRequest = (mobile: string) => {
   })
 }
 
-type registerData = {
-  mobile: string,
-  name: string,
-  password: string,
-  storeName?: string,
-  position: Position
-}
-export const registerUser = async (user: registerData) => {
+export const registerUser = async (user: UserInfo) => {
   await firebase.auth().createUserWithEmailAndPassword(user.mobile + '@gmail.com', user.mobile.substring(9, 2) + user.password)
   let colors = []
   for (var i = 0; i < 4; i++){
-    colors.push(randomColors[Number(user.password.charAt(i))].name)
+    colors.push(randomColors[Number(user.password!.charAt(i))].name)
   }
-  const { password, ...others } = user
+  const {password, ...others} = user
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).set({
     ...others,
     colors,
@@ -127,27 +141,20 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
 }
 
 export const addAlarm = (alarm: Alarm) => {
-  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
+  const batch = firebase.firestore().batch()
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  batch.update(userRef, {
     alarms: firebase.firestore.FieldValue.arrayUnion(alarm)
   })
+  const storeRef = firebase.firestore().collection('stores').doc(alarm.storeId)
+  const {storeId, ...others} = alarm
+  batch.update(storeRef, {
+    alarms: firebase.firestore.FieldValue.arrayUnion(others)
+  })
+  batch.commit()
 }
 
-export const readNotification = (user: UserInfo, notificationId: string) => {
-  const notifications = user.notifications?.slice()
-  if (notifications) {
-    const notificationIndex = notifications.findIndex(n => n.id === notificationId)
-    notifications.splice(notificationIndex, 1, {
-      ...notifications[notificationIndex],
-      status: 'r'
-    })
-    firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-      notifications
-    })  
-  }
-}
-
-export const updateFavorites = (user: UserInfo, productId: string) => {
-  const favorites = user.favorites?.slice() || []
+export const updateFavorites = (favorites: string[], productId: string) => {
   const found = favorites.indexOf(productId)
   if (found === -1) {
     favorites.push(productId) 
@@ -159,15 +166,11 @@ export const updateFavorites = (user: UserInfo, productId: string) => {
   })
 }
 
-export const deleteNotification = (user: UserInfo, notificationId: string) => {
-  const notifications = user.notifications?.slice()
-  if (notifications) {
-    const notificationIndex = notifications.findIndex(n => n.id === notificationId)
-    notifications.splice(notificationIndex, 1)
+export const deleteNotification = (notifications: Notification[], notificationId: string) => {
+    const newNotifications = notifications.filter(n => n.id !== notificationId)
     firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-      notifications
+      notifications: newNotifications
     })  
-  }
 }
 
 export const addProductRequest = async (productRequest: ProductRequest, image?: File) => {
@@ -193,7 +196,7 @@ export const changePrice = (storePack: PackPrice, packPrices: PackPrice[], batch
   const otherStores = packStores.filter(p => p.storeId !== storePack.storeId)
   otherStores.push(storePack)
   const prices = otherStores.map(p => {
-    const { packId, ...others } = p
+    const {packId, ...others} = p
     return others
   })
   let packRef = firebase.firestore().collection('packs').doc(storePack.packId)
@@ -228,7 +231,7 @@ export const deleteStorePack = (storePack: PackPrice, packPrices: PackPrice[], p
   const packStores = packPrices.filter(p => p.packId === storePack.packId)
   const otherStores = packStores.filter(p => p.storeId !== storePack.storeId)
   const prices = otherStores.map(p => {
-    const { packId, ...others } = p
+    const {packId, ...others} = p
     return others
   })
   const packRef = firebase.firestore().collection('packs').doc(pack.id)
@@ -247,7 +250,7 @@ export const deleteStorePack = (storePack: PackPrice, packPrices: PackPrice[], p
 }
 
 export const addPackPrice = (storePack: PackPrice, packs: Pack[]) => {
-  const { packId, ...others } = storePack
+  const {packId, ...others} = storePack
   const pack = packs.find(p => p.id === packId)!
   const packRef = firebase.firestore().collection('packs').doc(pack.id)
   packRef.update({
@@ -267,4 +270,26 @@ export const addPackRequest = (storeId: string, packId: string) => {
 export const deletePackRequest = (storeId: string, packId: string) => {
   const requestRef = firebase.firestore().collection('pack-requests').doc()
   requestRef.delete()
+}
+
+export const sendNotification = (userId: string, title: string, message: string, batch?: firebase.firestore.WriteBatch) => {
+  const newBatch =  batch || firebase.firestore().batch()
+  const userRef = firebase.firestore().collection('users').doc(userId)
+  newBatch.update(userRef, {
+    notifications: firebase.firestore.FieldValue.arrayUnion({
+      id: Math.random().toString(),
+      title,
+      message,
+      status: 'n',
+      time: new Date()
+    })
+  })
+  if (!batch) {
+    newBatch.commit()
+  }
+}
+export const updateLastSeen = () => {
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
+    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+  })
 }

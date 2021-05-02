@@ -1,16 +1,16 @@
-import { useContext, useState, useEffect } from 'react'
-import { f7, Button, Block, Page, Navbar } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
+import {useContext, useState, useEffect} from 'react'
+import {f7, Button, Block, Page, Navbar} from 'framework7-react'
+import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import { randomColors } from '../data/config'
-import { Category } from '../data/types'
+import {randomColors} from '../data/config'
+import {Category} from '../data/types'
 
 type Props = {
   id: string
 } 
 
 const Categories = (props: Props) => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [categories, setCategories] = useState<Category[]>([])
   const [currentCategory] = useState<Category>(() => state.categories.find(c => c.id === props.id)!)
   useEffect(() => {

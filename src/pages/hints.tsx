@@ -1,9 +1,9 @@
-import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
+import {useContext, useState, useEffect} from 'react'
+import {Block, Page, Navbar, List, ListItem} from 'framework7-react'
+import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import { productOfText } from '../data/actions'
-import { Pack } from '../data/types'
+import {productOfText} from '../data/actions'
+import {Pack} from '../data/types'
 
 type Props = {
   id: string,
@@ -15,7 +15,7 @@ type ExtendedPack = Pack & {
   trademarkName?: string
 }
 const Hints = (props: Props) => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [pack] = useState(() => state.packs.find(p => p.id === props.id))
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   useEffect(() => {

@@ -57,16 +57,17 @@ export type Notification = {
   id: string,
   title: string,
   message: string,
-  status: string,
-  time: string
+  time: Date
 }
 export type Rating = {
-  productId: string
+  productId: string,
+  value: number
 }
 export type Alarm = {
   packId: string,
   storeId: string,
-  status: string
+  type: string,
+  time: Date
 }
 export type Position = {
   lat: number, 
@@ -74,14 +75,14 @@ export type Position = {
 }
 export type UserInfo = {
   name: string,
+  password?: string,
   mobile: string,
   position: Position,
+  address?: string,
   storeId?: string,
   storeName?: string,
-  notifications?: Notification[],
-  ratings?: Rating[],
-  favorites?: string[],
-  alarms?: Alarm[]
+  lastSeen?: Date,
+  time?: Date
 }
 export type BasketPack = {
   packId: string,
@@ -157,9 +158,12 @@ export type State = {
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
   notifications: Notification[],
+  alarms: Alarm[],
   units: Unit[],
   packRequests: PackRequest[],
-  stores: Store[]
+  stores: Store[],
+  favorites: string[],
+  ratings: Rating[]
 }
 
 export type Action = {

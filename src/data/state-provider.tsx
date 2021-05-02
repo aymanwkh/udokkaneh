@@ -1,7 +1,7 @@
-import { createContext, useReducer, useEffect } from 'react'
+import {createContext, useReducer, useEffect} from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import { State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification, Store, PackRequest } from './types'
+import {State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification, Store, PackRequest, UserInfo, Rating, Alarm} from './types'
 
 export const StateContext = createContext({} as Context)
 
@@ -9,7 +9,7 @@ type Props = {
   children: React.ReactElement
 }
 
-const StateProvider = ({ children }: Props) => {
+const StateProvider = ({children}: Props) => {
   const initState: State = {
     categories: [], 
     basket: [], 
@@ -21,9 +21,12 @@ const StateProvider = ({ children }: Props) => {
     trademarks: [],
     passwordRequests: [],
     notifications: [],
+    alarms: [],
     units: [],
     packRequests: [],
-    stores: []
+    stores: [],
+    favorites: [],
+    ratings: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -127,24 +130,46 @@ const StateProvider = ({ children }: Props) => {
     })  
     firebase.auth().onAuthStateChanged(user => {
       dispatch({type: 'LOGIN', payload: user})
-      if (user){
+      if (user) {
         const localData = localStorage.getItem('basket')
         const basket = localData ? JSON.parse(localData) : []
         if (basket) dispatch({type: 'SET_BASKET', payload: basket}) 
         const unsubscribeUser = firebase.firestore().collection('users').doc(user.uid).onSnapshot(doc => {
           const notifications: Notification[] = []
+          const favorites: string[] = []
+          const ratings: Rating[] = []
           if (doc.exists){
-            dispatch({type: 'SET_USER_INFO', payload: doc.data()})
-            doc.data()?.notifications?.forEach((n: any) => {
+            const userData: UserInfo = {
+              name: doc.data()!.name,
+              mobile: doc.data()!.mobile,
+              position: doc.data()!.position,
+              storeId: doc.data()!.storeId,
+              storeName: doc.data()!.storeName,
+              lastSeen: doc.data()!.lastSeen.toDate(),
+              time: doc.data()!.time.toDate()
+            }
+            dispatch({type: 'SET_USER_INFO', payload: userData})
+            doc.data()!.notifications?.forEach((n: any) => {
               notifications.push({
                 id: n.id,
                 message: n.message,
-                status: n.status,
                 title: n.title,
                 time: n.time.toDate()
               })
             })
             dispatch({type: 'SET_NOTIFICATIONS', payload: notifications})
+            doc.data()!.favorites?.forEach((f: string) => {
+              favorites.push(f)
+            })
+            dispatch({type: 'SET_FAVORITES', payload: favorites})
+            doc.data()!.ratings?.forEach((r: any) => {
+              ratings.push({
+                productId: r.productId,
+                value: r.value
+              })
+            })
+            dispatch({type: 'SET_RATINGS', payload: ratings})
+
           } else {
             firebase.auth().signOut()
             dispatch({type: 'LOGOUT'})
@@ -154,7 +179,7 @@ const StateProvider = ({ children }: Props) => {
         })
         if (user.displayName === 'o') {
           const unsubscribeRequests = firebase.firestore().collection('pack-requests').onSnapshot(docs => {
-            let packRequests: PackRequest[] = []
+            const packRequests: PackRequest[] = []
             docs.forEach(doc => {
               packRequests.push({
                 packId: doc.data().packId,
@@ -167,7 +192,8 @@ const StateProvider = ({ children }: Props) => {
           }) 
         }
         const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
-          let stores: Store[] = []
+          const stores: Store[] = []
+          const alarms: Alarm[] = []
           docs.forEach(doc => {
             stores.push({
               id: doc.id,
@@ -177,8 +203,17 @@ const StateProvider = ({ children }: Props) => {
               position: doc.data().position,
               mobile: doc.data().mobile,
             })
+            doc.data()!.alarms?.forEach((a: any) => {
+              alarms.push({
+                storeId: doc.id,
+                packId: a.packId,
+                type: a.type,
+                time: a.time.toDate()
+              })
+            })
           })
           dispatch({type: 'SET_STORES', payload: stores})
+          dispatch({type: 'SET_ALARMS', payload: alarms})
         }, err => {
           unsubscribeStores()
         }) 

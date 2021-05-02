@@ -1,12 +1,12 @@
-import { useContext, useState, useEffect } from 'react'
-import { Button } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
-import { randomColors } from '../data/config'
+import {useContext, useState, useEffect} from 'react'
+import {Button} from 'framework7-react'
+import {StateContext} from '../data/state-provider'
+import {randomColors} from '../data/config'
 import labels from '../data/labels'
-import { Category } from '../data/types'
+import {Category} from '../data/types'
 
 const MainCategories = () => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [categories, setCategories] = useState<Category[]>([])
   useEffect(() => {
     setCategories(() => {

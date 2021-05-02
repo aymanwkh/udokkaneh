@@ -1,14 +1,14 @@
-import { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListItem, ListInput, Fab, Icon, Toggle, FabButton, FabButtons, FabBackdrop, Actions, ActionsButton } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
+import {useContext, useState, useEffect} from 'react'
+import {f7, Page, Navbar, List, ListInput, Fab, Icon, Actions, ActionsButton} from 'framework7-react'
+import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import { addAlarm, getMessage, showMessage, showError } from '../data/actions'
+import {addAlarm, getMessage, showMessage, showError} from '../data/actions'
 
 type Props = {
   id: string
 }
 const StoreDetails = (props: Props) => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [store, setStore] = useState(() => state.stores.find(s => s.id === props.id)!)
   const [actionOpened, setActionOpened] = useState(false);
   const [error, setError] = useState('')
@@ -21,17 +21,16 @@ const StoreDetails = (props: Props) => {
       setError('')
     }
   }, [error])
-  const handleAddAlarm = () => {
+  const handleAddAlarm = (type: string) => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
       try{
-        if (state.userInfo?.alarms?.find(a => a.packId === props.id && a.status === 'n')){
+        if (state.alarms.find(a => a.storeId === props.id && a.time === new Date())){
           throw new Error('duplicateAlarms')
         }
         const alarm = {
-          id: Math.random().toString(),
           packId: props.id,
           storeId: store.id!,
-          status: 'n',
+          type,
           time: new Date()  
         }
         addAlarm(alarm)
@@ -79,8 +78,11 @@ const StoreDetails = (props: Props) => {
         <Icon material="menu"></Icon>
       </Fab>
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
-        <ActionsButton onClick={handleAddAlarm}>
-          {labels.addAlarm}
+        <ActionsButton onClick={() => handleAddAlarm('m')}>
+          {labels.addNotFoundAlarm}
+        </ActionsButton>
+        <ActionsButton onClick={() => handleAddAlarm('p')}>
+          {labels.addChangePriceAlarm}
         </ActionsButton>
       </Actions>
     </Page>

@@ -1,16 +1,22 @@
-import { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListItem } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
-import { logout } from '../data/actions'
+import {useContext, useState, useEffect} from 'react'
+import {f7, Page, Navbar, List, ListItem} from 'framework7-react'
+import {StateContext } from '../data/state-provider'
+import {logout} from '../data/actions'
 import labels from '../data/labels'
-import { Notification } from '../data/types'
 
 const Panel = () => {
-  const { state, dispatch } = useContext(StateContext)
-  const [notifications, setNotifications] = useState<Notification[]>([])
+  const {state, dispatch} = useContext(StateContext)
+  const [notificationsCount, setNotificationsCount] = useState(0)
   useEffect(() => {
-    setNotifications(() => state.userInfo?.notifications?.filter(n => n.status === 'n') || [])
-  }, [state.userInfo])
+    let notifications = 0, alarms = 0
+    if (state.userInfo) {
+      notifications = state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length
+    }
+    if (state.userInfo?.storeId) {
+      alarms = state.alarms.filter(a => a.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length
+    }
+    setNotificationsCount(notifications + alarms)
+  }, [state.userInfo, state.alarms, state.notifications])
   const handleLogout = () => {
     logout()
     dispatch({type: 'LOGOUT'})
@@ -25,7 +31,7 @@ const Panel = () => {
         {state.user ? <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
         : <ListItem link="/panel-login/" title={labels.login} />}
         {state.user && <ListItem link="/change-password/" title={labels.changePassword} />}
-        {state.user && <ListItem link="/notifications/" title={labels.notifications} badge={notifications.length} badgeColor="red" view="#main-view" panelClose />}
+        {state.user && <ListItem link="/notifications/" title={labels.notifications} badge={notificationsCount} badgeColor="red" view="#main-view" panelClose />}
         {state.user && <ListItem link="/packs/0/type/f" title={labels.favorites} view="#main-view" panelClose />}
         {state.user && state.userInfo?.storeId && <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose />}
         {!state.user && <ListItem link="/register/o" title={labels.registerStoreOwner} />}

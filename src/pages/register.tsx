@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListInput, Button, ListButton } from 'framework7-react'
-import { registerUser, showMessage, showError, getMessage } from '../data/actions'
+import {useState, useEffect} from 'react'
+import {f7, Page, Navbar, List, ListInput, Button, ListButton} from 'framework7-react'
+import {registerUser, showMessage, showError, getMessage} from '../data/actions'
 import labels from '../data/labels'
+import {UserInfo} from '../data/types'
 
 type Props = {
   type: string
@@ -18,6 +19,8 @@ const StoreOwner = (props: Props) => {
   const [mobileErrorMessage, setMobileErrorMessage] = useState('')
   const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
   const [position, setPosition] = useState({lat: 0, lng: 0})
+  const [positionError, setPositionError] = useState(false)
+  const [address, setAddress] = useState('')
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -92,29 +95,23 @@ const StoreOwner = (props: Props) => {
           lng: position.coords.longitude,
         });
       },
-      () => null
+      () => {
+        setPositionError(true)
+        setError(labels.positionError)
+      }
     );
   }
   const handleRegister = async () => {
     try{
       setInprocess(true)
-      let user 
-      if (props.type === 'o') {
-        user = {
-          mobile,
-          name,
-          storeName,
-          password,
-          position
-        }
-      } else {
-        user = {
-          mobile,
-          name,
-          password,
-          position
-        }
+      let user: UserInfo = {
+        mobile,
+        name,
+        password,
+        position
       }
+      if (props.type === 'o') user.storeName = storeName
+      if (positionError) user.address = address
       await registerUser(user)
       setInprocess(false)
       showMessage(props.type === 'o' ? labels.registerStoreOwnerSuccess : labels.registerSuccess)
@@ -184,6 +181,21 @@ const StoreOwner = (props: Props) => {
           title={labels.setPosition} 
           onClick={handleSetPosition}
         />
+        {positionError && 
+          <ListInput
+            label={labels.name}
+            type="text"
+            placeholder={labels.namePlaceholder}
+            name="name"
+            clearButton
+            autofocus
+            value={name}
+            errorMessage={nameErrorMessage}
+            errorMessageForce
+            onChange={e => setName(e.target.value)}
+            onInputClear={() => setName('')}
+          />
+        }
       </List>
       {!name || !mobile || !password || !position.lat || !position.lng || (props.type === 'o' && !storeName) || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
         <Button text={labels.register} large onClick={() => handleRegister()} />

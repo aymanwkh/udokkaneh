@@ -1,20 +1,22 @@
-import { useContext, useState, useEffect } from 'react'
-import { f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge } from 'framework7-react'
+import {useContext, useState, useEffect} from 'react'
+import {f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge} from 'framework7-react'
 import MainCategories from './main-categories'
-import { StateContext } from '../data/state-provider'
-import { Advert, Notification } from '../data/types'
+import {StateContext} from '../data/state-provider'
+import {Advert, Notification} from '../data/types'
 import labels from '../data/labels'
 
 const Home = () => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [advert, setAdvert] = useState<Advert | undefined>(undefined)
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
     setAdvert(() => state.adverts.find(a => a.isActive))
   }, [state.adverts])
   useEffect(() => {
-    setNotifications(() => state.userInfo?.notifications?.filter(n => n.status === 'n') || [])
-  }, [state.userInfo])
+    if (state.userInfo) {
+      setNotifications(() => state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)))
+    }
+  }, [state.userInfo, state.notifications])
   useEffect(() => {
     if (state.categories.length === 0) {
       f7.dialog.preloader('')

@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
+import {useContext, useState, useEffect} from 'react'
+import {Block, Page, Navbar, List, ListItem} from 'framework7-react'
+import {StateContext} from '../data/state-provider'
 import 'moment/locale/ar'
 import labels from '../data/labels'
-import { productOfText } from '../data/actions'
-import { Pack } from '../data/types'
+import {productOfText} from '../data/actions'
+import {Pack} from '../data/types'
 
 type Props = {
   type: string
@@ -20,7 +20,7 @@ type ExtendedPack = Pack & {
 }
 
 const StorePacks = (props: Props) => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [storeLocation] = useState(() => state.stores.find(s => s.id === state.userInfo?.storeId)?.locationId)
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   useEffect(() => {

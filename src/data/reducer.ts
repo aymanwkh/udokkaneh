@@ -1,4 +1,4 @@
-import { State, Action } from './types'
+import {State, Action} from './types'
 
 const Reducer = (state: State, action: Action) => {
   let pack, packs
@@ -58,6 +58,12 @@ const Reducer = (state: State, action: Action) => {
       return {...state, packRequests: action.payload}
     case 'SET_STORES':
       return {...state, stores: action.payload}
+    case 'SET_FAVORITES':
+      return {...state, favorites: action.payload}  
+    case 'SET_RATINGS':
+      return {...state, ratings: action.payload}  
+    case 'SET_ALARMS':
+      return {...state, alarms: action.payload}    
     default:
       return state
   }

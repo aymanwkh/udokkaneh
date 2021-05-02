@@ -1,4 +1,4 @@
-import { Label } from './types'
+import {Label} from './types'
 
 const labels: Label = {
   news: 'آخر الاخبار',
@@ -164,7 +164,8 @@ const labels: Label = {
   addGroupPage: 'اضافة مجموعة',
   addSuccess: 'تم الاضافة',
   available: 'هذا المنتج متوفر عندي',
-  addAlarm: 'اضافة بلاغ',
+  addNotFoundAlarm: 'بلاغ بعدم وجود المنتج في هذا المحل',
+  addChangePriceAlarm: 'بلاغ بعدم تقيد المحل بالسعر المعلن',
   newRequestText: 'هل ترغب بطلب نفس المنتج',
   newRequestTitle: 'اعادة الطلب',
   newRequest: 'طلب هذا المنتج',
@@ -174,7 +175,10 @@ const labels: Label = {
   bestStoresCount: 'المحلات بأفضل سعر',
   nearBy: 'القريبة',
   showPackPrices: 'سجل معنا لتظهر لك المحلات',
-  storeDetails: 'تفاصيل المحل'
+  storeDetails: 'تفاصيل المحل',
+  rateProduct: 'رأيك في هذا المنتج',
+  newAlarm: 'بلاغ جديد',
+  positionError: 'حدث خطأ في تحديد الموقع، يرجى ادخال العنوان'
 }
 
 export default labels

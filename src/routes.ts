@@ -12,7 +12,6 @@ import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
 import Hints from './pages/hints'
 import Notifications from './pages/notifications'
-import NotificationDetails from './pages/notification-details'
 import Advert from './pages/advert'
 import AddProductRequest from './pages/add-product-request'
 import AddPack from './pages/add-pack'
@@ -89,10 +88,6 @@ const routes = [
   {
     path: '/notifications/',
     component: Notifications
-  },
-  {
-    path: '/notification-details/:id',
-    component: NotificationDetails
   },
   {
     path: '/advert/',

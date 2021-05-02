@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { f7, Page, Navbar, List, ListInput, Button, Link, Toolbar } from 'framework7-react'
-import { login, showMessage, showError, getMessage } from '../data/actions'
+import {useState, useEffect} from 'react'
+import {f7, Page, Navbar, List, ListInput, Button, Link, Toolbar} from 'framework7-react'
+import {login, showMessage, showError, getMessage} from '../data/actions'
 import labels from '../data/labels'
 
 const Login = () => {

@@ -1,16 +1,19 @@
-import { useContext, useState, useEffect } from 'react'
-import { f7, Block, Page, Navbar, List, ListItem } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
+import {useContext, useState, useEffect} from 'react'
+import {f7, Block, Page, Navbar, List, ListItem, Link} from 'framework7-react'
+import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import moment from 'moment'
 import 'moment/locale/ar'
-import { readNotification, getMessage, showError } from '../data/actions'
-import { Notification } from '../data/types'
+import {updateLastSeen, deleteNotification, getMessage, showError, showMessage } from '../data/actions'
+import {Notification} from '../data/types'
 
 const Notifications = () => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [error, setError] = useState('')
   const [notifications, setNotifications] = useState<Notification[]>([])
+  useEffect(() => {
+    updateLastSeen()
+  }, [])
   useEffect(() => {
     setNotifications(() => [...state.notifications].sort((n1, n2) => n1.time > n2.time ? -1 : 1))
   }, [state.notifications])
@@ -20,12 +23,10 @@ const Notifications = () => {
       setError('')
     }
   }, [error])
-  const handleOpen = (notificationId: string) => {
+  const handleDelete = (notificationId: string) => {
     try{
-      if (state.userInfo) {
-        readNotification(state.userInfo, notificationId)
-        f7.views.current.router.navigate(`/notification-details/${notificationId}`)  
-      }
+      deleteNotification(state.notifications, notificationId)
+      showMessage(labels.deleteSuccess) 
     } catch(err) {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
@@ -39,13 +40,13 @@ const Notifications = () => {
             <ListItem title={labels.noData} />
           : notifications.map(n =>
               <ListItem
-                link="#"
                 title={n.title}
-                subtitle={n.status === 'n' ? labels.notRead : labels.read}
+                subtitle={n.message}
                 footer={moment(n.time).fromNow()}
                 key={n.id}
-                onClick={() => handleOpen(n.id)}
-              />
+              >
+                <Link slot="after" iconMaterial="delete" onClick={()=> handleDelete(n.id)}/>
+              </ListItem>
             )
           }
         </List>

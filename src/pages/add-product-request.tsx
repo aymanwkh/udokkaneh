@@ -1,6 +1,6 @@
-import { useState, useEffect, ChangeEvent, useRef } from 'react'
-import { f7, Page, Navbar, List, ListInput, Fab, Icon, ListButton } from 'framework7-react'
-import { addProductRequest, showMessage, showError, getMessage } from '../data/actions'
+import {useState, useEffect, ChangeEvent, useRef} from 'react'
+import {f7, Page, Navbar, List, ListInput, Fab, Icon, ListButton} from 'framework7-react'
+import {addProductRequest, showMessage, showError, getMessage} from '../data/actions'
 import labels from '../data/labels'
 
 type Props = {
@@ -100,7 +100,7 @@ const AddProductRequest = (props: Props) => {
           ref={inputEl}
           type="file" 
           accept="image/*" 
-          style={{ display: "none" }}
+          style={{display: "none"}}
           onChange={e => handleFileChange(e)}
         />
         <ListButton title={labels.setImage} onClick={onUploadClick} />

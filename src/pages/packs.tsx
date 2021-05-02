@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect } from 'react'
-import { Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Actions, ActionsButton, ActionsLabel } from 'framework7-react'
-import { StateContext } from '../data/state-provider'
+import {useContext, useState, useEffect} from 'react'
+import {Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Actions, ActionsButton, ActionsLabel} from 'framework7-react'
+import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import { sortByList } from '../data/config'
-import { getChildren, productOfText } from '../data/actions'
-import { Pack } from '../data/types'
+import {sortByList} from '../data/config'
+import {getChildren, productOfText} from '../data/actions'
+import {Pack} from '../data/types'
 
 type Props = {
   id: string,
@@ -16,7 +16,7 @@ type ExtendedPack = Pack & {
   trademarkName?: string
 }
 const Packs = (props: Props) => {
-  const { state } = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === props.id))
   const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))
@@ -24,7 +24,7 @@ const Packs = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => p.price > 0 &&  (!props.id || (props.type === 'f' && state.userInfo?.favorites?.includes(p.product.id)) || children.includes(p.product.categoryId)))
+      const packs = state.packs.filter(p => p.price > 0 &&  (!props.id || (props.type === 'f' && state.favorites.includes(p.product.id)) || children.includes(p.product.categoryId)))
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
@@ -38,7 +38,7 @@ const Packs = (props: Props) => {
       })
       return results.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
     })
-  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries])
+  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries, state.favorites])
   const handleSorting = (sortByValue: string) => {
     setSortBy(() => sortByList.find(s => s.id === sortByValue))
     switch(sortByValue){
