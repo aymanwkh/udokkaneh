@@ -17,6 +17,7 @@ import AddProductRequest from './pages/add-product-request'
 import AddPack from './pages/add-pack'
 import AddGroup from './pages/add-group'
 import StoreDetails from './pages/store-details'
+import ProductRequests from './pages/product-requests'
 
 const routes = [
   {
@@ -92,6 +93,10 @@ const routes = [
   {
     path: '/advert/',
     component: Advert
+  },
+  {
+    path: '/product-requests/',
+    component: ProductRequests
   },
   {
     path: '/add-product-request/',

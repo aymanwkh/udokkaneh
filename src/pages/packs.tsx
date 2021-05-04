@@ -24,7 +24,7 @@ const Packs = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => p.price > 0 &&  (!props.id || (props.type === 'f' && state.favorites.includes(p.product.id)) || children.includes(p.product.categoryId)))
+      const packs = state.packs.filter(p => p.price! > 0 &&  (!props.id || (props.type === 'f' && state.favorites.includes(p.product.id)) || children.includes(p.product.categoryId)))
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
@@ -36,20 +36,20 @@ const Packs = (props: Props) => {
           countryName: countryInfo.name,
         }
       })
-      return results.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)
+      return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
   }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries, state.favorites])
   const handleSorting = (sortByValue: string) => {
     setSortBy(() => sortByList.find(s => s.id === sortByValue))
     switch(sortByValue){
       case 'p':
-        setPacks([...packs].sort((p1, p2) => p1.price - p2.price))
+        setPacks([...packs].sort((p1, p2) => p1.price! - p2.price!))
         break
       case 'r':
         setPacks([...packs].sort((p1, p2) => p2.product.rating - p1.product.rating))
         break
       case 'v':
-        setPacks([...packs].sort((p1, p2) => p1.weightedPrice - p2.weightedPrice))
+        setPacks([...packs].sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!))
         break
       default:
     }
@@ -91,7 +91,7 @@ const Packs = (props: Props) => {
                 subtitle={p.product.description}
                 text={p.name}
                 footer={p.categoryName}
-                after={p.price.toFixed(2)}
+                after={p.price!.toFixed(2)}
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />

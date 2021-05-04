@@ -28,7 +28,7 @@ const MainCategories = () => {
       {categories.map(c => 
         <Button
           text={c.name}
-          href={`/categories/${c.id}`} 
+          href={c.isLeaf ? `/packs/${c.id}/type/n` : `/categories/${c.id}`} 
           large 
           fill 
           className="sections" 

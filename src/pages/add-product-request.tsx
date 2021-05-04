@@ -1,18 +1,20 @@
-import {useState, useEffect, ChangeEvent, useRef} from 'react'
+import {useState, useEffect, ChangeEvent, useRef, useContext} from 'react'
 import {f7, Page, Navbar, List, ListInput, Fab, Icon, ListButton} from 'framework7-react'
 import {addProductRequest, showMessage, showError, getMessage} from '../data/actions'
 import labels from '../data/labels'
+import { StateContext } from '../data/state-provider'
 
 type Props = {
   id: string
 }
 const AddProductRequest = (props: Props) => {
+  const {state} = useContext(StateContext)
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [country, setCountry] = useState('')
   const [weight, setWeight] = useState('')
   const [imageUrl, setImageUrl] = useState('')
-  const [price, setPrice] = useState(0)
+  const [price, setPrice] = useState('')
   const [image, setImage] = useState<File>()
   const inputEl = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
@@ -42,6 +44,7 @@ const AddProductRequest = (props: Props) => {
   const handleSubmit = () => {
     try{
       const productRequest = {
+        storeId: state.userInfo?.storeId!,
         name,
         country,
         weight,
@@ -93,8 +96,8 @@ const AddProductRequest = (props: Props) => {
           value={price}
           clearButton
           type="number" 
-          onChange={e => setPrice(e.target.value)}
-          onInputClear={() => setPrice(0)}
+          onChange={(e) => setPrice(e.target.value)}
+          onInputClear={() => setPrice('')}
         />
         <input 
           ref={inputEl}

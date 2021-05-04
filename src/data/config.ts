@@ -25,3 +25,11 @@ export const sortByList = [
   {id: 'v', name: 'اﻷفضل قيمة (السعر/الوزن)'},
 ]
 
+export const units = [
+  {id: 'g', name: 'غم', type: 'w', factor: 1},
+  {id: 'kg', name: 'كغم', type: 'w', factor: 1000},
+  {id: 'l', name: 'لتر', type: 'v', factor: 1000},
+  {id: 'ml', name: 'مل', type: 'v', factor: 1},
+  {id: 'c', name: 'حبة', type: 'c', factor: 1},
+  {id: 'd', name: 'دزينة', type: 'c', factor: 12}
+]

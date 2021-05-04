@@ -150,7 +150,7 @@ const PackDetails = (props: Props) => {
       <Card>
         <CardHeader className="card-header">
           <div className="price">
-            {pack.price.toFixed(2)}
+            {pack.price!.toFixed(2)}
           </div>
         </CardHeader>
         <CardContent>
@@ -244,9 +244,11 @@ const PackDetails = (props: Props) => {
             <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>
               {labels.addPack}
             </ActionsButton>
-            <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-group/${props.id}`)}>
-              {labels.addGroup}
-            </ActionsButton>
+            {!pack.subPackId && 
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-group/${props.id}`)}>
+                {labels.addGroup}
+              </ActionsButton>
+            }
           </>
         }
       </Actions>

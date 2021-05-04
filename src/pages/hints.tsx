@@ -22,7 +22,7 @@ const Hints = (props: Props) => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
         (props.type === 'p' && p.product.categoryId === pack?.product.categoryId && p.product.rating > pack.product.rating) ||
-        (props.type === 'w' && p.product.id === pack?.product.id && p.weightedPrice < pack.weightedPrice)
+        (props.type === 'w' && p.product.id === pack?.product.id && p.weightedPrice! < pack.weightedPrice!)
       )
       let extendedPacks = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
@@ -35,7 +35,7 @@ const Hints = (props: Props) => {
           trademarkName: trademarkInfo?.name
         }
       })
-      return extendedPacks.sort((p1, p2) => p1.weightedPrice - p2.weightedPrice)  
+      return extendedPacks.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)  
     })
   }, [pack, state.packs, state.categories, state.trademarks, state.countries, props.type]) 
   return(
@@ -52,7 +52,7 @@ const Hints = (props: Props) => {
                 subtitle={p.product.description}
                 text={p.name}
                 footer={`${labels.category}: ${p.categoryName}`}
-                after={p.price.toFixed(2)}
+                after={p.price!.toFixed(2)}
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />

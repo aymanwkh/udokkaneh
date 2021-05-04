@@ -155,14 +155,13 @@ const labels: Label = {
   setImage: 'حمل الصورة',
   setPosition: 'حدد موقعك',
   changePrice: 'تغيير السعر',
-  addPack: 'اضافة عبوة جديدة لنفس المنتج',
+  addPack: 'عبوة جديدة بوزن/حجم مختلف',
   package: 'التغليف',
   unit: 'الوحدة',
   unitsCount: 'عدد الوحدات',
   byWeight: 'بالوزن؟',
-  addGroup: 'اضافة مجموعة من نفس العبوة',
-  addGroupPage: 'اضافة مجموعة',
-  addSuccess: 'تم الاضافة',
+  addGroup: 'اضافة مجموعة/عرض',
+  addSuccess: 'تمت الاضافة',
   available: 'هذا المنتج متوفر عندي',
   addNotFoundAlarm: 'بلاغ بعدم وجود المنتج في هذا المحل',
   addChangePriceAlarm: 'بلاغ بعدم تقيد المحل بالسعر المعلن',
@@ -178,7 +177,12 @@ const labels: Label = {
   storeDetails: 'تفاصيل المحل',
   rateProduct: 'رأيك في هذا المنتج',
   newAlarm: 'بلاغ جديد',
-  positionError: 'حدث خطأ في تحديد الموقع، يرجى ادخال العنوان'
+  positionError: 'حدث خطأ في تحديد الموقع، يرجى ادخال العنوان',
+  productRequests: 'طلبات منتجات جديدة',
+  duplicatePack: 'يوجد عبوة اخرى لنفس المنتج بنفس الوزن او الحجم',
+  withGift: 'مع هدية',
+  gift: 'الهدية',
+  enterGift: 'الرجاء ادخل نوع الهدية'
 }
 
 export default labels

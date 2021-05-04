@@ -70,7 +70,6 @@ const Login = () => {
         <ListInput
           label={labels.mobile}
           type="number"
-          placeholder={labels.mobilePlaceholder}
           name="mobile"
           clearButton
           autofocus
@@ -82,7 +81,6 @@ const Login = () => {
         <ListInput
           label={labels.password}
           type="number"
-          placeholder={labels.passwordPlaceholder}
           name="password"
           clearButton
           errorMessage={passwordErrorMessage}

@@ -32,12 +32,12 @@ const StoreSummary = () => {
           href={state.packRequests.length === 0 ? '' : '/store-packs/r'} 
         />
         <Button 
-          text={labels.addProductRequest}
+          text={labels.productRequests}
           large 
           fill 
           className="sections" 
           color={randomColors[i++ % 10].name} 
-          href="/add-product-request/"
+          href="/product-requests/"
         />
       </Block>
     </Page>

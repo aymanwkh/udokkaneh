@@ -88,14 +88,17 @@ const StoreOwner = (props: Props) => {
     if (storeName) validateStoreName(storeName)
   }, [storeName])
   const handleSetPosition = () => {
+    setInprocess(true)
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        setInprocess(false)
         setPosition({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
       },
       () => {
+        setInprocess(false)
         setPositionError(true)
         setError(labels.positionError)
       }
@@ -177,27 +180,29 @@ const StoreOwner = (props: Props) => {
             onInputClear={() => setStoreName('')}
           />
         }
-        <ListButton 
-          title={labels.setPosition} 
-          onClick={handleSetPosition}
-        />
+        {!positionError &&
+          <ListButton 
+            title={labels.setPosition} 
+            onClick={handleSetPosition}
+          />
+        }
         {positionError && 
           <ListInput
-            label={labels.name}
+            label={labels.address}
             type="text"
             placeholder={labels.namePlaceholder}
             name="name"
             clearButton
             autofocus
-            value={name}
+            value={address}
             errorMessage={nameErrorMessage}
             errorMessageForce
-            onChange={e => setName(e.target.value)}
-            onInputClear={() => setName('')}
+            onChange={e => setAddress(e.target.value)}
+            onInputClear={() => setAddress('')}
           />
         }
       </List>
-      {!name || !mobile || !password || !position.lat || !position.lng || (props.type === 'o' && !storeName) || nameErrorMessage || mobileErrorMessage || passwordErrorMessage || storeNameErrorMessage ? '' :
+      {name && mobile && password && (position.lat || address) && (storeName || props.type !== 'o') && !nameErrorMessage && !mobileErrorMessage && !passwordErrorMessage && !storeNameErrorMessage &&
         <Button text={labels.register} large onClick={() => handleRegister()} />
       }
     </Page>

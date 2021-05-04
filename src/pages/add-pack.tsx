@@ -1,22 +1,18 @@
 import {useState, useContext, useEffect} from 'react'
 import {addPack, showMessage, showError, getMessage} from '../data/actions'
-import {f7, Page, Navbar, List, ListItem, ListInput, Fab, Icon, Toggle} from 'framework7-react'
+import {f7, Page, Navbar, List, ListInput, Fab, Icon} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-
+import {units} from '../data/config'
 type Props = {
   id: string
 }
 const AddPack = (props: Props) => {
   const {state} = useContext(StateContext)
   const [error, setError] = useState('')
-  const [name, setName] = useState('')
-  const [typeUnits, setTypeUnits] = useState(0)
-  const [unitId, setUnitId] = useState('')
-  const [byWeight, setByWeight] = useState(false)
-  const [price, setPrice] = useState(0)
-  const [product] = useState(() => state.packs.find(p => p.id === props.id)!.product)
-  const [units] = useState(() => state.units.filter(u => u.type === product.unitType))
+  const [unitsCount, setUnitsCount] = useState('')
+  const [price, setPrice] = useState('')
+  const [pack] = useState(() => state.packs.find(p => p.id === props.id)!)
   useEffect(() => {
     if (error) {
       showError(error)
@@ -24,38 +20,27 @@ const AddPack = (props: Props) => {
     }
   }, [error])
 
-  const generateName = () => {
-    let suggestedName
-    if (unitId && typeUnits) {
-      suggestedName = `${typeUnits} ${state.units.find(u => u.id === unitId)!.name}`
-      if (!name) setName(suggestedName)
-    }
-  }
-
   const handleSubmit = () => {
     try{
-      if (state.packs.find(p => p.product.id === props.id && p.name === name)) {
-        throw new Error('duplicateName')
+      if (state.packs.find(p => p.product.id === pack.product.id && p.unitsCount === +unitsCount)) {
+        throw new Error('duplicatePack')
       }
-      const standardUnits = units.find(u => u.id === unitId)!.factor * typeUnits
       const prices = [{
         storeId: state.userInfo?.storeId!,
         price: +price,
         time: new Date()
       }]
-      const pack = {
-        name,
-        product,
+      const newPack = {
+        name: `${unitsCount} ${units.find(u => u.id === pack.product.unit)!.name}`,
+        product: pack.product,
         prices,
-        typeUnits,
-        standardUnits,
-        unitId,
-        byWeight,
+        unitsCount: +unitsCount,
+        byWeight: pack.byWeight,
         isArchived: false,
         specialImage: false,
         imageUrl: state.packs.find(p => p.id === props.id)!.imageUrl
       }
-      addPack(pack)
+      addPack(newPack)
       showMessage(labels.addSuccess)
       f7.views.current.router.back()
     } catch(err) {
@@ -64,58 +49,32 @@ const AddPack = (props: Props) => {
   }
   return (
     <Page>
-      <Navbar title={`${labels.addPack} ${product?.name}`} backLink={labels.back} />
+      <Navbar title={labels.addPack} backLink={labels.back} />
       <List form inlineLabels>
         <ListInput 
           name="name" 
           label={labels.name}
+          type="text" 
+          value={pack.product.name}
+          readonly
+        />
+        <ListInput 
+          name="unit" 
+          label={labels.unit}
+          type="text" 
+          value={units.find(u => u.id === pack.product.unit)?.name}
+          readonly
+        />
+        <ListInput 
+          name="unitsCount" 
+          label={labels.weightVolume}
           clearButton
           autofocus
-          type="text" 
-          value={name} 
-          onChange={e => setName(e.target.value)}
-          onInputClear={() => setName('')}
+          type="number" 
+          value={unitsCount} 
+          onChange={e => setUnitsCount(e.target.value)}
+          onInputClear={() => setUnitsCount('')}
         />
-        <ListItem>
-          <span>{labels.byWeight}</span>
-          <Toggle 
-            name="byWeight" 
-            color="green" 
-            checked={byWeight} 
-            onToggleChange={() => setByWeight(s => !s)}
-          />
-        </ListItem>
-        {!byWeight &&
-          <ListItem 
-            title={labels.unit}
-            smartSelect
-            // @ts-ignore
-            smartSelectParams={{
-              // el: "#units", 
-              openIn: "sheet",
-              closeOnSelect: true, 
-            }}
-          >
-            <select name="unitId" value={unitId} onChange={e => setUnitId(e.target.value)} onBlur={() => generateName()}>
-              <option value=""></option>
-              {units.map(u => 
-                <option key={u.id} value={u.id}>{u.name}</option>
-              )}
-            </select>
-          </ListItem>
-        }
-        {!byWeight &&
-          <ListInput 
-            name="typeUnits" 
-            label={labels.unitsCount}
-            clearButton
-            type="number" 
-            value={typeUnits} 
-            onChange={e => setTypeUnits(e.target.value)}
-            onInputClear={() => setTypeUnits(0)}
-            onBlur={() => generateName()}
-          />
-        }
         <ListInput 
           name="price" 
           label={labels.price}
@@ -123,11 +82,10 @@ const AddPack = (props: Props) => {
           clearButton
           type="number" 
           onChange={e => setPrice(e.target.value)}
-          onInputClear={() => setPrice(0)}
+          onInputClear={() => setPrice('')}
         />
-
       </List>
-      {name && unitId && typeUnits &&
+      {price && unitsCount &&
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>

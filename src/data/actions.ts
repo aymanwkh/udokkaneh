@@ -185,7 +185,6 @@ export const addProductRequest = async (productRequest: ProductRequest, image?: 
   productRequest['imageUrl'] = imageUrl
   productRequestRef.set({
     ...productRequest,
-    userId: firebase.auth().currentUser?.uid,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
@@ -208,19 +207,7 @@ export const changePrice = (storePack: PackPrice, packPrices: PackPrice[], batch
   }
 }
 
-type newPack = {
-  name: string,
-  product: Product,
-  prices: {storeId: string, price: number, time: Date}[],
-  typeUnits: number,
-  standardUnits: number,
-  unitId: string,
-  byWeight: boolean,
-  isArchived: boolean,
-  specialImage: boolean,
-  imageUrl: string
-}
-export const addPack = (pack: newPack) => {
+export const addPack = (pack: Pack) => {
   const packRef = firebase.firestore().collection('packs').doc()
   packRef.set(pack)
 }
@@ -292,4 +279,12 @@ export const updateLastSeen = () => {
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
     lastSeen: firebase.firestore.FieldValue.serverTimestamp()
   })
+}
+
+export const deleteProductRequest = async (productRequest: ProductRequest) => {
+  const productRequestRef = firebase.firestore().collection('product-requests').doc(productRequest.id)
+  productRequestRef.delete()
+  const ext = productRequest.imageUrl.slice(productRequest.imageUrl.lastIndexOf('.'), productRequest.imageUrl.indexOf('?'))
+  const image = firebase.storage().ref().child('product-requests/' + productRequest.id + ext)
+  await image.delete()
 }

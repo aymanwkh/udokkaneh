@@ -15,11 +15,14 @@ export type Error = {
   message: string
 }
 export type ProductRequest = {
+  id?: string,
+  storeId: string,
   name: string,
   country: string,
   weight: string,
   price: number,
-  imageUrl: string
+  imageUrl: string,
+  time?: Date
 }
 export type Product = {
   id: string,
@@ -29,7 +32,7 @@ export type Product = {
   categoryId: string,
   countryId: string,
   trademarkId?: string,
-  unitType: string,
+  unit: string,
   rating: number,
   ratingCount: number
 }
@@ -38,13 +41,11 @@ export type Pack = {
   name: string,
   product: Product,
   imageUrl: string,
-  price: number,
+  price?: number,
   subPackId?: string,
   subQuantity?: number,
-  weightedPrice: number,
-  typeUnits: number,
-  standardUnits: number,
-  unitId: string,
+  weightedPrice?: number,
+  unitsCount: number,
   byWeight: boolean
 }
 export type PackPrice = {
@@ -127,12 +128,6 @@ export type Discount = {
   value: number,
   type: string
 }
-export type Unit = {
-  id: string,
-  name: string,
-  type: string,
-  factor: number
-}
 export type Store = {
   id?: string,
   name: string,
@@ -159,11 +154,11 @@ export type State = {
   passwordRequests: PasswordRequest[],
   notifications: Notification[],
   alarms: Alarm[],
-  units: Unit[],
   packRequests: PackRequest[],
   stores: Store[],
   favorites: string[],
-  ratings: Rating[]
+  ratings: Rating[],
+  productRequests: ProductRequest[]
 }
 
 export type Action = {

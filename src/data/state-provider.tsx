@@ -1,7 +1,7 @@
 import {createContext, useReducer, useEffect} from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import {State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification, Store, PackRequest, UserInfo, Rating, Alarm} from './types'
+import {State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification, Store, PackRequest, UserInfo, Rating, Alarm, ProductRequest} from './types'
 
 export const StateContext = createContext({} as Context)
 
@@ -22,11 +22,11 @@ const StateProvider = ({children}: Props) => {
     passwordRequests: [],
     notifications: [],
     alarms: [],
-    units: [],
     packRequests: [],
     stores: [],
     favorites: [],
-    ratings: []
+    ratings: [],
+    productRequests: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -60,14 +60,12 @@ const StateProvider = ({children}: Props) => {
           name: doc.data().name,
           product: doc.data().product,
           imageUrl: doc.data().imageUrl,
-          typeUnits: doc.data().typeUnits,
-          standardUnits: doc.data().standardUnits,
-          unitId: doc.data().unitId,
+          unitsCount: doc.data().unitsCount,
           byWeight: doc.data().byWeight,
           subPackId: doc.data().subPackId,
           subQuantity: doc.data().subQuantity,
           price: minPrice,
-          weightedPrice: Math.floor(minPrice / doc.data().standardUnits),
+          weightedPrice: Math.floor(minPrice / doc.data().unitsCount),
         })
         if (doc.data().prices) {
           doc.data().prices.forEach((p: any) => {
@@ -145,8 +143,8 @@ const StateProvider = ({children}: Props) => {
               position: doc.data()!.position,
               storeId: doc.data()!.storeId,
               storeName: doc.data()!.storeName,
-              lastSeen: doc.data()!.lastSeen.toDate(),
-              time: doc.data()!.time.toDate()
+              lastSeen: doc.data()!.lastSeen?.toDate(),
+              time: doc.data()!.time?.toDate()
             }
             dispatch({type: 'SET_USER_INFO', payload: userData})
             doc.data()!.notifications?.forEach((n: any) => {
@@ -190,6 +188,25 @@ const StateProvider = ({children}: Props) => {
           }, err => {
             unsubscribeRequests()
           }) 
+          const unsubscribeProductRequests = firebase.firestore().collection('product-requests').onSnapshot(docs => {
+            let productRequests: ProductRequest[] = []
+            docs.forEach(doc => {
+              productRequests.push({
+                id: doc.id,
+                storeId: doc.data().storeId,
+                name: doc.data().name,
+                country: doc.data().country,
+                weight: doc.data().weight,
+                price: doc.data().price,
+                imageUrl: doc.data().imageUrl,
+                time: doc.data().time?.toDate()
+              })
+            })
+            dispatch({type: 'SET_PRODUCT_REQUESTS', payload: productRequests})
+          }, err => {
+            unsubscribeProductRequests()
+          })  
+  
         }
         const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
           const stores: Store[] = []

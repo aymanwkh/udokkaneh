@@ -62,7 +62,7 @@ const StorePacks = (props: Props) => {
                 title={p.product.name}
                 subtitle={p.product.description}
                 text={p.name}
-                footer={`${labels.bestPrice}: ${p.price.toFixed(2)}`}
+                footer={`${labels.bestPrice}: ${p.price!.toFixed(2)}`}
                 after={p.storePrice > 0 ? p.storePrice.toFixed(2): ''}
                 key={i++}
               >
