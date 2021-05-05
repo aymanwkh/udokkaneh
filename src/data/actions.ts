@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import {randomColors} from './config'
-import {Error, Category, Alarm, Pack, ProductRequest, PackPrice, Product, Notification, UserInfo} from './types'
+import {Error, Category, Alarm, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, PackRequest} from './types'
 import {f7} from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
@@ -189,18 +189,17 @@ export const addProductRequest = async (productRequest: ProductRequest, image?: 
   })
 }
 
-export const changePrice = (storePack: PackPrice, packPrices: PackPrice[], batch?: firebase.firestore.WriteBatch) => {
+export const changePrice = (packStore: PackStore, packStores: PackStore[], batch?: firebase.firestore.WriteBatch) => {
   const newBatch = batch || firebase.firestore().batch()
-  const packStores = packPrices.filter(p => p.packId === storePack.packId)
-  const otherStores = packStores.filter(p => p.storeId !== storePack.storeId)
-  otherStores.push(storePack)
-  const prices = otherStores.map(p => {
+  const otherStores = packStores.filter(p => p.packId === packStore.packId && p.storeId !== packStore.storeId)
+  otherStores.push(packStore)
+  const stores = otherStores.map(p => {
     const {packId, ...others} = p
     return others
   })
-  let packRef = firebase.firestore().collection('packs').doc(storePack.packId)
+  let packRef = firebase.firestore().collection('packs').doc(packStore.packId)
   newBatch.update(packRef, {
-    prices
+    stores
   })
   if (!batch) {
     newBatch.commit()
@@ -212,37 +211,43 @@ export const addPack = (pack: Pack) => {
   packRef.set(pack)
 }
 
-export const deleteStorePack = (storePack: PackPrice, packPrices: PackPrice[], packs: Pack[], withRequest: boolean) => {
+export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], packs: Pack[], withRequest: boolean) => {
   const batch = firebase.firestore().batch()
-  const pack = packs.find(p => p.id === storePack.packId)!
-  const packStores = packPrices.filter(p => p.packId === storePack.packId)
-  const otherStores = packStores.filter(p => p.storeId !== storePack.storeId)
-  const prices = otherStores.map(p => {
+  const pack = packs.find(p => p.id === packStore.packId)!
+  const otherStores = packStores.filter(p => p.packId === packStore.packId && p.storeId !== packStore.storeId)
+  const stores = otherStores.map(p => {
     const {packId, ...others} = p
     return others
   })
   const packRef = firebase.firestore().collection('packs').doc(pack.id)
   batch.update(packRef, {
-    prices
+    stores
   })
   if (withRequest) {
     const requestRef = firebase.firestore().collection('pack-requests').doc()
     batch.set(requestRef, {
-      storeId: storePack.storeId,
-      packId: storePack.packId,
+      storeId: packStore.storeId,
+      packId: packStore.packId,
       time: firebase.firestore.FieldValue.serverTimestamp()
     })
   }
   batch.commit()
 }
 
-export const addPackPrice = (storePack: PackPrice, packs: Pack[]) => {
-  const {packId, ...others} = storePack
+export const addPackStore = (packStore: PackStore, packs: Pack[], packRequests: PackRequest[]) => {
+  const batch = firebase.firestore().batch()
+  const {packId, ...others} = packStore
   const pack = packs.find(p => p.id === packId)!
   const packRef = firebase.firestore().collection('packs').doc(pack.id)
-  packRef.update({
-    prices: firebase.firestore.FieldValue.arrayUnion(others)
+  batch.update(packRef, {
+    stores: firebase.firestore.FieldValue.arrayUnion(others)
   })
+  const packRequest = packRequests.find(r => r.storeId === packStore.storeId && r.packId === packStore.packId)
+  if (packRequest) {
+    const requestRef = firebase.firestore().collection('pack-requests').doc(packRequest.id)
+    batch.delete(requestRef)
+  }
+  batch.commit()
 }
 
 export const addPackRequest = (storeId: string, packId: string) => {
@@ -254,8 +259,8 @@ export const addPackRequest = (storeId: string, packId: string) => {
   })
 }
 
-export const deletePackRequest = (storeId: string, packId: string) => {
-  const requestRef = firebase.firestore().collection('pack-requests').doc()
+export const deletePackRequest = (packRequest: PackRequest) => {
+  const requestRef = firebase.firestore().collection('pack-requests').doc(packRequest.id)
   requestRef.delete()
 }
 

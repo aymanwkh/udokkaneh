@@ -18,6 +18,7 @@ import AddPack from './pages/add-pack'
 import AddGroup from './pages/add-group'
 import StoreDetails from './pages/store-details'
 import ProductRequests from './pages/product-requests'
+import Basket from './pages/basket'
 
 const routes = [
   {
@@ -113,6 +114,10 @@ const routes = [
   {
     path: '/store-details/:id',
     component: StoreDetails
+  },
+  {
+    path: '/basket/',
+    component: Basket
   },
   {
     path: '(.*)',

@@ -45,10 +45,10 @@ export type Pack = {
   subPackId?: string,
   subQuantity?: number,
   weightedPrice?: number,
-  unitsCount: number,
+  unitsCount?: number,
   byWeight: boolean
 }
-export type PackPrice = {
+export type PackStore = {
   storeId: string,
   packId: string,
   price: number,
@@ -84,19 +84,6 @@ export type UserInfo = {
   storeName?: string,
   lastSeen?: Date,
   time?: Date
-}
-export type BasketPack = {
-  packId: string,
-  productId: string,
-  productName: string,
-  productDescription: string,
-  packName: string,
-  imageUrl: string,
-  price: number,
-  quantity: number,
-  offerId: string
-  byWeight: boolean,
-  weight?: number,
 }
 export type Advert = {
   id: string,
@@ -137,6 +124,7 @@ export type Store = {
   locationId?: string
 }
 export type PackRequest = {
+  id?: string,
   storeId: string,
   packId: string
 }
@@ -144,9 +132,9 @@ export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
   categories: Category[],
-  basket: BasketPack[],
+  basket: PackStore[],
   packs: Pack[],
-  packPrices: PackPrice[],
+  packStores: PackStore[],
   adverts: Advert[],
   locations: Location[],
   countries: Country[],

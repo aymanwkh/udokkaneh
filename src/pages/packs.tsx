@@ -1,10 +1,11 @@
 import {useContext, useState, useEffect} from 'react'
-import {Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Actions, ActionsButton, ActionsLabel} from 'framework7-react'
+import {Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Actions, ActionsButton, ActionsLabel, Toolbar} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {sortByList} from '../data/config'
 import {getChildren, productOfText} from '../data/actions'
 import {Pack} from '../data/types'
+import Footer from './footer'
 
 type Props = {
   id: string,
@@ -109,6 +110,9 @@ const Packs = (props: Props) => {
           : <ActionsButton key={o.id} onClick={() => handleSorting(o.id)}>{o.name}</ActionsButton>
         )}
       </Actions>
+      <Toolbar bottom>
+        <Footer />
+      </Toolbar>
     </Page>
   )
 }

@@ -1,26 +1,14 @@
 import {State, Action} from './types'
 
 const Reducer = (state: State, action: Action) => {
-  let pack, packs
+  let packs
   switch (action.type){
     case 'ADD_TO_BASKET':
-      if (state.basket.find(p => p.packId === action.payload.id)) return state
-      pack = {
-        packId: action.payload.id,
-        productId: action.payload.productId,
-        productName: action.payload.productName,
-        productDescription: action.payload.productDescription,
-        packName: action.payload.name,
-        imageUrl: action.payload.imageUrl,
-        price: action.payload.price,
-        quantity: 1,
-        isDivided: action.payload.isDivided,
-        byWeight: action.payload.byWeight,
-        maxQuantity: action.payload.maxQuantity,
-        offerId: action.payload.offerId,
-        closeExpired: action.payload.closeExpired
-      }
-      packs = [...state.basket, pack]
+      packs = [...state.basket, action.payload]
+      localStorage.setItem('basket', JSON.stringify(packs))
+      return {...state, basket: packs}
+    case 'DELETE_FROM_BASKET':
+      packs = state.basket.filter(p => p.storeId !== action.payload.storeId && p.packId === action.payload.packId)
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'CLEAR_BASKET':
@@ -42,8 +30,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, packs: action.payload}
     case 'SET_CATEGORIES':
       return {...state, categories: action.payload}
-    case 'SET_PACK_PRICES':
-      return {...state, packPrices: action.payload}
+    case 'SET_PACK_STORES':
+      return {...state, packStores: action.payload}
     case 'SET_ADVERTS':
       return {...state, adverts: action.payload}
     case 'SET_LOCATIONS':

@@ -1,7 +1,7 @@
 import {createContext, useReducer, useEffect} from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import {State, Context, Category, Pack, PackPrice, Advert, PasswordRequest, Notification, Store, PackRequest, UserInfo, Rating, Alarm, ProductRequest} from './types'
+import {State, Context, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, PackRequest, UserInfo, Rating, Alarm, ProductRequest} from './types'
 
 export const StateContext = createContext({} as Context)
 
@@ -14,7 +14,7 @@ const StateProvider = ({children}: Props) => {
     categories: [], 
     basket: [], 
     packs: [],
-    packPrices: [],
+    packStores: [],
     adverts: [],
     locations: [],
     countries: [],
@@ -48,11 +48,11 @@ const StateProvider = ({children}: Props) => {
     })  
     const unsubscribePacks = firebase.firestore().collection('packs').where('isArchived', '==', false).onSnapshot(docs => {
       let packs: Pack[] = []
-      let packPrices: PackPrice[] = []
+      let packStores: PackStore[] = []
       docs.forEach(doc => {
         let prices, minPrice = 0
-        if (doc.data().prices) {
-          prices = doc.data().prices.map((p: PackPrice) => p.price)
+        if (doc.data().stores) {
+          prices = doc.data().stores.map((s: PackStore) => s.price)
           minPrice = prices.length > 0 ? Math.min(...prices) : 0
         }
         packs.push({
@@ -67,19 +67,19 @@ const StateProvider = ({children}: Props) => {
           price: minPrice,
           weightedPrice: Math.floor(minPrice / doc.data().unitsCount),
         })
-        if (doc.data().prices) {
-          doc.data().prices.forEach((p: any) => {
-            packPrices.push({
+        if (doc.data().stores) {
+          doc.data().stores.forEach((s: any) => {
+            packStores.push({
               packId: doc.id,
-              storeId: p.storeId,
-              price: p.price,
-              time: p.time.toDate()
+              storeId: s.storeId,
+              price: s.price,
+              time: s.time.toDate()
             })
           })
         }
       })
       dispatch({type: 'SET_PACKS', payload: packs})
-      dispatch({type: 'SET_PACK_PRICES', payload: packPrices})
+      dispatch({type: 'SET_PACK_STORES', payload: packStores})
     }, err => {
       unsubscribePacks()
     })

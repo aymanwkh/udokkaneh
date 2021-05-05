@@ -1,9 +1,10 @@
 import {useContext, useState, useEffect} from 'react'
-import {f7, Button, Block, Page, Navbar} from 'framework7-react'
+import {f7, Button, Block, Page, Navbar, Toolbar} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {randomColors} from '../data/config'
 import {Category} from '../data/types'
+import Footer from './footer'
 
 type Props = {
   id: string
@@ -54,6 +55,9 @@ const Categories = (props: Props) => {
           )
         })}
       </Block>
+      <Toolbar bottom>
+        <Footer />
+      </Toolbar>
     </Page>
   )
 }

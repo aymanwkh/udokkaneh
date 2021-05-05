@@ -1,10 +1,11 @@
 import {useContext, useEffect, useState} from 'react'
-import {f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader, List, ListItem, Button} from 'framework7-react'
+import {f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader, List, ListItem, Button, Toolbar} from 'framework7-react'
 import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
-import {addPackPrice, changePrice, deleteStorePack, deletePackRequest, addPackRequest, showMessage, showError, getMessage, updateFavorites, productOfText, rateProduct} from '../data/actions'
+import {addPackStore, changePrice, deleteStorePack, deletePackRequest, addPackRequest, showMessage, showError, getMessage, updateFavorites, productOfText, rateProduct} from '../data/actions'
 import labels from '../data/labels'
-import {Pack, PackPrice, Store} from '../data/types'
+import {Pack, PackStore, Store} from '../data/types'
+import Footer from './footer'
 
 type Props = {
   id: string,
@@ -14,7 +15,7 @@ type ExtendedPack = Pack & {
   countryName: string,
   trademarkName?: string
 }
-type ExtendedPackPrice = PackPrice & {
+type ExtendedPackStore = PackStore & {
   storeInfo: Store,
   storeLocation?: string
 }
@@ -27,7 +28,7 @@ const PackDetails = (props: Props) => {
   const [otherPacks, setOtherPacks] = useState<Pack[]>([])
   const [actionOpened, setActionOpened] = useState(false);
   const [ratingOpened, setRatingOpened] = useState(false);
-  const [packPrices, setPackPrices] = useState<ExtendedPackPrice[]>([])
+  const [packStores, setPackStores] = useState<ExtendedPackStore[]>([])
   useEffect(() => {
     setPack(() => {
       const pack = state.packs.find(p => p.id === props.id)!
@@ -42,9 +43,9 @@ const PackDetails = (props: Props) => {
   }, [state.packs, state.trademarks, state.countries, props.id])
   useEffect(() => {
     if (state.user) {
-      setPackPrices(() => {
-        const packPrices = state.packPrices.filter(p => p.packId === pack?.id)
-        const results = packPrices.map(p => {
+      setPackStores(() => {
+        const packStores = state.packStores.filter(p => p.packId === pack?.id)
+        const results = packStores.map(p => {
           const storeInfo = state.stores.find(s => s.id === p.storeId)!
           const storeLocation = state.locations.find(l => l.id === storeInfo.locationId)?.name
           return {
@@ -56,10 +57,10 @@ const PackDetails = (props: Props) => {
         return results.sort((r1, r2) => r1.price > r2.price ? 1 : -1)
       })
     }
-  }, [state.packPrices, state.stores, state.locations, state.user, pack])
+  }, [state.packStores, state.stores, state.locations, state.user, pack])
   useEffect(() => {
-    setIsAvailable(() => Boolean(state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
-  }, [state.packPrices, state.userInfo, pack])
+    setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
+  }, [state.packStores, state.userInfo, pack])
   useEffect(() => {
     setOtherProducts(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
     setOtherPacks(() => state.packs.filter(pa => pa.id !== pack?.id && pa.product.id === pack?.product.id))
@@ -72,8 +73,8 @@ const PackDetails = (props: Props) => {
   }, [error])
   const deletePrice = (flag: boolean) => {
     try{
-      const storePack = state.packPrices.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
-      deleteStorePack(storePack, state.packPrices, state.packs, flag)
+      const storePack = state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
+      deleteStorePack(storePack, state.packStores, state.packs, flag)
       showMessage(flag ? labels.addSuccess : labels.deleteSuccess)
       f7.views.current.router.back()
     } catch(err) {
@@ -94,7 +95,7 @@ const PackDetails = (props: Props) => {
   }
   const handleRemoveRequest = () => {
     try{
-      deletePackRequest(state.userInfo?.storeId!, pack?.id!)
+      deletePackRequest(state.packRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === pack?.id!)!)
       showMessage(labels.deleteSuccess)
       f7.views.current.router.back()
     } catch(err) {
@@ -104,11 +105,17 @@ const PackDetails = (props: Props) => {
   const handleAvailable = (type: string) => {
     f7.dialog.prompt(labels.price, labels.enterPrice, value => {
       try{
-        if (Number(value) !== Number(Number(value).toFixed(2))) {
+        if (+value !== Number((+value).toFixed(2))) {
           throw new Error('invalidPrice')
         }
-        if (Number(value) <= 0) {
+        if (+value <= 0) {
           throw new Error('invalidPrice')
+        }
+        if (Math.abs(+value - pack?.price!) / pack?.price! > 0.25) {
+          throw new Error('invalidChangePrice')
+        }
+        if (type === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
+          throw new Error('samePrice')
         }
         const storePack = {
           packId: pack?.id!,
@@ -116,8 +123,8 @@ const PackDetails = (props: Props) => {
           price: +value,
           time: new Date()
         }
-        if (type === 'n') addPackPrice(storePack, state.packs)
-        else changePrice(storePack, state.packPrices)
+        if (type === 'n') addPackStore(storePack, state.packs, state.packRequests)
+        else changePrice(storePack, state.packStores)
         showMessage(type === 'n' ? labels.addSuccess : labels.editSuccess)
         f7.views.current.router.back()
         } catch(err) {
@@ -165,12 +172,12 @@ const PackDetails = (props: Props) => {
       </Card>
       {state.user && 
         <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => setActionOpened(true)}>
-          <Icon material="menu"></Icon>
+          <Icon material="menu" />
         </Fab>
       }
       {!state.user && 
         <Button 
-          text={labels.showPackPrices}
+          text={labels.showPackStores}
           large 
           fill 
           className="sections"
@@ -180,9 +187,9 @@ const PackDetails = (props: Props) => {
       }
       {state.user && !state.userInfo?.storeId &&
         <List mediaList>
-          {packPrices.map((p, i) => 
+          {packStores.map((p, i) => 
             <ListItem 
-              link={`/store-details/${p.storeId}`}
+              link={`/store-details/${p.storeId}/${p.packId}`}
               title={p.storeInfo.name}
               subtitle={p.storeLocation || p.storeInfo.address}
               after={p.price.toFixed(2)} 
@@ -203,12 +210,12 @@ const PackDetails = (props: Props) => {
               {pack.product.id && state.favorites.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}
             </ActionsButton>
             {otherProducts.length > 0 &&
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/a`)}>
                 {labels.otherProducts}
               </ActionsButton>
             }
             {otherPacks.length > 0 &&
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/w`)}>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>
                 {labels.otherPacks}
               </ActionsButton>
             }
@@ -241,14 +248,14 @@ const PackDetails = (props: Props) => {
                 }
               </>
             }
-            <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>
-              {labels.addPack}
-            </ActionsButton>
-            {!pack.subPackId && 
+            {!pack.subPackId && <>
+              <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>
+                {labels.addPack}
+              </ActionsButton>
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-group/${props.id}`)}>
                 {labels.addGroup}
               </ActionsButton>
-            }
+            </>}
           </>
         }
       </Actions>
@@ -266,6 +273,9 @@ const PackDetails = (props: Props) => {
           <Icon material="thumb_down" color="red" style={{margin: '5px'}}></Icon>
         </ActionsButton>
       </Actions>
+      <Toolbar bottom>
+        <Footer />
+      </Toolbar>
     </Page>
   )
 }

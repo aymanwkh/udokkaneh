@@ -11,6 +11,7 @@ const AddPack = (props: Props) => {
   const {state} = useContext(StateContext)
   const [error, setError] = useState('')
   const [unitsCount, setUnitsCount] = useState('')
+  const [unitsCountError, setUnitsCountError] = useState('')
   const [price, setPrice] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.id)!)
   useEffect(() => {
@@ -19,13 +20,17 @@ const AddPack = (props: Props) => {
       setError('')
     }
   }, [error])
-
+  useEffect(() => {
+    if (state.packs.find(p => p.product.id === pack.product.id && p.unitsCount === +unitsCount)) {
+      setUnitsCountError(labels.duplicatePack)
+    } else {
+      setUnitsCountError('')
+    }
+  }, [unitsCount, state.packs, pack])
   const handleSubmit = () => {
     try{
-      if (state.packs.find(p => p.product.id === pack.product.id && p.unitsCount === +unitsCount)) {
-        throw new Error('duplicatePack')
-      }
-      const prices = [{
+      
+      const stores = [{
         storeId: state.userInfo?.storeId!,
         price: +price,
         time: new Date()
@@ -33,7 +38,7 @@ const AddPack = (props: Props) => {
       const newPack = {
         name: `${unitsCount} ${units.find(u => u.id === pack.product.unit)!.name}`,
         product: pack.product,
-        prices,
+        stores,
         unitsCount: +unitsCount,
         byWeight: pack.byWeight,
         isArchived: false,
@@ -71,6 +76,8 @@ const AddPack = (props: Props) => {
           clearButton
           autofocus
           type="number" 
+          errorMessage={unitsCountError}
+          errorMessageForce
           value={unitsCount} 
           onChange={e => setUnitsCount(e.target.value)}
           onInputClear={() => setUnitsCount('')}
@@ -85,7 +92,7 @@ const AddPack = (props: Props) => {
           onInputClear={() => setPrice('')}
         />
       </List>
-      {price && unitsCount &&
+      {price && unitsCount && !unitsCountError &&
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>

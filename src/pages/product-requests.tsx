@@ -59,7 +59,7 @@ const ProductRequests = () => {
                   title={p.name}
                   subtitle={p.weight}
                   text={p.country}
-                  footer={p.price.toFixed(2)}
+                  footer={`${labels.price}: ${p.price.toFixed(2)}`}
                   key={p.id}
                 >
                   <img slot="media" src={p.imageUrl} className="img-list" alt={labels.noImage} />

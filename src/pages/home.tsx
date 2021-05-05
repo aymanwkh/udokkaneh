@@ -1,9 +1,10 @@
 import {useContext, useState, useEffect} from 'react'
-import {f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge} from 'framework7-react'
+import {f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge, Toolbar} from 'framework7-react'
 import MainCategories from './main-categories'
 import {StateContext} from '../data/state-provider'
 import {Advert, Notification} from '../data/types'
 import labels from '../data/labels'
+import Footer from './footer'
 
 const Home = () => {
   const {state} = useContext(StateContext)
@@ -44,6 +45,9 @@ const Home = () => {
         {advert ? <Button href="/advert/" large outline text={advert.title} className="sections" /> : ''}
         <MainCategories/>
       </Block>
+      <Toolbar bottom>
+        <Footer />
+      </Toolbar>
     </Page>
   )
 }

@@ -5,16 +5,18 @@ import labels from '../data/labels'
 import {addAlarm, getMessage, showMessage, showError} from '../data/actions'
 
 type Props = {
-  id: string
+  storeId: string,
+  packId: string
 }
 const StoreDetails = (props: Props) => {
-  const {state} = useContext(StateContext)
-  const [store, setStore] = useState(() => state.stores.find(s => s.id === props.id)!)
+  const {state, dispatch} = useContext(StateContext)
+  const [packStore] = useState(() => state.packStores.find(p => p.storeId === props.storeId && p.packId === props.packId))
+  const [store, setStore] = useState(() => state.stores.find(s => s.id === props.storeId)!)
   const [actionOpened, setActionOpened] = useState(false);
   const [error, setError] = useState('')
   useEffect(() => {
-    setStore(() => state.stores.find(s => s.id === props.id)!)
-  }, [state.stores, props.id])
+    setStore(() => state.stores.find(s => s.id === props.storeId)!)
+  }, [state.stores, props.storeId])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -24,12 +26,12 @@ const StoreDetails = (props: Props) => {
   const handleAddAlarm = (type: string) => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, () => {
       try{
-        if (state.alarms.find(a => a.storeId === props.id && a.time === new Date())){
+        if (state.alarms.find(a => a.storeId === props.storeId && a.time === new Date())){
           throw new Error('duplicateAlarms')
         }
         const alarm = {
-          packId: props.id,
-          storeId: store.id!,
+          packId: props.packId,
+          storeId: props.storeId,
           type,
           time: new Date()  
         }
@@ -41,7 +43,9 @@ const StoreDetails = (props: Props) => {
       }
     })  
   }
-
+  const handleAddToBasket = () => {
+    dispatch({type: 'ADD_TO_BASKET', payload: packStore})
+  }
   return (
     <Page>
       <Navbar title={labels.storeDetails} backLink={labels.back} />
@@ -78,6 +82,11 @@ const StoreDetails = (props: Props) => {
         <Icon material="menu"></Icon>
       </Fab>
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
+        {!state.basket.find(p => p.packId === props.packId) && 
+          <ActionsButton onClick={handleAddToBasket}>
+            {labels.addToBasket}
+          </ActionsButton>
+        }
         <ActionsButton onClick={() => handleAddAlarm('m')}>
           {labels.addNotFoundAlarm}
         </ActionsButton>

@@ -21,10 +21,10 @@ const Hints = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
-        (props.type === 'p' && p.product.categoryId === pack?.product.categoryId && p.product.rating > pack.product.rating) ||
-        (props.type === 'w' && p.product.id === pack?.product.id && p.weightedPrice! < pack.weightedPrice!)
+        (props.type === 'a' && p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId) ||
+        (props.type === 'p' && p.id !== pack?.id && p.product.id === pack?.product.id)
       )
-      let extendedPacks = packs.map(p => {
+      const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
         const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
@@ -35,12 +35,12 @@ const Hints = (props: Props) => {
           trademarkName: trademarkInfo?.name
         }
       })
-      return extendedPacks.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)  
+      return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)  
     })
   }, [pack, state.packs, state.categories, state.trademarks, state.countries, props.type]) 
   return(
     <Page>
-      <Navbar title={props.type === 'p' ? labels.otherProducts : (props.type === 'o' ? labels.otherOffers : labels.otherPacks)} backLink={labels.back} />
+      <Navbar title={props.type === 'a' ? labels.otherProducts : labels.otherPacks} backLink={labels.back} />
       <Block>
         <List mediaList>
           {packs.length === 0 ? 

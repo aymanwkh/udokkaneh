@@ -12,6 +12,8 @@ const AddGroup = (props: Props) => {
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.id)!)
   const [subQuantity, setSubQuantity] = useState('')
+  const [quantityError, setQuantityError] = useState('')
+  const [giftError, setGiftError] = useState('')
   const [price, setPrice] = useState('')
   const [withGift, setWithGift] = useState(false)
   const [gift, setGift] = useState('')
@@ -22,19 +24,28 @@ const AddGroup = (props: Props) => {
       setError('')
     }
   }, [error])
+  useEffect(() => {
+    const validateQuantity = (value: number) => {
+      if (value === 0 || value !== Math.floor(value) || (!withGift && value === 1)){
+        setQuantityError(labels.invalidQuantity)
+      } else {
+        setQuantityError('')
+      }
+    }
+    if (subQuantity) validateQuantity(+subQuantity)
+    else setQuantityError('')
+  }, [subQuantity, withGift])
+  useEffect(() => {
+    if (withGift && !gift) setGiftError(labels.enterValue)
+    else setGiftError('')
+  }, [withGift, gift])
   const handleSubmit = () => {
     try{
-      if (!withGift && +subQuantity <= 1) {
-        throw new Error('invalidQuantity')
-      }
-      if (withGift && +subQuantity < 1) {
-        throw new Error('invalidQuantity')
-      }
-      const name = `${+subQuantity > 1 ? subQuantity + 'x' : ''}${pack.name}${withGift ? '+' + gift : ''}`
+      const name = `${+subQuantity > 1 ? subQuantity + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}`
       if (state.packs.find(p => p.product.id === pack.product.id && p.name === name)) {
         throw new Error('duplicateName')
       }
-      const prices = [{
+      const stores = [{
         storeId: state.userInfo?.storeId!,
         price: +price,
         time: new Date()
@@ -42,7 +53,7 @@ const AddGroup = (props: Props) => {
       const newPack = {
         name,
         product,
-        prices,
+        stores,
         subPackId: props.id,
         subQuantity: +subQuantity,
         unitsCount: +subQuantity * pack.unitsCount!,
@@ -68,6 +79,8 @@ const AddGroup = (props: Props) => {
           value={subQuantity}
           clearButton
           autofocus
+          errorMessage={quantityError}
+          errorMessageForce
           type="number" 
           onChange={e => setSubQuantity(e.target.value)}
           onInputClear={() => setSubQuantity('')}
@@ -75,7 +88,7 @@ const AddGroup = (props: Props) => {
         <ListItem>
           <span>{labels.withGift}</span>
           <Toggle 
-            name="byWeight" 
+            name="withGift" 
             color="green" 
             checked={withGift} 
             onToggleChange={() => setWithGift(s => !s)}
@@ -87,6 +100,8 @@ const AddGroup = (props: Props) => {
             label={labels.gift}
             clearButton
             type="text" 
+            errorMessage={giftError}
+            errorMessageForce  
             value={gift} 
             onChange={e => setGift(e.target.value)}
             onInputClear={() => setGift('')}
@@ -102,7 +117,7 @@ const AddGroup = (props: Props) => {
           onInputClear={() => setPrice('')}
         />
       </List>
-      {subQuantity && price && (!withGift || gift) &&
+      {subQuantity && price && !quantityError && !giftError &&
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>

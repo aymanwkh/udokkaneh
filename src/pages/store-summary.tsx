@@ -8,8 +8,8 @@ const StoreSummary = () => {
   const {state} = useContext(StateContext)
   const [storePacksCount, setStorePacksCount] = useState(0)
   useEffect(() => {
-    setStorePacksCount(() => state.packPrices.filter(p => p.storeId === state.userInfo?.storeId).length)
-  }, [state.packPrices, state.userInfo])
+    setStorePacksCount(() => state.packStores.filter(p => p.storeId === state.userInfo?.storeId).length)
+  }, [state.packStores, state.userInfo])
   let i = 0
   return(
     <Page>
@@ -24,7 +24,7 @@ const StoreSummary = () => {
           href={storePacksCount === 0 ? '' : '/store-packs/p'} 
         />
         <Button 
-          text={`${labels.packRequests} (${state.packRequests.length})`}
+          text={`${labels.packRequests} (${state.packRequests.filter(r => r.storeId === state.userInfo?.storeId).length})`}
           large 
           fill 
           className="sections" 

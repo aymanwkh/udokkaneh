@@ -25,15 +25,15 @@ const StorePacks = (props: Props) => {
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   useEffect(() => {
     setPacks(() => {
-      const packs = state.packs.filter(p => props.type === 'r' ? state.packRequests.find(r => r.packId === p.id && r.storeId === state.userInfo?.storeId) : state.packPrices.find(pr => pr.packId === p.id && pr.storeId === state.userInfo?.storeId))
+      const packs = state.packs.filter(p => props.type === 'r' ? state.packRequests.find(r => r.packId === p.id && r.storeId === state.userInfo?.storeId) : state.packStores.find(pr => pr.packId === p.id && pr.storeId === state.userInfo?.storeId))
       const results = packs.map(p => {
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
         const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
-        const storePrice = props.type === 'r' ? 0 : state.packPrices.find(pr => pr.packId === p.id && pr.storeId === state.userInfo?.storeId)?.price!
-        const stores = state.packPrices.filter(pr => pr.packId === p.id).length
-        const nearStores = state.packPrices.filter(pr => pr.packId === p.id && state.stores.find(s => s.id === pr.storeId)?.locationId === storeLocation).length
-        const bestPriceStores = state.packPrices.filter(pr => pr.packId === p.id && pr.price === p.price).length
-        const bestPriceNearStores = state.packPrices.filter(pr => pr.packId === p.id && pr.price === p.price && state.stores.find(s => s.id === pr.storeId)?.locationId === storeLocation).length
+        const storePrice = props.type === 'r' ? 0 : state.packStores.find(pr => pr.packId === p.id && pr.storeId === state.userInfo?.storeId)?.price!
+        const stores = state.packStores.filter(pr => pr.packId === p.id).length
+        const nearStores = state.packStores.filter(pr => pr.packId === p.id && state.stores.find(s => s.id === pr.storeId)?.locationId === storeLocation).length
+        const bestPriceStores = state.packStores.filter(pr => pr.packId === p.id && pr.price === p.price).length
+        const bestPriceNearStores = state.packStores.filter(pr => pr.packId === p.id && pr.price === p.price && state.stores.find(s => s.id === pr.storeId)?.locationId === storeLocation).length
         return {
           ...p,
           countryName: countryInfo.name,
@@ -47,7 +47,7 @@ const StorePacks = (props: Props) => {
       })
       return results.sort((r1, r2) => r1.name > r2.name ? 1 : -1)
     })
-  }, [state.packPrices, state.packs, state.userInfo, state.trademarks, state.countries, state.packRequests, state.stores, storeLocation, props.type])
+  }, [state.packStores, state.packs, state.userInfo, state.trademarks, state.countries, state.packRequests, state.stores, storeLocation, props.type])
   let i = 0
   return(
     <Page>

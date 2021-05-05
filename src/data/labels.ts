@@ -24,8 +24,7 @@ const labels: Label = {
   sendOrder: 'ارسال الطلب',
   basket: 'سلة المشتريات',
   send: 'ارسال',
-  orderDetails: 'تفاصيل الطلب',
-  addToBasket: 'شراء',
+  addToBasket: 'اضافة الى قائمة المشتريات',
   submit: 'موافق',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',
@@ -97,7 +96,7 @@ const labels: Label = {
   allOffer: 'كامل العرض',
   status: 'الحالة',
   requested: 'الكمية المطلوبة',
-  purchased: 'ما تم شراؤه',
+  purchase: 'تم الشراء',
   weight: 'الوزن',
   returned: 'المرتجع',
   currentPrice: 'السعر الحالي',
@@ -173,16 +172,21 @@ const labels: Label = {
   storesCount: 'عدد المحلات',
   bestStoresCount: 'المحلات بأفضل سعر',
   nearBy: 'القريبة',
-  showPackPrices: 'سجل معنا لتظهر لك المحلات',
+  showPackStores: 'سجل معنا لتظهر لك المحلات',
   storeDetails: 'تفاصيل المحل',
   rateProduct: 'رأيك في هذا المنتج',
   newAlarm: 'بلاغ جديد',
   positionError: 'حدث خطأ في تحديد الموقع، يرجى ادخال العنوان',
   productRequests: 'طلبات منتجات جديدة',
-  duplicatePack: 'يوجد عبوة اخرى لنفس المنتج بنفس الوزن او الحجم',
+  duplicatePack: 'يوجد عبوة اخرى لنفس المنتج بنفس الوزن',
   withGift: 'مع هدية',
   gift: 'الهدية',
-  enterGift: 'الرجاء ادخل نوع الهدية'
+  enterGift: 'الرجاء ادخل نوع الهدية',
+  samePrice: 'السعر كما هو في السابق',
+  invalidChangePrice: 'السعر يختلف عن سعر السوق بنسبة كبيرة',
+  invalidQuantity: 'الرجاء التأكد من قيمة الكمية المدخلة',
+  enterValue: 'الرجاء ادخال قيمة',
+  details: 'تفاصيل'
 }
 
 export default labels
