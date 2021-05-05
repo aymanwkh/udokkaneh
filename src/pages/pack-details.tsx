@@ -2,7 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import {f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader, List, ListItem, Button, Toolbar} from 'framework7-react'
 import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
-import {addPackStore, changePrice, deleteStorePack, deletePackRequest, addPackRequest, showMessage, showError, getMessage, updateFavorites, productOfText, rateProduct} from '../data/actions'
+import {addPackStore, changePrice, deleteStorePack, addPackRequest, showMessage, showError, getMessage, productOfText, rateProduct, addToBasket} from '../data/actions'
 import labels from '../data/labels'
 import {Pack, PackStore, Store} from '../data/types'
 import Footer from './footer'
@@ -20,7 +20,7 @@ type ExtendedPackStore = PackStore & {
   storeLocation?: string
 }
 const PackDetails = (props: Props) => {
-  const {state} = useContext(StateContext)
+  const {state, dispatch} = useContext(StateContext)
   const [error, setError] = useState('')
   const [pack, setPack] = useState<ExtendedPack>()
   const [isAvailable, setIsAvailable] = useState(false)
@@ -84,19 +84,22 @@ const PackDetails = (props: Props) => {
   const handleUnAvailable = () => {
     f7.dialog.confirm(labels.newRequestText, labels.newRequestTitle, () => deletePrice(true), () => deletePrice(false))
   }
-  const handleNewRequest = () => {
+  const handleAddToBasket = () => {
     try{
-      addPackRequest(state.userInfo?.storeId!, pack?.id!)
+      addToBasket(pack?.product.id!)
+      dispatch({type: 'ADD_TO_BASKET', payload: pack})
       showMessage(labels.addSuccess)
       f7.views.current.router.back()
     } catch(err) {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
   }
-  const handleRemoveRequest = () => {
+
+  const handleNewRequest = () => {
     try{
-      deletePackRequest(state.packRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === pack?.id!)!)
-      showMessage(labels.deleteSuccess)
+      addPackRequest(state.userInfo?.storeId!, pack?.id!)
+      dispatch({type: 'ADD_TO_BASKET', payload: pack})
+      showMessage(labels.addSuccess)
       f7.views.current.router.back()
     } catch(err) {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
@@ -127,8 +130,8 @@ const PackDetails = (props: Props) => {
         else changePrice(storePack, state.packStores)
         showMessage(type === 'n' ? labels.addSuccess : labels.editSuccess)
         f7.views.current.router.back()
-        } catch(err) {
-          setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      } catch(err) {
+        setError(getMessage(f7.views.current.router.currentRoute.path, err))
       }
     })
   }
@@ -136,16 +139,6 @@ const PackDetails = (props: Props) => {
     try{
       rateProduct(pack?.product!, value, state.packs)
       showMessage(labels.ratingSuccess)   
-		} catch (err){
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
-    }
-  }
-  const handleFavorite = () => {
-    try{
-      if (state.userInfo && pack) {
-        updateFavorites(state.favorites, pack.product.id)
-        showMessage(state.favorites.includes(pack.product.id) ? labels.removeFavoriteSuccess : labels.addFavoriteSuccess)  
-      }
 		} catch (err){
       setError(getMessage(f7.views.current.router.currentRoute.path, err))
     }
@@ -201,14 +194,16 @@ const PackDetails = (props: Props) => {
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
         {!state.userInfo?.storeId &&
           <>
+            {!state.basket.find(p => p.id === props.id) && 
+              <ActionsButton onClick={handleAddToBasket}>
+                {labels.addToBasket}
+              </ActionsButton>
+           }
             {!state.ratings.find(r => r.productId === pack.product.id) && 
               <ActionsButton onClick={() => setRatingOpened(true)}>
                 {labels.rateProduct}
               </ActionsButton>
             }
-            <ActionsButton onClick={handleFavorite}>
-              {pack.product.id && state.favorites.includes(pack.product.id) ? labels.removeFromFavorites : labels.addToFavorites}
-            </ActionsButton>
             {otherProducts.length > 0 &&
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/a`)}>
                 {labels.otherProducts}
@@ -223,6 +218,11 @@ const PackDetails = (props: Props) => {
         }
         {state.userInfo?.storeId && 
           <>
+            {!state.packRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) &&
+              <ActionsButton onClick={handleNewRequest}>
+                {labels.newRequest}
+              </ActionsButton>
+            }
             {isAvailable && <>
               <ActionsButton onClick={handleUnAvailable}>
                 {labels.unAvailable}
@@ -232,21 +232,9 @@ const PackDetails = (props: Props) => {
               </ActionsButton>
             </>}
             {!isAvailable &&
-              <>
-                <ActionsButton onClick={() => handleAvailable('n')}>
-                  {labels.available}
-                </ActionsButton>
-                {state.packRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) &&
-                  <ActionsButton onClick={handleRemoveRequest}>
-                    {labels.removeRequest}
-                  </ActionsButton>
-                }
-                {!state.packRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) &&
-                  <ActionsButton onClick={handleNewRequest}>
-                    {labels.newRequest}
-                  </ActionsButton>
-                }
-              </>
+              <ActionsButton onClick={() => handleAvailable('n')}>
+                {labels.available}
+              </ActionsButton>
             }
             {!pack.subPackId && <>
               <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>

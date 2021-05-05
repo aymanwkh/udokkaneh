@@ -3,33 +3,28 @@ import {f7, Block, Page, Navbar, List, ListItem, Toolbar, Actions, ActionsButton
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import Footer from './footer'
-import { Pack, PackStore, Store } from '../data/types'
-import { productOfText } from '../data/actions'
+import {Pack} from '../data/types'
+import {deletePackRequest, getMessage, productOfText, showError, deleteFromBasket} from '../data/actions'
 
-type ExtendedBasket = PackStore & {
-  storeInfo: Store,
-  packInfo: Pack,
+type ExtendedPack = Pack & {
   countryName: string,
   categoryName: string,
   trademarkName?: string
 }
 const Basket = () => {
   const {state, dispatch} = useContext(StateContext)
-  const [currentPack, setCurrentPack] = useState<PackStore | undefined>(undefined)
-  const [basket, setBasket] = useState<ExtendedBasket[]>([])
+  const [currentPack, setCurrentPack] = useState<Pack | undefined>(undefined)
+  const [basket, setBasket] = useState<ExtendedPack[]>([])
+  const [error, setError] = useState('')
   const [actionOpened, setActionOpened] = useState(false);
   useEffect(() => {
     setBasket(() => {
       return state.basket.map(p => {
-        const storeInfo = state.stores.find(s => s.id === p.storeId)!
-        const packInfo = state.packs.find(pp => pp.id === p.packId)!
-        const countryName = state.countries.find(c => c.id === packInfo.product.countryId)!.name
-        const categoryName = state.categories.find(c => c.id === packInfo.product.categoryId)!.name
-        const trademarkName = state.trademarks.find(t => t.id === packInfo.product.trademarkId)?.name
+        const countryName = state.countries.find(c => c.id === p.product.countryId)!.name
+        const categoryName = state.categories.find(c => c.id === p.product.categoryId)!.name
+        const trademarkName = state.trademarks.find(t => t.id === p.product.trademarkId)?.name
         return {
           ...p,
-          storeInfo,
-          packInfo,
           countryName,
           categoryName,
           trademarkName
@@ -37,9 +32,27 @@ const Basket = () => {
       })
     })
   }, [state.basket, state.stores, state.packs, state.categories, state.countries, state.trademarks])
-  const handleMore = (packStore: PackStore) => {
-    setCurrentPack(packStore)
+  useEffect(() => {
+    if (error) {
+      showError(error)
+      setError('')
+    }
+  }, [error])
+  const handleMore = (pack: Pack) => {
+    setCurrentPack(pack)
     setActionOpened(true)
+  }
+  const handleDelete = () => {
+    try{
+      if (state.userInfo?.storeId) {
+        deletePackRequest(state.packRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === currentPack?.id!)!)
+      } else {
+        deleteFromBasket(currentPack?.product.id!)
+      }
+      dispatch({type: 'DELETE_FROM_BASKET', payload: currentPack})
+    } catch(err) {
+      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+    }
   }
   return(
     <Page>
@@ -50,28 +63,26 @@ const Basket = () => {
           <ListItem title={labels.noData} />
         : basket.map(p => 
           <ListItem
-            title={p.packInfo.product.name}
-            subtitle={p.packInfo.product.description}
-            text={p.packInfo.name}
-            footer={`${labels.bestPrice}: ${p.packInfo.price?.toFixed(2)}`}
+            title={p.product.name}
+            subtitle={p.product.description}
+            text={p.name}
+            footer={p.categoryName}
             after={p.price?.toFixed(2)}
-            key={p.packId}
-            className={(currentPack && currentPack.packId === p.packId) ? 'selected' : ''}
+            key={p.id}
+            className={(currentPack && currentPack.id === p.id) ? 'selected' : ''}
             onClick={()=> handleMore(p)}
           >
-            <img src={p.packInfo.imageUrl} slot="media" className="img-list" alt={labels.noImage}/>
-            <div className="list-subtext1">{p.categoryName}</div>
-            <div className="list-subtext2">{productOfText(p.countryName, p.trademarkName)}</div>
-            <div className="list-subtext3">{`${p.storeInfo.name}-${state.locations.find(l => l.id === p.storeInfo.locationId)?.name}`}</div>
+            <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage}/>
+            <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
           </ListItem>
         )}
       </List>
     </Block>
     <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
-      <ActionsButton onClick={() => f7.views.current.router.navigate(`/pack-details/${currentPack?.packId}`)}>
+      <ActionsButton onClick={() => f7.views.current.router.navigate(`/pack-details/${currentPack?.id}`)}>
         {labels.details}
       </ActionsButton>
-      <ActionsButton onClick={() => dispatch({type: 'DELETE_FROM_BASKET', payload: currentPack})}>
+      <ActionsButton onClick={handleDelete}>
         {labels.delete}
       </ActionsButton>
     </Actions>

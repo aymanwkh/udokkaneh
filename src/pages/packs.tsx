@@ -25,7 +25,7 @@ const Packs = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => p.price! > 0 &&  (!props.id || (props.type === 'f' && state.favorites.includes(p.product.id)) || children.includes(p.product.categoryId)))
+      const packs = state.packs.filter(p => p.price! > 0 && (!props.id || children.includes(p.product.categoryId)))
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
@@ -39,7 +39,7 @@ const Packs = (props: Props) => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries, state.favorites])
+  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries])
   const handleSorting = (sortByValue: string) => {
     setSortBy(() => sortByList.find(s => s.id === sortByValue))
     switch(sortByValue){
@@ -49,6 +49,9 @@ const Packs = (props: Props) => {
       case 'r':
         setPacks([...packs].sort((p1, p2) => p2.product.rating - p1.product.rating))
         break
+      case 'd':
+        setPacks([...packs].sort((p1, p2) => p2.product.demand - p1.product.demand))
+        break
       case 'v':
         setPacks([...packs].sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!))
         break
@@ -57,7 +60,7 @@ const Packs = (props: Props) => {
   }
   return(
     <Page>
-      <Navbar title={category?.name || (props.type === 'f' ? labels.favorites : labels.allProducts)} backLink={labels.back}>
+      <Navbar title={category?.name || labels.allProducts} backLink={labels.back}>
         <NavRight>
           <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
         </NavRight>

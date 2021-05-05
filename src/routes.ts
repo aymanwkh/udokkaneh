@@ -7,7 +7,6 @@ import Register from './pages/register'
 import Packs from './pages/packs'
 import PackDetails from './pages/pack-details'
 import PasswordRequest from './pages/password-request'
-import StoreSummary from './pages/store-summary'
 import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
 import Hints from './pages/hints'
@@ -64,7 +63,7 @@ const routes = [
     component: Categories,
   },
   {
-    path: '/packs/:id/type/:type',
+    path: '/packs/:id/:type',
     component: Packs,
   },
   {
@@ -76,15 +75,11 @@ const routes = [
     component: Packs,
   },
   {
-    path: '/store-summary/',
-    component: StoreSummary,
-  },
-  {
-    path: '/store-packs/:type',
+    path: '/store-packs/',
     component: StorePacks,
   },
   {
-    path: '/hints/:id/type/:type',
+    path: '/hints/:id/:type',
     component: Hints
   },
   {
@@ -112,7 +107,7 @@ const routes = [
     component: AddGroup,
   },
   {
-    path: '/store-details/:id',
+    path: '/store-details/:storeId/:packId',
     component: StoreDetails
   },
   {

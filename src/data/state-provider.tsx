@@ -24,7 +24,6 @@ const StateProvider = ({children}: Props) => {
     alarms: [],
     packRequests: [],
     stores: [],
-    favorites: [],
     ratings: [],
     productRequests: []
   }
@@ -64,6 +63,7 @@ const StateProvider = ({children}: Props) => {
           byWeight: doc.data().byWeight,
           subPackId: doc.data().subPackId,
           subQuantity: doc.data().subQuantity,
+          withGift: doc.data().withGift,
           price: minPrice,
           weightedPrice: Math.floor(minPrice / doc.data().unitsCount),
         })
@@ -134,7 +134,6 @@ const StateProvider = ({children}: Props) => {
         if (basket) dispatch({type: 'SET_BASKET', payload: basket}) 
         const unsubscribeUser = firebase.firestore().collection('users').doc(user.uid).onSnapshot(doc => {
           const notifications: Notification[] = []
-          const favorites: string[] = []
           const ratings: Rating[] = []
           if (doc.exists){
             const userData: UserInfo = {
@@ -156,10 +155,6 @@ const StateProvider = ({children}: Props) => {
               })
             })
             dispatch({type: 'SET_NOTIFICATIONS', payload: notifications})
-            doc.data()!.favorites?.forEach((f: string) => {
-              favorites.push(f)
-            })
-            dispatch({type: 'SET_FAVORITES', payload: favorites})
             doc.data()!.ratings?.forEach((r: any) => {
               ratings.push({
                 productId: r.productId,
@@ -205,8 +200,7 @@ const StateProvider = ({children}: Props) => {
             dispatch({type: 'SET_PRODUCT_REQUESTS', payload: productRequests})
           }, err => {
             unsubscribeProductRequests()
-          })  
-  
+          })
         }
         const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
           const stores: Store[] = []

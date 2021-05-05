@@ -9,7 +9,7 @@ export const getMessage = (path: string, error: Error) => {
   if (!labels[errorCode]) {
     firebase.firestore().collection('logs').add({
       userId: firebase.auth().currentUser?.uid || '',
-      error,
+      error: errorCode,
       page: path,
       time: firebase.firestore.FieldValue.serverTimestamp()
     })
@@ -154,18 +154,6 @@ export const addAlarm = (alarm: Alarm) => {
   batch.commit()
 }
 
-export const updateFavorites = (favorites: string[], productId: string) => {
-  const found = favorites.indexOf(productId)
-  if (found === -1) {
-    favorites.push(productId) 
-  } else {
-    favorites.splice(found, 1)
-  }
-  firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-    favorites
-  })
-}
-
 export const deleteNotification = (notifications: Notification[], notificationId: string) => {
     const newNotifications = notifications.filter(n => n.id !== notificationId)
     firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
@@ -292,4 +280,18 @@ export const deleteProductRequest = async (productRequest: ProductRequest) => {
   const ext = productRequest.imageUrl.slice(productRequest.imageUrl.lastIndexOf('.'), productRequest.imageUrl.indexOf('?'))
   const image = firebase.storage().ref().child('product-requests/' + productRequest.id + ext)
   await image.delete()
+}
+
+export const addToBasket = (productId: string) => {
+  const productRef = firebase.firestore().collection('products').doc(productId)
+  productRef.update({
+    demand: firebase.firestore.FieldValue.increment(1)
+  })
+}
+
+export const deleteFromBasket = (productId: string) => {
+  const productRef = firebase.firestore().collection('products').doc(productId)
+  productRef.update({
+    demand: firebase.firestore.FieldValue.increment(-1)
+  })
 }

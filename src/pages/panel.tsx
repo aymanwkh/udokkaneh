@@ -32,8 +32,8 @@ const Panel = () => {
         : <ListItem link="/panel-login/" title={labels.login} />}
         {state.user && <ListItem link="/change-password/" title={labels.changePassword} />}
         {state.user && <ListItem link="/notifications/" title={labels.notifications} badge={notificationsCount} badgeColor="red" view="#main-view" panelClose />}
-        {state.user && <ListItem link="/packs/0/type/f" title={labels.favorites} view="#main-view" panelClose />}
-        {state.user && state.userInfo?.storeId && <ListItem link="/store-summary/" title={labels.myPacks} view="#main-view" panelClose />}
+        {state.user && state.userInfo?.storeId && <ListItem link="/store-packs/" title={labels.myPacks} view="#main-view" panelClose />}
+        {state.user && state.userInfo?.storeId && <ListItem link="/product-requests/" title={labels.productRequests} view="#main-view" panelClose />}
         {!state.user && <ListItem link="/register/o" title={labels.registerStoreOwner} />}
       </List>
     </Page>

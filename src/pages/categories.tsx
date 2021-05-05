@@ -39,7 +39,7 @@ const Categories = (props: Props) => {
             fill 
             className="sections" 
             color={randomColors[i++ % 10].name} 
-            href={`/packs/${props.id}/type/a`} 
+            href={`/packs/${props.id}/a`} 
           />
         {categories.map(c => {
           return (
@@ -49,7 +49,7 @@ const Categories = (props: Props) => {
               fill 
               className="sections" 
               color={randomColors[i++ % 10].name} 
-              href={c.isLeaf ? `/packs/${c.id}/type/n` : `/categories/${c.id}`} 
+              href={c.isLeaf ? `/packs/${c.id}/n` : `/categories/${c.id}`} 
               key={c.id}
             />
           )

@@ -60,7 +60,8 @@ const AddGroup = (props: Props) => {
         byWeight: pack.byWeight,
         isArchived: false,
         specialImage: false,
-        imageUrl: pack.imageUrl
+        imageUrl: pack.imageUrl,
+        withGift
       }
       addPack(newPack)
       showMessage(labels.addSuccess)

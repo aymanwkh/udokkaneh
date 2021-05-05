@@ -9,8 +9,7 @@ type Props = {
   packId: string
 }
 const StoreDetails = (props: Props) => {
-  const {state, dispatch} = useContext(StateContext)
-  const [packStore] = useState(() => state.packStores.find(p => p.storeId === props.storeId && p.packId === props.packId))
+  const {state} = useContext(StateContext)
   const [store, setStore] = useState(() => state.stores.find(s => s.id === props.storeId)!)
   const [actionOpened, setActionOpened] = useState(false);
   const [error, setError] = useState('')
@@ -42,9 +41,6 @@ const StoreDetails = (props: Props) => {
         setError(getMessage(f7.views.current.router.currentRoute.path, err))
       }
     })  
-  }
-  const handleAddToBasket = () => {
-    dispatch({type: 'ADD_TO_BASKET', payload: packStore})
   }
   return (
     <Page>
@@ -82,11 +78,6 @@ const StoreDetails = (props: Props) => {
         <Icon material="menu"></Icon>
       </Fab>
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
-        {!state.basket.find(p => p.packId === props.packId) && 
-          <ActionsButton onClick={handleAddToBasket}>
-            {labels.addToBasket}
-          </ActionsButton>
-        }
         <ActionsButton onClick={() => handleAddAlarm('m')}>
           {labels.addNotFoundAlarm}
         </ActionsButton>

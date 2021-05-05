@@ -186,7 +186,8 @@ const labels: Label = {
   invalidChangePrice: 'السعر يختلف عن سعر السوق بنسبة كبيرة',
   invalidQuantity: 'الرجاء التأكد من قيمة الكمية المدخلة',
   enterValue: 'الرجاء ادخال قيمة',
-  details: 'تفاصيل'
+  details: 'تفاصيل',
+  duplicateName: 'هناك عبوة اخرى بنفس البيانات'
 }
 
 export default labels

@@ -2,20 +2,22 @@ import {useContext, useState, useEffect} from 'react'
 import {f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge, Toolbar} from 'framework7-react'
 import MainCategories from './main-categories'
 import {StateContext} from '../data/state-provider'
-import {Advert, Notification} from '../data/types'
+import {Advert} from '../data/types'
 import labels from '../data/labels'
 import Footer from './footer'
 
 const Home = () => {
   const {state} = useContext(StateContext)
   const [advert, setAdvert] = useState<Advert | undefined>(undefined)
-  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [notificationsCount, setNotificationsCount] = useState(0)
   useEffect(() => {
     setAdvert(() => state.adverts.find(a => a.isActive))
   }, [state.adverts])
   useEffect(() => {
     if (state.userInfo) {
-      setNotifications(() => state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)))
+      setNotificationsCount(() => state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length)
+    } else {
+      setNotificationsCount(0)
     }
   }, [state.userInfo, state.notifications])
   useEffect(() => {
@@ -30,7 +32,7 @@ const Home = () => {
     <Page>
       <Navbar large>
         <NavLeft>
-          <Link iconMaterial="menu" panelOpen="right" iconBadge={notifications.length || undefined} badgeColor="red" />
+          <Link iconMaterial="menu" panelOpen="right" iconBadge={notificationsCount || ''} badgeColor="red" />
         </NavLeft>
         <NavTitle sliding>
           <img src="/dokaneh_logo.png" alt="logo" className="logo" />

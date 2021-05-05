@@ -8,7 +8,7 @@ const Reducer = (state: State, action: Action) => {
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'DELETE_FROM_BASKET':
-      packs = state.basket.filter(p => p.storeId !== action.payload.storeId && p.packId === action.payload.packId)
+      packs = state.basket.filter(p => p.id === action.payload.id)
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'CLEAR_BASKET':

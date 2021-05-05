@@ -34,7 +34,8 @@ export type Product = {
   trademarkId?: string,
   unit: string,
   rating: number,
-  ratingCount: number
+  ratingCount: number,
+  demand: number
 }
 export type Pack = {
   id?: string,
@@ -46,7 +47,8 @@ export type Pack = {
   subQuantity?: number,
   weightedPrice?: number,
   unitsCount?: number,
-  byWeight: boolean
+  byWeight: boolean,
+  withGift?: boolean
 }
 export type PackStore = {
   storeId: string,
@@ -132,7 +134,7 @@ export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
   categories: Category[],
-  basket: PackStore[],
+  basket: Pack[],
   packs: Pack[],
   packStores: PackStore[],
   adverts: Advert[],
@@ -144,7 +146,6 @@ export type State = {
   alarms: Alarm[],
   packRequests: PackRequest[],
   stores: Store[],
-  favorites: string[],
   ratings: Rating[],
   productRequests: ProductRequest[]
 }
