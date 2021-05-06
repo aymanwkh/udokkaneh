@@ -1,13 +1,10 @@
 import {useState, useEffect} from 'react'
-import {f7, Page, Navbar, List, ListInput, Button, ListButton} from 'framework7-react'
+import {f7, Page, Navbar, List, ListInput, Button, ListButton, Toolbar} from 'framework7-react'
 import {registerUser, showMessage, showError, getMessage} from '../data/actions'
 import labels from '../data/labels'
 import {UserInfo} from '../data/types'
 
-type Props = {
-  type: string
-}
-const StoreOwner = (props: Props) => {
+const Register = () => {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
@@ -21,6 +18,7 @@ const StoreOwner = (props: Props) => {
   const [position, setPosition] = useState({lat: 0, lng: 0})
   const [positionError, setPositionError] = useState(false)
   const [address, setAddress] = useState('')
+  const [type, setType] = useState('n')
   useEffect(() => {
     const patterns = {
       name: /^.{4,50}$/,
@@ -111,14 +109,15 @@ const StoreOwner = (props: Props) => {
         mobile,
         name,
         password,
-        position
+        position,
+        type
       }
-      if (props.type === 'o') user.storeName = storeName
+      if (type === 's') user.storeName = storeName
       if (positionError) user.address = address
       await registerUser(user)
       setInprocess(false)
-      showMessage(props.type === 'o' ? labels.registerStoreOwnerSuccess : labels.registerSuccess)
-      f7.views.current.router.navigate('/home/')
+      showMessage(type === 'n' ? labels.registerSuccess : labels.registerStoreOwnerSuccess)
+      f7.views.current.router.back()
       f7.panel.close('right') 
     } catch (err){
       setInprocess(false)
@@ -166,7 +165,7 @@ const StoreOwner = (props: Props) => {
           onChange={e => setPassword(e.target.value)}
           onInputClear={() => setPassword('')}
         />
-        {props.type === 'o' &&
+        {type === 's' &&
           <ListInput
             label={labels.storeName}
             type="text"
@@ -180,7 +179,7 @@ const StoreOwner = (props: Props) => {
             onInputClear={() => setStoreName('')}
           />
         }
-        {!positionError &&
+        {type !== 'd' && !positionError &&
           <ListButton 
             title={labels.setPosition} 
             onClick={handleSetPosition}
@@ -190,22 +189,23 @@ const StoreOwner = (props: Props) => {
           <ListInput
             label={labels.address}
             type="text"
-            placeholder={labels.namePlaceholder}
-            name="name"
+            name="address"
             clearButton
-            autofocus
             value={address}
-            errorMessage={nameErrorMessage}
-            errorMessageForce
             onChange={e => setAddress(e.target.value)}
             onInputClear={() => setAddress('')}
           />
         }
       </List>
-      {name && mobile && password && (position.lat || address) && (storeName || props.type !== 'o') && !nameErrorMessage && !mobileErrorMessage && !passwordErrorMessage && !storeNameErrorMessage &&
-        <Button text={labels.register} large onClick={() => handleRegister()} />
+      {name && mobile && password && (position.lat || address || type ==='d') && (storeName || type !== 's') && !nameErrorMessage && !mobileErrorMessage && !passwordErrorMessage && !storeNameErrorMessage &&
+        <Button text={labels.register} large onClick={handleRegister} />
       }
+      <Toolbar bottom>
+        <Button text={labels.storeOwner} large onClick={() => setType('s')} />
+        <Button text={labels.salesman} large onClick={() => setType('d')} />
+      </Toolbar>
+
     </Page>
   )
 }
-export default StoreOwner
+export default Register

@@ -35,13 +35,6 @@ const routes = [
   {
     path: '/login/',
     component: Login,
-    options: {
-      reloadCurrent: true,
-    },
-  },
-  {
-    path: '/panel-login/',
-    component: Login,
   },
   {
     path: '/password-request/',
@@ -52,11 +45,11 @@ const routes = [
     component: ChangePassword
   },
   {
-    path: '/register/:type',
+    path: '/register/',
     component: Register,
-    // options: {
-    //   reloadCurrent: true,
-    // },
+    options: {
+      reloadCurrent: true,
+    },
   },
   {
     path: '/categories/:id',

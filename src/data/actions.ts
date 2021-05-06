@@ -113,8 +113,9 @@ export const registerUser = async (user: UserInfo) => {
     colors,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
+  
   return firebase.auth().currentUser?.updateProfile({
-    displayName: 'o'
+    displayName: user.type === 'n' ? 'n' : 's'
   })
 
 }
@@ -282,16 +283,3 @@ export const deleteProductRequest = async (productRequest: ProductRequest) => {
   await image.delete()
 }
 
-export const addToBasket = (productId: string) => {
-  const productRef = firebase.firestore().collection('products').doc(productId)
-  productRef.update({
-    demand: firebase.firestore.FieldValue.increment(1)
-  })
-}
-
-export const deleteFromBasket = (productId: string) => {
-  const productRef = firebase.firestore().collection('products').doc(productId)
-  productRef.update({
-    demand: firebase.firestore.FieldValue.increment(-1)
-  })
-}

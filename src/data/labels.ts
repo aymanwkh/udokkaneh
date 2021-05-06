@@ -57,7 +57,8 @@ const labels: Label = {
   pricePlaceholder: 'ادخل سعر المنتج',
   logout: 'تسجيل خروج',
   mainPanelTitle: 'الوظائف المساندة',
-  registerStoreOwner: 'انا صاحب محل، أود الاشتراك',
+  storeOwner: 'صاحب محل',
+  salesman: 'موزع/جملة',
   address: 'العنوان',
   notFoundPageTitle: 'الصفحة غير موجودة',
   notFoundPageError: 'حدث خطأ ... الصفحة غير موجودة',
@@ -187,7 +188,7 @@ const labels: Label = {
   invalidQuantity: 'الرجاء التأكد من قيمة الكمية المدخلة',
   enterValue: 'الرجاء ادخال قيمة',
   details: 'تفاصيل',
-  duplicateName: 'هناك عبوة اخرى بنفس البيانات'
+  duplicateName: 'هناك عبوة اخرى بنفس البيانات',
 }
 
 export default labels

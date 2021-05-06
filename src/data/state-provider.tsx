@@ -143,7 +143,8 @@ const StateProvider = ({children}: Props) => {
               storeId: doc.data()!.storeId,
               storeName: doc.data()!.storeName,
               lastSeen: doc.data()!.lastSeen?.toDate(),
-              time: doc.data()!.time?.toDate()
+              time: doc.data()!.time?.toDate(),
+              type: doc.data()!.type
             }
             dispatch({type: 'SET_USER_INFO', payload: userData})
             doc.data()!.notifications?.forEach((n: any) => {
@@ -170,7 +171,7 @@ const StateProvider = ({children}: Props) => {
         }, err => {
           unsubscribeUser()
         })
-        if (user.displayName === 'o') {
+        if (user.displayName !== 'n') {
           const unsubscribeRequests = firebase.firestore().collection('pack-requests').onSnapshot(docs => {
             const packRequests: PackRequest[] = []
             docs.forEach(doc => {

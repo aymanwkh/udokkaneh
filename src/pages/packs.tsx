@@ -49,9 +49,6 @@ const Packs = (props: Props) => {
       case 'r':
         setPacks([...packs].sort((p1, p2) => p2.product.rating - p1.product.rating))
         break
-      case 'd':
-        setPacks([...packs].sort((p1, p2) => p2.product.demand - p1.product.demand))
-        break
       case 'v':
         setPacks([...packs].sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!))
         break

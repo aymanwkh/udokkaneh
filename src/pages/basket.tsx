@@ -4,7 +4,7 @@ import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import Footer from './footer'
 import {Pack} from '../data/types'
-import {deletePackRequest, getMessage, productOfText, showError, deleteFromBasket} from '../data/actions'
+import {deletePackRequest, getMessage, productOfText, showError} from '../data/actions'
 
 type ExtendedPack = Pack & {
   countryName: string,
@@ -46,9 +46,7 @@ const Basket = () => {
     try{
       if (state.userInfo?.storeId) {
         deletePackRequest(state.packRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === currentPack?.id!)!)
-      } else {
-        deleteFromBasket(currentPack?.product.id!)
-      }
+      } 
       dispatch({type: 'DELETE_FROM_BASKET', payload: currentPack})
     } catch(err) {
       setError(getMessage(f7.views.current.router.currentRoute.path, err))

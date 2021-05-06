@@ -26,15 +26,14 @@ const Panel = () => {
   }
   return(
     <Page>
-      <Navbar title={state.user ? `${labels.loginSuccess} ${state.userInfo?.name}${state.userInfo?.storeId ? '/' + state.userInfo?.storeName : ''}` : labels.mainPanelTitle} />
+      <Navbar title={state.user ? `${labels.loginSuccess} ${state.userInfo?.name}` : labels.mainPanelTitle} />
       <List>
         {state.user ? <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
-        : <ListItem link="/panel-login/" title={labels.login} />}
+        : <ListItem link="/login/" title={labels.login} />}
         {state.user && <ListItem link="/change-password/" title={labels.changePassword} />}
         {state.user && <ListItem link="/notifications/" title={labels.notifications} badge={notificationsCount} badgeColor="red" view="#main-view" panelClose />}
         {state.user && state.userInfo?.storeId && <ListItem link="/store-packs/" title={labels.myPacks} view="#main-view" panelClose />}
         {state.user && state.userInfo?.storeId && <ListItem link="/product-requests/" title={labels.productRequests} view="#main-view" panelClose />}
-        {!state.user && <ListItem link="/register/o" title={labels.registerStoreOwner} />}
       </List>
     </Page>
   )

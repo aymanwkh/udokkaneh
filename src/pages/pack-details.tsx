@@ -2,7 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import {f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader, List, ListItem, Button, Toolbar} from 'framework7-react'
 import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
-import {addPackStore, changePrice, deleteStorePack, addPackRequest, showMessage, showError, getMessage, productOfText, rateProduct, addToBasket} from '../data/actions'
+import {addPackStore, changePrice, deleteStorePack, addPackRequest, showMessage, showError, getMessage, productOfText, rateProduct} from '../data/actions'
 import labels from '../data/labels'
 import {Pack, PackStore, Store} from '../data/types'
 import Footer from './footer'
@@ -83,16 +83,6 @@ const PackDetails = (props: Props) => {
   }
   const handleUnAvailable = () => {
     f7.dialog.confirm(labels.newRequestText, labels.newRequestTitle, () => deletePrice(true), () => deletePrice(false))
-  }
-  const handleAddToBasket = () => {
-    try{
-      addToBasket(pack?.product.id!)
-      dispatch({type: 'ADD_TO_BASKET', payload: pack})
-      showMessage(labels.addSuccess)
-      f7.views.current.router.back()
-    } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
-    }
   }
 
   const handleNewRequest = () => {
@@ -195,7 +185,7 @@ const PackDetails = (props: Props) => {
         {!state.userInfo?.storeId &&
           <>
             {!state.basket.find(p => p.id === props.id) && 
-              <ActionsButton onClick={handleAddToBasket}>
+              <ActionsButton onClick={() => dispatch({type: 'ADD_TO_BASKET', payload: pack})}>
                 {labels.addToBasket}
               </ActionsButton>
            }

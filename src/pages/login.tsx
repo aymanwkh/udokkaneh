@@ -93,7 +93,7 @@ const Login = () => {
         <Button text={labels.login} large onClick={() => handleLogin()} />
       }
       <Toolbar bottom>
-        <Link href="/register/n">{labels.newUser}</Link>
+        <Link href="/register/">{labels.newUser}</Link>
         <Link href="/password-request/">{labels.forgetPassword}</Link>
       </Toolbar>
     </Page>

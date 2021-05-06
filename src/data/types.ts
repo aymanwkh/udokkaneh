@@ -34,8 +34,7 @@ export type Product = {
   trademarkId?: string,
   unit: string,
   rating: number,
-  ratingCount: number,
-  demand: number
+  ratingCount: number
 }
 export type Pack = {
   id?: string,
@@ -85,7 +84,8 @@ export type UserInfo = {
   storeId?: string,
   storeName?: string,
   lastSeen?: Date,
-  time?: Date
+  time?: Date,
+  type: string
 }
 export type Advert = {
   id: string,
