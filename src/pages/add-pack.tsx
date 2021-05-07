@@ -33,6 +33,7 @@ const AddPack = (props: Props) => {
       const stores = [{
         storeId: state.userInfo?.storeId!,
         price: +price,
+        isRetail: state.userInfo?.type === 's',
         time: new Date()
       }]
       const newPack = {
@@ -43,6 +44,7 @@ const AddPack = (props: Props) => {
         byWeight: pack.byWeight,
         isArchived: false,
         specialImage: false,
+        forSale: true,
         imageUrl: state.packs.find(p => p.id === props.id)!.imageUrl
       }
       addPack(newPack)

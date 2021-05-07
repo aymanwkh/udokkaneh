@@ -170,9 +170,10 @@ const labels: Label = {
   newRequest: 'طلب هذا المنتج',
   packRequests: 'طلباتي',
   removeRequest: 'حذف من الطلبات',
-  storesCount: 'عدد المحلات',
-  bestStoresCount: 'المحلات بأفضل سعر',
-  nearBy: 'القريبة',
+  storesCount: 'عدد المحلات الاخرى',
+  bestStoresCount: 'عدد المحلات الاخرى لأفضل سعر',
+  nearBy: 'عدد المحلات الاخرى القريبة',
+  bestStoresNearByCount: 'عدد المحلات القريبة لأفضل سعر',
   showPackStores: 'سجل معنا لتظهر لك المحلات',
   storeDetails: 'تفاصيل المحل',
   rateProduct: 'رأيك في هذا المنتج',
@@ -189,6 +190,7 @@ const labels: Label = {
   enterValue: 'الرجاء ادخال قيمة',
   details: 'تفاصيل',
   duplicateName: 'هناك عبوة اخرى بنفس البيانات',
+  salesmenCount: 'عدد الموزعين'
 }
 
 export default labels

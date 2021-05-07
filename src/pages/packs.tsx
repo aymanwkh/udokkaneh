@@ -14,7 +14,8 @@ type Props = {
 type ExtendedPack = Pack & {
   categoryName: string,
   countryName: string,
-  trademarkName?: string
+  trademarkName?: string,
+  myPrice: number
 }
 const Packs = (props: Props) => {
   const {state} = useContext(StateContext)
@@ -25,21 +26,23 @@ const Packs = (props: Props) => {
   useEffect(() => {
     setPacks(() => {
       const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => p.price! > 0 && (!props.id || children.includes(p.product.categoryId)))
+      const packs = state.packs.filter(p => (props.type === 's' && state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)) || (p.price! > 0 && children.includes(p.product.categoryId)))
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
         const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
+        const myPrice = (state.userInfo?.storeId && state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)?.price) || 0
         return {
           ...p,
           categoryName: categoryInfo.name,
           trademarkName: trademarkInfo?.name,
           countryName: countryInfo.name,
+          myPrice
         }
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries])
+  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries, state.packStores])
   const handleSorting = (sortByValue: string) => {
     setSortBy(() => sortByList.find(s => s.id === sortByValue))
     switch(sortByValue){
@@ -91,12 +94,13 @@ const Packs = (props: Props) => {
                 title={p.product.name}
                 subtitle={p.product.description}
                 text={p.name}
-                footer={p.categoryName}
+                footer={p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}
                 after={p.price!.toFixed(2)}
                 key={p.id}
               >
                 <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
+                <div className="list-subtext2">{p.categoryName}</div>
               </ListItem>
               
             )

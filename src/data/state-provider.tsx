@@ -51,7 +51,7 @@ const StateProvider = ({children}: Props) => {
       docs.forEach(doc => {
         let prices, minPrice = 0
         if (doc.data().stores) {
-          prices = doc.data().stores.map((s: PackStore) => s.price)
+          prices = doc.data().stores.map((s: PackStore) => s.isRetail ? s.price : 0)
           minPrice = prices.length > 0 ? Math.min(...prices) : 0
         }
         packs.push({
@@ -64,6 +64,7 @@ const StateProvider = ({children}: Props) => {
           subPackId: doc.data().subPackId,
           subQuantity: doc.data().subQuantity,
           withGift: doc.data().withGift,
+          forSale: doc.data().forSale,
           price: minPrice,
           weightedPrice: Math.floor(minPrice / doc.data().unitsCount),
         })
@@ -72,6 +73,7 @@ const StateProvider = ({children}: Props) => {
             packStores.push({
               packId: doc.id,
               storeId: s.storeId,
+              isRetail: s.isRetail,
               price: s.price,
               time: s.time.toDate()
             })
@@ -109,10 +111,10 @@ const StateProvider = ({children}: Props) => {
     }, err => {
       unsubscribeCountries()
     })  
-    const unsubscribeUnints = firebase.firestore().collection('lookups').doc('u').onSnapshot(doc => {
-      dispatch({type: 'SET_UNITS', payload: doc.data()?.values})
+    const unsubscribeTrademarks = firebase.firestore().collection('lookups').doc('t').onSnapshot(doc => {
+      dispatch({type: 'SET_TRADEMARKS', payload: doc.data()?.values})
     }, err => {
-      unsubscribeUnints()
+      unsubscribeTrademarks()
     }) 
     const unsubscribePasswordRequests = firebase.firestore().collection('password-requests').onSnapshot(docs => {
       let passwordRequests: PasswordRequest[] = []

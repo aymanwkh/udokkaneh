@@ -32,7 +32,7 @@ const Panel = () => {
         : <ListItem link="/login/" title={labels.login} />}
         {state.user && <ListItem link="/change-password/" title={labels.changePassword} />}
         {state.user && <ListItem link="/notifications/" title={labels.notifications} badge={notificationsCount} badgeColor="red" view="#main-view" panelClose />}
-        {state.user && state.userInfo?.storeId && <ListItem link="/store-packs/" title={labels.myPacks} view="#main-view" panelClose />}
+        {state.user && state.userInfo?.storeId && <ListItem link="/packs/0/s" title={labels.myPacks} view="#main-view" panelClose />}
         {state.user && state.userInfo?.storeId && <ListItem link="/product-requests/" title={labels.productRequests} view="#main-view" panelClose />}
       </List>
     </Page>

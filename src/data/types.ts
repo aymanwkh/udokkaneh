@@ -47,10 +47,12 @@ export type Pack = {
   weightedPrice?: number,
   unitsCount?: number,
   byWeight: boolean,
-  withGift?: boolean
+  withGift?: boolean,
+  forSale: boolean
 }
 export type PackStore = {
   storeId: string,
+  isRetail: boolean,
   packId: string,
   price: number,
   time: Date

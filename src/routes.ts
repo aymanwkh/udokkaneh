@@ -7,7 +7,6 @@ import Register from './pages/register'
 import Packs from './pages/packs'
 import PackDetails from './pages/pack-details'
 import PasswordRequest from './pages/password-request'
-import StorePacks from './pages/store-packs'
 import ChangePassword from './pages/change-password'
 import Hints from './pages/hints'
 import Notifications from './pages/notifications'
@@ -62,14 +61,6 @@ const routes = [
   {
     path: '/pack-details/:id',
     component: PackDetails,
-  },
-  {
-    path: '/search/',
-    component: Packs,
-  },
-  {
-    path: '/store-packs/',
-    component: StorePacks,
   },
   {
     path: '/hints/:id/:type',

@@ -19,7 +19,7 @@ const MainCategories = () => {
     <>
       <Button
         text={labels.allProducts}
-        href={`/search/`} 
+        href={`/packs/0/a`} 
         large 
         fill 
         className="sections" 

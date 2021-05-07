@@ -4,16 +4,12 @@ import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
 import {addPackStore, changePrice, deleteStorePack, addPackRequest, showMessage, showError, getMessage, productOfText, rateProduct} from '../data/actions'
 import labels from '../data/labels'
-import {Pack, PackStore, Store} from '../data/types'
+import {PackStore, Store} from '../data/types'
 import Footer from './footer'
 
 type Props = {
   id: string,
   type: string
-}
-type ExtendedPack = Pack & {
-  countryName: string,
-  trademarkName?: string
 }
 type ExtendedPackStore = PackStore & {
   storeInfo: Store,
@@ -22,27 +18,25 @@ type ExtendedPackStore = PackStore & {
 const PackDetails = (props: Props) => {
   const {state, dispatch} = useContext(StateContext)
   const [error, setError] = useState('')
-  const [pack, setPack] = useState<ExtendedPack>()
+  const [pack] = useState(() => state.packs.find(p => p.id === props.id)!)
   const [isAvailable, setIsAvailable] = useState(false)
-  const [otherProducts, setOtherProducts] = useState<Pack[]>([])
-  const [otherPacks, setOtherPacks] = useState<Pack[]>([])
+  const [otherProducts] = useState(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
+  const [otherPacks] = useState(() => state.packs.filter(pa => pa.id !== pack?.id && pa.product.id === pack?.product.id))
   const [actionOpened, setActionOpened] = useState(false);
   const [ratingOpened, setRatingOpened] = useState(false);
   const [packStores, setPackStores] = useState<ExtendedPackStore[]>([])
+  const [trademarkName] = useState(() => state.trademarks.find(t => t.id === pack.product.trademarkId)?.name)
+  const [countryName] = useState(() => state.countries.find(c => c.id === pack.product.countryId)!.name)
+  const [myPrice] = useState(() => state.packStores.find(ps => ps.packId === pack.id && ps.storeId === state.userInfo?.storeId)?.price)
+  const [storeLocation] = useState(() => state.stores.find(s => s.id === state.userInfo?.storeId)?.locationId)
+  const [stores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId).length)
+  const [nearStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && state.stores.find(s => s.id === ps.storeId)?.locationId === storeLocation).length)
+  const [bestPriceStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length)
+  const [bestPriceNearStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price && state.stores.find(s => s.id === ps.storeId)?.locationId === storeLocation).length)
+  const [salesmen] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && !ps.isRetail && ps.storeId !== state.userInfo?.storeId).length)
+
   useEffect(() => {
-    setPack(() => {
-      const pack = state.packs.find(p => p.id === props.id)!
-      const trademarkInfo = state.trademarks.find(t => t.id === pack.product.trademarkId)
-      const countryInfo = state.countries.find(c => c.id === pack.product.countryId)!
-      return {
-        ...pack,
-        trademarkName: trademarkInfo?.name,
-        countryName: countryInfo.name
-      }
-    })
-  }, [state.packs, state.trademarks, state.countries, props.id])
-  useEffect(() => {
-    if (state.user) {
+    if (state.userInfo?.type === 'n') {
       setPackStores(() => {
         const packStores = state.packStores.filter(p => p.packId === pack?.id)
         const results = packStores.map(p => {
@@ -57,14 +51,10 @@ const PackDetails = (props: Props) => {
         return results.sort((r1, r2) => r1.price > r2.price ? 1 : -1)
       })
     }
-  }, [state.packStores, state.stores, state.locations, state.user, pack])
+  }, [state.packStores, state.stores, state.locations, state.user, pack, state.userInfo])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
-  useEffect(() => {
-    setOtherProducts(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
-    setOtherPacks(() => state.packs.filter(pa => pa.id !== pack?.id && pa.product.id === pack?.product.id))
-  }, [pack, state.packs])
   useEffect(() => {
     if (error) {
       showError(error)
@@ -75,6 +65,7 @@ const PackDetails = (props: Props) => {
     try{
       const storePack = state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
       deleteStorePack(storePack, state.packStores, state.packs, flag)
+      if (flag) dispatch({type: 'ADD_TO_BASKET', payload: pack})
       showMessage(flag ? labels.addSuccess : labels.deleteSuccess)
       f7.views.current.router.back()
     } catch(err) {
@@ -113,6 +104,7 @@ const PackDetails = (props: Props) => {
         const storePack = {
           packId: pack?.id!,
           storeId: state.userInfo?.storeId!,
+          isRetail: state.userInfo?.type === 's',
           price: +value,
           time: new Date()
         }
@@ -149,7 +141,7 @@ const PackDetails = (props: Props) => {
           <p className="card-title">{pack.product.description}</p>
         </CardContent>
         <CardFooter>
-          <p>{productOfText(pack.countryName, pack.trademarkName)}</p>
+          <p>{productOfText(countryName, trademarkName)}</p>
           <p><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></p>
         </CardFooter>
       </Card>
@@ -168,7 +160,7 @@ const PackDetails = (props: Props) => {
           href="/login/"
         />
       }
-      {state.user && !state.userInfo?.storeId &&
+      {state.userInfo?.type === 'n' &&
         <List mediaList>
           {packStores.map((p, i) => 
             <ListItem 
@@ -179,6 +171,16 @@ const PackDetails = (props: Props) => {
               key={i} 
             />
           )}
+        </List>
+      }
+      {state.userInfo?.type !== 'n' &&
+        <List mediaList>
+          <ListItem title={labels.myPrice} after={myPrice?.toFixed(2)} />
+          <ListItem title={labels.storesCount} after={stores.toString()} />
+          <ListItem title={labels.nearBy} after={nearStores.toString()} />
+          <ListItem title={labels.bestStoresCount} after={bestPriceStores.toString()} />
+          <ListItem title={labels.bestStoresNearByCount} after={bestPriceNearStores.toString()} />
+          <ListItem title={labels.salesmenCount} after={salesmen.toString()} />
         </List>
       }
       <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>

@@ -17,6 +17,7 @@ const AddGroup = (props: Props) => {
   const [price, setPrice] = useState('')
   const [withGift, setWithGift] = useState(false)
   const [gift, setGift] = useState('')
+  const [forSale, setForSale] = useState(true)
   const [product] = useState(() => state.packs.find(p => p.id === props.id)!.product)
   useEffect(() => {
     if (error) {
@@ -39,6 +40,9 @@ const AddGroup = (props: Props) => {
     if (withGift && !gift) setGiftError(labels.enterValue)
     else setGiftError('')
   }, [withGift, gift])
+  useEffect(() => {
+    if (!forSale) setWithGift(false)
+  }, [forSale])
   const handleSubmit = () => {
     try{
       const name = `${+subQuantity > 1 ? subQuantity + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}`
@@ -48,6 +52,7 @@ const AddGroup = (props: Props) => {
       const stores = [{
         storeId: state.userInfo?.storeId!,
         price: +price,
+        isRetail: state.userInfo?.type === 's',
         time: new Date()
       }]
       const newPack = {
@@ -61,7 +66,8 @@ const AddGroup = (props: Props) => {
         isArchived: false,
         specialImage: false,
         imageUrl: pack.imageUrl,
-        withGift
+        withGift,
+        forSale
       }
       addPack(newPack)
       showMessage(labels.addSuccess)
@@ -87,14 +93,25 @@ const AddGroup = (props: Props) => {
           onInputClear={() => setSubQuantity('')}
         />
         <ListItem>
-          <span>{labels.withGift}</span>
+          <span>{labels.forSale}</span>
           <Toggle 
-            name="withGift" 
+            name="forSale" 
             color="green" 
-            checked={withGift} 
-            onToggleChange={() => setWithGift(s => !s)}
+            checked={forSale} 
+            onToggleChange={() => setForSale(s => !s)}
           />
         </ListItem>
+        {forSale && 
+          <ListItem>
+            <span>{labels.withGift}</span>
+            <Toggle 
+              name="withGift" 
+              color="green" 
+              checked={withGift} 
+              onToggleChange={() => setWithGift(s => !s)}
+            />
+          </ListItem>
+        }
         {withGift && 
           <ListInput 
             name="gift" 
