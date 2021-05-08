@@ -11,13 +11,10 @@ const AddGroup = (props: Props) => {
   const {state} = useContext(StateContext)
   const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === props.id)!)
-  const [subQuantity, setSubQuantity] = useState('')
-  const [quantityError, setQuantityError] = useState('')
-  const [giftError, setGiftError] = useState('')
+  const [subCount, setSubCount] = useState('')
   const [price, setPrice] = useState('')
   const [withGift, setWithGift] = useState(false)
   const [gift, setGift] = useState('')
-  const [forSale, setForSale] = useState(true)
   const [product] = useState(() => state.packs.find(p => p.id === props.id)!.product)
   useEffect(() => {
     if (error) {
@@ -25,27 +22,15 @@ const AddGroup = (props: Props) => {
       setError('')
     }
   }, [error])
-  useEffect(() => {
-    const validateQuantity = (value: number) => {
-      if (value === 0 || value !== Math.floor(value) || (!withGift && value === 1)){
-        setQuantityError(labels.invalidQuantity)
-      } else {
-        setQuantityError('')
-      }
-    }
-    if (subQuantity) validateQuantity(+subQuantity)
-    else setQuantityError('')
-  }, [subQuantity, withGift])
-  useEffect(() => {
-    if (withGift && !gift) setGiftError(labels.enterValue)
-    else setGiftError('')
-  }, [withGift, gift])
-  useEffect(() => {
-    if (!forSale) setWithGift(false)
-  }, [forSale])
   const handleSubmit = () => {
     try{
-      const name = `${+subQuantity > 1 ? subQuantity + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}`
+      if (+subCount === 0 || +subCount !== Math.floor(+subCount)){
+        throw new Error('invalidCount')
+      }
+      if (!withGift && +subCount === 1) {
+        throw new Error('invalidCountWithoutGift')
+      }
+      const name = `${+subCount > 1 ? subCount + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}`
       if (state.packs.find(p => p.product.id === pack.product.id && p.name === name)) {
         throw new Error('duplicateName')
       }
@@ -60,14 +45,14 @@ const AddGroup = (props: Props) => {
         product,
         stores,
         subPackId: props.id,
-        subQuantity: +subQuantity,
-        unitsCount: +subQuantity * pack.unitsCount!,
+        subCount: +subCount,
+        unitsCount: +subCount * pack.unitsCount!,
         byWeight: pack.byWeight,
         isArchived: false,
         specialImage: false,
         imageUrl: pack.imageUrl,
         withGift,
-        forSale
+        forSale: state.userInfo?.type === 's'
       }
       addPack(newPack)
       showMessage(labels.addSuccess)
@@ -81,45 +66,30 @@ const AddGroup = (props: Props) => {
       <Navbar title={`${labels.addGroup} ${product.name}`} backLink={labels.back} />
       <List form inlineLabels>
         <ListInput 
-          name="subQuantity" 
-          label={labels.quantity}
-          value={subQuantity}
+          name="subCount" 
+          label={labels.count}
+          value={subCount}
           clearButton
           autofocus
-          errorMessage={quantityError}
-          errorMessageForce
           type="number" 
-          onChange={e => setSubQuantity(e.target.value)}
-          onInputClear={() => setSubQuantity('')}
+          onChange={e => setSubCount(e.target.value)}
+          onInputClear={() => setSubCount('')}
         />
         <ListItem>
-          <span>{labels.forSale}</span>
+          <span>{labels.withGift}</span>
           <Toggle 
-            name="forSale" 
+            name="withGift" 
             color="green" 
-            checked={forSale} 
-            onToggleChange={() => setForSale(s => !s)}
+            checked={withGift} 
+            onToggleChange={() => setWithGift(s => !s)}
           />
         </ListItem>
-        {forSale && 
-          <ListItem>
-            <span>{labels.withGift}</span>
-            <Toggle 
-              name="withGift" 
-              color="green" 
-              checked={withGift} 
-              onToggleChange={() => setWithGift(s => !s)}
-            />
-          </ListItem>
-        }
         {withGift && 
           <ListInput 
             name="gift" 
             label={labels.gift}
             clearButton
             type="text" 
-            errorMessage={giftError}
-            errorMessageForce  
             value={gift} 
             onChange={e => setGift(e.target.value)}
             onInputClear={() => setGift('')}
@@ -135,7 +105,7 @@ const AddGroup = (props: Props) => {
           onInputClear={() => setPrice('')}
         />
       </List>
-      {subQuantity && price && !quantityError && !giftError &&
+      {subCount && price && (gift || !withGift) &&
         <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
           <Icon material="done"></Icon>
         </Fab>

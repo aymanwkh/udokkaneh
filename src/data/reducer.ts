@@ -42,12 +42,10 @@ const Reducer = (state: State, action: Action) => {
       return {...state, trademarks: action.payload}
     case 'SET_PASSWORD_REQUESTS':
       return {...state, passwordRequests: action.payload}
-    case 'SET_PACK_REQUESTS':
-      return {...state, packRequests: action.payload}
+    case 'SET_STORE_REQUESTS':
+      return {...state, storeRequests: action.payload}
     case 'SET_STORES':
       return {...state, stores: action.payload}
-    case 'SET_FAVORITES':
-      return {...state, favorites: action.payload}  
     case 'SET_RATINGS':
       return {...state, ratings: action.payload}  
     case 'SET_ALARMS':

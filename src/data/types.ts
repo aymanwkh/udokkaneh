@@ -43,7 +43,7 @@ export type Pack = {
   imageUrl: string,
   price?: number,
   subPackId?: string,
-  subQuantity?: number,
+  subCount?: number,
   weightedPrice?: number,
   unitsCount?: number,
   byWeight: boolean,
@@ -127,7 +127,7 @@ export type Store = {
   position: Position,
   locationId?: string
 }
-export type PackRequest = {
+export type StoreRequest = {
   id?: string,
   storeId: string,
   packId: string
@@ -146,7 +146,7 @@ export type State = {
   passwordRequests: PasswordRequest[],
   notifications: Notification[],
   alarms: Alarm[],
-  packRequests: PackRequest[],
+  storeRequests: StoreRequest[],
   stores: Store[],
   ratings: Rating[],
   productRequests: ProductRequest[]

@@ -2,7 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import {f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader, List, ListItem, Button, Toolbar} from 'framework7-react'
 import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
-import {addPackStore, changePrice, deleteStorePack, addPackRequest, showMessage, showError, getMessage, productOfText, rateProduct} from '../data/actions'
+import {addPackStore, changePrice, deleteStorePack, addStoreRequest, showMessage, showError, getMessage, productOfText, rateProduct} from '../data/actions'
 import labels from '../data/labels'
 import {PackStore, Store} from '../data/types'
 import Footer from './footer'
@@ -78,7 +78,7 @@ const PackDetails = (props: Props) => {
 
   const handleNewRequest = () => {
     try{
-      addPackRequest(state.userInfo?.storeId!, pack?.id!)
+      addStoreRequest(state.userInfo?.storeId!, pack?.id!)
       dispatch({type: 'ADD_TO_BASKET', payload: pack})
       showMessage(labels.addSuccess)
       f7.views.current.router.back()
@@ -108,7 +108,7 @@ const PackDetails = (props: Props) => {
           price: +value,
           time: new Date()
         }
-        if (type === 'n') addPackStore(storePack, state.packs, state.packRequests)
+        if (type === 'n') addPackStore(storePack, state.packs, state.storeRequests)
         else changePrice(storePack, state.packStores)
         showMessage(type === 'n' ? labels.addSuccess : labels.editSuccess)
         f7.views.current.router.back()
@@ -210,7 +210,7 @@ const PackDetails = (props: Props) => {
         }
         {state.userInfo?.storeId && 
           <>
-            {!state.packRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) &&
+            {!state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) &&
               <ActionsButton onClick={handleNewRequest}>
                 {labels.newRequest}
               </ActionsButton>

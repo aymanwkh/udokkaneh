@@ -183,14 +183,16 @@ const labels: Label = {
   duplicatePack: 'يوجد عبوة اخرى لنفس المنتج بنفس الوزن',
   withGift: 'مع هدية',
   gift: 'الهدية',
-  enterGift: 'الرجاء ادخل نوع الهدية',
   samePrice: 'السعر كما هو في السابق',
   invalidChangePrice: 'السعر يختلف عن سعر السوق بنسبة كبيرة',
-  invalidQuantity: 'الرجاء التأكد من قيمة الكمية المدخلة',
+  invalidCount: 'الرجاء التأكد من قيمة العدد المدخل',
   enterValue: 'الرجاء ادخال قيمة',
   details: 'تفاصيل',
   duplicateName: 'هناك عبوة اخرى بنفس البيانات',
-  salesmenCount: 'عدد الموزعين'
+  salesmenCount: 'عدد الموزعين',
+  count: 'العدد',
+  invalidCountWithoutGift: 'لا يوجد معني لعرض بنفس العبوة وبلا هدية'
+
 }
 
 export default labels

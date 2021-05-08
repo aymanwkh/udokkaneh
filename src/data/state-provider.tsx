@@ -1,7 +1,7 @@
 import {createContext, useReducer, useEffect} from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import {State, Context, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, PackRequest, UserInfo, Rating, Alarm, ProductRequest} from './types'
+import {State, Context, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, StoreRequest, UserInfo, Rating, Alarm, ProductRequest} from './types'
 
 export const StateContext = createContext({} as Context)
 
@@ -22,7 +22,7 @@ const StateProvider = ({children}: Props) => {
     passwordRequests: [],
     notifications: [],
     alarms: [],
-    packRequests: [],
+    storeRequests: [],
     stores: [],
     ratings: [],
     productRequests: []
@@ -62,7 +62,7 @@ const StateProvider = ({children}: Props) => {
           unitsCount: doc.data().unitsCount,
           byWeight: doc.data().byWeight,
           subPackId: doc.data().subPackId,
-          subQuantity: doc.data().subQuantity,
+          subCount: doc.data().subCount,
           withGift: doc.data().withGift,
           forSale: doc.data().forSale,
           price: minPrice,
@@ -174,17 +174,17 @@ const StateProvider = ({children}: Props) => {
           unsubscribeUser()
         })
         if (user.displayName !== 'n') {
-          const unsubscribeRequests = firebase.firestore().collection('pack-requests').onSnapshot(docs => {
-            const packRequests: PackRequest[] = []
+          const unsubscribeStoreRequests = firebase.firestore().collection('store-requests').onSnapshot(docs => {
+            const storeRequests: StoreRequest[] = []
             docs.forEach(doc => {
-              packRequests.push({
+              storeRequests.push({
                 packId: doc.data().packId,
                 storeId: doc.data().storeId
               })
             })
-            dispatch({type: 'SET_PACK_REQUESTS', payload: packRequests})
+            dispatch({type: 'SET_STORE_REQUESTS', payload: storeRequests})
           }, err => {
-            unsubscribeRequests()
+            unsubscribeStoreRequests()
           }) 
           const unsubscribeProductRequests = firebase.firestore().collection('product-requests').onSnapshot(docs => {
             let productRequests: ProductRequest[] = []
