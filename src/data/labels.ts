@@ -191,8 +191,9 @@ const labels: Label = {
   duplicateName: 'هناك عبوة اخرى بنفس البيانات',
   salesmenCount: 'عدد الموزعين',
   count: 'العدد',
-  invalidCountWithoutGift: 'لا يوجد معني لعرض بنفس العبوة وبلا هدية'
-
+  invalidCountWithoutGift: 'لا يوجد معني لعرض بنفس العبوة وبلا هدية',
+  pendingPrice: 'سوف يتم التواصل معك للتأكد من السعر لوجود فرق كبير عن سعر السوق',
+  specialImage: 'صورة خاصة؟'
 }
 
 export default labels

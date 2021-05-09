@@ -15,7 +15,7 @@ export type Error = {
   message: string
 }
 export type ProductRequest = {
-  id?: string,
+  id: string,
   storeId: string,
   name: string,
   country: string,
@@ -48,11 +48,26 @@ export type Pack = {
   unitsCount?: number,
   byWeight: boolean,
   withGift?: boolean,
-  forSale: boolean
+  forSale: boolean,
 }
+export type PackRequest = {
+  id: string,
+  storeId: string,
+  siblingPackId: string,
+  name: string,
+  imageUrl?: string,
+  price: number,
+  subCount?: number,
+  withGift?: boolean,
+  gift?: string,
+  specialImage: boolean,
+  time?: Date
+}
+
 export type PackStore = {
   storeId: string,
   isRetail: boolean,
+  isActive: boolean,
   packId: string,
   price: number,
   time: Date
@@ -115,10 +130,6 @@ export type PasswordRequest = {
   id: string,
   mobile: string
 }
-export type Discount = {
-  value: number,
-  type: string
-}
 export type Store = {
   id?: string,
   name: string,
@@ -128,7 +139,6 @@ export type Store = {
   locationId?: string
 }
 export type StoreRequest = {
-  id?: string,
   storeId: string,
   packId: string
 }

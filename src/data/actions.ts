@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import {randomColors} from './config'
-import {Error, Category, Alarm, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest} from './types'
+import {Error, Category, Alarm, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest} from './types'
 import {f7} from 'framework7-react'
 
 export const getMessage = (path: string, error: Error) => {
@@ -163,18 +163,18 @@ export const deleteNotification = (notifications: Notification[], notificationId
 }
 
 export const addProductRequest = async (productRequest: ProductRequest, image?: File) => {
-  const productRequestRef = firebase.firestore().collection('product-requests').doc()
+  const storeRef = firebase.firestore().collection('stores').doc(productRequest.storeId)
+  const {storeId, ...others} = productRequest
   let imageUrl = ''
   if (image) {
     const filename = image.name
     const ext = filename.slice(filename.lastIndexOf('.'))
-    const fileData = await firebase.storage().ref().child('product-requests/' + productRequestRef.id + ext).put(image)
+    const fileData = await firebase.storage().ref().child('requests/' + productRequest.id + ext).put(image)
     imageUrl = await firebase.storage().ref().child(fileData.metadata.fullPath).getDownloadURL()
   }
-  productRequest['imageUrl'] = imageUrl
-  productRequestRef.set({
-    ...productRequest,
-    time: firebase.firestore.FieldValue.serverTimestamp()
+  others['imageUrl'] = imageUrl
+  storeRef.update({
+    productRequests: firebase.firestore.FieldValue.arrayUnion(others)
   })
 }
 
@@ -188,16 +188,27 @@ export const changePrice = (packStore: PackStore, packStores: PackStore[], batch
   })
   let packRef = firebase.firestore().collection('packs').doc(packStore.packId)
   newBatch.update(packRef, {
-    stores
+    stores,
+    lastTrans: firebase.firestore.FieldValue.serverTimestamp()
   })
   if (!batch) {
     newBatch.commit()
   }
 }
 
-export const addPack = (pack: Pack) => {
-  const packRef = firebase.firestore().collection('packs').doc()
-  packRef.set(pack)
+export const addPackRequest = async (packRequest: PackRequest, image?: File) => {
+  const storeRef = firebase.firestore().collection('stores').doc(packRequest.storeId)
+  const {storeId, ...others} = packRequest
+  if (image) {
+    console.log('image ... ')
+    const filename = image.name
+    const ext = filename.slice(filename.lastIndexOf('.'))
+    const fileData = await firebase.storage().ref().child('requests/' + packRequest.id + ext).put(image)
+    others['imageUrl'] = await firebase.storage().ref().child(fileData.metadata.fullPath).getDownloadURL()
+  }
+  storeRef.update({
+    packRequests: firebase.firestore.FieldValue.arrayUnion(others),
+  })
 }
 
 export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], packs: Pack[], withRequest: boolean) => {
@@ -210,14 +221,13 @@ export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], p
   })
   const packRef = firebase.firestore().collection('packs').doc(pack.id)
   batch.update(packRef, {
-    stores
+    stores,
+    lastTrans: firebase.firestore.FieldValue.serverTimestamp()
   })
   if (withRequest) {
-    const requestRef = firebase.firestore().collection('pack-requests').doc()
-    batch.set(requestRef, {
-      storeId: packStore.storeId,
-      packId: packStore.packId,
-      time: firebase.firestore.FieldValue.serverTimestamp()
+    const storeRef = firebase.firestore().collection('stores').doc(packStore.storeId)
+    batch.set(storeRef, {
+      requests: firebase.firestore.FieldValue.arrayUnion(packStore.packId)
     })
   }
   batch.commit()
@@ -226,31 +236,33 @@ export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], p
 export const addPackStore = (packStore: PackStore, packs: Pack[], storeRequests: StoreRequest[]) => {
   const batch = firebase.firestore().batch()
   const {packId, ...others} = packStore
-  const pack = packs.find(p => p.id === packId)!
-  const packRef = firebase.firestore().collection('packs').doc(pack.id)
+  const packRef = firebase.firestore().collection('packs').doc(packId)
   batch.update(packRef, {
-    stores: firebase.firestore.FieldValue.arrayUnion(others)
+    stores: firebase.firestore.FieldValue.arrayUnion(others),
+    lastTrans: firebase.firestore.FieldValue.serverTimestamp()
   })
-  const storeRequest = storeRequests.find(r => r.storeId === packStore.storeId && r.packId === packStore.packId)
+  const storeRequest = storeRequests.find(r => r.storeId === packStore.storeId && r.packId === packId)
   if (storeRequest) {
-    const requestRef = firebase.firestore().collection('store-requests').doc(storeRequest.id)
-    batch.delete(requestRef)
+    const storeRef = firebase.firestore().collection('stores').doc(packStore.storeId)
+    batch.update(storeRef, {
+      requests: firebase.firestore.FieldValue.arrayRemove(packId)
+    })
   }
   batch.commit()
 }
 
 export const addStoreRequest = (storeId: string, packId: string) => {
-  const requestRef = firebase.firestore().collection('pack-requests').doc()
-  requestRef.set({
-    storeId,
-    packId,
-    time: firebase.firestore.FieldValue.serverTimestamp()
+  const storeRef = firebase.firestore().collection('stores').doc(storeId)
+  storeRef.update({
+    requests: firebase.firestore.FieldValue.arrayUnion(packId)
   })
 }
 
 export const deleteStoreRequest = (storeRequest: StoreRequest) => {
-  const requestRef = firebase.firestore().collection('store-requests').doc(storeRequest.id)
-  requestRef.delete()
+  const storeRef = firebase.firestore().collection('stores').doc(storeRequest.storeId)
+  storeRef.update({
+    requests: firebase.firestore.FieldValue.arrayRemove(storeRequest.packId)
+  })
 }
 
 export const sendNotification = (userId: string, title: string, message: string, batch?: firebase.firestore.WriteBatch) => {
@@ -275,11 +287,14 @@ export const updateLastSeen = () => {
   })
 }
 
-export const deleteProductRequest = async (productRequest: ProductRequest) => {
-  const productRequestRef = firebase.firestore().collection('product-requests').doc(productRequest.id)
-  productRequestRef.delete()
+export const deleteProductRequest = async (productRequest: ProductRequest, productRequests: ProductRequest[]) => {
+  const storeRef = firebase.firestore().collection('stores').doc(productRequest.storeId)
+  const otherRequests = productRequests.filter(r => r.storeId === productRequest.storeId && r.id !== productRequest.id)
+  storeRef.update({
+    productRequests: otherRequests
+  })
   const ext = productRequest.imageUrl.slice(productRequest.imageUrl.lastIndexOf('.'), productRequest.imageUrl.indexOf('?'))
-  const image = firebase.storage().ref().child('product-requests/' + productRequest.id + ext)
+  const image = firebase.storage().ref().child('requests/' + productRequest.id + ext)
   await image.delete()
 }
 

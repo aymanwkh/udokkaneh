@@ -1,9 +1,5 @@
 export const setup = {
-  fixedFees: 0.01,
-  maxDiscount: 10,
-  firstOrderDiscount: 10,
-  orderLimit: 5000,
-  profit: 0.05,
+  priceDiff: 0.10,
 }
 
 export const randomColors = [
@@ -31,5 +27,4 @@ export const units = [
   {id: 'l', name: 'لتر', type: 'v', factor: 1000},
   {id: 'ml', name: 'مل', type: 'v', factor: 1},
   {id: 'c', name: 'حبة', type: 'c', factor: 1},
-  {id: 'd', name: 'دزينة', type: 'c', factor: 12}
 ]

@@ -44,12 +44,14 @@ const AddProductRequest = (props: Props) => {
   const handleSubmit = () => {
     try{
       const productRequest = {
+        id: Math.random().toString(),
         storeId: state.userInfo?.storeId!,
         name,
         country,
         weight,
         price: +price,
-        imageUrl
+        imageUrl,
+        time: new Date()
       }
       addProductRequest(productRequest, image)
       showMessage(labels.sendRequestSuccess)

@@ -52,6 +52,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, alarms: action.payload}    
     case 'SET_PRODUCT_REQUESTS':
       return {...state, productRequests: action.payload}
+    case 'SET_PACK_REQUESTS':
+      return {...state, packRequests: action.payload}
     default:
       return state
   }

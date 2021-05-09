@@ -24,7 +24,7 @@ const ProductRequests = () => {
   const handleDelete = (productRequest: ProductRequest) => {
     f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
       try{
-        await deleteProductRequest(productRequest)
+        await deleteProductRequest(productRequest, state.productRequests)
         showMessage(labels.deleteSuccess) 
       } catch(err) {
         setError(getMessage(f7.views.current.router.currentRoute.path, err))

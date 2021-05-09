@@ -6,6 +6,7 @@ import {addPackStore, changePrice, deleteStorePack, addStoreRequest, showMessage
 import labels from '../data/labels'
 import {PackStore, Store} from '../data/types'
 import Footer from './footer'
+import { setup } from '../data/config'
 
 type Props = {
   id: string,
@@ -95,22 +96,21 @@ const PackDetails = (props: Props) => {
         if (+value <= 0) {
           throw new Error('invalidPrice')
         }
-        if (Math.abs(+value - pack?.price!) / pack?.price! > 0.25) {
-          throw new Error('invalidChangePrice')
-        }
         if (type === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
           throw new Error('samePrice')
         }
+        const isActive = (Math.abs(+value - pack?.price!) / pack?.price! <= setup.priceDiff)
         const storePack = {
           packId: pack?.id!,
           storeId: state.userInfo?.storeId!,
           isRetail: state.userInfo?.type === 's',
           price: +value,
+          isActive,
           time: new Date()
         }
         if (type === 'n') addPackStore(storePack, state.packs, state.storeRequests)
         else changePrice(storePack, state.packStores)
-        showMessage(type === 'n' ? labels.addSuccess : labels.editSuccess)
+        showMessage(isActive ? (type === 'n' ? labels.addSuccess : labels.editSuccess) : labels.pendingPrice)
         f7.views.current.router.back()
       } catch(err) {
         setError(getMessage(f7.views.current.router.currentRoute.path, err))
