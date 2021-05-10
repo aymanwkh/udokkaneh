@@ -192,7 +192,6 @@ const labels: Label = {
   salesmenCount: 'عدد الموزعين',
   count: 'العدد',
   invalidCountWithoutGift: 'لا يوجد معني لعرض بنفس العبوة وبلا هدية',
-  pendingPrice: 'سوف يتم التواصل معك للتأكد من السعر لوجود فرق كبير عن سعر السوق',
   specialImage: 'صورة خاصة؟'
 }
 

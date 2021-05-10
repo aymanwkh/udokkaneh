@@ -43,6 +43,9 @@ const AddProductRequest = (props: Props) => {
   }
   const handleSubmit = () => {
     try{
+      if (+price <= 0 || +price !== Number((+price).toFixed(2))) {
+        throw new Error('invalidPrice')
+      }
       const productRequest = {
         id: Math.random().toString(),
         storeId: state.userInfo?.storeId!,

@@ -99,18 +99,19 @@ const PackDetails = (props: Props) => {
         if (type === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
           throw new Error('samePrice')
         }
-        const isActive = (Math.abs(+value - pack?.price!) / pack?.price! <= setup.priceDiff)
+        if (Math.abs(+value - pack?.price!) / pack?.price! <= setup.priceDiff) {
+          throw new Error('invalidChangePrice')
+        }
         const storePack = {
           packId: pack?.id!,
           storeId: state.userInfo?.storeId!,
           isRetail: state.userInfo?.type === 's',
           price: +value,
-          isActive,
           time: new Date()
         }
         if (type === 'n') addPackStore(storePack, state.packs, state.storeRequests)
         else changePrice(storePack, state.packStores)
-        showMessage(isActive ? (type === 'n' ? labels.addSuccess : labels.editSuccess) : labels.pendingPrice)
+        showMessage(type === 'n' ? labels.addSuccess : labels.editSuccess)
         f7.views.current.router.back()
       } catch(err) {
         setError(getMessage(f7.views.current.router.currentRoute.path, err))
@@ -137,7 +138,7 @@ const PackDetails = (props: Props) => {
         </CardHeader>
         <CardContent>
           <p className="card-title">{pack.name}</p>
-          <img src={pack.imageUrl} className="img-card" alt={labels.noImage} />
+          <img src={pack.imageUrl || pack.product.imageUrl} className="img-card" alt={labels.noImage} />
           <p className="card-title">{pack.product.description}</p>
         </CardContent>
         <CardFooter>

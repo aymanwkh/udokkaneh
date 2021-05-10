@@ -1,5 +1,5 @@
 export const setup = {
-  priceDiff: 0.10,
+  priceDiff: 0.25,
 }
 
 export const randomColors = [

@@ -98,7 +98,7 @@ const Packs = (props: Props) => {
                 after={p.price!.toFixed(2)}
                 key={p.id}
               >
-                <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
+                <img src={p.imageUrl || p.product.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
                 <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
                 <div className="list-subtext2">{p.categoryName}</div>
               </ListItem>

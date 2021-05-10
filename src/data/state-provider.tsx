@@ -51,7 +51,7 @@ const StateProvider = ({children}: Props) => {
       docs.forEach(doc => {
         let prices, minPrice = 0
         if (doc.data().stores) {
-          prices = doc.data().stores.map((s: PackStore) => s.isRetail && s.isActive ? s.price : 0)
+          prices = doc.data().stores.map((s: PackStore) => s.isRetail ? s.price : 0)
           minPrice = prices.length > 0 ? Math.min(...prices) : 0
         }
         packs.push({
@@ -74,7 +74,6 @@ const StateProvider = ({children}: Props) => {
               packId: doc.id,
               storeId: s.storeId,
               isRetail: s.isRetail,
-              isActive: s.isActive,
               price: s.price,
               time: s.time.toDate()
             })
@@ -213,7 +212,7 @@ const StateProvider = ({children}: Props) => {
               doc.data().requests?.forEach((r: any) => {
                 storeRequests.push({
                   storeId: doc.id,
-                  packId: r.packId
+                  packId: r
                 })
               })
               doc.data().packRequests?.forEach((r: any) => {
@@ -222,7 +221,6 @@ const StateProvider = ({children}: Props) => {
                   storeId: doc.id,
                   siblingPackId: r.siblingPackId,
                   name: r.name,
-                  specialImage: r.specialImage,
                   price: r.price,
                   imageUrl: r.imageUrl,
                   withGift: r.withGift,

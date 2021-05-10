@@ -3,7 +3,6 @@ import {addPackRequest, showMessage, showError, getMessage} from '../data/action
 import {f7, Page, Navbar, List, ListInput, Fab, Icon, ListItem, Toggle, ListButton} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import { PackRequest } from '../data/types'
 
 type Props = {
   id: string
@@ -53,6 +52,9 @@ const AddGroup = (props: Props) => {
       if (!withGift && +subCount === 1) {
         throw new Error('invalidCountWithoutGift')
       }
+      if (+price <= 0 || +price !== Number((+price).toFixed(2))) {
+        throw new Error('invalidPrice')
+      }
       const packRequest = {
         id: Math.random().toString(),
         storeId: state.userInfo?.storeId!,
@@ -60,7 +62,6 @@ const AddGroup = (props: Props) => {
         name: `${+subCount > 1 ? subCount + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}`,
         price: +price,
         subCount: +subCount,
-        specialImage,
         withGift,
         gift,
         time: new Date()

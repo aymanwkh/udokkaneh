@@ -34,13 +34,15 @@ export type Product = {
   trademarkId?: string,
   unit: string,
   rating: number,
-  ratingCount: number
+  ratingCount: number,
+  imageUrl: string,
+  isActive: boolean
 }
 export type Pack = {
   id?: string,
   name: string,
   product: Product,
-  imageUrl: string,
+  imageUrl?: string,
   price?: number,
   subPackId?: string,
   subCount?: number,
@@ -60,14 +62,12 @@ export type PackRequest = {
   subCount?: number,
   withGift?: boolean,
   gift?: string,
-  specialImage: boolean,
   time?: Date
 }
 
 export type PackStore = {
   storeId: string,
   isRetail: boolean,
-  isActive: boolean,
   packId: string,
   price: number,
   time: Date

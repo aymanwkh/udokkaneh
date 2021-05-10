@@ -204,7 +204,7 @@ export const addPackRequest = async (packRequest: PackRequest, image?: File) => 
     const filename = image.name
     const ext = filename.slice(filename.lastIndexOf('.'))
     const fileData = await firebase.storage().ref().child('requests/' + packRequest.id + ext).put(image)
-    others['imageUrl'] = await firebase.storage().ref().child(fileData.metadata.fullPath).getDownloadURL()
+    others.imageUrl = await firebase.storage().ref().child(fileData.metadata.fullPath).getDownloadURL()
   }
   storeRef.update({
     packRequests: firebase.firestore.FieldValue.arrayUnion(others),
@@ -226,7 +226,7 @@ export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], p
   })
   if (withRequest) {
     const storeRef = firebase.firestore().collection('stores').doc(packStore.storeId)
-    batch.set(storeRef, {
+    batch.update(storeRef, {
       requests: firebase.firestore.FieldValue.arrayUnion(packStore.packId)
     })
   }

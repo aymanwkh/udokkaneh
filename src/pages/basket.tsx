@@ -70,7 +70,7 @@ const Basket = () => {
             className={(currentPack && currentPack.id === p.id) ? 'selected' : ''}
             onClick={()=> handleMore(p)}
           >
-            <img src={p.imageUrl} slot="media" className="img-list" alt={labels.noImage}/>
+            <img src={p.imageUrl || p.product.imageUrl} slot="media" className="img-list" alt={labels.noImage}/>
             <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
           </ListItem>
         )}
