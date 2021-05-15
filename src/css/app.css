@@ -1,6 +1,9 @@
+/* Your app styles here */
+/* Your app styles here */
+
 .sections {
     margin: 1rem;
-  }
+}
   
 .center {
   text-align: center;
@@ -35,7 +38,66 @@
 
 .success {
   font-size: 1.2rem;
-  color:cyan;
+  color: cyan;
+}
+
+.green {
+  color: green;
+}
+
+.blue {
+  color: blue;
+}
+
+.red {
+  color: red;
+}
+
+.logo {
+  width: 120px;
+  margin-bottom: -10px;
+}
+
+.icons {
+  color: white;
+}
+
+.block-title {
+  color: blue;
+}
+
+.price {
+  font-size: 1.2rem;
+  color: blue;
+  margin-right: 0.2rem;
+}
+
+.avatar {
+  width: 100px;
+}
+
+.section-label {
+  font-size: 1.2rem;
+}
+
+.img-card {
+  max-width: 100%;
+  height: 18rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.img-list {
+  width: 4.5rem;
+  height: 6rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.top-fab {
+  top: 0px !important;
 }
 
 .total {
@@ -54,74 +116,9 @@
   color: blue;
 }
 
-.logo {
-  width: 120px;
-  margin-bottom: -10px;
-}
-
-.banner {
-  position: relative;
-  bottom: 1.5rem;
-  color: blue;
-  font-size: 1.1rem;
-}
-
-.price {
-  font-size: 1.2rem;
-  color: blue;
-  width: 5rem;
-}
-
-.note {
-  text-align: center;
-  color: red;
-  margin: 1rem;
-}
-
-.help1 {
-  text-align: center;
-  color: blue;
-  margin: 1rem;
-}
-
-.help2 {
-  text-align: center;
-  color: green;
-  margin: 1rem;
-}
-
-.help3 {
-  text-align: center;
-  color: purple;
-  margin: 1rem;
-}
-
-.avatar {
-  width: 100px;
-}
-
-.img-card{
-  max-width: 100%;
-  height: 16rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.img-list{
-  width: 6rem;
-  height: 6rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.top-fab{
-  top: 0px !important;
-}
-
 .card-title {
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: blue;
 }
 
@@ -169,53 +166,30 @@
   color:orange;
 }
 
-.toolbar-inner .link {
-  font-size: 0.8rem;
-}
-
-.alarm-list {
-  font-size: 0.8rem;
-}
-
 .actions-button-text {
   font-size: 1rem;
+  text-align: center;
 }
 
 .actions-button {
   height: 3rem;
 }
 
-.rating-stars {
-  margin-bottom: -1.5rem;
-}
-
-.hints {
-  position: absolute;
-  left: 0;
-  margin-top: -0.5rem;
+.note {
+  font-size: 0.9rem;
+  text-align: center;
+  color: red;
 }
 
 .selected {
   background-color: lightskyblue;
 }
 
-.item-footer {
-  position: relative;
+.toolbar-inner .link {
+  font-size: 0.8rem;
 }
 
 .card-footer {
   padding-top: 0;
   height: 2rem;
-}
-
-input[type="file"] {
-  display: none;
-}
-.custom-file-upload {
-  border: 1px solid #ccc;
-  display: inline-block;
-  padding: 6px 12px;
-  cursor: pointer;
-  text-align: center;
-  color: blue;
 }

@@ -119,7 +119,7 @@ const labels: Label = {
   otherPacks: 'عبوات اخرى',
   suggestions: 'اقتراحات لبدائل',
   favorites: 'المفضلة',
-  inprocess: 'تنفيذ العملية',
+  inprocess: 'الرجاء الانتظار',
   orderHelp: 'للمزيد عن الرسوم،الخصم،الشراء ومتابعة الطلب',
   clickHere: 'اضغط هنا',
   advert: 'اعلان',

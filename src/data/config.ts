@@ -3,16 +3,11 @@ export const setup = {
 }
 
 export const randomColors = [
-  {id: 0, name: 'red'},
-  {id: 1, name: 'green'},
-  {id: 2, name: 'blue'},
-  {id: 3, name: 'pink'},
-  {id: 4, name: 'yellow'},
-  {id: 5, name: 'orange'},
-  {id: 6, name: 'purple'},
-  {id: 7, name: 'deeppurple'},
-  {id: 8, name: 'lightblue'},
-  {id: 9, name: 'teal'},
+  {id: 0, name: 'primary'},
+  {id: 1, name: 'tertiary'},
+  {id: 2, name: 'success'},
+  {id: 3, name: 'warning'},
+  {id: 4, name: 'danger'},
 ]
 
 export const sortByList = [
@@ -28,3 +23,9 @@ export const units = [
   {id: 'ml', name: 'مل', type: 'v', factor: 1},
   {id: 'c', name: 'حبة', type: 'c', factor: 1},
 ]
+
+export const patterns = {
+  password: /^.{4}$/,
+  name: /^.{4,50}$/,
+  mobile: /^07[7-9][0-9]{7}$/
+}
