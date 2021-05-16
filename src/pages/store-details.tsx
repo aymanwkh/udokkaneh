@@ -29,7 +29,7 @@ const StoreDetails = () => {
       message(error, 3000)
       setError('')
     }
-  }, [error])
+  }, [error, message])
   const handleAddAlarm = (type: string) => {
     alert({
       header: labels.confirmationTitle,

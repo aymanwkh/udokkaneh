@@ -42,7 +42,7 @@ const Basket = () => {
       message(error, 3000)
       setError('')
     }
-  }, [error])
+  }, [error, message])
   const handleMore = (pack: Pack) => {
     setCurrentPack(pack)
     setActionOpened(true)

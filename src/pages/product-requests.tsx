@@ -3,11 +3,11 @@ import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {deleteProductRequest, getMessage} from '../data/actions'
 import Footer from './footer'
-import { IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { ProductRequest } from '../data/types'
-import { useLocation } from 'react-router'
-import { trashOutline } from 'ionicons/icons'
+import { useHistory, useLocation } from 'react-router'
+import { addOutline, trashOutline } from 'ionicons/icons'
 
 const ProductRequests = () => {
   const {state} = useContext(StateContext)
@@ -16,6 +16,7 @@ const ProductRequests = () => {
   const [message] = useIonToast();
   const location = useLocation()
   const [alert] = useIonAlert();
+  const history = useHistory()
   useEffect(() => {
     setProductRequests(() => {
       const productRequests = state.productRequests.filter(r => r.storeId === state.userInfo?.storeId)
@@ -27,7 +28,7 @@ const ProductRequests = () => {
       message(error, 3000)
       setError('')
     }
-  }, [error])
+  }, [error, message])
   const handleDelete = (productRequest: ProductRequest) => {
     alert({
       header: labels.confirmationTitle,
@@ -76,6 +77,11 @@ const ProductRequests = () => {
           }
         </IonList>
       </IonContent>
+      <IonFab vertical="top" horizontal="end" slot="fixed">
+        <IonFabButton routerLink="/add-product-request">
+          <IonIcon ios={addOutline} />
+        </IonFabButton>
+      </IonFab>
       <Footer />
     </IonPage>
   )
