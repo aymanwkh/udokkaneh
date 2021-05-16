@@ -1,15 +1,21 @@
 import {useContext, useState, useEffect} from 'react'
-import {f7, Block, Page, Navbar, List, ListItem, Link} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
+import {deleteNotification, getMessage, updateLastSeen} from '../data/actions'
+import Footer from './footer'
+import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
+import Header from './header'
+import { useLocation } from 'react-router'
+import {Notification} from '../data/types'
 import moment from 'moment'
 import 'moment/locale/ar'
-import {updateLastSeen, deleteNotification, getMessage, showError, showMessage } from '../data/actions'
-import {Notification} from '../data/types'
+import { trashOutline } from 'ionicons/icons'
 
 const Notifications = () => {
   const {state} = useContext(StateContext)
   const [error, setError] = useState('')
+  const location = useLocation()
+  const [message] = useIonToast();
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
     updateLastSeen()
@@ -19,39 +25,47 @@ const Notifications = () => {
   }, [state.notifications])
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
   }, [error])
   const handleDelete = (notificationId: string) => {
     try{
       deleteNotification(state.notifications, notificationId)
-      showMessage(labels.deleteSuccess) 
+      message(labels.deleteSuccess, 3000) 
     } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
-  return (
-    <Page>
-      <Navbar title={labels.notifications} backLink={labels.back} />
-      <Block>
-        <List mediaList>
-          {notifications.length === 0 ? 
-            <ListItem title={labels.noData} />
-          : notifications.map(n =>
-              <ListItem
-                title={n.title}
-                subtitle={n.message}
-                footer={moment(n.time).fromNow()}
-                key={n.id}
-              >
-                <Link slot="after" iconMaterial="delete" onClick={()=> handleDelete(n.id)}/>
-              </ListItem>
+  return(
+    <IonPage>
+      <Header title={labels.basket} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          {notifications.length === 0 ?
+            <IonItem> 
+              <IonLabel>{labels.noData}</IonLabel>
+            </IonItem>
+          : notifications.map(n => 
+              <IonItem key={n.id}>
+                <IonLabel>
+                  <div className="list-row1">{n.title}</div>
+                  <div className="list-row2">{n.message}</div>
+                  <div className="list-row3">{moment(n.time).fromNow()}</div>
+                </IonLabel>
+                <IonIcon 
+                  ios={trashOutline} 
+                  slot="end" 
+                  style={{fontSize: '20px', marginRight: '10px'}} 
+                  onClick={()=> handleDelete(n.id)}
+                />
+              </IonItem>    
             )
           }
-        </List>
-      </Block>
-    </Page>
+        </IonList>
+      </IonContent>
+      <Footer />
+    </IonPage>
   )
 }
 

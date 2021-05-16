@@ -1,14 +1,21 @@
 import {useContext, useState, useEffect} from 'react'
-import {f7, Page, Block, Navbar, List, ListItem, Searchbar, NavRight, Link, Fab, Icon} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import {deleteProductRequest, getMessage, showError, showMessage} from '../data/actions'
+import {deleteProductRequest, getMessage} from '../data/actions'
+import Footer from './footer'
+import { IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
+import Header from './header'
 import { ProductRequest } from '../data/types'
+import { useLocation } from 'react-router'
+import { trashOutline } from 'ionicons/icons'
 
 const ProductRequests = () => {
   const {state} = useContext(StateContext)
   const [error, setError] = useState('')
   const [productRequests, setProductRequests] = useState<ProductRequest[]>([])
+  const [message] = useIonToast();
+  const location = useLocation()
+  const [alert] = useIonAlert();
   useEffect(() => {
     setProductRequests(() => {
       const productRequests = state.productRequests.filter(r => r.storeId === state.userInfo?.storeId)
@@ -17,62 +24,60 @@ const ProductRequests = () => {
   }, [state.productRequests, state.userInfo])
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
   }, [error])
   const handleDelete = (productRequest: ProductRequest) => {
-    f7.dialog.confirm(labels.confirmationText, labels.confirmationTitle, async () => {
-      try{
-        await deleteProductRequest(productRequest, state.productRequests)
-        showMessage(labels.deleteSuccess) 
-      } catch(err) {
-        setError(getMessage(f7.views.current.router.currentRoute.path, err))
-      }
+    alert({
+      header: labels.confirmationTitle,
+      message: labels.confirmationText,
+      buttons: [
+        {text: labels.cancel},
+        {text: labels.ok, handler: async () => {
+          try{
+            await deleteProductRequest(productRequest, state.productRequests)
+            message(labels.deleteSuccess, 3000) 
+          } catch(err) {
+            setError(getMessage(location.pathname, err))
+          }    
+        }},
+      ],
     })
   }
-
   return(
-    <Page>
-      <Navbar title={labels.productRequests} backLink={labels.back}>
-        <NavRight>
-          <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
-        </NavRight>
-        <Searchbar
-          className="searchbar"
-          searchContainer=".search-list"
-          searchIn=".item-inner"
-          clearButton
-          expandable
-          placeholder={labels.search}
-        />
-      </Navbar>
-        <Block>
-          <List className="searchbar-not-found">
-            <ListItem title={labels.noData} />
-          </List>
-          <List mediaList className="search-list searchbar-found">
-            {productRequests.length === 0 ? 
-              <ListItem title={labels.noData} /> 
-            : productRequests.map(p => 
-                <ListItem
-                  title={p.name}
-                  subtitle={p.weight}
-                  text={p.country}
-                  footer={`${labels.price}: ${p.price.toFixed(2)}`}
-                  key={p.id}
-                >
-                  <img slot="media" src={p.imageUrl} className="img-list" alt={labels.noImage} />
-                  <Link slot="after" iconMaterial="delete" onClick={()=> handleDelete(p)}/>
-                </ListItem>
-              )
-            }
-          </List>
-      </Block>
-      <Fab position="left-top" slot="fixed" color="green" className="top-fab" href="/add-product-request/">
-        <Icon material="add"></Icon>
-      </Fab>
-    </Page>
+    <IonPage>
+      <Header title={labels.productRequests} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          {productRequests.length === 0 ?
+            <IonItem> 
+              <IonLabel>{labels.noData}</IonLabel>
+            </IonItem>
+          : productRequests.map(p => 
+              <IonItem key={p.id}>
+                <IonThumbnail slot="start">
+                  <IonImg src={p.imageUrl} alt={labels.noImage} />
+                </IonThumbnail>
+                <IonLabel>
+                  <div className="list-row1">{p.name}</div>
+                  <div className="list-row2">{p.weight}</div>
+                  <div className="list-row3">{p.country}</div>
+                  <div className="list-row4">{`${labels.price}: ${p.price.toFixed(2)}`}</div>
+                </IonLabel>
+                <IonIcon 
+                  ios={trashOutline} 
+                  slot="end" 
+                  style={{fontSize: '20px', marginRight: '10px'}} 
+                  onClick={()=> handleDelete(p)}
+                />
+              </IonItem>    
+            )
+          }
+        </IonList>
+      </IonContent>
+      <Footer />
+    </IonPage>
   )
 }
 

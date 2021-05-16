@@ -3,17 +3,18 @@ import {getMessage, addPackRequest} from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, IonToggle, useIonToast } from '@ionic/react'
 import Header from './header'
-import { useHistory, useLocation } from 'react-router'
+import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
 
-type Props = {
+type Params = {
   id: string
 }
-const AddGroup = (props: Props) => {
+const AddGroup = () => {
   const {state} = useContext(StateContext)
+  const params = useParams<Params>()
   const [error, setError] = useState('')
-  const [pack] = useState(() => state.packs.find(p => p.id === props.id)!)
+  const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
   const [subCount, setSubCount] = useState('')
   const [price, setPrice] = useState('')
   const [specialImage, setSpecialImage] = useState(false)
@@ -22,7 +23,7 @@ const AddGroup = (props: Props) => {
   const [imageUrl, setImageUrl] = useState('')
   const [image, setImage] = useState<File>()
   const inputEl = useRef<HTMLInputElement | null>(null);
-  const [product] = useState(() => state.packs.find(p => p.id === props.id)!.product)
+  const [product] = useState(() => state.packs.find(p => p.id === params.id)!.product)
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast();
@@ -64,7 +65,7 @@ const AddGroup = (props: Props) => {
       const packRequest = {
         id: Math.random().toString(),
         storeId: state.userInfo?.storeId!,
-        siblingPackId: props.id,
+        siblingPackId: params.id,
         name: `${+subCount > 1 ? subCount + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}`,
         price: +price,
         subCount: +subCount,

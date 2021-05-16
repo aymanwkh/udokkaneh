@@ -1,19 +1,27 @@
-import {useState, useContext, useEffect} from 'react'
-import {addPackRequest, showMessage, showError, getMessage} from '../data/actions'
-import {f7, Page, Navbar, List, ListInput, Fab, Icon} from 'framework7-react'
-import {StateContext} from '../data/state-provider'
+import {useState, useEffect, useContext} from 'react'
+import {getMessage, addPackRequest} from '../data/actions'
 import labels from '../data/labels'
-type Props = {
+import { IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
+import Header from './header'
+import { useHistory, useLocation, useParams } from 'react-router'
+import { StateContext } from '../data/state-provider'
+import { checkmarkOutline } from 'ionicons/icons'
+
+type Params = {
   id: string
 }
-const AddPack = (props: Props) => {
+const AddPack = () => {
   const {state} = useContext(StateContext)
+  const params = useParams<Params>()
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
+  const history = useHistory()
+  const location = useLocation()
+  const [message] = useIonToast()
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
   }, [error])
@@ -25,49 +33,57 @@ const AddPack = (props: Props) => {
       const packRequest = {
         id: Math.random().toString(),
         storeId: state.userInfo?.storeId!,
-        siblingPackId: props.id,
+        siblingPackId: params.id,
         name,
         specialImage: false,
         price: +price,
         time: new Date()
       }
       addPackRequest(packRequest)
-      showMessage(labels.sendRequestSuccess)
-      f7.views.current.router.back()
+      message(labels.sendRequestSuccess, 3000)
+      history.goBack()
     } catch(err) {
-			setError(getMessage(f7.views.current.router.currentRoute.path, err))
+			setError(getMessage(location.pathname, err))
 		}
   }
   return (
-    <Page>
-      <Navbar title={labels.addPack} backLink={labels.back} />
-      <List form inlineLabels>
-        <ListInput 
-          name="name" 
-          label={labels.weightVolume}
-          type="text" 
-          clearButton
-          autofocus
-          value={name}
-          onChange={e => setName(e.target.value)}
-          onInputClear={() => setName('')}
-        />
-        <ListInput 
-          name="price" 
-          label={labels.price}
-          value={price}
-          clearButton
-          type="number" 
-          onChange={e => setPrice(e.target.value)}
-          onInputClear={() => setPrice('')}
-        />
-      </List>
-      {price && name &&
-        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
-          <Icon material="done"></Icon>
-        </Fab>
-      }
-    </Page>
+    <IonPage>
+      <Header title={labels.addPack} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.weightVolume}
+            </IonLabel>
+            <IonInput 
+              value={name} 
+              type="text" 
+              autofocus
+              clearInput
+              onIonChange={e => setName(e.detail.value!)} 
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.price}
+            </IonLabel>
+            <IonInput 
+              value={price} 
+              type="number" 
+              clearInput
+              onIonChange={e => setPrice(e.detail.value!)} 
+            />
+          </IonItem>
+        </IonList>
+        {price && name &&
+          <IonFab vertical="top" horizontal="end" slot="fixed">
+            <IonFabButton onClick={handleSubmit}>
+              <IonIcon ios={checkmarkOutline} />
+            </IonFabButton>
+          </IonFab>
+        }
+      </IonContent>
+    </IonPage>
   )
 }
 export default AddPack

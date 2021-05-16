@@ -73,7 +73,7 @@ const Login = () => {
             />
           </IonItem>
         </IonList>
-        {!mobileInvalid && passwordInvalid && 
+        {!mobileInvalid && !passwordInvalid && 
           <IonButton expand="block" fill="clear" onClick={handleLogin}>{labels.login}</IonButton>
         }
       </IonContent>

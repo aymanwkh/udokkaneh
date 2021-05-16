@@ -1,10 +1,12 @@
-import {useContext, useEffect, useState} from 'react'
-import {f7, Block, Page, Navbar, List, ListItem, Toolbar, Actions, ActionsButton} from 'framework7-react'
+import {useContext, useState, useEffect} from 'react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import Footer from './footer'
+import {deleteStoreRequest, getMessage, productOfText} from '../data/actions'
 import {Pack} from '../data/types'
-import {deleteStoreRequest, getMessage, productOfText, showError} from '../data/actions'
+import Footer from './footer'
+import { IonActionSheet, IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail, useIonToast } from '@ionic/react'
+import Header from './header'
+import { useHistory, useLocation } from 'react-router'
 
 type ExtendedPack = Pack & {
   countryName: string,
@@ -17,6 +19,9 @@ const Basket = () => {
   const [basket, setBasket] = useState<ExtendedPack[]>([])
   const [error, setError] = useState('')
   const [actionOpened, setActionOpened] = useState(false);
+  const history = useHistory()
+  const location = useLocation()
+  const [message] = useIonToast();
   useEffect(() => {
     setBasket(() => {
       return state.basket.map(p => {
@@ -34,7 +39,7 @@ const Basket = () => {
   }, [state.basket, state.stores, state.packs, state.categories, state.countries, state.trademarks])
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
   }, [error])
@@ -49,45 +54,59 @@ const Basket = () => {
       } 
       dispatch({type: 'DELETE_FROM_BASKET', payload: currentPack})
     } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
   return(
-    <Page>
-    <Navbar title={labels.basket} backLink={labels.back} />
-    <Block>
-      <List mediaList>
-        {basket.length === 0 ?
-          <ListItem title={labels.noData} />
-        : basket.map(p => 
-          <ListItem
-            title={p.product.name}
-            subtitle={p.product.description}
-            text={p.name}
-            footer={p.categoryName}
-            after={p.price?.toFixed(2)}
-            key={p.id}
-            className={(currentPack && currentPack.id === p.id) ? 'selected' : ''}
-            onClick={()=> handleMore(p)}
-          >
-            <img src={p.imageUrl || p.product.imageUrl} slot="media" className="img-list" alt={labels.noImage}/>
-            <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
-          </ListItem>
-        )}
-      </List>
-    </Block>
-    <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
-      <ActionsButton onClick={() => f7.views.current.router.navigate(`/pack-details/${currentPack?.id}`)}>
-        {labels.details}
-      </ActionsButton>
-      <ActionsButton onClick={handleDelete}>
-        {labels.delete}
-      </ActionsButton>
-    </Actions>
-    <Toolbar bottom>
+    <IonPage>
+      <Header title={labels.basket} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          {basket.length === 0 ?
+            <IonItem> 
+              <IonLabel>{labels.noData}</IonLabel>
+            </IonItem>
+          : basket.map(p => 
+              <IonItem 
+                key={p.id} 
+                className={(currentPack && currentPack.id === p.id) ? 'selected' : ''}
+                onClick={()=> handleMore(p)}
+              >
+                <IonThumbnail slot="start">
+                  <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
+                </IonThumbnail>
+                <IonLabel>
+                  <div className="list-row1">{p.product.name}</div>
+                  <div className="list-row2">{p.product.description}</div>
+                  <div className="list-row3">{p.name}</div>
+                  <div className="list-row4">{productOfText(p.countryName, p.trademarkName)}</div>
+                  <div className="list-row5">{p.categoryName}</div>
+                </IonLabel>
+                <IonLabel slot="end" className="ion-text-end">{p.price!.toFixed(2)}</IonLabel>
+              </IonItem>    
+            )
+          }
+        </IonList>
+      </IonContent>
+      <IonActionSheet
+        isOpen={actionOpened}
+        onDidDismiss={() => setActionOpened(false)}
+        buttons={[
+          {
+            text: labels.details,
+            cssClass: 'success',
+            handler: () => history.push(`/pack-details/${currentPack?.id}`)
+          },
+          {
+            text: labels.delete,
+            cssClass: 'danger',
+            handler: () => handleDelete()
+          },
+        ]}
+      />
       <Footer />
-    </Toolbar>
-  </Page>
+    </IonPage>
   )
 }
+
 export default Basket

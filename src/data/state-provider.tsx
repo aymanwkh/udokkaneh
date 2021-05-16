@@ -173,72 +173,70 @@ const StateProvider = ({children}: Props) => {
         }, err => {
           unsubscribeUser()
         })
-        if (user.displayName !== 'n') {
-          const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
-            const stores: Store[] = []
-            const alarms: Alarm[] = []
-            const productRequests: ProductRequest[] = []
-            const storeRequests: StoreRequest[] = []
-            const packRequests: PackRequest[] = []
-            docs.forEach(doc => {
-              stores.push({
-                id: doc.id,
-                name: doc.data().name,
-                locationId: doc.data().locationId,
-                address: doc.data().address,
-                position: doc.data().position,
-                mobile: doc.data().mobile,
-              })
-              doc.data().alarms?.forEach((a: any) => {
-                alarms.push({
-                  storeId: doc.id,
-                  packId: a.packId,
-                  type: a.type,
-                  time: a.time.toDate()
-                })
-              })
-              doc.data().productRequests?.forEach((r: any) => {
-                productRequests.push({
-                  id: r.id,
-                  storeId: doc.id,
-                  name: r.name,
-                  country: r.country,
-                  weight: r.weight,
-                  price: r.price,
-                  imageUrl: r.imageUrl,
-                  time: r.time?.toDate()
-                })
-              })
-              doc.data().requests?.forEach((r: any) => {
-                storeRequests.push({
-                  storeId: doc.id,
-                  packId: r
-                })
-              })
-              doc.data().packRequests?.forEach((r: any) => {
-                packRequests.push({
-                  id: r.id,
-                  storeId: doc.id,
-                  siblingPackId: r.siblingPackId,
-                  name: r.name,
-                  price: r.price,
-                  imageUrl: r.imageUrl,
-                  withGift: r.withGift,
-                  gift: r.gift,
-                  subCount: r.subCount,
-                  time: r.time?.toDate()
-                })
+        const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
+          const stores: Store[] = []
+          const alarms: Alarm[] = []
+          const productRequests: ProductRequest[] = []
+          const storeRequests: StoreRequest[] = []
+          const packRequests: PackRequest[] = []
+          docs.forEach(doc => {
+            stores.push({
+              id: doc.id,
+              name: doc.data().name,
+              locationId: doc.data().locationId,
+              address: doc.data().address,
+              position: doc.data().position,
+              mobile: doc.data().mobile,
+            })
+            doc.data().alarms?.forEach((a: any) => {
+              alarms.push({
+                storeId: doc.id,
+                packId: a.packId,
+                type: a.type,
+                time: a.time.toDate()
               })
             })
-            dispatch({type: 'SET_STORES', payload: stores})
-            dispatch({type: 'SET_ALARMS', payload: alarms})
-            dispatch({type: 'SET_PRODUCT_REQUESTS', payload: productRequests})
-            dispatch({type: 'SET_STORE_REQUESTS', payload: storeRequests})
-            dispatch({type: 'SET_PACK_REQUESTS', payload: packRequests})
-          }, err => {
-            unsubscribeStores()
-          }) 
-        }
+            doc.data().productRequests?.forEach((r: any) => {
+              productRequests.push({
+                id: r.id,
+                storeId: doc.id,
+                name: r.name,
+                country: r.country,
+                weight: r.weight,
+                price: r.price,
+                imageUrl: r.imageUrl,
+                time: r.time?.toDate()
+              })
+            })
+            doc.data().requests?.forEach((r: any) => {
+              storeRequests.push({
+                storeId: doc.id,
+                packId: r
+              })
+            })
+            doc.data().packRequests?.forEach((r: any) => {
+              packRequests.push({
+                id: r.id,
+                storeId: doc.id,
+                siblingPackId: r.siblingPackId,
+                name: r.name,
+                price: r.price,
+                imageUrl: r.imageUrl,
+                withGift: r.withGift,
+                gift: r.gift,
+                subCount: r.subCount,
+                time: r.time?.toDate()
+              })
+            })
+          })
+          dispatch({type: 'SET_STORES', payload: stores})
+          dispatch({type: 'SET_ALARMS', payload: alarms})
+          dispatch({type: 'SET_PRODUCT_REQUESTS', payload: productRequests})
+          dispatch({type: 'SET_STORE_REQUESTS', payload: storeRequests})
+          dispatch({type: 'SET_PACK_REQUESTS', payload: packRequests})
+        }, err => {
+          unsubscribeStores()
+        }) 
       } else {
         dispatch({type: 'CLEAR_USER_INFO'})
         dispatch({type: 'LOGOUT'})

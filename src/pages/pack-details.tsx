@@ -5,9 +5,9 @@ import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage,
 import labels from '../data/labels'
 import {PackStore, Store} from '../data/types'
 import Footer from './footer'
-import { setup } from '../data/config'
+import { setup, randomColors } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { IonActionSheet, IonAlert, IonButton, IonCard, IonCardContent, IonCardHeader, IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
+import { IonActionSheet, IonAlert, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 
@@ -21,6 +21,7 @@ type ExtendedPackStore = PackStore & {
 }
 type ActionButton = {
   text: string,
+  cssClass?: string,
   handler(): void
 }
 const PackDetails = () => {
@@ -79,35 +80,42 @@ const PackDetails = () => {
   useEffect(() => {
     setActionButtons(() => {
       const buttons = []
+      let i = 0
       if (state.userInfo?.storeId) {
         if (!state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId)) {
           buttons.push({
             text: labels.newRequest,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => handleNewRequest()
           })
         }
         if (isAvailable) {
           buttons.push({
             text: labels.unAvailable,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => handleUnAvailable()
           })
           buttons.push({
             text: labels.changePrice,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => handleAvailable('c')
           })
         } else {
           buttons.push({
             text: labels.available,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => handleAvailable('n')
           })
         }
         if (!pack.subPackId) {
           buttons.push({
             text: labels.addPack,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => history.push(`/add-pack/${params.id}`)
           })
           buttons.push({
             text: labels.addGroup,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => history.push(`/add-group/${params.id}`)
           })
         }
@@ -115,24 +123,28 @@ const PackDetails = () => {
         if (!state.basket.find(p => p.id === params.id)) {
           buttons.push({
             text: labels.addToBasket,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => dispatch({type: 'ADD_TO_BASKET', payload: pack})
           })
         }
         if (!state.ratings.find(r => r.productId === pack.product.id)) {
           buttons.push({
             text: labels.rateProduct,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => setRatingOpened(true)
           })
         } 
         if (otherProducts.length > 0) {
           buttons.push({
             text: labels.otherProducts,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => history.push(`/hints/${pack.id}/type/a`)
           })
         }
         if (otherPacks.length > 0) {
           buttons.push({
             text: labels.otherPacks,
+            cssClass: randomColors[i++ % 5].name,
             handler: () => history.push(`/hints/${pack.id}/type/p`)
           })
         }
@@ -156,8 +168,8 @@ const PackDetails = () => {
       header: labels.newRequestTitle,
       message: labels.newRequestText,
       buttons: [
-        { text: 'Cancel', handler: () => deletePrice(false) },
-        { text: 'Ok', handler: () => deletePrice(true) },
+        {text: labels.cancel, handler: () => deletePrice(false)},
+        {text: labels.ok, handler: () => deletePrice(true)},
       ],
     })
   }
@@ -213,22 +225,28 @@ const PackDetails = () => {
       setError(getMessage(location.pathname, err))
     }
   }
+  
   if (!pack) return <IonPage><h1>loading...</h1></IonPage>
   return (
     <IonPage>
       <Header title={pack.product.name} />
-      <IonContent fullscreen className="ion-padding">
+      <IonContent fullscreen>
         <IonCard>
-          <img src={pack.imageUrl || pack.product.imageUrl} className="img-card" alt={labels.noImage} />
-          <IonCardHeader>
-            <p>{pack.price!.toFixed(2)}</p>
-            <p>{pack.name}</p>
-            <p>{pack.product.description}</p>
-          </IonCardHeader>
-          <IonCardContent>
-            <p>{productOfText(countryName, trademarkName)}</p>
-            <p><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></p>
-          </IonCardContent>
+          <IonGrid>
+            <IonRow>
+              <IonCol>{pack.name}</IonCol>
+              <IonCol className="ion-text-end">{pack.price!.toFixed(2)}</IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonImg src={pack.imageUrl || pack.product.imageUrl} alt={labels.noImage} />
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>{productOfText(countryName, trademarkName)}</IonCol>
+              <IonCol className="ion-text-end"><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></IonCol>
+            </IonRow>
+          </IonGrid>
         </IonCard>
         {state.user && 
           <IonFab vertical="top" horizontal="end" slot="fixed">
@@ -242,6 +260,7 @@ const PackDetails = () => {
             expand="block"
             color="success"
             routerLink="/login"
+            className="h-padding"
           >
             {labels.showPackStores}
           </IonButton>
@@ -294,21 +313,24 @@ const PackDetails = () => {
         />
         <IonActionSheet
           isOpen={ratingOpened}
-          onDidDismiss={() => setActionOpened(false)}
+          onDidDismiss={() => setRatingOpened(false)}
           buttons={[
             {
               text: labels.rateGood,
               icon: heartOutline,
+              cssClass: 'success',
               handler: () => handleRate(5)
             },
             {
               text: labels.rateMiddle,
               icon: heartHalfOutline,
+              cssClass: 'warning',
               handler: () => handleRate(3)
             },
             {
               text: labels.rateBad,
               icon: heartDislikeOutline,
+              cssClass: 'danger',
               handler: () => handleRate(1)
             },
           ]}

@@ -1,25 +1,33 @@
-import {useState, useEffect, ChangeEvent, useRef, useContext} from 'react'
-import {f7, Page, Navbar, List, ListInput, Fab, Icon, ListButton} from 'framework7-react'
-import {addProductRequest, showMessage, showError, getMessage} from '../data/actions'
+import {useState, useEffect, useRef, ChangeEvent, useContext} from 'react'
+import {getMessage, addPackRequest, addProductRequest} from '../data/actions'
 import labels from '../data/labels'
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, IonToggle, useIonToast } from '@ionic/react'
+import Header from './header'
+import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
+import { checkmarkOutline } from 'ionicons/icons'
 
-type Props = {
+type Params = {
   id: string
 }
-const AddProductRequest = (props: Props) => {
+const AddProductRequest = () => {
   const {state} = useContext(StateContext)
+  const params = useParams<Params>()
   const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [country, setCountry] = useState('')
   const [weight, setWeight] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
   const [price, setPrice] = useState('')
+  const [specialImage, setSpecialImage] = useState(false)
+  const [imageUrl, setImageUrl] = useState('')
   const [image, setImage] = useState<File>()
   const inputEl = useRef<HTMLInputElement | null>(null);
+  const history = useHistory()
+  const location = useLocation()
+  const [message] = useIonToast();
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
   }, [error])
@@ -57,69 +65,99 @@ const AddProductRequest = (props: Props) => {
         time: new Date()
       }
       addProductRequest(productRequest, image)
-      showMessage(labels.sendRequestSuccess)
-      f7.views.current.router.back()
+      message(labels.sendRequestSuccess, 3000)
+      history.goBack()
     } catch(err) {
-			setError(getMessage(f7.views.current.router.currentRoute.path, err))
+			setError(getMessage(location.pathname, err))
 		}
   }
   return (
-    <Page>
-      <Navbar title={labels.addProductRequest} backLink={labels.back} />
-      <List form inlineLabels>
-        <ListInput 
-          name="name" 
-          label={labels.name}
-          clearButton
-          autofocus
-          type="text" 
-          value={name} 
-          onChange={e => setName(e.target.value)}
-          onInputClear={() => setName('')}
-        />
-        <ListInput 
-          name="weight" 
-          label={labels.weightVolume}
-          clearButton
-          type="text" 
-          value={weight} 
-          onChange={e => setWeight(e.target.value)}
-          onInputClear={() => setWeight('')}
-        />
-        <ListInput 
-          name="country" 
-          label={labels.country}
-          clearButton
-          type="text" 
-          value={country} 
-          onChange={e => setCountry(e.target.value)}
-          onInputClear={() => setCountry('')}
-        />
-        <ListInput 
-          name="price" 
-          label={labels.price}
-          value={price}
-          clearButton
-          type="number" 
-          onChange={(e) => setPrice(e.target.value)}
-          onInputClear={() => setPrice('')}
-        />
-        <input 
-          ref={inputEl}
-          type="file" 
-          accept="image/*" 
-          style={{display: "none"}}
-          onChange={e => handleFileChange(e)}
-        />
-        <ListButton title={labels.setImage} onClick={onUploadClick} />
-        <img src={imageUrl} className="img-card" alt={labels.noImage} />
-      </List>
-      {name && country && weight && price && imageUrl &&
-        <Fab position="left-top" slot="fixed" color="green" className="top-fab" onClick={() => handleSubmit()}>
-          <Icon material="done"></Icon>
-        </Fab>
-      }
-    </Page>
+    <IonPage>
+      <Header title={labels.addProductRequest} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.name}
+            </IonLabel>
+            <IonInput 
+              value={name} 
+              type="text" 
+              autofocus
+              clearInput
+              onIonChange={e => setName(e.detail.value!)} 
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.weightVolume}
+            </IonLabel>
+            <IonInput 
+              value={weight} 
+              type="text" 
+              autofocus
+              clearInput
+              onIonChange={e => setWeight(e.detail.value!)} 
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.country}
+            </IonLabel>
+            <IonInput 
+              value={country} 
+              type="text" 
+              autofocus
+              clearInput
+              onIonChange={e => setCountry(e.detail.value!)} 
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.price}
+            </IonLabel>
+            <IonInput 
+              value={price} 
+              type="number" 
+              clearInput
+              onIonChange={e => setPrice(e.detail.value!)} 
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel>{labels.specialImage}</IonLabel>
+            <IonToggle checked={specialImage} onIonChange={() => setSpecialImage(s => !s)} />
+          </IonItem>
+          {specialImage &&
+            <input 
+              ref={inputEl}
+              type="file" 
+              accept="image/*" 
+              style={{display: "none"}}
+              onChange={e => handleFileChange(e)}
+            />
+          }
+          {specialImage &&
+            <IonButton 
+              expand="block" 
+              fill="clear" 
+              onClick={onUploadClick}
+            >
+              {labels.setImage}
+            </IonButton>
+          }
+          {specialImage &&
+            <img src={imageUrl} className="img-card" alt={labels.noImage} />
+          }
+        </IonList>
+        {name && country && weight && price && imageUrl &&
+          <IonFab vertical="top" horizontal="end" slot="fixed">
+            <IonFabButton onClick={handleSubmit}>
+              <IonIcon ios={checkmarkOutline} />
+            </IonFabButton>
+          </IonFab>
+        }
+      </IonContent>
+    </IonPage>
   )
 }
 export default AddProductRequest

@@ -1,25 +1,47 @@
 /* Your app styles here */
 /* Your app styles here */
 
+
+ion-item {
+  font-size: 1rem;
+}
+
 .sections {
-    margin: 1rem;
+  margin: 1rem;
 }
   
 .center {
   text-align: center;
 }
 
-.total-price {
-  margin: 20px;
+.h-padding {
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
-.order-button {
-  margin: 20px;
-  width: 10em;
+.primary {
+  --color: var(--ion-color-primary);
+  --button-color: var(--ion-color-primary);
 }
 
-.search-icon {
-  margin-top: 0.8rem;
+.tertiary {
+  --color: var(--ion-color-tertiary);
+  --button-color: var(--ion-color-tertiary);
+}
+
+.success {
+  --color: var(--ion-color-success);
+  --button-color: var(--ion-color-success);
+}
+
+.warning {
+  --color: var(--ion-color-warning);
+  --button-color: var(--ion-color-warning);
+}
+
+.danger {
+  --color: var(--ion-color-danger);
+  --button-color: var(--ion-color-danger);
 }
 
 .star {
@@ -53,15 +75,6 @@
   color: red;
 }
 
-.logo {
-  width: 120px;
-  margin-bottom: -10px;
-}
-
-.icons {
-  color: white;
-}
-
 .block-title {
   color: blue;
 }
@@ -70,14 +83,6 @@
   font-size: 1.2rem;
   color: blue;
   margin-right: 0.2rem;
-}
-
-.avatar {
-  width: 100px;
-}
-
-.section-label {
-  font-size: 1.2rem;
 }
 
 .img-card {
@@ -96,33 +101,8 @@
   margin-right: auto;
 }
 
-.top-fab {
-  top: 0px !important;
-}
-
-.total {
-  color: purple;
-}
-
-.fees {
-  color: red;
-}
-
-.discount {
-  color: green;
-}
-
-.net {
-  color: blue;
-}
-
 .card-title {
   text-align: center;
-  font-size: 1rem;
-  color: blue;
-}
-
-.navbar-inner {
   font-size: 1rem;
   color: blue;
 }
@@ -162,27 +142,8 @@
   color:orange;
 }
 
-.actions-button-text {
-  font-size: 1rem;
-  text-align: center;
-}
-
-.actions-button {
-  height: 3rem;
-}
-
-.note {
-  font-size: 0.9rem;
-  text-align: center;
-  color: red;
-}
-
 .selected {
   background-color: lightskyblue;
-}
-
-.toolbar-inner .link {
-  font-size: 0.8rem;
 }
 
 .card-footer {

@@ -1,11 +1,14 @@
 import {useContext, useState, useEffect} from 'react'
-import {Block, Page, Navbar, List, ListItem} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {productOfText} from '../data/actions'
 import {Pack} from '../data/types'
+import Footer from './footer'
+import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail } from '@ionic/react'
+import Header from './header'
+import { useParams } from 'react-router'
 
-type Props = {
+type Params = {
   id: string,
   type: string
 }
@@ -14,15 +17,16 @@ type ExtendedPack = Pack & {
   countryName: string,
   trademarkName?: string
 }
-const Hints = (props: Props) => {
+const Hints = () => {
   const {state} = useContext(StateContext)
-  const [pack] = useState(() => state.packs.find(p => p.id === props.id))
+  const params = useParams<Params>()
+  const [pack] = useState(() => state.packs.find(p => p.id === params.id))
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   useEffect(() => {
     setPacks(() => {
       const packs = state.packs.filter(p => 
-        (props.type === 'a' && p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId) ||
-        (props.type === 'p' && p.id !== pack?.id && p.product.id === pack?.product.id)
+        (params.type === 'a' && p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId) ||
+        (params.type === 'p' && p.id !== pack?.id && p.product.id === pack?.product.id)
       )
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
@@ -37,32 +41,36 @@ const Hints = (props: Props) => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)  
     })
-  }, [pack, state.packs, state.categories, state.trademarks, state.countries, props.type]) 
+  }, [pack, state.packs, state.categories, state.trademarks, state.countries, params.type]) 
   return(
-    <Page>
-      <Navbar title={props.type === 'a' ? labels.otherProducts : labels.otherPacks} backLink={labels.back} />
-      <Block>
-        <List mediaList>
-          {packs.length === 0 ? 
-            <ListItem title={labels.noData} />
+    <IonPage>
+      <Header title={params.type === 'a' ? labels.otherProducts : labels.otherPacks} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          {packs.length === 0 ?
+            <IonItem> 
+              <IonLabel>{labels.noData}</IonLabel>
+            </IonItem>
           : packs.map(p => 
-              <ListItem
-                link={`/pack-details/${p.id}/type/c`}
-                title={p.product.name}
-                subtitle={p.product.description}
-                text={p.name}
-                footer={`${labels.category}: ${p.categoryName}`}
-                after={p.price!.toFixed(2)}
-                key={p.id}
-              >
-                <img src={p.imageUrl || p.product.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
-              </ListItem>
+              <IonItem key={p.id} routerLink={`/pack-details/${p.id}/type/c`}>
+                <IonThumbnail slot="start">
+                  <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
+                </IonThumbnail>
+                <IonLabel>
+                  <div className="list-row1">{p.product.name}</div>
+                  <div className="list-row2">{p.product.description}</div>
+                  <div className="list-row3">{p.name}</div>
+                  <div className="list-row4">{productOfText(p.countryName, p.trademarkName)}</div>
+                  <div className="list-row5">{p.categoryName}</div>
+                </IonLabel>
+                <IonLabel slot="end" className="ion-text-end">{p.price!.toFixed(2)}</IonLabel>
+              </IonItem>    
             )
           }
-        </List>
-      </Block>
-    </Page>
+        </IonList>
+      </IonContent>
+      <Footer />
+    </IonPage>
   )
 }
 

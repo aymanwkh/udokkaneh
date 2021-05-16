@@ -24,7 +24,7 @@ const Packs = () => {
   const params = useParams<Params>()
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === params.id))
-  const [sortBy, setSortBy] = useState('')
+  const [sortBy, setSortBy] = useState('v')
   useEffect(() => {
     setPacks(() => {
       const children = params.type === 'a' ? getChildren(params.id, state.categories) : [params.id]
@@ -52,7 +52,7 @@ const Packs = () => {
         setPacks([...packs].sort((p1, p2) => p1.price! - p2.price!))
         break
       case 'r':
-        setPacks([...packs].sort((p1, p2) => p2.product.rating - p1.product.rating))
+        setPacks([...packs].sort((p1, p2) => (p2.product.rating * p2.product.ratingCount) - (p1.product.rating * p1.product.ratingCount)))
         break
       case 'v':
         setPacks([...packs].sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!))
