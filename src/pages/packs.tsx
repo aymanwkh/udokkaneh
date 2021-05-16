@@ -8,6 +8,7 @@ import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSelect, IonSelectOption, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { useParams } from 'react-router'
+import Fuse from "fuse.js";
 
 type ExtendedPack = Pack & {
   categoryName: string,
@@ -25,6 +26,7 @@ const Packs = () => {
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === params.id))
   const [sortBy, setSortBy] = useState('v')
+  const [data, setData] = useState<ExtendedPack[]>([])
   useEffect(() => {
     setPacks(() => {
       const children = params.type === 'a' ? getChildren(params.id, state.categories) : [params.id]
@@ -45,6 +47,21 @@ const Packs = () => {
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
   }, [state.packs, state.userInfo, params.id, params.type, state.categories, state.trademarks, state.countries, state.packStores])
+  useEffect(() => {
+    if (!state.searchText) {
+      setData(packs)
+      return
+    }
+    const options = {
+      includeScore: true,
+      findAllMatches: true,
+      threshold: 0.1,
+      keys: ['product.name', 'product.description', 'categoryName', 'trademarkName', 'countryName']
+    }
+    const fuse = new Fuse(packs, options);
+    const result = fuse.search(state.searchText);
+    setData(result.map(p => p.item));
+  }, [state.searchText, packs])
   const handleSorting = (sortByValue: string) => {
     setSortBy(sortByValue)
     switch(sortByValue){
@@ -62,10 +79,10 @@ const Packs = () => {
   }
   return(
     <IonPage>
-      <Header title={category?.name || labels.allProducts} />
+      <Header title={category?.name || labels.allProducts} withSearch/>
       <IonContent fullscreen className="ion-padding">
         <IonList>
-          {packs.length > 1 &&
+          {data.length > 1 &&
             <IonItem>
               <IonLabel>{labels.sortBy}</IonLabel>
               <IonSelect value={sortBy} interface="action-sheet" cancelText={labels.cancel} onIonChange={e => handleSorting(e.detail.value)}>
@@ -73,11 +90,11 @@ const Packs = () => {
               </IonSelect>
             </IonItem>
           }
-          {packs.length === 0 ?
+          {data.length === 0 ?
             <IonItem> 
               <IonLabel>{labels.noData}</IonLabel>
             </IonItem>
-          : packs.map(p => 
+          : data.map(p => 
               <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
                 <IonThumbnail slot="start">
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />

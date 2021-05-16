@@ -160,6 +160,7 @@ export type State = {
   stores: Store[],
   ratings: Rating[],
   productRequests: ProductRequest[]
+  searchText: string
 }
 
 export type Action = {
