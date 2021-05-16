@@ -86,9 +86,9 @@ const Packs = () => {
                   <div className="list-row1">{p.product.name}</div>
                   <div className="list-row2">{p.product.description}</div>
                   <div className="list-row3">{p.name}</div>
-                  <div className="list-row4">{p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</div>
+                  <div className="list-row4">{p.categoryName}</div>
                   <div className="list-row5">{productOfText(p.countryName, p.trademarkName)}</div>
-                  <div className="list-row6">{p.categoryName}</div>
+                  <div className="list-row6">{p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</div>
                 </IonLabel>
                 <IonLabel slot="end" className="ion-text-end">{p.price!.toFixed(2)}</IonLabel>
               </IonItem>    

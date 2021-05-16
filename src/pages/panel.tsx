@@ -44,7 +44,7 @@ const Panel = () => {
                 </IonItem>
                 <IonItem routerLink="/notifications">
                   <IonLabel>{labels.notifications}</IonLabel>
-                  <IonBadge color="danger" style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '35px'}}>{notificationsCount}</IonBadge>
+                  <IonBadge color="danger">{notificationsCount}</IonBadge>
                 </IonItem>
               </>
             : <IonItem routerLink='/login'>
