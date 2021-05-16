@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import {getMessage, registerUser} from '../data/actions'
 import labels from '../data/labels'
-import { IonButton, IonButtons, IonContent, IonFooter, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage, IonToolbar, useIonToast } from '@ionic/react'
+import { IonButton, IonButtons, IonContent, IonFooter, IonInput, IonItem, IonLabel, IonList, IonPage, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
 import { UserInfo } from '../data/types'
@@ -9,8 +9,6 @@ import { patterns } from '../data/config'
 
 const Register = () => {
   const [name, setName] = useState('')
-  const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
   const [storeName, setStoreName] = useState('')
@@ -24,6 +22,7 @@ const Register = () => {
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast();
+  const [loading, dismiss] = useIonLoading();
   useEffect(() => {
     setPasswordInvalid(!password || !patterns.password.test(password))
   }, [password])
@@ -33,32 +32,26 @@ const Register = () => {
   useEffect(() => {
     setMobileInvalid(!mobile || !patterns.mobile.test(mobile))
   }, [mobile])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
   const handleSetPosition = () => {
-    setInprocess(true)
+    loading()
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setInprocess(false)
+        dismiss()
         setPosition({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
       },
       () => {
-        setInprocess(false)
+        dismiss()
         setPositionError(true)
-        setError(labels.positionError)
+        message(labels.positionError, 3000)
       }
     );
   }
   const handleRegister = async () => {
     try{
-      setInprocess(true)
+      loading()
       let user: UserInfo = {
         mobile,
         name,
@@ -69,12 +62,12 @@ const Register = () => {
       if (type === 's') user.storeName = storeName
       if (positionError) user.address = address
       await registerUser(user)
-      setInprocess(false)
+      dismiss()
       message(type === 'n' ? labels.registerSuccess : labels.registerStoreOwnerSuccess, 3000)
       history.goBack() 
     } catch (err){
-      setInprocess(false)
-      setError(getMessage(location.pathname, err))
+      dismiss()
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   return (
@@ -172,10 +165,6 @@ const Register = () => {
           </IonButtons>
         </IonToolbar>
       </IonFooter>
-      <IonLoading
-        isOpen={inprocess}
-        message={labels.inprocess}
-      />
     </IonPage>
   )
 }

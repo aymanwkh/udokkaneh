@@ -17,7 +17,6 @@ const Basket = () => {
   const {state, dispatch} = useContext(StateContext)
   const [currentPack, setCurrentPack] = useState<Pack | undefined>(undefined)
   const [basket, setBasket] = useState<ExtendedPack[]>([])
-  const [error, setError] = useState('')
   const [actionOpened, setActionOpened] = useState(false);
   const history = useHistory()
   const location = useLocation()
@@ -37,12 +36,6 @@ const Basket = () => {
       })
     })
   }, [state.basket, state.stores, state.packs, state.categories, state.countries, state.trademarks])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
   const handleMore = (pack: Pack) => {
     setCurrentPack(pack)
     setActionOpened(true)
@@ -54,7 +47,7 @@ const Basket = () => {
       } 
       dispatch({type: 'DELETE_FROM_BASKET', payload: currentPack})
     } catch(err) {
-      setError(getMessage(location.pathname, err))
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   return(

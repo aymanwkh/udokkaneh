@@ -3,7 +3,7 @@ import { useState } from 'react'
 import labels from '../data/labels'
 
 type Props = {
-  title: string,
+  title?: string,
   withSearch?: boolean
 }
 const Header = (props: Props) => {
@@ -12,7 +12,7 @@ const Header = (props: Props) => {
     <IonHeader>
     <IonToolbar>
       <IonButtons slot="start">
-        <IonBackButton text={labels.back}/>
+        <IonBackButton text={labels.back} defaultHref="/" />
       </IonButtons>
       {props.withSearch && 
         <IonButtons slot="end" onClick={() => setVisible(true)}>

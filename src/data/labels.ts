@@ -191,7 +191,8 @@ const labels: Label = {
   salesmenCount: 'الموزعين',
   count: 'العدد',
   invalidCountWithoutGift: 'لا يوجد معني لعرض بنفس العبوة وبلا هدية',
-  specialImage: 'صورة خاصة؟'
+  specialImage: 'صورة خاصة؟',
+  invalidFile: 'ملف غير صحيح'
 }
 
 export default labels

@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import {getMessage, changePassword} from '../data/actions'
 import labels from '../data/labels'
-import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage, useIonToast } from '@ionic/react'
+import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonList, IonPage, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
 import { patterns } from '../data/config'
@@ -11,35 +11,26 @@ const ChangePassword = () => {
   const [oldPasswordInvalid, setOldPasswordInvalid] = useState(false)
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordInvalid, setNewPasswordInvalid] = useState(false)
-  const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast();
+  const [loading, dismiss] = useIonLoading();
   useEffect(() => {
     setOldPasswordInvalid(!patterns.password.test(oldPassword))
   }, [oldPassword])
   useEffect(() => {
     setNewPasswordInvalid(!patterns.password.test(newPassword))
   }, [newPassword])
-
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
-
   const handleSubmit = async () => {
     try{
-      setInprocess(true)
+      loading()
       await changePassword(oldPassword, newPassword)
-      setInprocess(false)
+      dismiss()
       message(labels.changePasswordSuccess, 3000)
       history.goBack()
     } catch (err){
-      setInprocess(false)
-      setError(getMessage(location.pathname, err))
+      dismiss()
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   return (
@@ -77,10 +68,6 @@ const ChangePassword = () => {
           <IonButton expand="block" fill="clear" onClick={handleSubmit}>{labels.submit}</IonButton>
         }
       </IonContent>
-      <IonLoading
-        isOpen={inprocess}
-        message={labels.inprocess}
-      />
     </IonPage>
   )
 }

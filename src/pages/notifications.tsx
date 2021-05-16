@@ -13,7 +13,6 @@ import { trashOutline } from 'ionicons/icons'
 
 const Notifications = () => {
   const {state} = useContext(StateContext)
-  const [error, setError] = useState('')
   const location = useLocation()
   const [message] = useIonToast();
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -23,18 +22,12 @@ const Notifications = () => {
   useEffect(() => {
     setNotifications(() => [...state.notifications].sort((n1, n2) => n1.time > n2.time ? -1 : 1))
   }, [state.notifications])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error])
   const handleDelete = (notificationId: string) => {
     try{
       deleteNotification(state.notifications, notificationId)
       message(labels.deleteSuccess, 3000) 
     } catch(err) {
-      setError(getMessage(location.pathname, err))
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   return(

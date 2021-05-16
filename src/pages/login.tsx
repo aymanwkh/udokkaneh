@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import {login, getMessage} from '../data/actions'
 import labels from '../data/labels'
-import { IonButton, IonButtons, IonContent, IonFooter, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage, IonToolbar, useIonToast } from '@ionic/react'
+import { IonButton, IonButtons, IonContent, IonFooter, IonInput, IonItem, IonLabel, IonList, IonPage, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -12,34 +12,26 @@ const Login = () => {
   const [mobile, setMobile] = useState('')
   const [passwordInvalid, setPasswordInvalid] = useState(true)
   const [mobileInvalid, setMobileInvalid] = useState(true)
-  const [error, setError] = useState('')
-  const [inprocess, setInprocess] = useState(false)
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast();
+  const [loading, dismiss] = useIonLoading();
   useEffect(() => {
     setPasswordInvalid(!password || !patterns.password.test(password))
   }, [password])
   useEffect(() => {
     setMobileInvalid(!mobile || !patterns.mobile.test(mobile))
   }, [mobile])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
-
   const handleLogin = async () => {
     try{
-      setInprocess(true)
+      loading()
       await login(mobile, password)
-      setInprocess(false)
+      dismiss()
       message(labels.loginSuccess, 3000)
       history.goBack()
     } catch (err){
-      setInprocess(false)
-      setError(getMessage(location.pathname, err))
+      dismiss()
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   return (
@@ -87,10 +79,6 @@ const Login = () => {
           </IonButtons>
         </IonToolbar>
       </IonFooter>
-      <IonLoading
-        isOpen={inprocess}
-        message={labels.inprocess}
-      />
     </IonPage>
   )
 }

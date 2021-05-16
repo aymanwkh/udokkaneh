@@ -14,25 +14,18 @@ const Categories = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
   const [categories, setCategories] = useState<Category[]>([])
-  const [inprocess, setInprocess] = useState(false)
-  const [currentCategory] = useState<Category>(() => state.categories.find(c => c.id === params.id)!)
+  const [currentCategory] = useState(() => state.categories.find(c => c.id === params.id))
   useEffect(() => {
     setCategories(() => {
       const categories = state.categories.filter(c => c.parentId === params.id)
       return categories.sort((c1, c2) => c1.ordering - c2.ordering)
     })
   }, [state.categories, params.id])
-  useEffect(() => {
-    if (state.packs.length === 0) {
-      setInprocess(true)
-    } else {
-      setInprocess(false)
-    }
-  }, [state.packs])
   let i = 0
   return (
     <IonPage>
-      <Header title={currentCategory.name} />
+      <IonLoading isOpen={state.categories.length === 0} message={labels.inprocess} />
+      <Header title={currentCategory?.name} />
       <IonContent fullscreen className="ion-padding">
         <IonButton 
           routerLink={`/packs/${params.id}/a`} 
@@ -56,10 +49,6 @@ const Categories = () => {
           </IonButton>
         )}
       </IonContent>
-      <IonLoading
-        isOpen={inprocess}
-        message={labels.inprocess}
-      />
     </IonPage>
   )
 

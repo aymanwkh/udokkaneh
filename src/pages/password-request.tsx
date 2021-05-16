@@ -11,19 +11,12 @@ const PasswordRequest = () => {
   const {state} = useContext(StateContext)
   const [mobile, setMobile] = useState('')
   const [mobileInvalid, setMobileInvalid] = useState(false)
-  const [error, setError] = useState('')
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast();
   useEffect(() => {
     setMobileInvalid(!mobile || !patterns.mobile.test(mobile))
   }, [mobile])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
   const handlePasswordRequest = () => {
     try{
       if (state.passwordRequests.find(r => r.mobile === mobile)) {
@@ -33,7 +26,7 @@ const PasswordRequest = () => {
       message(labels.sendSuccess, 3000)
       history.goBack()
     } catch (err){
-      setError(getMessage(location.pathname, err))
+      message(getMessage(location.pathname, err), 3000)
     }
   }
 

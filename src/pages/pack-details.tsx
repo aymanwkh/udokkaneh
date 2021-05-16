@@ -27,7 +27,6 @@ type ActionButton = {
 const PackDetails = () => {
   const {state, dispatch} = useContext(StateContext)
   const params = useParams<Params>()
-  const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
   const [isAvailable, setIsAvailable] = useState(false)
   const [otherProducts] = useState(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
@@ -71,12 +70,6 @@ const PackDetails = () => {
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
   useEffect(() => {
     setActionButtons(() => {
       const buttons = []
@@ -160,7 +153,7 @@ const PackDetails = () => {
       message(flag ? labels.addSuccess : labels.deleteSuccess, 3000)
       history.goBack()
     } catch(err) {
-      setError(getMessage(location.pathname, err))
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   const handleUnAvailable = () => {
@@ -181,7 +174,7 @@ const PackDetails = () => {
       message(labels.addSuccess, 3000)
       history.goBack()
     } catch(err) {
-      setError(getMessage(location.pathname, err))
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   const handleAddPackStore = (value: string) => {
@@ -210,7 +203,7 @@ const PackDetails = () => {
       message(transType === 'n' ? labels.addSuccess : labels.editSuccess, 3000)
       history.goBack()
     } catch(err) {
-      setError(getMessage(location.pathname, err))
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   const handleAvailable = (type: string) => {
@@ -222,7 +215,7 @@ const PackDetails = () => {
       rateProduct(pack?.product!, value, state.packs)
       message(labels.ratingSuccess, 3000)   
 		} catch (err){
-      setError(getMessage(location.pathname, err))
+      message(getMessage(location.pathname, err), 3000)
     }
   }
   

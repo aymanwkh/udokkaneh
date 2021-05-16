@@ -16,7 +16,6 @@ const StoreDetails = () => {
   const params = useParams<Params>()
   const [store, setStore] = useState(() => state.stores.find(s => s.id === params.storeId)!)
   const [actionOpened, setActionOpened] = useState(false);
-  const [error, setError] = useState('')
   const [message] = useIonToast();
   const location = useLocation()
   const history = useHistory()
@@ -24,12 +23,6 @@ const StoreDetails = () => {
   useEffect(() => {
     setStore(() => state.stores.find(s => s.id === params.storeId)!)
   }, [state.stores, params.storeId])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
   const handleAddAlarm = (type: string) => {
     alert({
       header: labels.confirmationTitle,
@@ -51,7 +44,7 @@ const StoreDetails = () => {
             message(labels.sendSuccess, 3000)
             history.goBack()
           } catch(err) {
-            setError(getMessage(location.pathname, err))
+            message(getMessage(location.pathname, err), 3000)
           }
         }},
       ],

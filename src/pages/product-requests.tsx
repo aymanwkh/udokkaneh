@@ -6,29 +6,21 @@ import Footer from './footer'
 import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { ProductRequest } from '../data/types'
-import { useHistory, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import { addOutline, trashOutline } from 'ionicons/icons'
 
 const ProductRequests = () => {
   const {state} = useContext(StateContext)
-  const [error, setError] = useState('')
   const [productRequests, setProductRequests] = useState<ProductRequest[]>([])
   const [message] = useIonToast();
   const location = useLocation()
   const [alert] = useIonAlert();
-  const history = useHistory()
   useEffect(() => {
     setProductRequests(() => {
       const productRequests = state.productRequests.filter(r => r.storeId === state.userInfo?.storeId)
       return productRequests.sort((r1, r2) => r1.time! > r2.time! ? 1 : -1)
     })
   }, [state.productRequests, state.userInfo])
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error, message])
   const handleDelete = (productRequest: ProductRequest) => {
     alert({
       header: labels.confirmationTitle,
@@ -40,7 +32,7 @@ const ProductRequests = () => {
             await deleteProductRequest(productRequest, state.productRequests)
             message(labels.deleteSuccess, 3000) 
           } catch(err) {
-            setError(getMessage(location.pathname, err))
+            message(getMessage(location.pathname, err), 3000)
           }    
         }},
       ],

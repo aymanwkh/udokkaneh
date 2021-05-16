@@ -11,7 +11,6 @@ const Home = () => {
   const {state} = useContext(StateContext)
   const [advert, setAdvert] = useState<Advert | undefined>(undefined)
   const [notificationsCount, setNotificationsCount] = useState(0)
-  const [inprocess, setInprocess] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
   useEffect(() => {
     setCategories(() => {
@@ -29,16 +28,10 @@ const Home = () => {
       setNotificationsCount(0)
     }
   }, [state.userInfo, state.notifications])
-  useEffect(() => {
-    if (state.categories.length === 0) {
-      setInprocess(true)
-    } else {
-      setInprocess(false)
-    }
-  }, [state.categories])
   let i = 0
   return (
     <IonPage>
+      <IonLoading isOpen={state.categories.length === 0} message={labels.inprocess} />
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -93,10 +86,6 @@ const Home = () => {
         </IonButton>
       )}
       </IonContent>
-      <IonLoading
-        isOpen={inprocess}
-        message={labels.inprocess}
-      />
       <Footer />
     </IonPage>
   );

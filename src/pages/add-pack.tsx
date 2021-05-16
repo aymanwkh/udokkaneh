@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext} from 'react'
+import {useState, useContext} from 'react'
 import {getMessage, addPackRequest} from '../data/actions'
 import labels from '../data/labels'
 import { IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
@@ -13,18 +13,11 @@ type Params = {
 const AddPack = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
-  const [error, setError] = useState('')
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast()
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error])
   const handleSubmit = () => {
     try{
       if (+price <= 0 || +price !== Number((+price).toFixed(2))) {
@@ -43,7 +36,7 @@ const AddPack = () => {
       message(labels.sendRequestSuccess, 3000)
       history.goBack()
     } catch(err) {
-			setError(getMessage(location.pathname, err))
+			message(getMessage(location.pathname, err), 3000)
 		}
   }
   return (

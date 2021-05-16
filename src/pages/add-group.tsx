@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, ChangeEvent, useContext} from 'react'
+import {useState, useRef, ChangeEvent, useContext} from 'react'
 import {getMessage, addPackRequest} from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, IonToggle, useIonToast } from '@ionic/react'
@@ -13,7 +13,6 @@ type Params = {
 const AddGroup = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
-  const [error, setError] = useState('')
   const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
   const [subCount, setSubCount] = useState('')
   const [price, setPrice] = useState('')
@@ -27,29 +26,26 @@ const AddGroup = () => {
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast();
-  useEffect(() => {
-    if (error) {
-      message(error, 3000)
-      setError('')
-    }
-  }, [error])
   const onUploadClick = () => {
     if (inputEl.current) inputEl.current.click();
   };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
-    const filename = files[0].name
-    if (filename.lastIndexOf('.') <= 0) {
-      setError(labels.invalidFile)
-      return
+    try {
+      const files = e.target.files
+      if (!files) return
+      const filename = files[0].name
+      if (filename.lastIndexOf('.') <= 0) {
+        throw new Error('invalidFile')
+      }
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        if (fileReader.result) setImageUrl(fileReader.result.toString())
+      })
+      fileReader.readAsDataURL(files[0])
+      setImage(files[0])
+    } catch (err) {
+      message(getMessage(location.pathname, err), 3000)
     }
-    const fileReader = new FileReader()
-    fileReader.addEventListener('load', () => {
-      if (fileReader.result) setImageUrl(fileReader.result.toString())
-    })
-    fileReader.readAsDataURL(files[0])
-    setImage(files[0])
   }
   const handleSubmit = () => {
     try{
@@ -77,7 +73,7 @@ const AddGroup = () => {
       message(labels.sendRequestSuccess, 3000)
       history.goBack()
     } catch(err) {
-			setError(getMessage(location.pathname, err))
+			message(getMessage(location.pathname, err), 3000)
 		}
   }
   return (
