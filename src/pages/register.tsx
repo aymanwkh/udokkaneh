@@ -1,8 +1,11 @@
 import {useState, useEffect} from 'react'
-import {f7, Page, Navbar, List, ListInput, Button, ListButton, Toolbar} from 'framework7-react'
-import {registerUser, showMessage, showError, getMessage} from '../data/actions'
+import {getMessage, registerUser} from '../data/actions'
 import labels from '../data/labels'
-import {UserInfo} from '../data/types'
+import { IonButton, IonButtons, IonContent, IonFooter, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage, IonToolbar, useIonToast } from '@ionic/react'
+import Header from './header'
+import { useHistory, useLocation } from 'react-router'
+import { UserInfo } from '../data/types'
+import { patterns } from '../data/config'
 
 const Register = () => {
   const [name, setName] = useState('')
@@ -11,80 +14,31 @@ const Register = () => {
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
   const [storeName, setStoreName] = useState('')
-  const [nameErrorMessage, setNameErrorMessage] = useState('')
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
-  const [mobileErrorMessage, setMobileErrorMessage] = useState('')
-  const [storeNameErrorMessage, setStoreNameErrorMessage] = useState('')
+  const [nameInvalid, setNameInvalid] = useState(true)
+  const [passwordInvalid, setPasswordInvalid] = useState(true)
+  const [mobileInvalid, setMobileInvalid] = useState(true)
   const [position, setPosition] = useState({lat: 0, lng: 0})
   const [positionError, setPositionError] = useState(false)
   const [address, setAddress] = useState('')
   const [type, setType] = useState('n')
+  const history = useHistory()
+  const location = useLocation()
+  const [message] = useIonToast();
   useEffect(() => {
-    const patterns = {
-      name: /^.{4,50}$/,
-    }
-    const validateName = (value: string) => {
-      if (patterns.name.test(value)){
-        setNameErrorMessage('')
-      } else {
-        setNameErrorMessage(labels.invalidName)
-      }
-    }  
-    if (name) validateName(name)
-  }, [name])
-  useEffect(() => {
-    const patterns = {
-      password: /^.{4}$/,
-    }
-    const validatePassword = (value: string) => {
-      if (patterns.password.test(value)){
-        setPasswordErrorMessage('')
-      } else {
-        setPasswordErrorMessage(labels.invalidPassword)
-      }
-    }
-    if (password) validatePassword(password)
+    setPasswordInvalid(!password || !patterns.password.test(password))
   }, [password])
   useEffect(() => {
-    const patterns = {
-      mobile: /^07[7-9][0-9]{7}$/
-    }
-    const validateMobile = (value: string) => {
-      if (patterns.mobile.test(value)){
-        setMobileErrorMessage('')
-      } else {
-        setMobileErrorMessage(labels.invalidMobile)
-      }
-    }
-    if (mobile) validateMobile(mobile)
+    setNameInvalid(!name || !patterns.name.test(name))
+  }, [name])
+  useEffect(() => {
+    setMobileInvalid(!mobile || !patterns.mobile.test(mobile))
   }, [mobile])
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
-  }, [error])
-    useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
-
-  useEffect(() => {
-    const patterns = {
-      name: /^.{4,50}$/,
-    }
-    const validateStoreName = (value: string) => {
-      if (patterns.name.test(value)){
-        setStoreNameErrorMessage('')
-      } else {
-        setStoreNameErrorMessage(labels.invalidName)
-      }
-    }  
-    if (storeName) validateStoreName(storeName)
-  }, [storeName])
+  }, [error, message])
   const handleSetPosition = () => {
     setInprocess(true)
     navigator.geolocation.getCurrentPosition(
@@ -116,96 +70,113 @@ const Register = () => {
       if (positionError) user.address = address
       await registerUser(user)
       setInprocess(false)
-      showMessage(type === 'n' ? labels.registerSuccess : labels.registerStoreOwnerSuccess)
-      f7.views.current.router.back()
-      f7.panel.close('right') 
+      message(type === 'n' ? labels.registerSuccess : labels.registerStoreOwnerSuccess, 3000)
+      history.goBack() 
     } catch (err){
       setInprocess(false)
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
   return (
-    <Page>
-      <Navbar title={labels.newUser} backLink={labels.back} />
-      <List form>
-        <ListInput
-          label={labels.name}
-          type="text"
-          placeholder={labels.namePlaceholder}
-          name="name"
-          clearButton
-          autofocus
-          value={name}
-          errorMessage={nameErrorMessage}
-          errorMessageForce
-          onChange={e => setName(e.target.value)}
-          onInputClear={() => setName('')}
-        />
-        <ListInput
-          label={labels.mobile}
-          type="number"
-          placeholder={labels.mobilePlaceholder}
-          name="mobile"
-          clearButton
-          value={mobile}
-          errorMessage={mobileErrorMessage}
-          errorMessageForce
-          onChange={e => setMobile(e.target.value)}
-          onInputClear={() => setMobile('')}
-        />
-        <ListInput
-          label={labels.password}
-          type="number"
-          placeholder={labels.passwordPlaceholder}
-          name="password"
-          clearButton
-          value={password}
-          errorMessage={passwordErrorMessage}
-          errorMessageForce
-          onChange={e => setPassword(e.target.value)}
-          onInputClear={() => setPassword('')}
-        />
-        {type === 's' &&
-          <ListInput
-            label={labels.storeName}
-            type="text"
-            placeholder={labels.namePlaceholder}
-            name="storeName"
-            clearButton
-            value={storeName}
-            errorMessage={storeNameErrorMessage}
-            errorMessageForce
-            onChange={e => setStoreName(e.target.value)}
-            onInputClear={() => setStoreName('')}
-          />
+    <IonPage>
+      <Header title={labels.newUser} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          <IonItem>
+            <IonLabel position="floating" color={nameInvalid ? 'danger' : ''}>
+              {labels.name}
+            </IonLabel>
+            <IonInput 
+              value={name} 
+              type="text" 
+              placeholder={labels.namePlaceholder}
+              autofocus
+              clearInput
+              onIonChange={e => setName(e.detail.value!)} 
+              color={nameInvalid ? 'danger' : ''}
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating" color={mobileInvalid ? 'danger' : ''}>
+              {labels.mobile}
+            </IonLabel>
+            <IonInput 
+              value={mobile} 
+              type="number" 
+              placeholder={labels.mobilePlaceholder}
+              clearInput
+              onIonChange={e => setMobile(e.detail.value!)} 
+              color={mobileInvalid ? 'danger' : ''}
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating" color={passwordInvalid ? 'danger' : ''}>
+              {labels.password}
+            </IonLabel>
+            <IonInput 
+              value={password} 
+              type="number" 
+              placeholder={labels.passwordPlaceholder}
+              clearInput
+              onIonChange={e => setPassword(e.detail.value!)} 
+              color={passwordInvalid ? 'danger' : ''}
+            />
+          </IonItem>
+          {type === 's' &&
+            <IonItem>
+              <IonLabel position="floating">
+                {labels.storeName}
+              </IonLabel>
+              <IonInput 
+                value={storeName} 
+                type="text" 
+                clearInput
+                onIonChange={e => setStoreName(e.detail.value!)} 
+              />
+            </IonItem>
+          }
+          {type !== 'd' && !positionError &&
+            <IonButton 
+              expand="block" 
+              fill="clear" 
+              onClick={handleSetPosition}
+            >
+              {labels.setPosition}
+            </IonButton>
+          }
+          {positionError && 
+            <IonItem>
+              <IonLabel position="floating">
+                {labels.address}
+              </IonLabel>
+              <IonInput 
+                value={address} 
+                type="text" 
+                clearInput
+                onIonChange={e => setAddress(e.detail.value!)} 
+              />
+            </IonItem>
+          }
+        </IonList>
+        {(position.lat || address || type ==='d') && (storeName || type !== 's') && !nameInvalid && !mobileInvalid && !passwordInvalid &&
+          <IonButton expand="block" fill="clear" onClick={handleRegister}>{labels.register}</IonButton>
         }
-        {type !== 'd' && !positionError &&
-          <ListButton 
-            title={labels.setPosition} 
-            onClick={handleSetPosition}
-          />
-        }
-        {positionError && 
-          <ListInput
-            label={labels.address}
-            type="text"
-            name="address"
-            clearButton
-            value={address}
-            onChange={e => setAddress(e.target.value)}
-            onInputClear={() => setAddress('')}
-          />
-        }
-      </List>
-      {name && mobile && password && (position.lat || address || type ==='d') && (storeName || type !== 's') && !nameErrorMessage && !mobileErrorMessage && !passwordErrorMessage && !storeNameErrorMessage &&
-        <Button text={labels.register} large onClick={handleRegister} />
-      }
-      <Toolbar bottom>
-        <Button text={labels.storeOwner} large onClick={() => setType('s')} />
-        <Button text={labels.salesman} large onClick={() => setType('d')} />
-      </Toolbar>
-
-    </Page>
+      </IonContent>
+      <IonFooter>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton fill="clear" onClick={() => setType('s')}>{labels.storeOwner}</IonButton>
+          </IonButtons>
+          <IonButtons slot="end">
+            <IonButton fill="clear" onClick={() => setType('d')}>{labels.salesman}</IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonFooter>
+      <IonLoading
+        isOpen={inprocess}
+        message={labels.inprocess}
+      />
+    </IonPage>
   )
 }
 export default Register

@@ -1,14 +1,17 @@
 import {useContext, useEffect, useState} from 'react'
-import {f7, Page, Navbar, Card, CardContent, CardHeader, CardFooter, Fab, Icon, Actions, ActionsButton, Preloader, List, ListItem, Button, Toolbar} from 'framework7-react'
 import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
-import {addPackStore, changePrice, deleteStorePack, addStoreRequest, showMessage, showError, getMessage, productOfText, rateProduct} from '../data/actions'
+import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct} from '../data/actions'
 import labels from '../data/labels'
 import {PackStore, Store} from '../data/types'
 import Footer from './footer'
 import { setup } from '../data/config'
+import { useHistory, useLocation, useParams } from 'react-router'
+import { IonActionSheet, IonAlert, IonButton, IonCard, IonCardContent, IonCardHeader, IonContent, IonFab, IonFabButton, IonIcon, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
+import Header from './header'
+import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 
-type Props = {
+type Params = {
   id: string,
   type: string
 }
@@ -16,10 +19,15 @@ type ExtendedPackStore = PackStore & {
   storeInfo: Store,
   storeLocation?: string
 }
-const PackDetails = (props: Props) => {
+type ActionButton = {
+  text: string,
+  handler(): void
+}
+const PackDetails = () => {
   const {state, dispatch} = useContext(StateContext)
+  const params = useParams<Params>()
   const [error, setError] = useState('')
-  const [pack] = useState(() => state.packs.find(p => p.id === props.id)!)
+  const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
   const [isAvailable, setIsAvailable] = useState(false)
   const [otherProducts] = useState(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
   const [otherPacks] = useState(() => state.packs.filter(pa => pa.id !== pack?.id && pa.product.id === pack?.product.id))
@@ -35,7 +43,13 @@ const PackDetails = (props: Props) => {
   const [bestPriceStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length)
   const [bestPriceNearStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price && state.stores.find(s => s.id === ps.storeId)?.locationId === storeLocation).length)
   const [salesmen] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && !ps.isRetail && ps.storeId !== state.userInfo?.storeId).length)
-
+  const history = useHistory()
+  const location = useLocation()
+  const [message] = useIonToast();
+  const [alert] = useIonAlert();
+  const [showAlert, setShowAlert] = useState(false)
+  const [transType, setTransType] = useState('')
+  const [actionButtons, setActionButtons] = useState<ActionButton[]>([])
   useEffect(() => {
     if (state.userInfo?.type === 'n') {
       setPackStores(() => {
@@ -58,206 +72,266 @@ const PackDetails = (props: Props) => {
   }, [state.packStores, state.userInfo, pack])
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
-  }, [error])
+  }, [error, message])
+  useEffect(() => {
+    setActionButtons(() => {
+      const buttons = []
+      if (state.userInfo?.storeId) {
+        if (!state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId)) {
+          buttons.push({
+            text: labels.newRequest,
+            handler: () => handleNewRequest()
+          })
+        }
+        if (isAvailable) {
+          buttons.push({
+            text: labels.unAvailable,
+            handler: () => handleUnAvailable()
+          })
+          buttons.push({
+            text: labels.changePrice,
+            handler: () => handleAvailable('c')
+          })
+        } else {
+          buttons.push({
+            text: labels.available,
+            handler: () => handleAvailable('n')
+          })
+        }
+        if (!pack.subPackId) {
+          buttons.push({
+            text: labels.addPack,
+            handler: () => history.push(`/add-pack/${params.id}`)
+          })
+          buttons.push({
+            text: labels.addGroup,
+            handler: () => history.push(`/add-group/${params.id}`)
+          })
+        }
+      } else {
+        if (!state.basket.find(p => p.id === params.id)) {
+          buttons.push({
+            text: labels.addToBasket,
+            handler: () => dispatch({type: 'ADD_TO_BASKET', payload: pack})
+          })
+        }
+        if (!state.ratings.find(r => r.productId === pack.product.id)) {
+          buttons.push({
+            text: labels.rateProduct,
+            handler: () => setRatingOpened(true)
+          })
+        } 
+        if (otherProducts.length > 0) {
+          buttons.push({
+            text: labels.otherProducts,
+            handler: () => history.push(`/hints/${pack.id}/type/a`)
+          })
+        }
+        if (otherPacks.length > 0) {
+          buttons.push({
+            text: labels.otherPacks,
+            handler: () => history.push(`/hints/${pack.id}/type/p`)
+          })
+        }
+      }
+      return buttons
+    })
+  }, [pack, params, state.userInfo, state.basket, state.ratings, state.storeRequests, isAvailable, dispatch, history, otherProducts, otherPacks])
   const deletePrice = (flag: boolean) => {
     try{
       const storePack = state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
       deleteStorePack(storePack, state.packStores, state.packs, flag)
       if (flag) dispatch({type: 'ADD_TO_BASKET', payload: pack})
-      showMessage(flag ? labels.addSuccess : labels.deleteSuccess)
-      f7.views.current.router.back()
+      message(flag ? labels.addSuccess : labels.deleteSuccess, 3000)
+      history.goBack()
     } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
   const handleUnAvailable = () => {
-    f7.dialog.confirm(labels.newRequestText, labels.newRequestTitle, () => deletePrice(true), () => deletePrice(false))
+    alert({
+      header: labels.newRequestTitle,
+      message: labels.newRequestText,
+      buttons: [
+        { text: 'Cancel', handler: () => deletePrice(false) },
+        { text: 'Ok', handler: () => deletePrice(true) },
+      ],
+    })
   }
 
   const handleNewRequest = () => {
     try{
       addStoreRequest(state.userInfo?.storeId!, pack?.id!)
       dispatch({type: 'ADD_TO_BASKET', payload: pack})
-      showMessage(labels.addSuccess)
-      f7.views.current.router.back()
+      message(labels.addSuccess, 3000)
+      history.goBack()
     } catch(err) {
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
+    }
+  }
+  const handleAddPackStore = (value: string) => {
+    try{
+      if (+value !== Number((+value).toFixed(2))) {
+        throw new Error('invalidPrice')
+      }
+      if (+value <= 0) {
+        throw new Error('invalidPrice')
+      }
+      if (transType === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
+        throw new Error('samePrice')
+      }
+      if (Math.abs(+value - pack?.price!) / pack?.price! <= setup.priceDiff) {
+        throw new Error('invalidChangePrice')
+      }
+      const storePack = {
+        packId: pack?.id!,
+        storeId: state.userInfo?.storeId!,
+        isRetail: state.userInfo?.type === 's',
+        price: +value,
+        time: new Date()
+      }
+      if (transType === 'n') addPackStore(storePack, state.packs, state.storeRequests)
+      else changePrice(storePack, state.packStores)
+      message(transType === 'n' ? labels.addSuccess : labels.editSuccess, 3000)
+      history.goBack()
+    } catch(err) {
+      setError(getMessage(location.pathname, err))
     }
   }
   const handleAvailable = (type: string) => {
-    f7.dialog.prompt(labels.price, labels.enterPrice, value => {
-      try{
-        if (+value !== Number((+value).toFixed(2))) {
-          throw new Error('invalidPrice')
-        }
-        if (+value <= 0) {
-          throw new Error('invalidPrice')
-        }
-        if (type === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
-          throw new Error('samePrice')
-        }
-        if (Math.abs(+value - pack?.price!) / pack?.price! <= setup.priceDiff) {
-          throw new Error('invalidChangePrice')
-        }
-        const storePack = {
-          packId: pack?.id!,
-          storeId: state.userInfo?.storeId!,
-          isRetail: state.userInfo?.type === 's',
-          price: +value,
-          time: new Date()
-        }
-        if (type === 'n') addPackStore(storePack, state.packs, state.storeRequests)
-        else changePrice(storePack, state.packStores)
-        showMessage(type === 'n' ? labels.addSuccess : labels.editSuccess)
-        f7.views.current.router.back()
-      } catch(err) {
-        setError(getMessage(f7.views.current.router.currentRoute.path, err))
-      }
-    })
+    setTransType(type)
+    setShowAlert(true)
   }
   const handleRate = (value: number) => {
     try{
       rateProduct(pack?.product!, value, state.packs)
-      showMessage(labels.ratingSuccess)   
+      message(labels.ratingSuccess, 3000)   
 		} catch (err){
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
-  if (!pack) return <Page><Preloader /></Page>
+  if (!pack) return <IonPage><h1>loading...</h1></IonPage>
   return (
-    <Page>
-      <Navbar title={pack.product.name} backLink={labels.back} />
-      <Card>
-        <CardHeader className="card-header">
-          <div className="price">
-            {pack.price!.toFixed(2)}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="card-title">{pack.name}</p>
+    <IonPage>
+      <Header title={pack.product.name} />
+      <IonContent fullscreen className="ion-padding">
+        <IonCard>
           <img src={pack.imageUrl || pack.product.imageUrl} className="img-card" alt={labels.noImage} />
-          <p className="card-title">{pack.product.description}</p>
-        </CardContent>
-        <CardFooter>
-          <p>{productOfText(countryName, trademarkName)}</p>
-          <p><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></p>
-        </CardFooter>
-      </Card>
-      {state.user && 
-        <Fab position="left-top" slot="fixed" color="red" className="top-fab" onClick={() => setActionOpened(true)}>
-          <Icon material="menu" />
-        </Fab>
-      }
-      {!state.user && 
-        <Button 
-          text={labels.showPackStores}
-          large 
-          fill 
-          className="sections"
-          color="green"
-          href="/login/"
+          <IonCardHeader>
+            <p>{pack.price!.toFixed(2)}</p>
+            <p>{pack.name}</p>
+            <p>{pack.product.description}</p>
+          </IonCardHeader>
+          <IonCardContent>
+            <p>{productOfText(countryName, trademarkName)}</p>
+            <p><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} /></p>
+          </IonCardContent>
+        </IonCard>
+        {state.user && 
+          <IonFab vertical="top" horizontal="end" slot="fixed">
+            <IonFabButton onClick={() => setActionOpened(true)}>
+              <IonIcon ios={menuOutline} />
+            </IonFabButton>
+          </IonFab>
+        }
+        {!state.user && 
+          <IonButton 
+            expand="block"
+            color="success"
+            routerLink="/login"
+          >
+            {labels.showPackStores}
+          </IonButton>
+        }
+        {state.userInfo?.type === 'n' &&
+          <IonList>
+            {packStores.map((p, i) => 
+              <IonItem key={i} routerLink={`/store-details/${p.storeId}/${p.packId}`}>
+                <IonLabel>
+                  <div className="list-row1">{p.storeInfo.name}</div>
+                  <div className="list-row2">{p.storeLocation || p.storeInfo.address}</div>
+                </IonLabel>
+                <IonLabel slot="end" className="ion-text-end">{p.price.toFixed(2)}</IonLabel>
+              </IonItem>
+            )}
+          </IonList>
+        }
+        {state.user && state.userInfo?.type !== 'n' &&
+          <IonList>
+            <IonItem>
+              <IonLabel>{labels.myPrice}</IonLabel>
+              <IonLabel slot="end" className="ion-text-end">{myPrice?.toFixed(2)}</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>{labels.storesCount}</IonLabel>
+              <IonLabel slot="end" className="ion-text-end">{stores.toString()}</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>{labels.nearBy}</IonLabel>
+              <IonLabel slot="end" className="ion-text-end">{nearStores.toString()}</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>{labels.bestStoresCount}</IonLabel>
+              <IonLabel slot="end" className="ion-text-end">{bestPriceStores.toString()}</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>{labels.bestStoresNearByCount}</IonLabel>
+              <IonLabel slot="end" className="ion-text-end">{bestPriceNearStores.toString()}</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>{labels.salesmenCount}</IonLabel>
+              <IonLabel slot="end" className="ion-text-end">{salesmen.toString()}</IonLabel>
+            </IonItem>
+          </IonList>
+        }
+        <IonActionSheet
+          isOpen={actionOpened}
+          onDidDismiss={() => setActionOpened(false)}
+          buttons={actionButtons}
         />
-      }
-      {state.userInfo?.type === 'n' &&
-        <List mediaList>
-          {packStores.map((p, i) => 
-            <ListItem 
-              link={`/store-details/${p.storeId}/${p.packId}`}
-              title={p.storeInfo.name}
-              subtitle={p.storeLocation || p.storeInfo.address}
-              after={p.price.toFixed(2)} 
-              key={i} 
-            />
-          )}
-        </List>
-      }
-      {state.userInfo?.type !== 'n' &&
-        <List mediaList>
-          <ListItem title={labels.myPrice} after={myPrice?.toFixed(2)} />
-          <ListItem title={labels.storesCount} after={stores.toString()} />
-          <ListItem title={labels.nearBy} after={nearStores.toString()} />
-          <ListItem title={labels.bestStoresCount} after={bestPriceStores.toString()} />
-          <ListItem title={labels.bestStoresNearByCount} after={bestPriceNearStores.toString()} />
-          <ListItem title={labels.salesmenCount} after={salesmen.toString()} />
-        </List>
-      }
-      <Actions opened={actionOpened} onActionsClosed={() => setActionOpened(false)}>
-        {!state.userInfo?.storeId &&
-          <>
-            {!state.basket.find(p => p.id === props.id) && 
-              <ActionsButton onClick={() => dispatch({type: 'ADD_TO_BASKET', payload: pack})}>
-                {labels.addToBasket}
-              </ActionsButton>
-           }
-            {!state.ratings.find(r => r.productId === pack.product.id) && 
-              <ActionsButton onClick={() => setRatingOpened(true)}>
-                {labels.rateProduct}
-              </ActionsButton>
-            }
-            {otherProducts.length > 0 &&
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/a`)}>
-                {labels.otherProducts}
-              </ActionsButton>
-            }
-            {otherPacks.length > 0 &&
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/hints/${pack.id}/type/p`)}>
-                {labels.otherPacks}
-              </ActionsButton>
-            }
-          </>
-        }
-        {state.userInfo?.storeId && 
-          <>
-            {!state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) &&
-              <ActionsButton onClick={handleNewRequest}>
-                {labels.newRequest}
-              </ActionsButton>
-            }
-            {isAvailable && <>
-              <ActionsButton onClick={handleUnAvailable}>
-                {labels.unAvailable}
-              </ActionsButton>
-              <ActionsButton onClick={() => handleAvailable('c')}>
-                {labels.changePrice}
-              </ActionsButton>
-            </>}
-            {!isAvailable &&
-              <ActionsButton onClick={() => handleAvailable('n')}>
-                {labels.available}
-              </ActionsButton>
-            }
-            {!pack.subPackId && <>
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-pack/${props.id}`)}>
-                {labels.addPack}
-              </ActionsButton>
-              <ActionsButton onClick={() => f7.views.current.router.navigate(`/add-group/${props.id}`)}>
-                {labels.addGroup}
-              </ActionsButton>
-            </>}
-          </>
-        }
-      </Actions>
-      <Actions opened={ratingOpened} onActionsClosed={() => setActionOpened(false)}>
-        <ActionsButton onClick={() => handleRate(5)}>
-          {labels.rateGood}
-          <Icon material="thumb_up" color="green" style={{margin: '5px'}}></Icon>
-        </ActionsButton>
-        <ActionsButton onClick={() => handleRate(3)}>
-          {labels.rateMiddle}
-          <Icon material="thumbs_up_down" color="blue" style={{margin: '5px'}}></Icon>
-        </ActionsButton>
-        <ActionsButton onClick={() => handleRate(1)}>
-          {labels.rateBad}
-          <Icon material="thumb_down" color="red" style={{margin: '5px'}}></Icon>
-        </ActionsButton>
-      </Actions>
-      <Toolbar bottom>
-        <Footer />
-      </Toolbar>
-    </Page>
+        <IonActionSheet
+          isOpen={ratingOpened}
+          onDidDismiss={() => setActionOpened(false)}
+          buttons={[
+            {
+              text: labels.rateGood,
+              icon: heartOutline,
+              handler: () => handleRate(5)
+            },
+            {
+              text: labels.rateMiddle,
+              icon: heartHalfOutline,
+              handler: () => handleRate(3)
+            },
+            {
+              text: labels.rateBad,
+              icon: heartDislikeOutline,
+              handler: () => handleRate(1)
+            },
+          ]}
+        />
+      </IonContent>
+      <IonAlert
+        isOpen={showAlert}
+        onDidDismiss={() => setShowAlert(false)}
+        header={labels.enterPrice}
+        inputs={[{name: 'price', type: 'number'}]}
+        buttons={[
+          {
+            text: 'Cancel',
+            cssClass: 'secondary',
+          },
+          {
+            text: 'Ok',
+            handler: (price) => handleAddPackStore(price)
+          }
+        ]}
+      />
+      <Footer />
+    </IonPage>
   )
 }
 

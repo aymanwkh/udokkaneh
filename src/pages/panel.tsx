@@ -1,12 +1,15 @@
-import {useContext, useState, useEffect} from 'react'
-import {f7, Page, Navbar, List, ListItem} from 'framework7-react'
-import {StateContext } from '../data/state-provider'
-import {logout} from '../data/actions'
-import labels from '../data/labels'
+import {IonContent, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle} from '@ionic/react';
+import { useHistory } from 'react-router-dom';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { StateContext } from '../data/state-provider';
+import { logout } from '../data/actions';
+import labels from '../data/labels';
 
 const Panel = () => {
   const {state, dispatch} = useContext(StateContext)
   const [notificationsCount, setNotificationsCount] = useState(0)
+  const menuEl = useRef<HTMLIonMenuElement | null>(null);
+  const history = useHistory()
   useEffect(() => {
     let notifications = 0, alarms = 0
     if (state.userInfo) {
@@ -20,22 +23,30 @@ const Panel = () => {
   const handleLogout = () => {
     logout()
     dispatch({type: 'LOGOUT'})
-    f7.views.main.router.navigate('/home/', {reloadAll: true})
-    f7.panel.close('right') 
+    history.push('/')
+    if (menuEl.current) menuEl.current.close()
     dispatch({type: 'CLEAR_BASKET'})
   }
-  return(
-    <Page>
-      <Navbar title={state.user ? `${labels.loginSuccess} ${state.userInfo?.name}` : labels.mainPanelTitle} />
-      <List>
-        {state.user ? <ListItem link="#" title={labels.logout} onClick={() => handleLogout()} />
-        : <ListItem link="/login/" title={labels.login} />}
-        {state.user && <ListItem link="/change-password/" title={labels.changePassword} />}
-        {state.user && <ListItem link="/notifications/" title={labels.notifications} badge={notificationsCount} badgeColor="red" view="#main-view" panelClose />}
-        {state.user && state.userInfo?.storeId && <ListItem link="/packs/0/s" title={labels.myPacks} view="#main-view" panelClose />}
-        {state.user && state.userInfo?.storeId && <ListItem link="/product-requests/" title={labels.productRequests} view="#main-view" panelClose />}
-      </List>
-    </Page>
-  )
-}
-export default Panel
+
+  return (
+    <IonMenu contentId="main" type="overlay" ref={menuEl}>
+      <IonContent>
+        <IonList>
+          <IonListHeader>{state.user ? `${labels.loginSuccess} ${state.userInfo?.name}` : labels.mainPanelTitle}</IonListHeader>
+          <IonMenuToggle autoHide={false}>
+            {state.user ?
+              <IonItem href="#" onClick={handleLogout}>
+                <IonLabel>{labels.logout}</IonLabel>
+              </IonItem>
+            : <IonItem routerLink='/login'>
+                <IonLabel>{labels.login}</IonLabel>
+              </IonItem>
+            }
+          </IonMenuToggle>
+        </IonList>
+      </IonContent>
+    </IonMenu>
+  );
+};
+
+export default Panel;

@@ -1,32 +1,34 @@
 import {useContext, useState, useEffect} from 'react'
-import {Block, Page, Navbar, List, ListItem, Searchbar, NavRight, Link, Actions, ActionsButton, ActionsLabel, Toolbar} from 'framework7-react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {sortByList} from '../data/config'
 import {getChildren, productOfText} from '../data/actions'
 import {Pack} from '../data/types'
 import Footer from './footer'
+import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSelect, IonSelectOption, IonThumbnail } from '@ionic/react'
+import Header from './header'
+import { useParams } from 'react-router'
 
-type Props = {
-  id: string,
-  type: string
-}
 type ExtendedPack = Pack & {
   categoryName: string,
   countryName: string,
   trademarkName?: string,
   myPrice: number
 }
-const Packs = (props: Props) => {
+type Params = {
+  id: string,
+  type: string
+}
+const Packs = () => {
   const {state} = useContext(StateContext)
+  const params = useParams<Params>()
   const [packs, setPacks] = useState<ExtendedPack[]>([])
-  const [category] = useState(() => state.categories.find(category => category.id === props.id))
-  const [sortBy, setSortBy] = useState(() => sortByList.find(s => s.id === 'v'))
-  const [actionOpened, setActionOpened] = useState(false);
+  const [category] = useState(() => state.categories.find(category => category.id === params.id))
+  const [sortBy, setSortBy] = useState('')
   useEffect(() => {
     setPacks(() => {
-      const children = props.type === 'a' ? getChildren(props.id, state.categories) : [props.id]
-      const packs = state.packs.filter(p => (props.type === 's' && state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)) || (p.price! > 0 && children.includes(p.product.categoryId)))
+      const children = params.type === 'a' ? getChildren(params.id, state.categories) : [params.id]
+      const packs = state.packs.filter(p => (params.type === 's' && state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)) || (p.price! > 0 && children.includes(p.product.categoryId)))
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
@@ -42,9 +44,9 @@ const Packs = (props: Props) => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, props.id, props.type, state.categories, state.trademarks, state.countries, state.packStores])
+  }, [state.packs, state.userInfo, params.id, params.type, state.categories, state.trademarks, state.countries, state.packStores])
   const handleSorting = (sortByValue: string) => {
-    setSortBy(() => sortByList.find(s => s.id === sortByValue))
+    setSortBy(sortByValue)
     switch(sortByValue){
       case 'p':
         setPacks([...packs].sort((p1, p2) => p1.price! - p2.price!))
@@ -59,65 +61,43 @@ const Packs = (props: Props) => {
     }
   }
   return(
-    <Page>
-      <Navbar title={category?.name || labels.allProducts} backLink={labels.back}>
-        <NavRight>
-          <Link searchbarEnable=".searchbar" iconMaterial="search"></Link>
-        </NavRight>
-        <Searchbar
-          className="searchbar"
-          searchContainer=".search-list"
-          searchIn=".item-inner"
-          clearButton
-          expandable
-          placeholder={labels.search}
-        />
-      </Navbar>
-
-      <Block>
-        <List className="searchbar-not-found">
-          <ListItem title={labels.noData} />
-        </List>
-        <List mediaList className="search-list searchbar-found">
+    <IonPage>
+      <Header title={category?.name || labels.allProducts} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
           {packs.length > 1 &&
-            <ListItem 
-              title={labels.sortBy} 
-              after={sortBy?.name}
-              onClick={() => setActionOpened(true)}
-            />
+            <IonItem>
+              <IonLabel>{labels.sortBy}</IonLabel>
+              <IonSelect value={sortBy} interface="action-sheet" cancelText={labels.cancel} onIonChange={e => handleSorting(e.detail.value)}>
+                {sortByList.map(s => <IonSelectOption key={s.id} value={s.id}>{s.name}</IonSelectOption>)}
+              </IonSelect>
+            </IonItem>
           }
           {packs.length === 0 ?
-            <ListItem title={labels.noData} />
+            <IonItem> 
+              <IonLabel>{labels.noData}</IonLabel>
+            </IonItem>
           : packs.map(p => 
-              <ListItem
-                link={`/pack-details/${p.id}`}
-                title={p.product.name}
-                subtitle={p.product.description}
-                text={p.name}
-                footer={p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}
-                after={p.price!.toFixed(2)}
-                key={p.id}
-              >
-                <img src={p.imageUrl || p.product.imageUrl} slot="media" className="img-list" alt={labels.noImage} />
-                <div className="list-subtext1">{productOfText(p.countryName, p.trademarkName)}</div>
-                <div className="list-subtext2">{p.categoryName}</div>
-              </ListItem>
-              
+              <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
+                <IonThumbnail slot="start">
+                  <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
+                </IonThumbnail>
+                <IonLabel>
+                  <div className="list-row1">{p.product.name}</div>
+                  <div className="list-row2">{p.product.description}</div>
+                  <div className="list-row3">{p.name}</div>
+                  <div className="list-row4">{p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</div>
+                  <div className="list-row5">{productOfText(p.countryName, p.trademarkName)}</div>
+                  <div className="list-row6">{p.categoryName}</div>
+                </IonLabel>
+                <IonLabel slot="end" className="ion-text-end">{p.price!.toFixed(2)}</IonLabel>
+              </IonItem>    
             )
           }
-        </List>
-      </Block>
-      <Actions opened={actionOpened}>
-        <ActionsLabel>{labels.sortBy}</ActionsLabel>
-        {sortByList.map(o => 
-          o.id === sortBy?.id ? ''
-          : <ActionsButton key={o.id} onClick={() => handleSorting(o.id)}>{o.name}</ActionsButton>
-        )}
-      </Actions>
-      <Toolbar bottom>
-        <Footer />
-      </Toolbar>
-    </Page>
+        </IonList>
+      </IonContent>
+      <Footer />
+    </IonPage>
   )
 }
 

@@ -11,9 +11,9 @@ export const randomColors = [
 ]
 
 export const sortByList = [
-  {id: 'p', name: 'اﻷقل سعرا'},
-  {id: 'r', name: 'اﻷفضل في التقييم'},
-  {id: 'v', name: 'اﻷفضل قيمة (السعر/الوزن)'},
+  {id: 'p', name: 'السعر'},
+  {id: 'r', name: 'التقييم'},
+  {id: 'v', name: 'القيمة للوزن'},
 ]
 
 export const units = [

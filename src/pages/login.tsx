@@ -1,102 +1,97 @@
 import {useState, useEffect} from 'react'
-import {f7, Page, Navbar, List, ListInput, Button, Link, Toolbar} from 'framework7-react'
-import {login, showMessage, showError, getMessage} from '../data/actions'
+import {login, getMessage} from '../data/actions'
 import labels from '../data/labels'
+import { IonButton, IonButtons, IonContent, IonFooter, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage, IonToolbar, useIonToast } from '@ionic/react'
+import Header from './header'
+import { useHistory, useLocation } from 'react-router'
+import { Link } from 'react-router-dom'
+import { patterns } from '../data/config'
 
 const Login = () => {
   const [password, setPassword] = useState('')
   const [mobile, setMobile] = useState('')
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
-  const [mobileErrorMessage, setMobileErrorMessage] = useState('')
+  const [passwordInvalid, setPasswordInvalid] = useState(true)
+  const [mobileInvalid, setMobileInvalid] = useState(true)
   const [error, setError] = useState('')
   const [inprocess, setInprocess] = useState(false)
+  const history = useHistory()
+  const location = useLocation()
+  const [message] = useIonToast();
   useEffect(() => {
-    const patterns = {
-      password: /^.{4}$/,
-    }
-    const validatePassword = (value: string) => {
-      if (patterns.password.test(value)){
-        setPasswordErrorMessage('')
-      } else {
-        setPasswordErrorMessage(labels.invalidPassword)
-      }
-    }
-    if (password) validatePassword(password)
+    setPasswordInvalid(!password || !patterns.password.test(password))
   }, [password])
   useEffect(() => {
-    const patterns = {
-      mobile: /^07[7-9][0-9]{7}$/
-    }
-    const validateMobile = (value: string) => {
-      if (patterns.mobile.test(value)){
-        setMobileErrorMessage('')
-      } else {
-        setMobileErrorMessage(labels.invalidMobile)
-      }
-    }
-    if (mobile) validateMobile(mobile)
+    setMobileInvalid(!mobile || !patterns.mobile.test(mobile))
   }, [mobile])
   useEffect(() => {
     if (error) {
-      showError(error)
+      message(error, 3000)
       setError('')
     }
-  }, [error])
-  useEffect(() => {
-    if (inprocess) {
-      f7.dialog.preloader(labels.inprocess)
-    } else {
-      f7.dialog.close()
-    }
-  }, [inprocess])
+  }, [error, message])
 
   const handleLogin = async () => {
     try{
       setInprocess(true)
       await login(mobile, password)
       setInprocess(false)
-      showMessage(labels.loginSuccess)
-      f7.views.current.router.back()
-      f7.panel.close('right') 
+      message(labels.loginSuccess, 3000)
+      history.goBack()
     } catch (err){
       setInprocess(false)
-      setError(getMessage(f7.views.current.router.currentRoute.path, err))
+      setError(getMessage(location.pathname, err))
     }
   }
   return (
-    <Page>
-      <Navbar title={labels.login} backLink={labels.back} />
-      <List form>
-        <ListInput
-          label={labels.mobile}
-          type="number"
-          name="mobile"
-          clearButton
-          autofocus
-          errorMessage={mobileErrorMessage}
-          errorMessageForce
-          onChange={e => setMobile(e.target.value)}
-          onInputClear={() => setMobile('')}
-        />
-        <ListInput
-          label={labels.password}
-          type="number"
-          name="password"
-          clearButton
-          errorMessage={passwordErrorMessage}
-          errorMessageForce
-          onChange={e => setPassword(e.target.value)}
-          onInputClear={() => setPassword('')}
-        />
-      </List>
-      {!mobile || !password || mobileErrorMessage || passwordErrorMessage ? '' : 
-        <Button text={labels.login} large onClick={() => handleLogin()} />
-      }
-      <Toolbar bottom>
-        <Link href="/register/">{labels.newUser}</Link>
-        <Link href="/password-request/">{labels.forgetPassword}</Link>
-      </Toolbar>
-    </Page>
+    <IonPage>
+      <Header title={labels.login} />
+      <IonContent fullscreen className="ion-padding">
+        <IonList>
+          <IonItem>
+            <IonLabel position="floating" color={mobileInvalid ? 'danger' : ''}>
+              {labels.mobile}
+            </IonLabel>
+            <IonInput 
+              value={mobile} 
+              type="number" 
+              autofocus
+              clearInput
+              onIonChange={e => setMobile(e.detail.value!)} 
+              color={mobileInvalid ? 'danger' : ''}
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating" color={passwordInvalid ? 'danger' : ''}>
+              {labels.password}
+            </IonLabel>
+            <IonInput 
+              value={password} 
+              type="number" 
+              clearInput
+              onIonChange={e => setPassword(e.detail.value!)} 
+              color={passwordInvalid ? 'danger' : ''}
+            />
+          </IonItem>
+        </IonList>
+        {!mobileInvalid && passwordInvalid && 
+          <IonButton expand="block" fill="clear" onClick={handleLogin}>{labels.login}</IonButton>
+        }
+      </IonContent>
+      <IonFooter>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <Link to="/register">{labels.newUser}</Link>
+          </IonButtons>
+          <IonButtons slot="end">
+            <Link to="/password-request">{labels.forgetPassword}</Link>
+          </IonButtons>
+        </IonToolbar>
+      </IonFooter>
+      <IonLoading
+        isOpen={inprocess}
+        message={labels.inprocess}
+      />
+    </IonPage>
   )
 }
 export default Login

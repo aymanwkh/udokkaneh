@@ -1,15 +1,24 @@
-import {useContext, useState, useEffect} from 'react'
-import {f7, Page, Navbar, NavLeft, NavTitle, Link, Block, Button, NavTitleLarge, Toolbar} from 'framework7-react'
-import MainCategories from './main-categories'
-import {StateContext} from '../data/state-provider'
-import {Advert} from '../data/types'
-import labels from '../data/labels'
-import Footer from './footer'
+import { IonButtons, IonContent, IonHeader, IonLoading , IonMenuButton, IonPage, IonTitle, IonToolbar, IonBadge, IonButton } from '@ionic/react';
+import { useContext, useEffect, useState } from 'react';
+import labels from '../data/labels';
+import { StateContext } from '../data/state-provider';
+import { Advert } from '../data/types';
+import Footer from './footer';
+import {randomColors} from '../data/config'
+import {Category} from '../data/types'
 
 const Home = () => {
   const {state} = useContext(StateContext)
   const [advert, setAdvert] = useState<Advert | undefined>(undefined)
   const [notificationsCount, setNotificationsCount] = useState(0)
+  const [inprocess, setInprocess] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
+  useEffect(() => {
+    setCategories(() => {
+      const categories = state.categories.filter(c => c.parentId === '0')
+      return categories.sort((c1, c2) => c1.ordering - c2.ordering)  
+    })
+  }, [state.categories])
   useEffect(() => {
     setAdvert(() => state.adverts.find(a => a.isActive))
   }, [state.adverts])
@@ -22,36 +31,75 @@ const Home = () => {
   }, [state.userInfo, state.notifications])
   useEffect(() => {
     if (state.categories.length === 0) {
-      f7.dialog.preloader('')
+      setInprocess(true)
     } else {
-      f7.dialog.close()
+      setInprocess(false)
     }
   }, [state.categories])
-
+  let i = 0
   return (
-    <Page>
-      <Navbar large>
-        <NavLeft>
-          <Link iconMaterial="menu" panelOpen="right" iconBadge={notificationsCount || ''} badgeColor="red" />
-        </NavLeft>
-        <NavTitle sliding>
-          <img src="/dokaneh_logo.png" alt="logo" className="logo" />
-          <span className='banner'>{labels.banner}</span>
-        </NavTitle>
-        <NavTitleLarge>
-          <img src="/dokaneh_logo.png" alt="logo" className="logo" />
-          <span className='banner'>{labels.banner}</span>
-        </NavTitleLarge>
-      </Navbar>
-      <Block>
-        {advert ? <Button href="/advert/" large outline text={advert.title} className="sections" /> : ''}
-        <MainCategories/>
-      </Block>
-      <Toolbar bottom>
-        <Footer />
-      </Toolbar>
-    </Page>
-  )
-}
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonMenuButton />
+            {notificationsCount > 0 && 
+              <IonBadge 
+                color="danger" 
+                style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '20px'}}
+              >
+                {notificationsCount}
+              </IonBadge>
+            }
+          </IonButtons>
+          <IonTitle><img src="/dokaneh_logo.png" alt="logo" style={{width: '120px', marginBottom: '-5px'}} /></IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+        <IonHeader collapse="condense">
+          <IonToolbar>
+            <IonTitle size="large"><img src="/dokaneh_logo.png" alt="logo" style={{width: '120px', marginBottom: '-15px'}} /></IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        {advert && 
+          <IonButton 
+            href="/advert" 
+            expand="block" 
+            fill="outline" 
+            className="sections" 
+          >
+            {advert.title}
+          </IonButton>
+        }
+      <IonButton 
+        routerLink="/packs/0/a"
+        className="sections"
+        expand="block"
+        shape="round"
+        color={randomColors[i++ % 5].name}
+      >
+        {labels.allProducts}
+      </IonButton>
+      {categories.map(c => 
+        <IonButton
+          routerLink={c.isLeaf ? `/packs/${c.id}/n` : `/categories/${c.id}`} 
+          expand="block"
+          shape="round"
+          color={randomColors[i++ % 5].name}
+          className="sections" 
+          key={c.id}
+        >
+          {c.name}
+        </IonButton>
+      )}
+      </IonContent>
+      <IonLoading
+        isOpen={inprocess}
+        message={labels.inprocess}
+      />
+      <Footer />
+    </IonPage>
+  );
+};
 
-export default Home
+export default Home;

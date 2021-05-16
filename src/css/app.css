@@ -127,41 +127,37 @@
   color: blue;
 }
 
-.item-title-row {
+.list-row1 {
   font-size: 0.8rem;
+  color:red;
 }
 
-.item-subtitle {
-  font-size: 0.8rem !important;
-  color:red !important;
+.list-row2 {
+  font-size: 0.8rem;
+  color: blue;
 }
 
-.item-text {
-  font-size: 0.8rem !important;
-  color: blue !important;
+.list-row3 {
+  font-size: 0.8rem;
+  color: green;
 }
 
-.item-footer {
-  font-size: 0.8rem !important;
-  color: green !important;
-}
-
-.list-subtext1 {
+.list-row4 {
   font-size: 0.8rem;
   color:purple;
 }
 
-.list-subtext2 {
+.list-row5 {
   font-size: 0.8rem;
   color:deeppink;
 }
 
-.list-subtext3 {
+.list-row6 {
   font-size: 0.8rem;
   color:teal;
 }
 
-.list-subtext4 {
+.list-row7 {
   font-size: 0.8rem;
   color:orange;
 }
