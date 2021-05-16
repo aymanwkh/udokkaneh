@@ -1,4 +1,4 @@
-import {IonContent, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle} from '@ionic/react';
+import {IonBadge, IonContent, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle} from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { StateContext } from '../data/state-provider';
@@ -35,12 +35,31 @@ const Panel = () => {
           <IonListHeader>{state.user ? `${labels.loginSuccess} ${state.userInfo?.name}` : labels.mainPanelTitle}</IonListHeader>
           <IonMenuToggle autoHide={false}>
             {state.user ?
-              <IonItem href="#" onClick={handleLogout}>
-                <IonLabel>{labels.logout}</IonLabel>
-              </IonItem>
+              <>
+                <IonItem href="#" onClick={handleLogout}>
+                  <IonLabel>{labels.logout}</IonLabel>
+                </IonItem>
+                <IonItem routerLink="/change-password">
+                  <IonLabel>{labels.changePassword}</IonLabel>
+                </IonItem>
+                <IonItem routerLink="/notifications">
+                  <IonLabel>{labels.notifications}</IonLabel>
+                  <IonBadge color="danger" style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '35px'}}>{notificationsCount}</IonBadge>
+                </IonItem>
+              </>
             : <IonItem routerLink='/login'>
                 <IonLabel>{labels.login}</IonLabel>
               </IonItem>
+            }
+            {state.user && state.userInfo?.storeId &&
+              <>
+                <IonItem routerLink='/packs/0/s'>
+                  <IonLabel>{labels.myPacks}</IonLabel>
+                </IonItem>
+                <IonItem routerLink='/product-requests'>
+                  <IonLabel>{labels.productRequests}</IonLabel>
+                </IonItem>
+              </>
             }
           </IonMenuToggle>
         </IonList>

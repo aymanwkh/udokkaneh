@@ -5,7 +5,7 @@ import { IonCard, IonCol, IonContent, IonGrid, IonImg, IonPage, IonRow } from '@
 import Header from './header'
 
 const Advert = () => {
-  const {state, dispatch} = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const [advert] = useState(state.adverts[0])
   return (
     <IonPage>

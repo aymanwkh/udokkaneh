@@ -36,6 +36,12 @@ import PackDetails from './pages/pack-details';
 import AddPack from './pages/add-pack';
 import AddGroup from './pages/add-group';
 import Basket from './pages/basket';
+import ProductRequests from './pages/product-requests';
+import Notifications from './pages/notifications';
+import StoreDetails from './pages/store-details';
+import Hints from './pages/hints';
+import AddProductRequest from './pages/add-product-request';
+import Advert from './pages/advert';
 
 const app = () => {
   return (
@@ -56,6 +62,12 @@ const app = () => {
               <Route path="/add-pack/:id" exact={true} component={AddPack} />
               <Route path="/add-group/:id" exact={true} component={AddGroup} />
               <Route path="/basket" exact={true} component={Basket} />
+              <Route path="/product-requests" exact={true} component={ProductRequests} />
+              <Route path="/notifications" exact={true} component={Notifications} />
+              <Route path="/store-details/:storeId/:packId" exact={true} component={StoreDetails} />
+              <Route path="/hints/:id/:type" exact={true} component={Hints} />
+              <Route path="/add-product-request/:id" exact={true} component={AddProductRequest} />
+              <Route path="/advert" exact={true} component={Advert} />
             </IonRouterOutlet>
           </IonSplitPane>
         </IonReactRouter>

@@ -63,7 +63,7 @@ const Home = () => {
         </IonHeader>
         {advert && 
           <IonButton 
-            href="/advert" 
+            routerLink="/advert" 
             expand="block" 
             fill="outline" 
             className="sections" 
