@@ -64,7 +64,7 @@ const Register = () => {
       await registerUser(user)
       dismiss()
       message(type === 'n' ? labels.registerSuccess : labels.registerStoreOwnerSuccess, 3000)
-      history.goBack() 
+      history.push('/')
     } catch (err){
       dismiss()
       message(getMessage(location.pathname, err), 3000)
@@ -90,7 +90,7 @@ const Register = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating" color={mobileInvalid ? 'danger' : ''}>
+            <IonLabel position="floating" color={mobileInvalid ? 'danger' : 'primary'}>
               {labels.mobile}
             </IonLabel>
             <IonInput 
@@ -103,7 +103,7 @@ const Register = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating" color={passwordInvalid ? 'danger' : ''}>
+            <IonLabel position="floating" color={passwordInvalid ? 'danger' : 'primary'}>
               {labels.password}
             </IonLabel>
             <IonInput 
@@ -117,7 +117,7 @@ const Register = () => {
           </IonItem>
           {type === 's' &&
             <IonItem>
-              <IonLabel position="floating">
+              <IonLabel position="floating" color="primary">
                 {labels.storeName}
               </IonLabel>
               <IonInput 
@@ -128,7 +128,7 @@ const Register = () => {
               />
             </IonItem>
           }
-          {type !== 'd' && !positionError &&
+          {type !== 'd' && !positionError && !position.lat &&
             <IonButton 
               expand="block" 
               fill="clear" 
@@ -139,7 +139,7 @@ const Register = () => {
           }
           {positionError && 
             <IonItem>
-              <IonLabel position="floating">
+              <IonLabel position="floating" color="primary">
                 {labels.address}
               </IonLabel>
               <IonInput 
@@ -158,10 +158,10 @@ const Register = () => {
       <IonFooter>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton fill="clear" onClick={() => setType('s')}>{labels.storeOwner}</IonButton>
+            <IonButton fill="clear" onClick={() => setType(type === 's' ? 'n': 's')}>{type === 's' ? labels.normalUser : labels.storeOwner}</IonButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton fill="clear" onClick={() => setType('d')}>{labels.salesman}</IonButton>
+            <IonButton fill="clear" onClick={() => setType(type === 'd' ? 'n' : 'd')}>{type === 'd' ? labels.normalUser : labels.salesman}</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonFooter>

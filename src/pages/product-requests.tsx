@@ -3,11 +3,12 @@ import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {deleteProductRequest, getMessage} from '../data/actions'
 import Footer from './footer'
-import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
+import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { ProductRequest } from '../data/types'
 import { useLocation } from 'react-router'
 import { addOutline, trashOutline } from 'ionicons/icons'
+import { randomColors } from '../data/config'
 
 const ProductRequests = () => {
   const {state} = useContext(StateContext)
@@ -53,10 +54,10 @@ const ProductRequests = () => {
                   <IonImg src={p.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <div className="list-row1">{p.name}</div>
-                  <div className="list-row2">{p.weight}</div>
-                  <div className="list-row3">{p.country}</div>
-                  <div className="list-row4">{`${labels.price}: ${p.price.toFixed(2)}`}</div>
+                  <IonText color={randomColors[0].name}>{p.name}</IonText>
+                  <IonText color={randomColors[1].name}>{p.weight}</IonText>
+                  <IonText color={randomColors[2].name}>{p.country}</IonText>
+                  <IonText color={randomColors[3].name}>{`${labels.price}: ${p.price.toFixed(2)}`}</IonText>
                 </IonLabel>
                 <IonIcon 
                   ios={trashOutline} 

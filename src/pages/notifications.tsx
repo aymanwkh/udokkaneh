@@ -3,13 +3,14 @@ import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {deleteNotification, getMessage, updateLastSeen} from '../data/actions'
 import Footer from './footer'
-import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
+import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonText, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useLocation } from 'react-router'
 import {Notification} from '../data/types'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { trashOutline } from 'ionicons/icons'
+import { randomColors } from '../data/config'
 
 const Notifications = () => {
   const {state} = useContext(StateContext)
@@ -32,7 +33,7 @@ const Notifications = () => {
   }
   return(
     <IonPage>
-      <Header title={labels.basket} />
+      <Header title={labels.notifications} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
           {notifications.length === 0 ?
@@ -42,13 +43,14 @@ const Notifications = () => {
           : notifications.map(n => 
               <IonItem key={n.id}>
                 <IonLabel>
-                  <div className="list-row1">{n.title}</div>
-                  <div className="list-row2">{n.message}</div>
-                  <div className="list-row3">{moment(n.time).fromNow()}</div>
+                  <IonText color={randomColors[0].name}>{n.title}</IonText>
+                  <IonText color={randomColors[1].name}>{n.message}</IonText>
+                  <IonText color={randomColors[2].name}>{moment(n.time).fromNow()}</IonText>
                 </IonLabel>
                 <IonIcon 
                   ios={trashOutline} 
                   slot="end" 
+                  color="danger"
                   style={{fontSize: '20px', marginRight: '10px'}} 
                   onClick={()=> handleDelete(n.id)}
                 />

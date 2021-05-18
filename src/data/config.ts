@@ -4,7 +4,7 @@ export const setup = {
 
 export const randomColors = [
   {id: 0, name: 'primary'},
-  {id: 1, name: 'tertiary'},
+  {id: 1, name: 'secondary'},
   {id: 2, name: 'success'},
   {id: 3, name: 'warning'},
   {id: 4, name: 'danger'},

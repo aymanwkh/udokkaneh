@@ -7,7 +7,7 @@ import {PackStore, Store} from '../data/types'
 import Footer from './footer'
 import { setup, randomColors } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { IonActionSheet, IonAlert, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, useIonAlert, useIonToast } from '@ionic/react'
+import { IonActionSheet, IonAlert, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 
@@ -253,7 +253,7 @@ const PackDetails = () => {
             expand="block"
             color="success"
             routerLink="/login"
-            className="h-padding"
+            className="ion-padding-horizontal"
           >
             {labels.showPackStores}
           </IonButton>
@@ -263,8 +263,8 @@ const PackDetails = () => {
             {packStores.map((p, i) => 
               <IonItem key={i} routerLink={`/store-details/${p.storeId}/${p.packId}`}>
                 <IonLabel>
-                  <div className="list-row1">{p.storeInfo.name}</div>
-                  <div className="list-row2">{p.storeLocation || p.storeInfo.address}</div>
+                  <IonText color={randomColors[0].name}>{p.storeInfo.name}</IonText>
+                  <IonText color={randomColors[1].name}>{p.storeLocation || p.storeInfo.address}</IonText>
                 </IonLabel>
                 <IonLabel slot="end" className="ion-text-end">{p.price.toFixed(2)}</IonLabel>
               </IonItem>

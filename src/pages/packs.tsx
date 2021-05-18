@@ -1,11 +1,11 @@
 import {useContext, useState, useEffect} from 'react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import {sortByList} from '../data/config'
+import {randomColors, sortByList} from '../data/config'
 import {getChildren, productOfText} from '../data/actions'
 import {Pack} from '../data/types'
 import Footer from './footer'
-import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSelect, IonSelectOption, IonThumbnail } from '@ionic/react'
+import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSelect, IonSelectOption, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { useParams } from 'react-router'
 import Fuse from "fuse.js";
@@ -100,12 +100,12 @@ const Packs = () => {
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <div className="list-row1">{p.product.name}</div>
-                  <div className="list-row2">{p.product.description}</div>
-                  <div className="list-row3">{p.name}</div>
-                  <div className="list-row4">{p.categoryName}</div>
-                  <div className="list-row5">{productOfText(p.countryName, p.trademarkName)}</div>
-                  <div className="list-row6">{p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</div>
+                  <IonText color={randomColors[0].name}>{p.product.name}</IonText>
+                  <IonText color={randomColors[1].name}>{p.product.description}</IonText>
+                  <IonText color={randomColors[2].name}>{p.name}</IonText>
+                  <IonText color={randomColors[3].name}>{p.categoryName}</IonText>
+                  <IonText color={randomColors[4].name}>{productOfText(p.countryName, p.trademarkName)}</IonText>
+                  <IonText color={randomColors[0].name}>{p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</IonText>
                 </IonLabel>
                 <IonLabel slot="end" className="ion-text-end">{p.price!.toFixed(2)}</IonLabel>
               </IonItem>    

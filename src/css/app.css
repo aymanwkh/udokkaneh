@@ -6,6 +6,11 @@ ion-item {
   font-size: 1rem;
 }
 
+ion-text {
+  display: block;
+  font-size: 0.8rem;
+}
+
 .sections {
   margin: 1rem;
 }
@@ -14,19 +19,14 @@ ion-item {
   text-align: center;
 }
 
-.h-padding {
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
 .primary {
   --color: var(--ion-color-primary);
   --button-color: var(--ion-color-primary);
 }
 
-.tertiary {
-  --color: var(--ion-color-tertiary);
-  --button-color: var(--ion-color-tertiary);
+.secondary {
+  --color: var(--ion-color-secondary);
+  --button-color: var(--ion-color-secondary);
 }
 
 .success {
@@ -105,41 +105,6 @@ ion-item {
   text-align: center;
   font-size: 1rem;
   color: blue;
-}
-
-.list-row1 {
-  font-size: 0.8rem;
-  color:red;
-}
-
-.list-row2 {
-  font-size: 0.8rem;
-  color: blue;
-}
-
-.list-row3 {
-  font-size: 0.8rem;
-  color: green;
-}
-
-.list-row4 {
-  font-size: 0.8rem;
-  color:purple;
-}
-
-.list-row5 {
-  font-size: 0.8rem;
-  color:deeppink;
-}
-
-.list-row6 {
-  font-size: 0.8rem;
-  color:teal;
-}
-
-.list-row7 {
-  font-size: 0.8rem;
-  color:orange;
 }
 
 .selected {

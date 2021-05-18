@@ -64,27 +64,27 @@ const Home = () => {
             {advert.title}
           </IonButton>
         }
-      <IonButton 
-        routerLink="/packs/0/a"
-        className="sections"
-        expand="block"
-        shape="round"
-        color={randomColors[i++ % 5].name}
-      >
-        {labels.allProducts}
-      </IonButton>
-      {categories.map(c => 
-        <IonButton
-          routerLink={c.isLeaf ? `/packs/${c.id}/n` : `/categories/${c.id}`} 
+        <IonButton 
+          routerLink="/packs/0/a"
+          className="sections"
           expand="block"
           shape="round"
           color={randomColors[i++ % 5].name}
-          className="sections" 
-          key={c.id}
         >
-          {c.name}
+          {labels.allProducts}
         </IonButton>
-      )}
+        {categories.map(c => 
+          <IonButton
+            routerLink={c.isLeaf ? `/packs/${c.id}/n` : `/categories/${c.id}`} 
+            expand="block"
+            shape="round"
+            color={randomColors[i++ % 5].name}
+            className="sections" 
+            key={c.id}
+          >
+            {c.name}
+          </IonButton>
+        )}
       </IonContent>
       <Footer />
     </IonPage>

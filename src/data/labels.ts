@@ -192,7 +192,8 @@ const labels: Label = {
   count: 'العدد',
   invalidCountWithoutGift: 'لا يوجد معني لعرض بنفس العبوة وبلا هدية',
   specialImage: 'صورة خاصة؟',
-  invalidFile: 'ملف غير صحيح'
+  invalidFile: 'الرجاء التأكد من ملف الصورة',
+  normalUser: 'مستخدم عادي'
 }
 
 export default labels
