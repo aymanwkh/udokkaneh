@@ -10,12 +10,6 @@ export const randomColors = [
   {id: 4, name: 'danger'},
 ]
 
-export const sortByList = [
-  {id: 'p', name: 'السعر'},
-  {id: 'r', name: 'التقييم'},
-  {id: 'v', name: 'القيمة الى الوزن'},
-]
-
 export const units = [
   {id: 'g', name: 'غرام', type: 'w', factor: 1},
   {id: 'kg', name: 'كيلو', type: 'w', factor: 1000},

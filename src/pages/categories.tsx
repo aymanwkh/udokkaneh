@@ -6,6 +6,7 @@ import labels from '../data/labels'
 import {Category} from '../data/types'
 import Header from './header'
 import { useParams } from 'react-router'
+import Footer from './footer'
 
 type Params = {
   id: string
@@ -49,6 +50,7 @@ const Categories = () => {
           </IonButton>
         )}
       </IonContent>
+      <Footer />
     </IonPage>
   )
 

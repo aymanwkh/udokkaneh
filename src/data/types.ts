@@ -6,6 +6,7 @@ export type Label = {
 export type Category = {
   id: string,
   name: string,
+  mainId?: string,
   parentId: string,
   ordering: number,
   isLeaf: boolean
@@ -83,13 +84,14 @@ export type Rating = {
   value: number
 }
 export type Alarm = {
+  userId: string,
   packId: string,
   storeId: string,
   type: string,
   time: Date
 }
 export type Position = {
-  lat: number, 
+  lat: number,
   lng: number
 }
 export type UserInfo = {
@@ -101,6 +103,7 @@ export type UserInfo = {
   storeId?: string,
   storeName?: string,
   lastSeen?: Date,
+  locationId?: string,
   time?: Date,
   type: string
 }
@@ -115,8 +118,7 @@ export type Advert = {
 export type Location = {
   id: string,
   name: string,
-  fees: number,
-  ordering: number
+  position: Position
 }
 export type Country = {
   id: string,
@@ -140,13 +142,14 @@ export type Store = {
 }
 export type StoreRequest = {
   storeId: string,
-  packId: string
+  packId: string,
+  time: Date
 }
 export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
   categories: Category[],
-  basket: Pack[],
+  basket: string[],
   packs: Pack[],
   packStores: PackStore[],
   adverts: Advert[],
@@ -162,12 +165,10 @@ export type State = {
   productRequests: ProductRequest[]
   searchText: string
 }
-
 export type Action = {
   type: string
   payload?: any
 }
-
 export type Context = {
   state: State;
   dispatch: React.Dispatch<Action>

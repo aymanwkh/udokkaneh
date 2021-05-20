@@ -78,9 +78,18 @@ const AddGroup = () => {
   }
   return (
     <IonPage>
-      <Header title={`${labels.addGroup} ${product.name}`} />
+      <Header title={labels.addGroup} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.productName}
+            </IonLabel>
+            <IonInput 
+              value={product.name} 
+              readonly
+            />
+          </IonItem>
           <IonItem>
             <IonLabel position="floating">
               {labels.count}

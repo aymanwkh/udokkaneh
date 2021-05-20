@@ -1,11 +1,11 @@
 import {useContext, useState, useEffect} from 'react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import {randomColors, sortByList} from '../data/config'
-import {getChildren, productOfText} from '../data/actions'
+import {randomColors} from '../data/config'
+import {getCategoryName, getChildren, productOfText} from '../data/actions'
 import {Pack} from '../data/types'
 import Footer from './footer'
-import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSelect, IonSelectOption, IonText, IonThumbnail } from '@ionic/react'
+import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { useParams } from 'react-router'
 import Fuse from "fuse.js";
@@ -14,14 +14,14 @@ type ExtendedPack = Pack & {
   categoryName: string,
   countryName: string,
   trademarkName?: string,
-  myPrice: number
+  myPrice?: number
 }
 type Params = {
   id: string,
   type: string
 }
 const Packs = () => {
-  const {state} = useContext(StateContext)
+  const {state, dispatch} = useContext(StateContext)
   const params = useParams<Params>()
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === params.id))
@@ -30,15 +30,15 @@ const Packs = () => {
   useEffect(() => {
     setPacks(() => {
       const children = params.type === 'a' ? getChildren(params.id, state.categories) : [params.id]
-      const packs = state.packs.filter(p => (params.type === 's' && state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)) || (p.price! > 0 && children.includes(p.product.categoryId)))
+      const packs = state.packs.filter(p => params.type === 's' ? state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId) : p.price! > 0 && children.includes(p.product.categoryId))
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
         const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
-        const myPrice = (state.userInfo?.storeId && state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)?.price) || 0
+        const myPrice = state.userInfo?.storeId ? state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)?.price : 0
         return {
           ...p,
-          categoryName: categoryInfo.name,
+          categoryName: getCategoryName(categoryInfo, state.categories),
           trademarkName: trademarkInfo?.name,
           countryName: countryInfo.name,
           myPrice
@@ -48,6 +48,9 @@ const Packs = () => {
     })
   }, [state.packs, state.userInfo, params.id, params.type, state.categories, state.trademarks, state.countries, state.packStores])
   useEffect(() => {
+    dispatch({type: 'CLEAR_SEARCH'})
+  }, [dispatch])
+  useEffect(() => {
     if (!state.searchText) {
       setData(packs)
       return
@@ -56,7 +59,7 @@ const Packs = () => {
       includeScore: true,
       findAllMatches: true,
       threshold: 0.1,
-      keys: ['product.name', 'product.description', 'categoryName', 'trademarkName', 'countryName']
+      keys: ['product.name', 'product.alias', 'name', 'categoryName', 'trademarkName', 'countryName']
     }
     const fuse = new Fuse(packs, options);
     const result = fuse.search(state.searchText);
@@ -79,16 +82,21 @@ const Packs = () => {
   }
   return(
     <IonPage>
-      <Header title={category?.name || labels.allProducts} withSearch/>
+      <Header title={params.type === 's' ? labels.myPacks : category?.name || labels.allProducts} withSearch/>
       <IonContent fullscreen className="ion-padding">
         <IonList>
           {data.length > 1 &&
-            <IonItem>
-              <IonLabel>{labels.sortBy}</IonLabel>
-              <IonSelect value={sortBy} interface="action-sheet" cancelText={labels.cancel} onIonChange={e => handleSorting(e.detail.value)}>
-                {sortByList.map(s => <IonSelectOption key={s.id} value={s.id}>{s.name}</IonSelectOption>)}
-              </IonSelect>
-            </IonItem>
+            <IonSegment value={sortBy} onIonChange={e => handleSorting(e.detail.value!)}>
+              <IonSegmentButton value="v">
+                <IonLabel>{labels.value}</IonLabel>
+              </IonSegmentButton>
+              <IonSegmentButton value="r">
+                <IonLabel>{labels.rating}</IonLabel>
+              </IonSegmentButton>
+              <IonSegmentButton value="p">
+                <IonLabel>{labels.price}</IonLabel>
+              </IonSegmentButton>
+            </IonSegment>
           }
           {data.length === 0 ?
             <IonItem> 
@@ -101,13 +109,13 @@ const Packs = () => {
                 </IonThumbnail>
                 <IonLabel>
                   <IonText color={randomColors[0].name}>{p.product.name}</IonText>
-                  <IonText color={randomColors[1].name}>{p.product.description}</IonText>
+                  <IonText color={randomColors[1].name}>{p.product.alias}</IonText>
                   <IonText color={randomColors[2].name}>{p.name}</IonText>
                   <IonText color={randomColors[3].name}>{p.categoryName}</IonText>
                   <IonText color={randomColors[4].name}>{productOfText(p.countryName, p.trademarkName)}</IonText>
-                  <IonText color={randomColors[0].name}>{p.myPrice > 0 ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</IonText>
+                  <IonText color={randomColors[0].name}>{p.myPrice ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</IonText>
                 </IonLabel>
-                <IonLabel slot="end" className="ion-text-end">{p.price!.toFixed(2)}</IonLabel>
+                <IonLabel slot="end" className="price">{p.price!.toFixed(2)}</IonLabel>
               </IonItem>    
             )
           }

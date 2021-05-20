@@ -8,7 +8,7 @@ const Reducer = (state: State, action: Action) => {
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'DELETE_FROM_BASKET':
-      packs = state.basket.filter(p => p.id === action.payload.id)
+      packs = state.basket.splice(state.basket.indexOf(action.payload.id), 1)
       localStorage.setItem('basket', JSON.stringify(packs))
       return {...state, basket: packs}
     case 'CLEAR_BASKET':
@@ -56,6 +56,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, packRequests: action.payload}
     case 'SET_SEARCH':
       return {...state, searchText: action.payload}
+    case 'CLEAR_SEARCH':
+      return {...state, searchText: ''}
     default:
       return state
   }

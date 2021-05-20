@@ -1,11 +1,11 @@
-import {useState, useEffect, useContext} from 'react'
+import {useState, useContext} from 'react'
 import {addAlarm, getMessage} from '../data/actions'
 import labels from '../data/labels'
 import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
-import { menuOutline } from 'ionicons/icons'
+import { thumbsDownOutline } from 'ionicons/icons'
 
 type Params = {
   storeId: string,
@@ -14,15 +14,13 @@ type Params = {
 const StoreDetails = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
-  const [store, setStore] = useState(() => state.stores.find(s => s.id === params.storeId)!)
+  const [store] = useState(() => state.stores.find(s => s.id === params.storeId)!)
+  const [alarmsCount] = useState(() => state.alarms.filter(a => a.storeId === params.storeId).length)
   const [actionOpened, setActionOpened] = useState(false);
   const [message] = useIonToast();
   const location = useLocation()
   const history = useHistory()
   const [alert] = useIonAlert();
-  useEffect(() => {
-    setStore(() => state.stores.find(s => s.id === params.storeId)!)
-  }, [state.stores, params.storeId])
   const handleAddAlarm = (type: string) => {
     alert({
       header: labels.confirmationTitle,
@@ -31,10 +29,11 @@ const StoreDetails = () => {
         {text: labels.cancel},
         {text: labels.ok, handler: async () => {
           try{
-            if (state.alarms.find(a => a.storeId === params.storeId && a.time === new Date())){
+            if (state.alarms.find(a => a.userId === state.user?.uid && a.storeId === params.storeId && a.time === new Date())){
               throw new Error('duplicateAlarms')
             }
             const alarm = {
+              userId: state.user?.uid!,
               packId: params.packId,
               storeId: params.storeId,
               type,
@@ -91,25 +90,36 @@ const StoreDetails = () => {
               readonly
             />
           </IonItem>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.alarmsCount}
+            </IonLabel>
+            <IonInput 
+              value={alarmsCount} 
+              readonly
+            />
+          </IonItem>
         </IonList>
       </IonContent>
-      <IonFab vertical="top" horizontal="end" slot="fixed">
-        <IonFabButton onClick={() => setActionOpened(true)}>
-          <IonIcon ios={menuOutline} />
-        </IonFabButton>
-      </IonFab>
+      {!state.userInfo?.storeId &&
+        <IonFab vertical="top" horizontal="end" slot="fixed">
+          <IonFabButton onClick={() => setActionOpened(true)} color="warning">
+            <IonIcon ios={thumbsDownOutline}/>
+          </IonFabButton>
+        </IonFab>
+      }
       <IonActionSheet
         isOpen={actionOpened}
         onDidDismiss={() => setActionOpened(false)}
         buttons={[
           {
             text: labels.addNotFoundAlarm,
-            cssClass: 'success',
-            handler: () => handleAddAlarm('m')
+            cssClass: 'primary',
+            handler: () => handleAddAlarm('f')
           },
           {
             text: labels.addChangePriceAlarm,
-            cssClass: 'warning',
+            cssClass: 'secondary',
             handler: () => handleAddAlarm('p')
           },
         ]}

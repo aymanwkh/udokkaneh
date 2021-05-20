@@ -183,7 +183,7 @@ const labels: Label = {
   withGift: 'مع هدية',
   gift: 'الهدية',
   samePrice: 'السعر كما هو في السابق',
-  invalidChangePrice: 'السعر يختلف عن سعر السوق بنسبة كبيرة',
+  invalidChangePrice: 'الرجاء التأكد من السعر المدخل لاختلافه عن سعر السوق بنسبة كبيرة',
   invalidCount: 'الرجاء التأكد من قيمة العدد المدخل',
   enterValue: 'الرجاء ادخال قيمة',
   details: 'تفاصيل',
@@ -193,7 +193,12 @@ const labels: Label = {
   invalidCountWithoutGift: 'لا يوجد معني لعرض بنفس العبوة وبلا هدية',
   specialImage: 'صورة خاصة؟',
   invalidFile: 'الرجاء التأكد من ملف الصورة',
-  normalUser: 'مستخدم عادي'
+  normalUser: 'مستخدم عادي',
+  value: 'القيمة',
+  rating: 'التقييم',
+  alarmsCount: 'عدد الشكاوى',
+  myInfo: 'معلوماتي',
+  deleteRequest: 'حذف الطلب'
 }
 
 export default labels

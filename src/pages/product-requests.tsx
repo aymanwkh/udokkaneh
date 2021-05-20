@@ -7,7 +7,7 @@ import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonLabel, I
 import Header from './header'
 import { ProductRequest } from '../data/types'
 import { useLocation } from 'react-router'
-import { addOutline, trashOutline } from 'ionicons/icons'
+import { add, trash } from 'ionicons/icons'
 import { randomColors } from '../data/config'
 
 const ProductRequests = () => {
@@ -60,8 +60,9 @@ const ProductRequests = () => {
                   <IonText color={randomColors[3].name}>{`${labels.price}: ${p.price.toFixed(2)}`}</IonText>
                 </IonLabel>
                 <IonIcon 
-                  ios={trashOutline} 
+                  ios={trash} 
                   slot="end" 
+                  color="danger"
                   style={{fontSize: '20px', marginRight: '10px'}} 
                   onClick={()=> handleDelete(p)}
                 />
@@ -72,7 +73,7 @@ const ProductRequests = () => {
       </IonContent>
       <IonFab vertical="top" horizontal="end" slot="fixed">
         <IonFabButton routerLink="/add-product-request">
-          <IonIcon ios={addOutline} />
+          <IonIcon ios={add} />
         </IonFabButton>
       </IonFab>
       <Footer />

@@ -1,7 +1,7 @@
 import {useState, useRef, ChangeEvent, useContext} from 'react'
 import {getMessage, addProductRequest} from '../data/actions'
 import labels from '../data/labels'
-import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, IonToggle, useIonToast } from '@ionic/react'
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
 import { StateContext } from '../data/state-provider'
@@ -13,7 +13,6 @@ const AddProductRequest = () => {
   const [country, setCountry] = useState('')
   const [weight, setWeight] = useState('')
   const [price, setPrice] = useState('')
-  const [specialImage, setSpecialImage] = useState(false)
   const [imageUrl, setImageUrl] = useState('')
   const [image, setImage] = useState<File>()
   const inputEl = useRef<HTMLInputElement | null>(null);
@@ -69,7 +68,7 @@ const AddProductRequest = () => {
       <IonContent fullscreen className="ion-padding">
         <IonList>
           <IonItem>
-            <IonLabel position="floating">
+            <IonLabel position="floating" color="primary">
               {labels.name}
             </IonLabel>
             <IonInput 
@@ -81,7 +80,7 @@ const AddProductRequest = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating">
+            <IonLabel position="floating" color="primary">
               {labels.weightVolume}
             </IonLabel>
             <IonInput 
@@ -93,7 +92,7 @@ const AddProductRequest = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating">
+            <IonLabel position="floating" color="primary">
               {labels.country}
             </IonLabel>
             <IonInput 
@@ -105,7 +104,7 @@ const AddProductRequest = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating">
+            <IonLabel position="floating" color="primary">
               {labels.price}
             </IonLabel>
             <IonInput 
@@ -115,40 +114,30 @@ const AddProductRequest = () => {
               onIonChange={e => setPrice(e.detail.value!)} 
             />
           </IonItem>
-          <IonItem>
-            <IonLabel>{labels.specialImage}</IonLabel>
-            <IonToggle checked={specialImage} onIonChange={() => setSpecialImage(s => !s)} />
-          </IonItem>
-          {specialImage &&
-            <input 
-              ref={inputEl}
-              type="file" 
-              accept="image/*" 
-              style={{display: "none"}}
-              onChange={e => handleFileChange(e)}
-            />
-          }
-          {specialImage &&
-            <IonButton 
-              expand="block" 
-              fill="clear" 
-              onClick={onUploadClick}
-            >
-              {labels.setImage}
-            </IonButton>
-          }
-          {specialImage &&
-            <img src={imageUrl} className="img-card" alt={labels.noImage} />
-          }
+          <input 
+            ref={inputEl}
+            type="file" 
+            accept="image/*" 
+            style={{display: "none"}}
+            onChange={e => handleFileChange(e)}
+          />
+          <IonButton 
+            expand="block" 
+            fill="clear" 
+            onClick={onUploadClick}
+          >
+            {labels.setImage}
+          </IonButton>
+          <IonImg src={imageUrl} alt={labels.noImage} />
         </IonList>
-        {name && country && weight && price && imageUrl &&
-          <IonFab vertical="top" horizontal="end" slot="fixed">
-            <IonFabButton onClick={handleSubmit}>
-              <IonIcon ios={checkmarkOutline} />
-            </IonFabButton>
-          </IonFab>
-        }
       </IonContent>
+      {name && country && weight && price && imageUrl &&
+        <IonFab vertical="top" horizontal="end" slot="fixed">
+          <IonFabButton onClick={handleSubmit}>
+            <IonIcon ios={checkmarkOutline} />
+          </IonFabButton>
+        </IonFab>
+      }
     </IonPage>
   )
 }

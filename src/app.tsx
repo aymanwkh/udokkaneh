@@ -66,7 +66,7 @@ const app = () => {
               <Route path="/notifications" exact={true} component={Notifications} />
               <Route path="/store-details/:storeId/:packId" exact={true} component={StoreDetails} />
               <Route path="/hints/:id/:type" exact={true} component={Hints} />
-              <Route path="/add-product-request/:id" exact={true} component={AddProductRequest} />
+              <Route path="/add-product-request" exact={true} component={AddProductRequest} />
               <Route path="/advert" exact={true} component={Advert} />
             </IonRouterOutlet>
           </IonSplitPane>

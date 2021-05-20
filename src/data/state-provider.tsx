@@ -37,6 +37,7 @@ const StateProvider = ({children}: Props) => {
         categories.push({
           id: doc.id,
           name: doc.data().name,
+          mainId: doc.data().mainId,
           parentId: doc.data().parentId,
           ordering: doc.data().ordering,
           isLeaf: doc.data().isLeaf
@@ -67,7 +68,7 @@ const StateProvider = ({children}: Props) => {
           withGift: doc.data().withGift,
           forSale: doc.data().forSale,
           price: minPrice,
-          weightedPrice: Math.floor(minPrice / doc.data().unitsCount),
+          weightedPrice: minPrice / doc.data().unitsCount,
         })
         if (doc.data().stores) {
           doc.data().stores.forEach((s: any) => {
@@ -103,17 +104,17 @@ const StateProvider = ({children}: Props) => {
       unsubscribeAdverts()
     })  
     const unsubscribeLocations = firebase.firestore().collection('lookups').doc('l').onSnapshot(doc => {
-      dispatch({type: 'SET_LOCATIONS', payload: doc.data()?.values})
+      if (doc.exists) dispatch({type: 'SET_LOCATIONS', payload: doc.data()!.values})
     }, err => {
       unsubscribeLocations()
     })  
     const unsubscribeCountries = firebase.firestore().collection('lookups').doc('c').onSnapshot(doc => {
-      dispatch({type: 'SET_COUNTRIES', payload: doc.data()?.values})
+      if (doc.exists) dispatch({type: 'SET_COUNTRIES', payload: doc.data()!.values})
     }, err => {
       unsubscribeCountries()
     })  
     const unsubscribeTrademarks = firebase.firestore().collection('lookups').doc('t').onSnapshot(doc => {
-      dispatch({type: 'SET_TRADEMARKS', payload: doc.data()?.values})
+      if (doc.exists) dispatch({type: 'SET_TRADEMARKS', payload: doc.data()!.values})
     }, err => {
       unsubscribeTrademarks()
     }) 
@@ -192,6 +193,7 @@ const StateProvider = ({children}: Props) => {
             doc.data().alarms?.forEach((a: any) => {
               alarms.push({
                 storeId: doc.id,
+                userId: a.userId,
                 packId: a.packId,
                 type: a.type,
                 time: a.time.toDate()
@@ -212,7 +214,8 @@ const StateProvider = ({children}: Props) => {
             doc.data().requests?.forEach((r: any) => {
               storeRequests.push({
                 storeId: doc.id,
-                packId: r
+                packId: r.packId,
+                time: r.time.toDate()
               })
             })
             doc.data().packRequests?.forEach((r: any) => {
@@ -235,6 +238,7 @@ const StateProvider = ({children}: Props) => {
           dispatch({type: 'SET_PRODUCT_REQUESTS', payload: productRequests})
           dispatch({type: 'SET_STORE_REQUESTS', payload: storeRequests})
           dispatch({type: 'SET_PACK_REQUESTS', payload: packRequests})
+          dispatch({type: 'SET_BASKET', payload: storeRequests.map(r => r.packId)}) 
         }, err => {
           unsubscribeStores()
         }) 

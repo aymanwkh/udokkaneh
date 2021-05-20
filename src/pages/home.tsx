@@ -38,8 +38,8 @@ const Home = () => {
             <IonMenuButton />
             {notificationsCount > 0 && 
               <IonBadge 
-                color="danger" 
-                style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '20px'}}
+              color="danger" 
+              style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '20px'}}
               >
                 {notificationsCount}
               </IonBadge>

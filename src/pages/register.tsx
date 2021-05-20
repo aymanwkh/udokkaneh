@@ -21,8 +21,8 @@ const Register = () => {
   const [type, setType] = useState('n')
   const history = useHistory()
   const location = useLocation()
-  const [message] = useIonToast();
-  const [loading, dismiss] = useIonLoading();
+  const [message] = useIonToast()
+  const [loading, dismiss] = useIonLoading()
   useEffect(() => {
     setPasswordInvalid(!password || !patterns.password.test(password))
   }, [password])

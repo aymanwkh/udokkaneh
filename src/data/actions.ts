@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import {randomColors} from './config'
-import {Error, Category, Alarm, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest} from './types'
+import {Error, Category, Alarm, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position} from './types'
 
 export const getMessage = (path: string, error: Error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -125,17 +125,11 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
 }
 
 export const addAlarm = (alarm: Alarm) => {
-  const batch = firebase.firestore().batch()
-  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
-  batch.update(userRef, {
-    alarms: firebase.firestore.FieldValue.arrayUnion(alarm)
-  })
-  const storeRef = firebase.firestore().collection('stores').doc(alarm.storeId)
   const {storeId, ...others} = alarm
-  batch.update(storeRef, {
+  const storeRef = firebase.firestore().collection('stores').doc(storeId)
+  storeRef.update({
     alarms: firebase.firestore.FieldValue.arrayUnion(others)
   })
-  batch.commit()
 }
 
 export const deleteNotification = (notifications: Notification[], notificationId: string) => {
@@ -183,7 +177,6 @@ export const addPackRequest = async (packRequest: PackRequest, image?: File) => 
   const storeRef = firebase.firestore().collection('stores').doc(packRequest.storeId)
   const {storeId, ...others} = packRequest
   if (image) {
-    console.log('image ... ')
     const filename = image.name
     const ext = filename.slice(filename.lastIndexOf('.'))
     const fileData = await firebase.storage().ref().child('requests/' + packRequest.id + ext).put(image)
@@ -210,13 +203,16 @@ export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], p
   if (withRequest) {
     const storeRef = firebase.firestore().collection('stores').doc(packStore.storeId)
     batch.update(storeRef, {
-      requests: firebase.firestore.FieldValue.arrayUnion(packStore.packId)
+      requests: firebase.firestore.FieldValue.arrayUnion({
+        packId: packStore.packId,
+        time: new Date()
+      })
     })
   }
   batch.commit()
 }
 
-export const addPackStore = (packStore: PackStore, packs: Pack[], storeRequests: StoreRequest[]) => {
+export const addPackStore = (packStore: PackStore, storeRequests: StoreRequest[]) => {
   const batch = firebase.firestore().batch()
   const {packId, ...others} = packStore
   const packRef = firebase.firestore().collection('packs').doc(packId)
@@ -226,25 +222,36 @@ export const addPackStore = (packStore: PackStore, packs: Pack[], storeRequests:
   })
   const storeRequest = storeRequests.find(r => r.storeId === packStore.storeId && r.packId === packId)
   if (storeRequest) {
+    const otherStoreRequests = storeRequests.filter(p => p.packId !== packId && p.storeId === packStore.storeId)
+    const requests = otherStoreRequests.map(p => {
+      const {storeId, ...others} = p
+      return others
+    })  
     const storeRef = firebase.firestore().collection('stores').doc(packStore.storeId)
     batch.update(storeRef, {
-      requests: firebase.firestore.FieldValue.arrayRemove(packId)
+      requests
     })
   }
   batch.commit()
 }
 
-export const addStoreRequest = (storeId: string, packId: string) => {
+export const addStoreRequest = (storeRequest: StoreRequest) => {
+  const {storeId,...others} = storeRequest
   const storeRef = firebase.firestore().collection('stores').doc(storeId)
   storeRef.update({
-    requests: firebase.firestore.FieldValue.arrayUnion(packId)
+    requests: firebase.firestore.FieldValue.arrayUnion(others)
   })
 }
 
-export const deleteStoreRequest = (storeRequest: StoreRequest) => {
+export const deleteStoreRequest = (storeRequest: StoreRequest, storeRequests: StoreRequest[]) => {
+  const otherStoreRequests = storeRequests.filter(p => p.packId !== storeRequest.packId && p.storeId === storeRequest.storeId)
+  const requests = otherStoreRequests.map(p => {
+    const {storeId, ...others} = p
+    return others
+  })
   const storeRef = firebase.firestore().collection('stores').doc(storeRequest.storeId)
   storeRef.update({
-    requests: firebase.firestore.FieldValue.arrayRemove(storeRequest.packId)
+    requests
   })
 }
 
@@ -281,3 +288,21 @@ export const deleteProductRequest = async (productRequest: ProductRequest, produ
   await image.delete()
 }
 
+export const calcDistance = (position1: Position, position2: Position) => {
+  const R = 6371; // Radius of the earth in km
+  const latDiff = (position1.lat - position2.lat) * Math.PI / 180
+  const lngDiff = (position1.lng - position2.lng) * Math.PI / 180
+  const a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) + Math.cos(position1.lat * Math.PI / 180) * Math.cos(position2.lat * Math.PI / 180) * Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const d = R * c
+  return d
+}
+
+export const getCategoryName = (category: Category, categories: Category[]): string => {
+  if (category.parentId === '0') {
+    return category.name
+  } else {
+    const mainCategory = categories.find(c => c.id === category.mainId)
+    return mainCategory?.name + '-' + category.name
+  }
+}

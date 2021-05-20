@@ -1,4 +1,4 @@
-import {IonBadge, IonContent, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle} from '@ionic/react';
+import {IonBadge, IonContent, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle} from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { StateContext } from '../data/state-provider';
@@ -29,22 +29,21 @@ const Panel = () => {
   }
 
   return (
-    <IonMenu contentId="main" type="overlay" ref={menuEl}>
+    <IonMenu contentId="main" type="overlay" ref={menuEl} className="dark">
       <IonContent>
         <IonList>
-          <IonListHeader>{state.user ? `${labels.loginSuccess} ${state.userInfo?.name}` : labels.mainPanelTitle}</IonListHeader>
           <IonMenuToggle autoHide={false}>
             {state.user ?
               <>
                 <IonItem href="#" onClick={handleLogout}>
-                  <IonLabel>{labels.logout}</IonLabel>
+                  <IonLabel style={{marginBottom: '5px'}}>{labels.logout}</IonLabel>
                 </IonItem>
-                <IonItem routerLink="/change-password">
+                <IonItem routerLink="/change-password" style={{marginBottom: '0px', marginTop: '0px'}}>
                   <IonLabel>{labels.changePassword}</IonLabel>
                 </IonItem>
                 <IonItem routerLink="/notifications">
                   <IonLabel>{labels.notifications}</IonLabel>
-                  <IonBadge color="danger">{notificationsCount}</IonBadge>
+                  {notificationsCount > 0 && <IonBadge color="danger">{notificationsCount}</IonBadge>}
                 </IonItem>
               </>
             : <IonItem routerLink='/login'>
@@ -58,6 +57,9 @@ const Panel = () => {
                 </IonItem>
                 <IonItem routerLink='/product-requests'>
                   <IonLabel>{labels.productRequests}</IonLabel>
+                </IonItem>
+                <IonItem routerLink={`/store-details/${state.userInfo?.storeId}/0`}>
+                  <IonLabel>{labels.myInfo}</IonLabel>
                 </IonItem>
               </>
             }

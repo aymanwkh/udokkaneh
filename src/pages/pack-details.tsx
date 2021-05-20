@@ -1,13 +1,13 @@
 import {useContext, useEffect, useState} from 'react'
 import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
-import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct} from '../data/actions'
+import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance} from '../data/actions'
 import labels from '../data/labels'
 import {PackStore, Store} from '../data/types'
 import Footer from './footer'
 import { setup, randomColors } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { IonActionSheet, IonAlert, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, useIonAlert, useIonToast } from '@ionic/react'
+import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 
@@ -17,12 +17,8 @@ type Params = {
 }
 type ExtendedPackStore = PackStore & {
   storeInfo: Store,
-  storeLocation?: string
-}
-type ActionButton = {
-  text: string,
-  cssClass?: string,
-  handler(): void
+  storeLocation?: string,
+  distance: number
 }
 const PackDetails = () => {
   const {state, dispatch} = useContext(StateContext)
@@ -47,109 +43,38 @@ const PackDetails = () => {
   const location = useLocation()
   const [message] = useIonToast();
   const [alert] = useIonAlert();
-  const [showAlert, setShowAlert] = useState(false)
   const [transType, setTransType] = useState('')
-  const [actionButtons, setActionButtons] = useState<ActionButton[]>([])
+  const [userPosition] = useState(() => state.userInfo?.position.lat ? state.userInfo.position : state.locations.find(l => l.id === state.userInfo?.locationId)?.position)
   useEffect(() => {
     if (state.userInfo?.type === 'n') {
       setPackStores(() => {
         const packStores = state.packStores.filter(p => p.packId === pack?.id)
         const results = packStores.map(p => {
           const storeInfo = state.stores.find(s => s.id === p.storeId)!
-          const storeLocation = state.locations.find(l => l.id === storeInfo.locationId)?.name
+          const storeLocation = state.locations.find(l => l.id === storeInfo.locationId)
+          const storePosition = storeInfo.position.lat ? storeInfo.position : storeLocation?.position
+          let distance = 1000
+          if (userPosition?.lat && storePosition?.lat) {
+            distance = calcDistance(userPosition, storePosition)
+          }
           return {
             ...p,
             storeInfo,
-            storeLocation
+            storeLocation: storeLocation?.name,
+            distance
           }
         })
-        return results.sort((r1, r2) => r1.price > r2.price ? 1 : -1)
+        return results.sort((r1, r2) => r1.distance > r2.distance ? 1 : -1)
       })
     }
-  }, [state.packStores, state.stores, state.locations, state.user, pack, state.userInfo])
+  }, [state.packStores, state.stores, state.locations, state.user, pack, state.userInfo, userPosition])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
-  useEffect(() => {
-    setActionButtons(() => {
-      const buttons = []
-      let i = 0
-      if (state.userInfo?.storeId) {
-        if (!state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId)) {
-          buttons.push({
-            text: labels.newRequest,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => handleNewRequest()
-          })
-        }
-        if (isAvailable) {
-          buttons.push({
-            text: labels.unAvailable,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => handleUnAvailable()
-          })
-          buttons.push({
-            text: labels.changePrice,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => handleAvailable('c')
-          })
-        } else {
-          buttons.push({
-            text: labels.available,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => handleAvailable('n')
-          })
-        }
-        if (!pack.subPackId) {
-          buttons.push({
-            text: labels.addPack,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => history.push(`/add-pack/${params.id}`)
-          })
-          buttons.push({
-            text: labels.addGroup,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => history.push(`/add-group/${params.id}`)
-          })
-        }
-      } else {
-        if (!state.basket.find(p => p.id === params.id)) {
-          buttons.push({
-            text: labels.addToBasket,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => dispatch({type: 'ADD_TO_BASKET', payload: pack})
-          })
-        }
-        if (!state.ratings.find(r => r.productId === pack.product.id)) {
-          buttons.push({
-            text: labels.rateProduct,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => setRatingOpened(true)
-          })
-        } 
-        if (otherProducts.length > 0) {
-          buttons.push({
-            text: labels.otherProducts,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => history.push(`/hints/${pack.id}/type/a`)
-          })
-        }
-        if (otherPacks.length > 0) {
-          buttons.push({
-            text: labels.otherPacks,
-            cssClass: randomColors[i++ % 5].name,
-            handler: () => history.push(`/hints/${pack.id}/type/p`)
-          })
-        }
-      }
-      return buttons
-    })
-  }, [pack, params, state.userInfo, state.basket, state.ratings, state.storeRequests, isAvailable, dispatch, history, otherProducts, otherPacks])
   const deletePrice = (flag: boolean) => {
     try{
       const storePack = state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
       deleteStorePack(storePack, state.packStores, state.packs, flag)
-      if (flag) dispatch({type: 'ADD_TO_BASKET', payload: pack})
       message(flag ? labels.addSuccess : labels.deleteSuccess, 3000)
       history.goBack()
     } catch(err) {
@@ -169,8 +94,12 @@ const PackDetails = () => {
 
   const handleNewRequest = () => {
     try{
-      addStoreRequest(state.userInfo?.storeId!, pack?.id!)
-      dispatch({type: 'ADD_TO_BASKET', payload: pack})
+      const storeRequest = {
+        storeId: state.userInfo?.storeId!,
+        packId: pack?.id!,
+        time: new Date()
+      }
+      addStoreRequest(storeRequest)
       message(labels.addSuccess, 3000)
       history.goBack()
     } catch(err) {
@@ -179,16 +108,13 @@ const PackDetails = () => {
   }
   const handleAddPackStore = (value: string) => {
     try{
-      if (+value !== Number((+value).toFixed(2))) {
-        throw new Error('invalidPrice')
-      }
-      if (+value <= 0) {
+      if (+value !== Number((+value).toFixed(2)) || +value <= 0) {
         throw new Error('invalidPrice')
       }
       if (transType === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
         throw new Error('samePrice')
       }
-      if (Math.abs(+value - pack?.price!) / pack?.price! <= setup.priceDiff) {
+      if (Math.abs(+value - pack?.price!) / pack?.price! > setup.priceDiff) {
         throw new Error('invalidChangePrice')
       }
       const storePack = {
@@ -198,7 +124,7 @@ const PackDetails = () => {
         price: +value,
         time: new Date()
       }
-      if (transType === 'n') addPackStore(storePack, state.packs, state.storeRequests)
+      if (transType === 'n') addPackStore(storePack, state.storeRequests)
       else changePrice(storePack, state.packStores)
       message(transType === 'n' ? labels.addSuccess : labels.editSuccess, 3000)
       history.goBack()
@@ -208,18 +134,39 @@ const PackDetails = () => {
   }
   const handleAvailable = (type: string) => {
     setTransType(type)
-    setShowAlert(true)
+    alert({
+      header: labels.enterPrice,
+      inputs: [{name: 'price', type: 'number'}],
+      buttons: [
+        {text: labels.cancel},
+        {text: labels.ok, handler: (e) => handleAddPackStore(e.price)}
+      ],
+    })
   }
   const handleRate = (value: number) => {
     try{
       rateProduct(pack?.product!, value, state.packs)
-      message(labels.ratingSuccess, 3000)   
+      message(labels.ratingSuccess, 3000)
+      history.goBack()   
 		} catch (err){
       message(getMessage(location.pathname, err), 3000)
     }
   }
-  
-  if (!pack) return <IonPage><h1>loading...</h1></IonPage>
+  const handleDeleteRequest = () => {
+    try{
+      const storeRequest = state.storeRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === pack?.id!)!
+      if (state.userInfo?.storeId) {
+        deleteStoreRequest(storeRequest, state.storeRequests)
+        message(labels.deleteSuccess, 3000)
+        history.goBack()
+      } 
+      dispatch({type: 'DELETE_FROM_BASKET', payload: pack.id})
+    } catch(err) {
+      message(getMessage(location.pathname, err), 3000)
+    }
+  }
+
+  let i = 0
   return (
     <IonPage>
       <Header title={pack.product.name} />
@@ -227,8 +174,8 @@ const PackDetails = () => {
         <IonCard>
           <IonGrid>
             <IonRow>
-              <IonCol>{pack.name}</IonCol>
-              <IonCol className="ion-text-end">{pack.price!.toFixed(2)}</IonCol>
+              <IonCol className="card-title">{pack.name}</IonCol>
+              <IonCol className="price">{pack.price!.toFixed(2)}</IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
@@ -241,13 +188,6 @@ const PackDetails = () => {
             </IonRow>
           </IonGrid>
         </IonCard>
-        {state.user && 
-          <IonFab vertical="top" horizontal="end" slot="fixed">
-            <IonFabButton onClick={() => setActionOpened(true)}>
-              <IonIcon ios={menuOutline} />
-            </IonFabButton>
-          </IonFab>
-        }
         {!state.user && 
           <IonButton 
             expand="block"
@@ -298,51 +238,98 @@ const PackDetails = () => {
               <IonLabel slot="end" className="ion-text-end">{salesmen.toString()}</IonLabel>
             </IonItem>
           </IonList>
-        }
-        <IonActionSheet
-          isOpen={actionOpened}
-          onDidDismiss={() => setActionOpened(false)}
-          buttons={actionButtons}
-        />
-        <IonActionSheet
-          isOpen={ratingOpened}
-          onDidDismiss={() => setRatingOpened(false)}
-          buttons={[
-            {
-              text: labels.rateGood,
-              icon: heartOutline,
-              cssClass: 'success',
-              handler: () => handleRate(5)
-            },
-            {
-              text: labels.rateMiddle,
-              icon: heartHalfOutline,
-              cssClass: 'warning',
-              handler: () => handleRate(3)
-            },
-            {
-              text: labels.rateBad,
-              icon: heartDislikeOutline,
-              cssClass: 'danger',
-              handler: () => handleRate(1)
-            },
-          ]}
-        />
+        }      
       </IonContent>
-      <IonAlert
-        isOpen={showAlert}
-        onDidDismiss={() => setShowAlert(false)}
-        header={labels.enterPrice}
-        inputs={[{name: 'price', type: 'number'}]}
+      {state.user && 
+        <IonFab vertical="top" horizontal="end" slot="fixed">
+          <IonFabButton onClick={() => setActionOpened(true)}>
+            <IonIcon ios={menuOutline} />
+          </IonFabButton>
+        </IonFab>
+      }
+      <IonActionSheet
+        isOpen={actionOpened}
+        onDidDismiss={() => setActionOpened(false)}
         buttons={[
           {
-            text: 'Cancel',
-            cssClass: 'secondary',
+            text: labels.newRequest,
+            cssClass: state.userInfo?.storeId && !state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => handleNewRequest()
           },
           {
-            text: 'Ok',
-            handler: (price) => handleAddPackStore(price)
+            text: labels.deleteRequest,
+            cssClass: state.userInfo?.storeId && state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => handleDeleteRequest()
+          },
+          {
+            text: labels.unAvailable,
+            cssClass: state.userInfo?.storeId && isAvailable ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => handleUnAvailable()
+          },
+          {
+            text: labels.changePrice,
+            cssClass: state.userInfo?.storeId && isAvailable ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => handleAvailable('c')
+          },
+          {
+            text: labels.available,
+            cssClass: state.userInfo?.storeId && !isAvailable ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => handleAvailable('n')
+          },
+          {
+            text: labels.addPack,
+            cssClass: state.userInfo?.storeId && !pack.subPackId ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => history.push(`/add-pack/${params.id}`)
+          },
+          {
+            text: labels.addGroup,
+            cssClass: state.userInfo?.storeId && !pack.subPackId ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => history.push(`/add-group/${params.id}`)
+          },
+          {
+            text: labels.addToBasket,
+            cssClass: !state.userInfo?.storeId && !state.basket.includes(params.id) ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => dispatch({type: 'ADD_TO_BASKET', payload: pack.id})
+          },
+          {
+            text: labels.rateProduct,
+            cssClass: !state.userInfo?.storeId && !state.ratings.find(r => r.productId === pack.product.id) ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => setRatingOpened(true)
+          },
+          {
+            text: labels.otherProducts,
+            cssClass: !state.userInfo?.storeId && otherProducts.length > 0 ? randomColors[i++ % 5].name: 'ion-hide',
+            handler: () => history.push(`/hints/${pack.id}/type/a`)
+          },
+          {
+            text: labels.otherPacks,
+            cssClass: !state.userInfo?.storeId && otherPacks.length > 0 ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => history.push(`/hints/${pack.id}/type/p`)
           }
+        ]}
+      />
+      <IonActionSheet
+        isOpen={ratingOpened}
+        onDidDismiss={() => setRatingOpened(false)}
+        buttons={[
+          {
+            text: labels.rateGood,
+            icon: heartOutline,
+            cssClass: 'success',
+            handler: () => handleRate(5)
+          },
+          {
+            text: labels.rateMiddle,
+            icon: heartHalfOutline,
+            cssClass: 'warning',
+            handler: () => handleRate(3)
+          },
+          {
+            text: labels.rateBad,
+            icon: heartDislikeOutline,
+            cssClass: 'danger',
+            handler: () => handleRate(1)
+          },
         ]}
       />
       <Footer />

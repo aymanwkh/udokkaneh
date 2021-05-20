@@ -15,6 +15,7 @@ const AddPack = () => {
   const params = useParams<Params>()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
+  const [product] = useState(() => state.packs.find(p => p.id === params.id)!.product)
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast()
@@ -44,6 +45,15 @@ const AddPack = () => {
       <Header title={labels.addPack} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
+          <IonItem>
+            <IonLabel position="floating">
+              {labels.productName}
+            </IonLabel>
+            <IonInput 
+              value={product.name} 
+              readonly
+            />
+          </IonItem>
           <IonItem>
             <IonLabel position="floating">
               {labels.weightVolume}
