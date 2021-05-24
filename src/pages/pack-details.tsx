@@ -1,13 +1,13 @@
 import {useContext, useEffect, useState} from 'react'
 import RatingStars from './rating-stars'
 import {StateContext} from '../data/state-provider'
-import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance} from '../data/actions'
+import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance, addToBasket, removeFromBasket} from '../data/actions'
 import labels from '../data/labels'
 import {PackStore, Store} from '../data/types'
 import Footer from './footer'
 import { setup, randomColors } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, useIonAlert, useIonToast } from '@ionic/react'
+import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 
@@ -21,14 +21,15 @@ type ExtendedPackStore = PackStore & {
   distance: number
 }
 const PackDetails = () => {
-  const {state, dispatch} = useContext(StateContext)
+  const {state} = useContext(StateContext)
   const params = useParams<Params>()
   const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
   const [isAvailable, setIsAvailable] = useState(false)
   const [otherProducts] = useState(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
   const [otherPacks] = useState(() => state.packs.filter(pa => pa.id !== pack?.id && pa.product.id === pack?.product.id))
-  const [actionOpened, setActionOpened] = useState(false);
-  const [ratingOpened, setRatingOpened] = useState(false);
+  const [actionOpened, setActionOpened] = useState(false)
+  const [ratingOpened, setRatingOpened] = useState(false)
+  const [nearbyOnly, setNearbyOnly] = useState(false)
   const [packStores, setPackStores] = useState<ExtendedPackStore[]>([])
   const [trademarkName] = useState(() => state.trademarks.find(t => t.id === pack.product.trademarkId)?.name)
   const [countryName] = useState(() => state.countries.find(c => c.id === pack.product.countryId)!.name)
@@ -41,8 +42,8 @@ const PackDetails = () => {
   const [salesmen] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && !ps.isRetail && ps.storeId !== state.userInfo?.storeId).length)
   const history = useHistory()
   const location = useLocation()
-  const [message] = useIonToast();
-  const [alert] = useIonAlert();
+  const [message] = useIonToast()
+  const [alert] = useIonAlert()
   const [transType, setTransType] = useState('')
   const [userPosition] = useState(() => state.userInfo?.position.lat ? state.userInfo.position : state.locations.find(l => l.id === state.userInfo?.locationId)?.position)
   useEffect(() => {
@@ -64,10 +65,14 @@ const PackDetails = () => {
             distance
           }
         })
-        return results.sort((r1, r2) => r1.distance > r2.distance ? 1 : -1)
+        if (userPosition?.lat && !nearbyOnly) {
+          return results.sort((r1, r2) => r1.distance - r2.distance)
+        } else {
+          return results.sort((r1, r2) => r1.price === r2.price ? (r1.storeInfo.claimsCount - r2.storeInfo.claimsCount) : (r1.price - r2.price))
+        }
       })
     }
-  }, [state.packStores, state.stores, state.locations, state.user, pack, state.userInfo, userPosition])
+  }, [state.packStores, state.stores, state.locations, state.user, pack, state.userInfo, userPosition, nearbyOnly])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
@@ -86,12 +91,11 @@ const PackDetails = () => {
       header: labels.newRequestTitle,
       message: labels.newRequestText,
       buttons: [
-        {text: labels.cancel, handler: () => deletePrice(false)},
-        {text: labels.ok, handler: () => deletePrice(true)},
+        {text: labels.no, handler: () => deletePrice(false)},
+        {text: labels.yes, handler: () => deletePrice(true)},
       ],
     })
   }
-
   const handleNewRequest = () => {
     try{
       const storeRequest = {
@@ -122,6 +126,7 @@ const PackDetails = () => {
         storeId: state.userInfo?.storeId!,
         isRetail: state.userInfo?.type === 's',
         price: +value,
+        isActive: true,
         time: new Date()
       }
       if (transType === 'n') addPackStore(storePack, state.storeRequests)
@@ -160,12 +165,24 @@ const PackDetails = () => {
         message(labels.deleteSuccess, 3000)
         history.goBack()
       } 
-      dispatch({type: 'DELETE_FROM_BASKET', payload: pack.id})
     } catch(err) {
       message(getMessage(location.pathname, err), 3000)
     }
   }
-
+  const handleAddToBasket = () => {
+    try {
+      addToBasket(pack.id!)
+    } catch(err) {
+      message(getMessage(location.pathname, err), 3000)
+    }
+  }
+  const handleRemoveFromBasket = () => {
+    try {
+      removeFromBasket(pack.id!)
+    } catch(err) {
+      message(getMessage(location.pathname, err), 3000)
+    }
+  }
   let i = 0
   return (
     <IonPage>
@@ -198,7 +215,11 @@ const PackDetails = () => {
             {labels.showPackStores}
           </IonButton>
         }
-        {state.userInfo?.type === 'n' &&
+        {state.userInfo?.type === 'n' && <>
+          <IonItem>
+            <IonLabel>{labels.nearbyOnly}</IonLabel>
+            <IonToggle checked={nearbyOnly} onIonChange={() => setNearbyOnly(s => !s)} />
+          </IonItem>
           <IonList>
             {packStores.map((p, i) => 
               <IonItem key={i} routerLink={`/store-details/${p.storeId}/${p.packId}`}>
@@ -210,7 +231,7 @@ const PackDetails = () => {
               </IonItem>
             )}
           </IonList>
-        }
+        </>}
         {state.user && state.userInfo?.type !== 'n' &&
           <IonList>
             <IonItem>
@@ -282,14 +303,14 @@ const PackDetails = () => {
             handler: () => history.push(`/add-pack/${params.id}`)
           },
           {
-            text: labels.addGroup,
-            cssClass: state.userInfo?.storeId && !pack.subPackId ? randomColors[i++ % 5].name : 'ion-hide',
-            handler: () => history.push(`/add-group/${params.id}`)
-          },
-          {
             text: labels.addToBasket,
             cssClass: !state.userInfo?.storeId && !state.basket.includes(params.id) ? randomColors[i++ % 5].name : 'ion-hide',
-            handler: () => dispatch({type: 'ADD_TO_BASKET', payload: pack.id})
+            handler: () => handleAddToBasket()
+          },
+          {
+            text: labels.removeFromBasket,
+            cssClass: !state.userInfo?.storeId && state.basket.includes(params.id) ? randomColors[i++ % 5].name : 'ion-hide',
+            handler: () => handleRemoveFromBasket()
           },
           {
             text: labels.rateProduct,

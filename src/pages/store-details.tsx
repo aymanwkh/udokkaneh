@@ -1,7 +1,7 @@
 import {useState, useContext} from 'react'
-import {addAlarm, getMessage} from '../data/actions'
+import {addClaim, getMessage} from '../data/actions'
 import labels from '../data/labels'
-import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
+import { IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
@@ -15,31 +15,23 @@ const StoreDetails = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
   const [store] = useState(() => state.stores.find(s => s.id === params.storeId)!)
-  const [alarmsCount] = useState(() => state.alarms.filter(a => a.storeId === params.storeId).length)
-  const [actionOpened, setActionOpened] = useState(false);
   const [message] = useIonToast();
   const location = useLocation()
   const history = useHistory()
   const [alert] = useIonAlert();
-  const handleAddAlarm = (type: string) => {
+  const handleAddClaim = () => {
     alert({
-      header: labels.confirmationTitle,
-      message: labels.confirmationText,
+      header: labels.claimTitle,
+      message: labels.claimText,
       buttons: [
         {text: labels.cancel},
         {text: labels.ok, handler: async () => {
           try{
-            if (state.alarms.find(a => a.userId === state.user?.uid && a.storeId === params.storeId && a.time === new Date())){
-              throw new Error('duplicateAlarms')
+            const packStore = state.packStores.find(s => s.storeId === params.storeId && s.packId === params.packId)
+            if (packStore?.claimUserId === state.user?.uid){
+              throw new Error('duplicateClaims')
             }
-            const alarm = {
-              userId: state.user?.uid!,
-              packId: params.packId,
-              storeId: params.storeId,
-              type,
-              time: new Date()  
-            }
-            addAlarm(alarm)
+            addClaim(params.storeId, params.packId, state.packStores)
             message(labels.sendSuccess, 3000)
             history.goBack()
           } catch(err) {
@@ -95,7 +87,7 @@ const StoreDetails = () => {
               {labels.alarmsCount}
             </IonLabel>
             <IonInput 
-              value={alarmsCount} 
+              value={store.claimsCount} 
               readonly
             />
           </IonItem>
@@ -103,27 +95,11 @@ const StoreDetails = () => {
       </IonContent>
       {!state.userInfo?.storeId &&
         <IonFab vertical="top" horizontal="end" slot="fixed">
-          <IonFabButton onClick={() => setActionOpened(true)} color="warning">
+          <IonFabButton onClick={handleAddClaim} color="danger">
             <IonIcon ios={thumbsDownOutline}/>
           </IonFabButton>
         </IonFab>
       }
-      <IonActionSheet
-        isOpen={actionOpened}
-        onDidDismiss={() => setActionOpened(false)}
-        buttons={[
-          {
-            text: labels.addNotFoundAlarm,
-            cssClass: 'primary',
-            handler: () => handleAddAlarm('f')
-          },
-          {
-            text: labels.addChangePriceAlarm,
-            cssClass: 'secondary',
-            handler: () => handleAddAlarm('p')
-          },
-        ]}
-      />
     </IonPage>
   )
 }

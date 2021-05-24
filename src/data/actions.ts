@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import {randomColors} from './config'
-import {Error, Category, Alarm, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position} from './types'
+import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position} from './types'
 
 export const getMessage = (path: string, error: Error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -96,11 +96,6 @@ export const registerUser = async (user: UserInfo) => {
     colors,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
-  
-  return firebase.auth().currentUser?.updateProfile({
-    displayName: user.type === 'n' ? 'n' : 's'
-  })
-
 }
 
 export const changePassword = async (oldPassword: string, newPassword: string) => {
@@ -124,12 +119,38 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
   }
 }
 
-export const addAlarm = (alarm: Alarm) => {
-  const {storeId, ...others} = alarm
-  const storeRef = firebase.firestore().collection('stores').doc(storeId)
-  storeRef.update({
-    alarms: firebase.firestore.FieldValue.arrayUnion(others)
+export const addClaim = (storeId: string, packId: string, packStores: PackStore[]) => {
+  const batch = firebase.firestore().batch()
+  const packStore = packStores.find(p => p.packId === packId && p.storeId === storeId)!
+  if (packStore.claimUserId) {
+    packStore.isActive = false
+    const storeRef = firebase.firestore().collection('stores').doc(storeId)
+    storeRef.update({
+      claimsCount: firebase.firestore.FieldValue.increment(1)
+    })
+  } else {
+    packStore.claimUserId = firebase.auth().currentUser?.uid
+  }
+  const otherStores = packStores.filter(p => p.packId === packId && p.storeId !== storeId)
+  otherStores.push(packStore)
+  const stores = otherStores.map(p => {
+    const {packId, ...others} = p
+    return others
   })
+  const packRef = firebase.firestore().collection('packs').doc(packStore.packId)
+  batch.update(packRef, {
+    stores
+  })
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  batch.update(userRef, {
+    claims: firebase.firestore.FieldValue.arrayUnion({
+      storeId,
+      packId,
+      time: new Date()
+    })
+  })
+  batch.commit()
+
 }
 
 export const deleteNotification = (notifications: Notification[], notificationId: string) => {
@@ -155,8 +176,8 @@ export const addProductRequest = async (productRequest: ProductRequest, image?: 
   })
 }
 
-export const changePrice = (packStore: PackStore, packStores: PackStore[], batch?: firebase.firestore.WriteBatch) => {
-  const newBatch = batch || firebase.firestore().batch()
+export const changePrice = (packStore: PackStore, packStores: PackStore[]) => {
+  const batch = firebase.firestore().batch()
   const otherStores = packStores.filter(p => p.packId === packStore.packId && p.storeId !== packStore.storeId)
   otherStores.push(packStore)
   const stores = otherStores.map(p => {
@@ -164,13 +185,11 @@ export const changePrice = (packStore: PackStore, packStores: PackStore[], batch
     return others
   })
   let packRef = firebase.firestore().collection('packs').doc(packStore.packId)
-  newBatch.update(packRef, {
+  batch.update(packRef, {
     stores,
     lastTrans: firebase.firestore.FieldValue.serverTimestamp()
   })
-  if (!batch) {
-    newBatch.commit()
-  }
+  batch.commit()
 }
 
 export const addPackRequest = async (packRequest: PackRequest, image?: File) => {
@@ -305,4 +324,18 @@ export const getCategoryName = (category: Category, categories: Category[]): str
     const mainCategory = categories.find(c => c.id === category.mainId)
     return mainCategory?.name + '-' + category.name
   }
+}
+
+export const addToBasket = (packId: string) => {
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  userRef.update({
+    basket: firebase.firestore.FieldValue.arrayUnion(packId)
+  })
+}
+
+export const removeFromBasket = (packId: string) => {
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  userRef.update({
+    basket: firebase.firestore.FieldValue.arrayRemove(packId)
+  })
 }

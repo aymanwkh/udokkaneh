@@ -1,11 +1,12 @@
-import {useState, useContext} from 'react'
+import {useState, useContext, useRef, ChangeEvent} from 'react'
 import {getMessage, addPackRequest} from '../data/actions'
 import labels from '../data/labels'
-import { IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonToggle, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
+import { PackRequest } from '../data/types'
 
 type Params = {
   id: string
@@ -15,25 +16,67 @@ const AddPack = () => {
   const params = useParams<Params>()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
-  const [product] = useState(() => state.packs.find(p => p.id === params.id)!.product)
+  const [form, setForm] = useState('w')
+  const [subCount, setSubCount] = useState('')
+  const [withGift, setWithGift] = useState(false)
+  const [gift, setGift] = useState('')
+  const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
+  const [specialImage, setSpecialImage] = useState(false)
+  const [imageUrl, setImageUrl] = useState('')
+  const [image, setImage] = useState<File>()
+  const inputEl = useRef<HTMLInputElement | null>(null);
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast()
+  const onUploadClick = () => {
+    if (inputEl.current) inputEl.current.click();
+  };
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = e.target.files
+      if (!files) return
+      const filename = files[0].name
+      if (filename.lastIndexOf('.') <= 0) {
+        throw new Error('invalidFile')
+      }
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        if (fileReader.result) setImageUrl(fileReader.result.toString())
+      })
+      fileReader.readAsDataURL(files[0])
+      setImage(files[0])
+    } catch (err) {
+      message(getMessage(location.pathname, err), 3000)
+    }
+  }
   const handleSubmit = () => {
     try{
       if (+price <= 0 || +price !== Number((+price).toFixed(2))) {
         throw new Error('invalidPrice')
       }
-      const packRequest = {
+      if (form === 'g') {
+        if (+subCount === 0 || +subCount !== Math.floor(+subCount)){
+          throw new Error('invalidCount')
+        }
+        if (!withGift && +subCount === 1) {
+          throw new Error('invalidCountWithoutGift')
+        }
+      }
+      const packName = form === 'g' ? `${+subCount > 1 ? subCount + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}` : name
+      const packRequest: PackRequest = {
         id: Math.random().toString(),
         storeId: state.userInfo?.storeId!,
         siblingPackId: params.id,
-        name,
-        specialImage: false,
+        name: packName,
         price: +price,
         time: new Date()
       }
-      addPackRequest(packRequest)
+      if (form === 'g') {
+        packRequest.subCount = +subCount
+        packRequest.withGift = withGift
+        packRequest.gift = gift
+      }
+      addPackRequest(packRequest, image)
       message(labels.sendRequestSuccess, 3000)
       history.goBack()
     } catch(err) {
@@ -45,27 +88,70 @@ const AddPack = () => {
       <Header title={labels.addPack} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
+          <IonSegment value={form} onIonChange={e => setForm(e.detail.value!)}>
+            <IonSegmentButton value="w">
+              <IonLabel>{labels.newWight}</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="g">
+              <IonLabel>{labels.newGroup}</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="o">
+              <IonLabel>{labels.others}</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
           <IonItem>
             <IonLabel position="floating">
               {labels.productName}
             </IonLabel>
             <IonInput 
-              value={product.name} 
+              value={pack.product.name} 
               readonly
             />
           </IonItem>
-          <IonItem>
-            <IonLabel position="floating">
-              {labels.weightVolume}
-            </IonLabel>
-            <IonInput 
-              value={name} 
-              type="text" 
-              autofocus
-              clearInput
-              onIonChange={e => setName(e.detail.value!)} 
-            />
-          </IonItem>
+          {form === 'g' ? <>
+            <IonItem>
+              <IonLabel position="floating">
+                {labels.count}
+              </IonLabel>
+              <IonInput 
+                value={subCount} 
+                type="number" 
+                autofocus
+                clearInput
+                onIonChange={e => setSubCount(e.detail.value!)} 
+              />
+            </IonItem>
+            <IonItem>
+              <IonLabel>{labels.withGift}</IonLabel>
+              <IonToggle checked={withGift} onIonChange={() => setWithGift(s => !s)} />
+            </IonItem>
+            {withGift &&
+              <IonItem>
+                <IonLabel position="floating">
+                  {labels.gift}
+                </IonLabel>
+                <IonInput 
+                  value={gift} 
+                  type="text" 
+                  clearInput
+                  onIonChange={e => setGift(e.detail.value!)} 
+                />
+              </IonItem>
+            }
+          </> : 
+            <IonItem>
+              <IonLabel position="floating">
+                {form === 'w' ? labels.weightVolume : labels.description}
+              </IonLabel>
+              <IonInput 
+                value={name} 
+                type="text" 
+                autofocus
+                clearInput
+                onIonChange={e => setName(e.detail.value!)} 
+              />
+            </IonItem>
+          }
           <IonItem>
             <IonLabel position="floating">
               {labels.price}
@@ -77,8 +163,31 @@ const AddPack = () => {
               onIonChange={e => setPrice(e.detail.value!)} 
             />
           </IonItem>
+          {form === 'o' &&
+            <IonItem>
+              <IonLabel>{labels.specialImage}</IonLabel>
+              <IonToggle checked={specialImage} onIonChange={() => setSpecialImage(s => !s)} />
+            </IonItem>
+          }
+          {specialImage && <>
+            <input 
+              ref={inputEl}
+              type="file" 
+              accept="image/*" 
+              style={{display: "none"}}
+              onChange={e => handleFileChange(e)}
+            />
+            <IonButton 
+              expand="block" 
+              fill="clear" 
+              onClick={onUploadClick}
+            >
+              {labels.setImage}
+            </IonButton>
+            <IonImg src={imageUrl} alt={labels.noImage} />
+          </>}
         </IonList>
-        {price && name &&
+        {price && (name || (form === 'g' && subCount && (gift || !withGift))) &&
           <IonFab vertical="top" horizontal="end" slot="fixed">
             <IonFabButton onClick={handleSubmit}>
               <IonIcon ios={checkmarkOutline} />

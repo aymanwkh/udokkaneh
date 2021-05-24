@@ -1,5 +1,6 @@
 export const setup = {
   priceDiff: 0.25,
+  nearbyDistance: 1
 }
 
 export const randomColors = [

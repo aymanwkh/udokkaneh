@@ -33,14 +33,14 @@ const Packs = () => {
       const packs = state.packs.filter(p => params.type === 's' ? state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId) : p.price! > 0 && children.includes(p.product.categoryId))
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
-        const trademarkInfo = state.trademarks.find(t => t.id === p.product.trademarkId)
-        const countryInfo = state.countries.find(c => c.id === p.product.countryId)!
+        const trademarkName = state.trademarks.find(t => t.id === p.product.trademarkId)?.name
+        const countryName = state.countries.find(c => c.id === p.product.countryId)!.name
         const myPrice = state.userInfo?.storeId ? state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)?.price : 0
         return {
           ...p,
           categoryName: getCategoryName(categoryInfo, state.categories),
-          trademarkName: trademarkInfo?.name,
-          countryName: countryInfo.name,
+          trademarkName,
+          countryName,
           myPrice
         }
       })

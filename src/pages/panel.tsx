@@ -8,18 +8,15 @@ import labels from '../data/labels';
 const Panel = () => {
   const {state, dispatch} = useContext(StateContext)
   const [notificationsCount, setNotificationsCount] = useState(0)
+  const [claimsCount, setClaimsCount] = useState(0)
   const menuEl = useRef<HTMLIonMenuElement | null>(null);
   const history = useHistory()
   useEffect(() => {
-    let notifications = 0, alarms = 0
-    if (state.userInfo) {
-      notifications = state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length
-    }
-    if (state.userInfo?.storeId) {
-      alarms = state.alarms.filter(a => a.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length
-    }
-    setNotificationsCount(notifications + alarms)
-  }, [state.userInfo, state.alarms, state.notifications])
+    setNotificationsCount(() => state.userInfo ? state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length : 0)
+  }, [state.userInfo, state.notifications])
+  useEffect(() => {
+    setClaimsCount(() => state.userInfo?.storeId ? state.packStores.filter(s => s.storeId === state.userInfo?.storeId && s.claimUserId).length : 0)
+  }, [state.userInfo, state.packStores])
   const handleLogout = () => {
     logout()
     dispatch({type: 'LOGOUT'})
@@ -61,6 +58,11 @@ const Panel = () => {
                 <IonItem routerLink={`/store-details/${state.userInfo?.storeId}/0`}>
                   <IonLabel>{labels.myInfo}</IonLabel>
                 </IonItem>
+                <IonItem routerLink='/claims'>
+                  <IonLabel>{labels.claims}</IonLabel>
+                  {claimsCount > 0 && <IonBadge color="danger">{claimsCount}</IonBadge>}
+                </IonItem>
+
               </>
             }
           </IonMenuToggle>

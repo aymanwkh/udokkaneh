@@ -1,7 +1,7 @@
 import {createContext, useReducer, useEffect} from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
-import {State, Context, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, StoreRequest, UserInfo, Rating, Alarm, ProductRequest, PackRequest} from './types'
+import {State, Context, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, StoreRequest, UserInfo, Rating, ProductRequest, PackRequest} from './types'
 
 export const StateContext = createContext({} as Context)
 
@@ -21,7 +21,6 @@ const StateProvider = ({children}: Props) => {
     trademarks: [],
     passwordRequests: [],
     notifications: [],
-    alarms: [],
     storeRequests: [],
     stores: [],
     ratings: [],
@@ -53,7 +52,7 @@ const StateProvider = ({children}: Props) => {
       docs.forEach(doc => {
         let prices, minPrice = 0
         if (doc.data().stores) {
-          prices = doc.data().stores.map((s: PackStore) => s.isRetail ? s.price : 0)
+          prices = doc.data().stores.map((s: PackStore) => s.isRetail && s.isActive ? s.price : 0)
           minPrice = prices.length > 0 ? Math.min(...prices) : 0
         }
         packs.push({
@@ -76,6 +75,8 @@ const StateProvider = ({children}: Props) => {
               packId: doc.id,
               storeId: s.storeId,
               isRetail: s.isRetail,
+              isActive: s.isActive,
+              claimUserId: s.claimUserId,
               price: s.price,
               time: s.time.toDate()
             })
@@ -133,9 +134,6 @@ const StateProvider = ({children}: Props) => {
     firebase.auth().onAuthStateChanged(user => {
       dispatch({type: 'LOGIN', payload: user})
       if (user) {
-        const localData = localStorage.getItem('basket')
-        const basket = localData ? JSON.parse(localData) : []
-        if (basket) dispatch({type: 'SET_BASKET', payload: basket}) 
         const unsubscribeUser = firebase.firestore().collection('users').doc(user.uid).onSnapshot(doc => {
           const notifications: Notification[] = []
           const ratings: Rating[] = []
@@ -150,7 +148,6 @@ const StateProvider = ({children}: Props) => {
               time: doc.data()!.time?.toDate(),
               type: doc.data()!.type
             }
-            dispatch({type: 'SET_USER_INFO', payload: userData})
             doc.data()!.notifications?.forEach((n: any) => {
               notifications.push({
                 id: n.id,
@@ -159,15 +156,16 @@ const StateProvider = ({children}: Props) => {
                 time: n.time.toDate()
               })
             })
-            dispatch({type: 'SET_NOTIFICATIONS', payload: notifications})
             doc.data()!.ratings?.forEach((r: any) => {
               ratings.push({
                 productId: r.productId,
                 value: r.value
               })
             })
+            dispatch({type: 'SET_USER_INFO', payload: userData})
+            dispatch({type: 'SET_NOTIFICATIONS', payload: notifications})
             dispatch({type: 'SET_RATINGS', payload: ratings})
-
+            if (doc.data()!.type === 'n' && doc.data()!.basket) dispatch({type: 'SET_BASKET', payload:  doc.data()!.basket})
           } else {
             firebase.auth().signOut()
             dispatch({type: 'LOGOUT'})
@@ -177,7 +175,6 @@ const StateProvider = ({children}: Props) => {
         })
         const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
           const stores: Store[] = []
-          const alarms: Alarm[] = []
           const productRequests: ProductRequest[] = []
           const storeRequests: StoreRequest[] = []
           const packRequests: PackRequest[] = []
@@ -189,15 +186,7 @@ const StateProvider = ({children}: Props) => {
               address: doc.data().address,
               position: doc.data().position,
               mobile: doc.data().mobile,
-            })
-            doc.data().alarms?.forEach((a: any) => {
-              alarms.push({
-                storeId: doc.id,
-                userId: a.userId,
-                packId: a.packId,
-                type: a.type,
-                time: a.time.toDate()
-              })
+              claimsCount: doc.data().claimsCount
             })
             doc.data().productRequests?.forEach((r: any) => {
               productRequests.push({
@@ -234,17 +223,17 @@ const StateProvider = ({children}: Props) => {
             })
           })
           dispatch({type: 'SET_STORES', payload: stores})
-          dispatch({type: 'SET_ALARMS', payload: alarms})
           dispatch({type: 'SET_PRODUCT_REQUESTS', payload: productRequests})
           dispatch({type: 'SET_STORE_REQUESTS', payload: storeRequests})
           dispatch({type: 'SET_PACK_REQUESTS', payload: packRequests})
-          dispatch({type: 'SET_BASKET', payload: storeRequests.map(r => r.packId)}) 
+          if (storeRequests.length > 0) dispatch({type: 'SET_BASKET', payload: storeRequests.map(r => r.packId)}) 
         }, err => {
           unsubscribeStores()
         }) 
       } else {
         dispatch({type: 'CLEAR_USER_INFO'})
         dispatch({type: 'LOGOUT'})
+        dispatch({type: 'CLEAR_BASKET'})
       }
     })
   }, [])

@@ -71,6 +71,8 @@ export type PackStore = {
   isRetail: boolean,
   packId: string,
   price: number,
+  claimUserId?: string,
+  isActive: boolean,
   time: Date
 }
 export type Notification = {
@@ -82,13 +84,6 @@ export type Notification = {
 export type Rating = {
   productId: string,
   value: number
-}
-export type Alarm = {
-  userId: string,
-  packId: string,
-  storeId: string,
-  type: string,
-  time: Date
 }
 export type Position = {
   lat: number,
@@ -138,7 +133,8 @@ export type Store = {
   mobile: string,
   address: string,
   position: Position,
-  locationId?: string
+  locationId?: string,
+  claimsCount: number
 }
 export type StoreRequest = {
   storeId: string,
@@ -158,7 +154,6 @@ export type State = {
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],
   notifications: Notification[],
-  alarms: Alarm[],
   storeRequests: StoreRequest[],
   stores: Store[],
   ratings: Rating[],
