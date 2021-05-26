@@ -40,7 +40,7 @@ const Login = () => {
       <IonContent fullscreen className="ion-padding">
         <IonList>
           <IonItem>
-            <IonLabel position="floating" color={mobileInvalid ? 'danger' : ''}>
+            <IonLabel position="floating" color={mobileInvalid ? 'danger' : 'primary'}>
               {labels.mobile}
             </IonLabel>
             <IonInput 
@@ -53,7 +53,7 @@ const Login = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating" color={passwordInvalid ? 'danger' : ''}>
+            <IonLabel position="floating" color={passwordInvalid ? 'danger' : 'primary'}>
               {labels.password}
             </IonLabel>
             <IonInput 
@@ -66,7 +66,15 @@ const Login = () => {
           </IonItem>
         </IonList>
         {!mobileInvalid && !passwordInvalid && 
-          <IonButton expand="block" fill="clear" onClick={handleLogin}>{labels.login}</IonButton>
+          <div className="ion-padding" style={{textAlign: 'center'}}>
+            <IonButton 
+              fill="solid" 
+              style={{width: '10rem'}}
+              onClick={handleLogin}
+            >
+              {labels.login}
+            </IonButton>
+          </div>
         }
       </IonContent>
       <IonFooter>

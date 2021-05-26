@@ -48,9 +48,6 @@ const Packs = () => {
     })
   }, [state.packs, state.userInfo, params.id, params.type, state.categories, state.trademarks, state.countries, state.packStores])
   useEffect(() => {
-    dispatch({type: 'CLEAR_SEARCH'})
-  }, [dispatch])
-  useEffect(() => {
     if (!state.searchText) {
       setData(packs)
       return
@@ -64,7 +61,10 @@ const Packs = () => {
     const fuse = new Fuse(packs, options);
     const result = fuse.search(state.searchText);
     setData(result.map(p => p.item));
-  }, [state.searchText, packs])
+    return function cleanUp() {
+      dispatch({type: 'CLEAR_SEARCH'})
+    }
+  }, [state.searchText, packs, dispatch])
   const handleSorting = (sortByValue: string) => {
     setSortBy(sortByValue)
     switch(sortByValue){

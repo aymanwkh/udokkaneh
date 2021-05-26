@@ -58,7 +58,7 @@ const labels: Label = {
   logout: 'تسجيل خروج',
   mainPanelTitle: 'الوظائف المساندة',
   storeOwner: 'صاحب محل',
-  salesman: 'موزع/جملة',
+  salesman: 'موزع',
   address: 'العنوان',
   notFoundPageTitle: 'الصفحة غير موجودة',
   notFoundPageError: 'حدث خطأ ... الصفحة غير موجودة',
@@ -150,7 +150,7 @@ const labels: Label = {
   country: 'بلد المنشأ',
   sendRequestSuccess: 'تم ارسال الطلب بنجاح',
   setImage: 'حمل الصورة',
-  setPosition: 'حدد موقعك',
+  currentPosition: 'مكان تواجدك',
   changePrice: 'تغيير السعر',
   addPack: 'اضافة عبوة جديدة',
   package: 'التغليف',
@@ -175,7 +175,7 @@ const labels: Label = {
   storeDetails: 'تفاصيل المحل',
   rateProduct: 'رأيك في هذا المنتج',
   newAlarm: 'بلاغ جديد',
-  positionError: 'حدث خطأ في تحديد الموقع، يرجى ادخال العنوان',
+  positionError: 'حدث خطأ في تحديد الموقع، يرجى التحديد من خلال الخريطة',
   productRequests: 'طلبات منتجات جديدة',
   duplicatePack: 'يوجد عبوة اخرى لنفس المنتج بنفس الوزن',
   withGift: 'مع هدية',
@@ -208,7 +208,12 @@ const labels: Label = {
   claims: 'الشكاوى',
   oneClaim: 'شكوى واحدة',
   twoClaims: 'شكوى مثبتة لذا توقف ظهور منتجك',
-  nearbyOnly: 'المحلات القريبة فقط'
+  nearbyOnly: 'المحلات القريبة فقط',
+  byMap: 'الخريطة',
+  or: 'او',
+  setPosition: 'حدد موقعك من خلال',
+  type: 'النوع',
+  map: 'الخريطة'
 }
 
 export default labels

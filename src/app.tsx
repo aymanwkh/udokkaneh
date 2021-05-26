@@ -42,6 +42,7 @@ import Hints from './pages/hints'
 import AddProductRequest from './pages/add-product-request'
 import Advert from './pages/advert'
 import Claims from './pages/claims'
+import Map from './pages/map'
 
 const app = () => {
   return (
@@ -68,6 +69,7 @@ const app = () => {
               <Route path="/add-product-request" exact={true} component={AddProductRequest} />
               <Route path="/advert" exact={true} component={Advert} />
               <Route path="/claims" exact={true} component={Claims} />
+              <Route path="/map/:lat/:lng/:updatable" exact={true} component={Map} />
             </IonRouterOutlet>
           </IonSplitPane>
         </IonReactRouter>

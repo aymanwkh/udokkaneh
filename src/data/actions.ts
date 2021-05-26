@@ -91,6 +91,7 @@ export const registerUser = async (user: UserInfo) => {
     colors.push(randomColors[Number(user.password!.charAt(i))].name)
   }
   const {password, ...others} = user
+  console.log('position === ', others.position)
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).set({
     ...others,
     colors,

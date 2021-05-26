@@ -2,6 +2,10 @@ import {State, Action} from './types'
 
 const Reducer = (state: State, action: Action) => {
   switch (action.type){
+    case 'SET_MAP_POSITION':
+      return {...state, mapPosition: action.payload}
+    case 'CLEAR_MAP_POSITION':
+      return {...state, mapPosition: undefined}
     case 'CLEAR_BASKET':
       return {...state, basket: []}
     case 'SET_BASKET':

@@ -158,7 +158,8 @@ export type State = {
   stores: Store[],
   ratings: Rating[],
   productRequests: ProductRequest[]
-  searchText: string
+  searchText: string,
+  mapPosition?: Position
 }
 export type Action = {
   type: string

@@ -1,6 +1,5 @@
 export const setup = {
   priceDiff: 0.25,
-  nearbyDistance: 1
 }
 
 export const randomColors = [
@@ -24,3 +23,8 @@ export const patterns = {
   name: /^.{4,50}$/,
   mobile: /^07[7-9][0-9]{7}$/
 }
+
+export const storeTypes = [
+  {id: 's', name: 'تجزئة'},
+  {id: 'w', name: 'جملة'},
+]

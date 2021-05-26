@@ -1,11 +1,11 @@
 import {useState, useContext} from 'react'
 import {addClaim, getMessage} from '../data/actions'
 import labels from '../data/labels'
-import { IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
-import { thumbsDownOutline } from 'ionicons/icons'
+import { thumbsDownOutline, warningOutline } from 'ionicons/icons'
 
 type Params = {
   storeId: string,
@@ -92,11 +92,20 @@ const StoreDetails = () => {
             />
           </IonItem>
         </IonList>
+        <div className="ion-padding" style={{textAlign: 'center'}}>
+          <IonButton 
+            fill="solid" 
+            style={{width: '10rem'}}
+            routerLink={`/map/${store.position.lat}/${store.position.lng}/0`}
+          >
+            {labels.map}
+          </IonButton>
+        </div>
       </IonContent>
       {!state.userInfo?.storeId &&
         <IonFab vertical="top" horizontal="end" slot="fixed">
           <IonFabButton onClick={handleAddClaim} color="danger">
-            <IonIcon ios={thumbsDownOutline}/>
+            <IonIcon ios={warningOutline}/>
           </IonFabButton>
         </IonFab>
       }

@@ -34,45 +34,42 @@ const PackDetails = () => {
   const [trademarkName] = useState(() => state.trademarks.find(t => t.id === pack.product.trademarkId)?.name)
   const [countryName] = useState(() => state.countries.find(c => c.id === pack.product.countryId)!.name)
   const [myPrice] = useState(() => state.packStores.find(ps => ps.packId === pack.id && ps.storeId === state.userInfo?.storeId)?.price)
-  const [storeLocation] = useState(() => state.stores.find(s => s.id === state.userInfo?.storeId)?.locationId)
-  const [stores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId).length)
-  const [nearStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && state.stores.find(s => s.id === ps.storeId)?.locationId === storeLocation).length)
-  const [bestPriceStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length)
-  const [bestPriceNearStores] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price && state.stores.find(s => s.id === ps.storeId)?.locationId === storeLocation).length)
+  const [storePosition] = useState(() => state.userInfo?.storeId ? state.stores.find(s => s.id === state.userInfo?.storeId)?.position! : undefined)
+  const [stores] = useState(() => state.userInfo?.storeId ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId).length : 0)
+  const [nearStores] = useState(() => state.userInfo?.storeId ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && calcDistance(storePosition!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
+  const [bestPriceStores] = useState(() => state.userInfo?.storeId ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length : 0)
+  const [bestPriceNearStores] = useState(() => state.userInfo?.storeId ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price && calcDistance(storePosition!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
   const [salesmen] = useState(() => state.packStores.filter(ps => ps.packId === pack.id && !ps.isRetail && ps.storeId !== state.userInfo?.storeId).length)
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast()
   const [alert] = useIonAlert()
   const [transType, setTransType] = useState('')
-  const [userPosition] = useState(() => state.userInfo?.position.lat ? state.userInfo.position : state.locations.find(l => l.id === state.userInfo?.locationId)?.position)
   useEffect(() => {
     if (state.userInfo?.type === 'n') {
       setPackStores(() => {
         const packStores = state.packStores.filter(p => p.packId === pack?.id)
         const results = packStores.map(p => {
           const storeInfo = state.stores.find(s => s.id === p.storeId)!
-          const storeLocation = state.locations.find(l => l.id === storeInfo.locationId)
-          const storePosition = storeInfo.position.lat ? storeInfo.position : storeLocation?.position
           let distance = 1000
-          if (userPosition?.lat && storePosition?.lat) {
-            distance = calcDistance(userPosition, storePosition)
+          if (state.userInfo?.position?.lat && storeInfo.position.lat) {
+            distance = calcDistance(state.userInfo?.position, storeInfo.position)
           }
           return {
             ...p,
             storeInfo,
-            storeLocation: storeLocation?.name,
+            storeLocation: state.locations.find(l => l.id === storeInfo.locationId)?.name,
             distance
           }
         })
-        if (userPosition?.lat && !nearbyOnly) {
-          return results.sort((r1, r2) => r1.distance - r2.distance)
+        if (nearbyOnly && state.userInfo?.position?.lat) {
+          return results.filter(r => r.distance < 1).sort((r1, r2) => r1.price === r2.price ? (r1.storeInfo.claimsCount - r2.storeInfo.claimsCount) : (r1.price - r2.price))
         } else {
-          return results.sort((r1, r2) => r1.price === r2.price ? (r1.storeInfo.claimsCount - r2.storeInfo.claimsCount) : (r1.price - r2.price))
+          return results.sort((r1, r2) => r1.distance - r2.distance)
         }
       })
     }
-  }, [state.packStores, state.stores, state.locations, state.user, pack, state.userInfo, userPosition, nearbyOnly])
+  }, [state.packStores, state.stores, state.locations, state.user, pack, state.userInfo, nearbyOnly])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
