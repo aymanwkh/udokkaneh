@@ -28,8 +28,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, packStores: action.payload}
     case 'SET_ADVERTS':
       return {...state, adverts: action.payload}
-    case 'SET_LOCATIONS':
-      return {...state, locations: action.payload}
+    case 'SET_REGIONS':
+      return {...state, regions: action.payload}
     case 'SET_COUNTRIES':
       return {...state, countries: action.payload}
     case 'SET_TRADEMARKS':

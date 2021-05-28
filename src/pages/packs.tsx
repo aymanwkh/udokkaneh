@@ -3,7 +3,7 @@ import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {randomColors} from '../data/config'
 import {getCategoryName, getChildren, productOfText} from '../data/actions'
-import {Pack} from '../data/types'
+import {Pack, PackStore} from '../data/types'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
@@ -14,7 +14,7 @@ type ExtendedPack = Pack & {
   categoryName: string,
   countryName: string,
   trademarkName?: string,
-  myPrice?: number
+  packStoreInfo?: PackStore
 }
 type Params = {
   id: string,
@@ -29,19 +29,32 @@ const Packs = () => {
   const [data, setData] = useState<ExtendedPack[]>([])
   useEffect(() => {
     setPacks(() => {
-      const children = params.type === 'a' ? getChildren(params.id, state.categories) : [params.id]
-      const packs = state.packs.filter(p => params.type === 's' ? state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId) : p.price! > 0 && children.includes(p.product.categoryId))
+      let packs
+      switch (params.type){
+        case 'a':
+          const children = getChildren(params.id, state.categories)
+          packs = state.packs.filter(p => p.price! > 0 && children.includes(p.product.categoryId))
+          break
+        case 's':
+          packs = state.packs.filter(p => state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId))
+          break
+        case 'r':
+          packs = state.packs.filter(p => state.storeRequests.find(r => r.packId === p.id))
+          break
+        default:
+          packs = state.packs.filter(p => p.price! > 0 && p.product.categoryId === params.id)
+      }
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkName = state.trademarks.find(t => t.id === p.product.trademarkId)?.name
         const countryName = state.countries.find(c => c.id === p.product.countryId)!.name
-        const myPrice = state.userInfo?.storeId ? state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)?.price : 0
+        const packStoreInfo = state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)
         return {
           ...p,
           categoryName: getCategoryName(categoryInfo, state.categories),
           trademarkName,
           countryName,
-          myPrice
+          packStoreInfo
         }
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
@@ -82,7 +95,7 @@ const Packs = () => {
   }
   return(
     <IonPage>
-      <Header title={params.type === 's' ? labels.myPacks : category?.name || labels.allProducts} withSearch/>
+      <Header title={params.type === 's' ? labels.myPacks : params.type === 'r' ? labels.requests : category?.name || labels.allProducts} withSearch/>
       <IonContent fullscreen className="ion-padding">
         <IonList>
           {data.length > 1 &&
@@ -113,7 +126,8 @@ const Packs = () => {
                   <IonText color={randomColors[2].name}>{p.name}</IonText>
                   <IonText color={randomColors[3].name}>{p.categoryName}</IonText>
                   <IonText color={randomColors[4].name}>{productOfText(p.countryName, p.trademarkName)}</IonText>
-                  <IonText color={randomColors[0].name}>{p.myPrice ? `${labels.myPrice}:${p.myPrice.toFixed(2)}` : ''}</IonText>
+                  <IonText color={randomColors[5].name}>{p.packStoreInfo?.price ? `${labels.myPrice}:${p.packStoreInfo.price.toFixed(2)} ${p.packStoreInfo.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
+                  <IonText color={randomColors[6].name}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
                 </IonLabel>
                 <IonLabel slot="end" className="price">{p.price!.toFixed(2)}</IonLabel>
               </IonItem>    

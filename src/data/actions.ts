@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
-import {randomColors} from './config'
-import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position} from './types'
+import {randomColors, userTypes} from './config'
+import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region} from './types'
 
 export const getMessage = (path: string, error: Error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -26,6 +26,10 @@ export const addQuantity = (q1: number, q2: number, q3 = 0) => {
 
 export const productOfText = (countryName: string, trademarkName?: string) => {
   return trademarkName ? `${labels.productFrom} ${trademarkName}-${countryName}` : `${labels.productOf} ${countryName}`
+}
+
+export const getStoreName = (store: Store, regions: Region[]) => {
+  return `${store.name} ${store.regionId ? '-' + regions.find(r => r.id === store.regionId)!.name : ''} (${userTypes.find(t => t.id === store.type)!.name})`
 }
 
 export const getChildren = (categoryId: string, categories: Category[]) => {
@@ -185,6 +189,7 @@ export const changePrice = (packStore: PackStore, packStores: PackStore[]) => {
     const {packId, ...others} = p
     return others
   })
+  console.log('stores == ', stores)
   let packRef = firebase.firestore().collection('packs').doc(packStore.packId)
   batch.update(packRef, {
     stores,
@@ -256,23 +261,37 @@ export const addPackStore = (packStore: PackStore, storeRequests: StoreRequest[]
 }
 
 export const addStoreRequest = (storeRequest: StoreRequest) => {
-  const {storeId,...others} = storeRequest
-  const storeRef = firebase.firestore().collection('stores').doc(storeId)
-  storeRef.update({
-    requests: firebase.firestore.FieldValue.arrayUnion(others)
+  const batch =  firebase.firestore().batch()
+  const storeRef = firebase.firestore().collection('stores').doc(storeRequest.storeId)
+  batch.update(storeRef, {
+    requests: firebase.firestore.FieldValue.arrayUnion({
+      packId: storeRequest.packId,
+      time: storeRequest.time
+    })
   })
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  batch.update(userRef, {
+      basket: firebase.firestore.FieldValue.arrayUnion(storeRequest.packId)
+  })
+  batch.commit()
 }
 
 export const deleteStoreRequest = (storeRequest: StoreRequest, storeRequests: StoreRequest[]) => {
+  const batch =  firebase.firestore().batch()
   const otherStoreRequests = storeRequests.filter(p => p.packId !== storeRequest.packId && p.storeId === storeRequest.storeId)
   const requests = otherStoreRequests.map(p => {
     const {storeId, ...others} = p
     return others
   })
   const storeRef = firebase.firestore().collection('stores').doc(storeRequest.storeId)
-  storeRef.update({
+  batch.update(storeRef, {
     requests
   })
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  batch.update(userRef, {
+    basket: firebase.firestore.FieldValue.arrayRemove(storeRequest.packId)
+  })
+  batch.commit()
 }
 
 export const sendNotification = (userId: string, title: string, message: string, batch?: firebase.firestore.WriteBatch) => {

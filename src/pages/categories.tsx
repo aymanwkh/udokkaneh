@@ -33,7 +33,7 @@ const Categories = () => {
           className="sections"
           expand="block"
           shape="round"
-          color={randomColors[i++ % 5].name}
+          color={randomColors[i++ % 7].name}
         >
           {labels.allProducts}
         </IonButton>
@@ -42,7 +42,7 @@ const Categories = () => {
             routerLink={c.isLeaf ? `/packs/${c.id}/n` : `/categories/${c.id}`} 
             expand="block"
             shape="round"
-            color={randomColors[i++ % 5].name}
+            color={randomColors[i++ % 7].name}
             className="sections" 
             key={c.id}
           >

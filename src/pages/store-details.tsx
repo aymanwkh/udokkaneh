@@ -5,7 +5,8 @@ import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
-import { thumbsDownOutline, warningOutline } from 'ionicons/icons'
+import { warningOutline } from 'ionicons/icons'
+import Footer from './footer'
 
 type Params = {
   storeId: string,
@@ -43,7 +44,7 @@ const StoreDetails = () => {
   }
   return (
     <IonPage>
-      <Header title={labels.storeDetails} />
+      <Header title={store.type === 'd' ? labels.salesmanDetails : labels.storeDetails} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
           <IonItem>
@@ -64,43 +65,47 @@ const StoreDetails = () => {
               readonly
             />
           </IonItem>
-          <IonItem>
-            <IonLabel position="floating">
-              {labels.location}
-            </IonLabel>
-            <IonInput 
-              value={state.locations.find(l => l.id === store.locationId)?.name || ''} 
-              readonly
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="floating">
-              {labels.address}
-            </IonLabel>
-            <IonInput 
-              value={store.address} 
-              readonly
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="floating">
-              {labels.alarmsCount}
-            </IonLabel>
-            <IonInput 
-              value={store.claimsCount} 
-              readonly
-            />
-          </IonItem>
+          {store.type !== 'd' && <>
+            <IonItem>
+              <IonLabel position="floating">
+                {labels.region}
+              </IonLabel>
+              <IonInput 
+                value={state.regions.find(r => r.id === store.regionId)?.name || ''} 
+                readonly
+              />
+            </IonItem>
+            <IonItem>
+              <IonLabel position="floating">
+                {labels.address}
+              </IonLabel>
+              <IonInput 
+                value={store.address} 
+                readonly
+              />
+            </IonItem>
+            <IonItem>
+              <IonLabel position="floating">
+                {labels.alarmsCount}
+              </IonLabel>
+              <IonInput 
+                value={store.claimsCount} 
+                readonly
+              />
+            </IonItem>
+          </>}
         </IonList>
-        <div className="ion-padding" style={{textAlign: 'center'}}>
-          <IonButton 
-            fill="solid" 
-            style={{width: '10rem'}}
-            routerLink={`/map/${store.position.lat}/${store.position.lng}/0`}
-          >
-            {labels.map}
-          </IonButton>
-        </div>
+        {store.type !== 'd' && 
+          <div className="ion-padding" style={{textAlign: 'center'}}>
+            <IonButton 
+              fill="solid" 
+              style={{width: '10rem'}}
+              routerLink={`/map/${store.position?.lat}/${store.position?.lng}/0`}
+            >
+              {labels.map}
+            </IonButton>
+          </div>
+        }
       </IonContent>
       {!state.userInfo?.storeId &&
         <IonFab vertical="top" horizontal="end" slot="fixed">
@@ -109,6 +114,7 @@ const StoreDetails = () => {
           </IonFabButton>
         </IonFab>
       }
+      <Footer />
     </IonPage>
   )
 }

@@ -69,6 +69,7 @@ const Login = () => {
           <div className="ion-padding" style={{textAlign: 'center'}}>
             <IonButton 
               fill="solid" 
+              shape="round"
               style={{width: '10rem'}}
               onClick={handleLogin}
             >

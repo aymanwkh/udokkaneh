@@ -11,7 +11,7 @@ import { PackRequest } from '../data/types'
 type Params = {
   id: string
 }
-const AddPack = () => {
+const AddPackRequest = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
   const [name, setName] = useState('')
@@ -187,15 +187,15 @@ const AddPack = () => {
             <IonImg src={imageUrl} alt={labels.noImage} />
           </>}
         </IonList>
-        {price && (name || (form === 'g' && subCount && (gift || !withGift))) &&
-          <IonFab vertical="top" horizontal="end" slot="fixed">
-            <IonFabButton onClick={handleSubmit}>
-              <IonIcon ios={checkmarkOutline} />
-            </IonFabButton>
-          </IonFab>
-        }
       </IonContent>
+      {price && (name || (form === 'g' && subCount && (gift || !withGift))) &&
+        <IonFab vertical="top" horizontal="end" slot="fixed">
+          <IonFabButton onClick={handleSubmit} color="success">
+            <IonIcon ios={checkmarkOutline} />
+          </IonFabButton>
+        </IonFab>
+      }
     </IonPage>
   )
 }
-export default AddPack
+export default AddPackRequest

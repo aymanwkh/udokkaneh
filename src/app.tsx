@@ -33,7 +33,7 @@ import ChangePassword from './pages/change-password'
 import Categories from './pages/categories'
 import Packs from './pages/packs'
 import PackDetails from './pages/pack-details'
-import AddPack from './pages/add-pack'
+import AddPackRequest from './pages/add-pack-request'
 import Basket from './pages/basket'
 import ProductRequests from './pages/product-requests'
 import Notifications from './pages/notifications'
@@ -60,7 +60,7 @@ const app = () => {
               <Route path="/categories/:id" exact={true} component={Categories} />
               <Route path="/packs/:id/:type" exact={true} component={Packs} />
               <Route path="/pack-details/:id" exact={true} component={PackDetails} />
-              <Route path="/add-pack/:id" exact={true} component={AddPack} />
+              <Route path="/add-pack-request/:id" exact={true} component={AddPackRequest} />
               <Route path="/basket" exact={true} component={Basket} />
               <Route path="/product-requests" exact={true} component={ProductRequests} />
               <Route path="/notifications" exact={true} component={Notifications} />

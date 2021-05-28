@@ -49,8 +49,8 @@ const Claims = () => {
                 <IonText color={randomColors[2].name}>{c.packInfo.name}</IonText>
                 <IonText color={randomColors[3].name}>{c.categoryName}</IonText>
                 <IonText color={randomColors[4].name}>{productOfText(c.countryName, c.trademarkName)}</IonText>
-                <IonText color={randomColors[0].name}>{c.isActive ? labels.oneClaim : labels.twoClaims}</IonText>
-                <IonText color={randomColors[1].name}>{moment(c.time).fromNow()}</IonText>
+                <IonText color={randomColors[5].name}>{c.isActive ? labels.oneClaim : labels.twoClaims}</IonText>
+                <IonText color={randomColors[6].name}>{moment(c.time).fromNow()}</IonText>
               </IonLabel>
               <IonLabel slot="end" className="price">{c.price!.toFixed(2)}</IonLabel>
           </IonItem>    

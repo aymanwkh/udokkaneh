@@ -16,7 +16,7 @@ const StateProvider = ({children}: Props) => {
     packs: [],
     packStores: [],
     adverts: [],
-    locations: [],
+    regions: [],
     countries: [],
     trademarks: [],
     passwordRequests: [],
@@ -50,9 +50,10 @@ const StateProvider = ({children}: Props) => {
       let packs: Pack[] = []
       let packStores: PackStore[] = []
       docs.forEach(doc => {
-        let prices, minPrice = 0
+        let minPrice = 0
         if (doc.data().stores) {
-          prices = doc.data().stores.map((s: PackStore) => s.isRetail && s.isActive ? s.price : 0)
+          const activePrices = doc.data().stores.filter((s: PackStore) => s.isRetail && s.isActive)
+          const prices = activePrices.map((p: PackStore) => p.price)
           minPrice = prices.length > 0 ? Math.min(...prices) : 0
         }
         packs.push({
@@ -76,7 +77,7 @@ const StateProvider = ({children}: Props) => {
               storeId: s.storeId,
               isRetail: s.isRetail,
               isActive: s.isActive,
-              claimUserId: s.claimUserId,
+              claimUserId: s.claimUserId || null,
               price: s.price,
               time: s.time.toDate()
             })
@@ -104,10 +105,10 @@ const StateProvider = ({children}: Props) => {
     }, err => {
       unsubscribeAdverts()
     })  
-    const unsubscribeLocations = firebase.firestore().collection('lookups').doc('l').onSnapshot(doc => {
-      if (doc.exists) dispatch({type: 'SET_LOCATIONS', payload: doc.data()!.values})
+    const unsubscribeRegions = firebase.firestore().collection('lookups').doc('r').onSnapshot(doc => {
+      if (doc.exists) dispatch({type: 'SET_REGIONS', payload: doc.data()!.values})
     }, err => {
-      unsubscribeLocations()
+      unsubscribeRegions()
     })  
     const unsubscribeCountries = firebase.firestore().collection('lookups').doc('c').onSnapshot(doc => {
       if (doc.exists) dispatch({type: 'SET_COUNTRIES', payload: doc.data()!.values})
@@ -144,6 +145,7 @@ const StateProvider = ({children}: Props) => {
               position: doc.data()!.position,
               storeId: doc.data()!.storeId,
               storeName: doc.data()!.storeName,
+              isActive: doc.data()!.isActive,
               lastSeen: doc.data()!.lastSeen?.toDate(),
               time: doc.data()!.time?.toDate(),
               type: doc.data()!.type
@@ -165,7 +167,7 @@ const StateProvider = ({children}: Props) => {
             dispatch({type: 'SET_USER_INFO', payload: userData})
             dispatch({type: 'SET_NOTIFICATIONS', payload: notifications})
             dispatch({type: 'SET_RATINGS', payload: ratings})
-            if (doc.data()!.type === 'n' && doc.data()!.basket) dispatch({type: 'SET_BASKET', payload:  doc.data()!.basket})
+            if (doc.data()!.basket) dispatch({type: 'SET_BASKET', payload:  doc.data()!.basket})
           } else {
             firebase.auth().signOut()
             dispatch({type: 'LOGOUT'})
@@ -173,7 +175,7 @@ const StateProvider = ({children}: Props) => {
         }, err => {
           unsubscribeUser()
         })
-        const unsubscribeStores = firebase.firestore().collection('stores').where('isActive', '==', true).onSnapshot(docs => {
+        const unsubscribeStores = firebase.firestore().collection('stores').onSnapshot(docs => {
           const stores: Store[] = []
           const productRequests: ProductRequest[] = []
           const storeRequests: StoreRequest[] = []
@@ -182,7 +184,8 @@ const StateProvider = ({children}: Props) => {
             stores.push({
               id: doc.id,
               name: doc.data().name,
-              locationId: doc.data().locationId,
+              type: doc.data().type,
+              regionId: doc.data().regionId,
               address: doc.data().address,
               position: doc.data().position,
               mobile: doc.data().mobile,
@@ -226,7 +229,6 @@ const StateProvider = ({children}: Props) => {
           dispatch({type: 'SET_PRODUCT_REQUESTS', payload: productRequests})
           dispatch({type: 'SET_STORE_REQUESTS', payload: storeRequests})
           dispatch({type: 'SET_PACK_REQUESTS', payload: packRequests})
-          if (storeRequests.length > 0) dispatch({type: 'SET_BASKET', payload: storeRequests.map(r => r.packId)}) 
         }, err => {
           unsubscribeStores()
         }) 

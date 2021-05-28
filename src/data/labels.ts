@@ -7,7 +7,7 @@ const labels: Label = {
   name: 'اﻻسم',
   mobile: 'الموبايل',
   password: 'كلمة السر',
-  location: 'المنطقة',
+  region: 'المنطقة',
   register: 'تسجيل',
   error: 'خطأ',
   noData: 'ﻻ يوجد بيانات',
@@ -167,10 +167,6 @@ const labels: Label = {
   newRequest: 'طلب هذا المنتج',
   packRequests: 'طلباتي',
   removeRequest: 'حذف من الطلبات',
-  storesCount: 'محلات اخرى',
-  bestStoresCount: 'محلات اخرى لأفضل سعر',
-  nearBy: 'محلات اخرى قريبة',
-  bestStoresNearByCount: 'محلات قريبة لأفضل سعر',
   showPackStores: 'سجل معنا لتظهر لك المحلات',
   storeDetails: 'تفاصيل المحل',
   rateProduct: 'رأيك في هذا المنتج',
@@ -213,7 +209,19 @@ const labels: Label = {
   or: 'او',
   setPosition: 'حدد موقعك من خلال',
   type: 'النوع',
-  map: 'الخريطة'
+  map: 'الخريطة',
+  browserGPSNote: 'تم تحديد موقعك...يرجى التأكد من خلال الخريطة ان موقعك صحيح',
+  distance: 'المسافة',
+  metre: 'متر',
+  requests: 'طلبات المحلات',
+  requestsCount: 'عدد المحلات',
+  inActive: 'غير فعال',
+  salesmanDetails: 'تفاصيل الموزع',
+  stores: 'محلات',
+  nearby: 'قريبة',
+  bestPrices: 'لأفضل سعر',
+  nearbyStores: 'محلات قريبة'
+
 }
 
 export default labels

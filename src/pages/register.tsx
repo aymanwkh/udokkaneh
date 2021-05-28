@@ -4,7 +4,7 @@ import labels from '../data/labels'
 import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
-import { Location, UserInfo } from '../data/types'
+import { Region, UserInfo } from '../data/types'
 import { patterns, storeTypes } from '../data/config'
 import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
@@ -20,7 +20,7 @@ const Register = () => {
   const [mobileInvalid, setMobileInvalid] = useState(true)
   const [position, setPosition] = useState({lat: 0, lng: 0})
   const [positionError, setPositionError] = useState(false)
-  const [loctionId, setLocationId] = useState('')
+  const [regionId, setRegionId] = useState('')
   const [type, setType] = useState('n')
   const history = useHistory()
   const location = useLocation()
@@ -51,6 +51,7 @@ const Register = () => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
+        message(labels.browserGPSNote, 3000)
       },
       () => {
         dismiss()
@@ -67,11 +68,12 @@ const Register = () => {
         name,
         password,
         position,
-        type
+        type,
+        isActive: true
       }
       if (['s', 'w'].includes(type)) {
         user.storeName = storeName
-        user.locationId = loctionId
+        user.regionId = regionId
       }
       await registerUser(user)
       dismiss()
@@ -89,9 +91,9 @@ const Register = () => {
       setShowModal(true)
     }
   }
-  const goToMap = (location: Location) => {
-    setLocationId(location.id)
-    history.push(`/map/${location.position.lat}/${location.position.lng}/1`)
+  const goToMap = (region: Region) => {
+    setRegionId(region.id)
+    history.push(`/map/${region.position.lat}/${region.position.lng}/1`)
     setShowModal(false)
   }
   return (
@@ -152,53 +154,52 @@ const Register = () => {
               />
             </IonItem>
             <IonItem>
-            <IonLabel position="floating" color="primary">{labels.type}</IonLabel>
-            <IonSelect 
-              ok-text={labels.ok} 
-              cancel-text={labels.cancel}
-              value={type} 
-              onIonChange={e => setType(e.detail.value)}
-            >
-              {storeTypes.map(t => <IonSelectOption key={t.id} value={t.id}>{t.name}</IonSelectOption>)}
-            </IonSelect>
-          </IonItem>
-
+              <IonLabel position="floating" color="primary">{labels.type}</IonLabel>
+              <IonSelect 
+                ok-text={labels.ok} 
+                cancel-text={labels.cancel}
+                value={type} 
+                onIonChange={e => setType(e.detail.value)}
+              >
+                {storeTypes.map(t => <IonSelectOption key={t.id} value={t.id}>{t.name}</IonSelectOption>)}
+              </IonSelect>
+            </IonItem>
           </>}
-          {type !== 'd' &&
-            <div className="ion-padding">
-              <div className="ion-text-center">
-                {labels.setPosition}
-              </div>
-              <div className="ion-text-center">
-                <IonButton 
-                  fill="solid" 
-                  style={{width: '10rem'}}
-                  onClick={handleSetPosition}
-                  disabled={positionError}
-                >
-                  {labels.currentPosition}
-                </IonButton>
-              </div>
-              <div className="ion-text-center">
-                {labels.or}
-              </div>
-              <div className="ion-text-center">
-                <IonButton 
-                  fill="solid" 
-                  color="secondary"
-                  style={{width: '10rem'}}
-                  onClick={handlePositionByMap}
-                >
-                  {labels.byMap}
-                </IonButton>
-              </div>
+          <div className="ion-padding">
+            <div className="ion-text-center">
+              {labels.setPosition}
             </div>
-          }
+            <div className="ion-text-center">
+              <IonButton 
+                fill="solid" 
+                shape="round"
+                style={{width: '10rem'}}
+                onClick={handleSetPosition}
+                disabled={positionError}
+              >
+                {labels.currentPosition}
+              </IonButton>
+            </div>
+            <div className="ion-text-center">
+              {labels.or}
+            </div>
+            <div className="ion-text-center">
+              <IonButton 
+                fill="solid" 
+                shape="round"
+                color="secondary"
+                style={{width: '10rem'}}
+                onClick={handlePositionByMap}
+              >
+                {labels.byMap}
+              </IonButton>
+            </div>
+          </div>
         </IonList>
       </IonContent>
-      {(position.lat || type ==='d') && (storeName || ['n', 'd'].includes(type)) && !nameInvalid && !mobileInvalid && !passwordInvalid &&
+      {(storeName || ['n', 'd'].includes(type)) && position.lat && !nameInvalid && !mobileInvalid && !passwordInvalid &&
         <IonFab vertical="top" horizontal="end" slot="fixed">
-          <IonFabButton onClick={handleRegister}>
+          <IonFabButton onClick={handleRegister} color="success">
             <IonIcon ios={checkmarkOutline} />
           </IonFabButton>
         </IonFab>
@@ -219,14 +220,14 @@ const Register = () => {
             <IonButtons slot="start">
               <IonButton onClick={() => setShowModal(false)}>{labels.cancel}</IonButton>
             </IonButtons>
-            <IonTitle>{labels.location}</IonTitle>
+            <IonTitle>{labels.region}</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent fullscreen className="ion-padding">
           <IonList>
-            {state.locations.map(l => 
-              <IonItem key={l.id} detail onClick={() => goToMap(l)}>
-                <IonLabel>{l.name}</IonLabel>
+            {state.regions.map(r => 
+              <IonItem key={r.id} detail onClick={() => goToMap(r)}>
+                <IonLabel>{r.name}</IonLabel>
               </IonItem>
             )}
           </IonList>

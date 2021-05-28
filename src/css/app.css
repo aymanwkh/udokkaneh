@@ -43,6 +43,11 @@ ion-toast {
   --button-color: var(--ion-color-secondary);
 }
 
+.tertiary {
+  --color: var(--ion-color-tertiary);
+  --button-color: var(--ion-color-tertiary);
+}
+
 .success {
   --color: var(--ion-color-success);
   --button-color: var(--ion-color-success);
@@ -56,6 +61,11 @@ ion-toast {
 .danger {
   --color: var(--ion-color-danger);
   --button-color: var(--ion-color-danger);
+}
+
+.dark {
+  --color: var(--ion-color-dark);
+  --button-color: var(--ion-color-dark);
 }
 
 .star {
@@ -105,8 +115,39 @@ ion-toast {
   color: blue;
 }
 
-.selected {
-  background-color: lightskyblue;
-  --background-activated: lightskyblue;
+.background1 {
+  background-color: #3880ff	;
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+  margin-right: 5px;
+  font-size: 0.8rem;
+}
+
+.background2 {
+  background-color:#3dc2ff;
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+  margin-right: 5px;
+  font-size: 0.8rem;
+}
+
+.background3 {
+  background-color:#5260ff	;
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+  margin-right: 5px;
+  font-size: 0.8rem;
+}
+
+.background4 {
+  background-color:#2dd36f;
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+  margin-right: 5px;
+  font-size: 0.8rem;
 }
 

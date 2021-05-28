@@ -6,7 +6,7 @@ export type Label = {
 export type Category = {
   id: string,
   name: string,
-  mainId?: string,
+  mainId: string | null,
   parentId: string,
   ordering: number,
   isLeaf: boolean
@@ -23,16 +23,16 @@ export type ProductRequest = {
   weight: string,
   price: number,
   imageUrl: string,
-  time?: Date
+  time: Date
 }
 export type Product = {
   id: string,
   name: string,
-  alias?: string,
-  description?: string,
+  alias: string,
+  description: string,
   categoryId: string,
   countryId: string,
-  trademarkId?: string,
+  trademarkId: string,
   unit: string,
   rating: number,
   ratingCount: number,
@@ -63,7 +63,7 @@ export type PackRequest = {
   subCount?: number,
   withGift?: boolean,
   gift?: string,
-  time?: Date
+  time: Date
 }
 
 export type PackStore = {
@@ -71,7 +71,7 @@ export type PackStore = {
   isRetail: boolean,
   packId: string,
   price: number,
-  claimUserId?: string,
+  claimUserId?: string | null,
   isActive: boolean,
   time: Date
 }
@@ -98,7 +98,8 @@ export type UserInfo = {
   storeId?: string,
   storeName?: string,
   lastSeen?: Date,
-  locationId?: string,
+  regionId?: string,
+  isActive: boolean,
   time?: Date,
   type: string
 }
@@ -110,9 +111,10 @@ export type Advert = {
   isActive: boolean,
   imageUrl?: string
 }
-export type Location = {
+export type Region = {
   id: string,
   name: string,
+  ordering: number,
   position: Position
 }
 export type Country = {
@@ -133,8 +135,9 @@ export type Store = {
   mobile: string,
   address: string,
   position: Position,
-  locationId?: string,
-  claimsCount: number
+  regionId?: string,
+  claimsCount: number,
+  type: string
 }
 export type StoreRequest = {
   storeId: string,
@@ -149,7 +152,7 @@ export type State = {
   packs: Pack[],
   packStores: PackStore[],
   adverts: Advert[],
-  locations: Location[],
+  regions: Region[],
   countries: Country[],
   trademarks: Trademark[],
   passwordRequests: PasswordRequest[],

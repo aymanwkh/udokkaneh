@@ -5,9 +5,11 @@ export const setup = {
 export const randomColors = [
   {id: 0, name: 'primary'},
   {id: 1, name: 'secondary'},
-  {id: 2, name: 'success'},
-  {id: 3, name: 'warning'},
+  {id: 2, name: 'tertiary'},
+  {id: 3, name: 'success'},
   {id: 4, name: 'danger'},
+  {id: 5, name: 'dark'},
+  {id: 6, name: 'warning'},
 ]
 
 export const units = [
@@ -27,4 +29,11 @@ export const patterns = {
 export const storeTypes = [
   {id: 's', name: 'تجزئة'},
   {id: 'w', name: 'جملة'},
+]
+
+export const userTypes = [
+  {id: 'n', name: 'مستخدم عادي', isStore: false},
+  {id: 's', name: 'محل تجزئة', isStore: true},
+  {id: 'w', name: 'محل جملة', isStore: true},
+  {id: 'd', name: 'موزع', isStore: true}
 ]

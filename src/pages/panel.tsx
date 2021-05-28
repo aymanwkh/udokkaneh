@@ -55,14 +55,19 @@ const Panel = () => {
                 <IonItem routerLink='/product-requests'>
                   <IonLabel>{labels.productRequests}</IonLabel>
                 </IonItem>
-                <IonItem routerLink={`/store-details/${state.userInfo?.storeId}/0`}>
-                  <IonLabel>{labels.myInfo}</IonLabel>
-                </IonItem>
-                <IonItem routerLink='/claims'>
-                  <IonLabel>{labels.claims}</IonLabel>
-                  {claimsCount > 0 && <IonBadge color="danger">{claimsCount}</IonBadge>}
-                </IonItem>
-
+                {state.userInfo.type === 'd' ?
+                  <IonItem routerLink='/packs/0/r'>
+                    <IonLabel>{labels.requests}</IonLabel>
+                  </IonItem>
+                : <>
+                  <IonItem routerLink={`/store-details/${state.userInfo?.storeId}/0`}>
+                    <IonLabel>{labels.myInfo}</IonLabel>
+                  </IonItem>
+                  <IonItem routerLink='/claims'>
+                    <IonLabel>{labels.claims}</IonLabel>
+                    {claimsCount > 0 && <IonBadge color="danger">{claimsCount}</IonBadge>}
+                  </IonItem>
+                </>}
               </>
             }
           </IonMenuToggle>
