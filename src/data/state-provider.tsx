@@ -145,6 +145,7 @@ const StateProvider = ({children}: Props) => {
               position: doc.data()!.position,
               storeId: doc.data()!.storeId,
               storeName: doc.data()!.storeName,
+              regionId: doc.data()!.regionId,
               isActive: doc.data()!.isActive,
               lastSeen: doc.data()!.lastSeen?.toDate(),
               time: doc.data()!.time?.toDate(),

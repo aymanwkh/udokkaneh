@@ -7,7 +7,7 @@ import {Store} from '../data/types'
 import Footer from './footer'
 import { setup, randomColors, userTypes } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { IonActionSheet, IonAvatar, IonBadge, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
+import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 import moment from 'moment'
@@ -36,7 +36,6 @@ const PackDetails = () => {
   const [stores, setStores] = useState<ExtendedStores[]>([])
   const [trademarkName] = useState(() => state.trademarks.find(t => t.id === pack.product.trademarkId)?.name)
   const [countryName] = useState(() => state.countries.find(c => c.id === pack.product.countryId)!.name)
-  const [myPrice] = useState(() => state.packStores.find(ps => ps.packId === params.id && ps.storeId === state.userInfo?.storeId)?.price || 0)
   const [storesCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId).length : 0)
   const [nearStoresCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && calcDistance(state.userInfo?.position!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
   const [bestPriceStoresCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length : 0)
@@ -81,7 +80,7 @@ const PackDetails = () => {
         return results.sort((r1, r2) => r1.distance - r2.distance)
       }
     })
-  }, [state.packStores, state.stores, state.regions, state.user, pack, state.userInfo, nearbyOnly])
+  }, [state.packStores, state.stores, state.regions, state.user, pack, state.userInfo, nearbyOnly, params.id, state.storeRequests])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
@@ -229,45 +228,38 @@ const PackDetails = () => {
             {labels.showPackStores}
           </IonButton>
         }
-        {state.userInfo?.type === 'n' ?
+        {state.userInfo?.type === 'n' &&
           <IonItem>
             <IonLabel>{labels.nearbyOnly}</IonLabel>
             <IonToggle checked={nearbyOnly} onIonChange={() => setNearbyOnly(s => !s)} />
           </IonItem>
-        : <>
-        <IonGrid style={{margin: '5px'}}>
-          <IonRow>
-            <IonCol className="background1">
-              <div>{labels.stores}</div>
-              <div>{labels.others}</div>
-              <div>{storesCount.toString()}</div>
-            </IonCol>
-            <IonCol className="background2">
-              <div>{labels.stores}</div>
-              <div>{labels.nearby}</div>
-              <div>{nearStoresCount.toString()}</div>
-            </IonCol>
-            <IonCol className="background3">
-              <div>{labels.stores}</div>
-              <div>{labels.bestPrices}</div>
-              <div>{bestPriceStoresCount.toString()}</div>
-            </IonCol>
-            <IonCol className="background4">
-              <div>{labels.nearbyStores}</div>
-              <div>{labels.bestPrices}</div>
-              <div>{bestPriceNearStoresCount.toString()}</div>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-          {/* <IonBadge style={{marginRight: '5px'}}>
-          </IonBadge>
-          <IonBadge style={{marginRight: '5px'}} color="secondary">
-          </IonBadge>
-          <IonBadge style={{marginRight: '5px'}} color="success">
-          </IonBadge>
-          <IonBadge style={{marginRight: '5px'}} color="danger">
-          </IonBadge> */}
-        </>}      
+        }
+        {state.userInfo?.storeId && state.userInfo?.type === 's' &&
+          <IonGrid style={{margin: '5px'}}>
+            <IonRow>
+              <IonCol className="background1">
+                <div>{labels.stores}</div>
+                <div>{labels.others}</div>
+                <div>{storesCount.toString()}</div>
+              </IonCol>
+              <IonCol className="background2">
+                <div>{labels.stores}</div>
+                <div>{labels.nearby}</div>
+                <div>{nearStoresCount.toString()}</div>
+              </IonCol>
+              <IonCol className="background3">
+                <div>{labels.stores}</div>
+                <div>{labels.bestPrices}</div>
+                <div>{bestPriceStoresCount.toString()}</div>
+              </IonCol>
+              <IonCol className="background4">
+                <div>{labels.nearbyStores}</div>
+                <div>{labels.bestPrices}</div>
+                <div>{bestPriceNearStoresCount.toString()}</div>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        }
         <IonList>
           {stores.map((s, i) => 
             <IonItem key={i} routerLink={`/store-details/${s.id}/${params.id}`}>
@@ -275,7 +267,7 @@ const PackDetails = () => {
                 <IonText color={randomColors[0].name}>{s.name}</IonText>
                 <IonText color={randomColors[1].name}>{s.storeInfo}</IonText>
                 {state.userInfo?.type !== 's' && <IonText color={randomColors[2].name}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
-                {s.time && <IonText color={randomColors[3].name}>{moment(s.time).fromNow()}</IonText>}
+                {state.userInfo?.type === 'd' && <IonText color={randomColors[3].name}>{moment(s.time).fromNow()}</IonText>}
               </IonLabel>
               {s.price > 0 && <IonLabel slot="end" className="ion-text-end">{s.price.toFixed(2)}</IonLabel>}
             </IonItem>
@@ -325,27 +317,27 @@ const PackDetails = () => {
           },
           {
             text: labels.addToBasket,
-            cssClass: !state.userInfo?.storeId && !state.basket.includes(params.id) ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && !state.basket.includes(params.id) ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleAddToBasket()
           },
           {
             text: labels.removeFromBasket,
-            cssClass: !state.userInfo?.storeId && state.basket.includes(params.id) ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && state.basket.includes(params.id) ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleRemoveFromBasket()
           },
           {
             text: labels.rateProduct,
-            cssClass: !state.userInfo?.storeId && !state.ratings.find(r => r.productId === pack.product.id) ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && !state.ratings.find(r => r.productId === pack.product.id) ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => setRatingOpened(true)
           },
           {
             text: labels.otherProducts,
-            cssClass: !state.userInfo?.storeId && otherProducts.length > 0 ? randomColors[i++ % 7].name: 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && otherProducts.length > 0 ? randomColors[i++ % 7].name: 'ion-hide',
             handler: () => history.push(`/hints/${pack.id}/type/a`)
           },
           {
             text: labels.otherPacks,
-            cssClass: !state.userInfo?.storeId && otherPacks.length > 0 ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && otherPacks.length > 0 ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => history.push(`/hints/${pack.id}/type/p`)
           }
         ]}

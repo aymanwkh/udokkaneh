@@ -31,7 +31,7 @@ const Home = () => {
   let i = 0
   return (
     <IonPage>
-      <IonLoading isOpen={state.categories.length === 0} message={labels.inprocess} />
+      <IonLoading isOpen={state.categories.length === 0} />
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">

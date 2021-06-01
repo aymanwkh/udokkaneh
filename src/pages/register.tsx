@@ -69,16 +69,14 @@ const Register = () => {
         password,
         position,
         type,
-        isActive: true
-      }
-      if (['s', 'w'].includes(type)) {
-        user.storeName = storeName
-        user.regionId = regionId
+        isActive: type === 'n',
+        storeName: ['s', 'w'].includes(type) ? storeName : null,
+        regionId: ['s', 'w'].includes(type) ? regionId : null,
       }
       await registerUser(user)
       dismiss()
       message(type === 'n' ? labels.registerSuccess : labels.registerStoreOwnerSuccess, 3000)
-      history.push('/')
+      history.goBack()
     } catch (err){
       dismiss()
       message(getMessage(location.pathname, err), 3000)

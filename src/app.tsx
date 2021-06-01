@@ -45,6 +45,10 @@ import Claims from './pages/claims'
 import Map from './pages/map'
 
 const app = () => {
+  const href = window.location.href
+  if (href.length - href.replaceAll('/', '').length !== (href.endsWith('/') ? 3 : 2)) {
+    window.location.href = window.location.hostname === 'localhost' ? href.substr(0, 21) : href.substr(0, 28)
+  }
   return (
     <StateProvider>
       <IonApp dir="rtl">

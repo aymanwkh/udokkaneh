@@ -96,9 +96,9 @@ export type UserInfo = {
   position: Position,
   address?: string,
   storeId?: string,
-  storeName?: string,
+  storeName: string | null,
   lastSeen?: Date,
-  regionId?: string,
+  regionId: string | null,
   isActive: boolean,
   time?: Date,
   type: string

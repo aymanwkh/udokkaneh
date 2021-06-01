@@ -133,7 +133,7 @@ const AddProductRequest = () => {
       </IonContent>
       {name && country && weight && price && imageUrl &&
         <IonFab vertical="top" horizontal="end" slot="fixed">
-          <IonFabButton onClick={handleSubmit}>
+          <IonFabButton onClick={handleSubmit} color="success">
             <IonIcon ios={checkmarkOutline} />
           </IonFabButton>
         </IonFab>

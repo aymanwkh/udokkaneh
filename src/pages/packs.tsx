@@ -5,7 +5,7 @@ import {randomColors} from '../data/config'
 import {getCategoryName, getChildren, productOfText} from '../data/actions'
 import {Pack, PackStore} from '../data/types'
 import Footer from './footer'
-import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
+import { IonContent, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText } from '@ionic/react'
 import Header from './header'
 import { useParams } from 'react-router'
 import Fuse from "fuse.js";
@@ -59,7 +59,7 @@ const Packs = () => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, params.id, params.type, state.categories, state.trademarks, state.countries, state.packStores])
+  }, [state.packs, state.userInfo, params.id, params.type, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests])
   useEffect(() => {
     if (!state.searchText) {
       setData(packs)
@@ -82,13 +82,13 @@ const Packs = () => {
     setSortBy(sortByValue)
     switch(sortByValue){
       case 'p':
-        setPacks([...packs].sort((p1, p2) => p1.price! - p2.price!))
+        setPacks([...packs].sort((p1, p2) => (p1.price! - (p1.withGift ? 0.01 : 0)) - (p2.price! - (p2.withGift ? 0.01 : 0))))
         break
       case 'r':
         setPacks([...packs].sort((p1, p2) => (p2.product.rating * p2.product.ratingCount) - (p1.product.rating * p1.product.ratingCount)))
         break
       case 'v':
-        setPacks([...packs].sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!))
+        setPacks([...packs].sort((p1, p2) => (p1.weightedPrice! - (p1.withGift ? 0.01 : 0)) - (p2.weightedPrice! - (p2.withGift ? 0.01 : 0))))
         break
       default:
     }
@@ -117,9 +117,9 @@ const Packs = () => {
             </IonItem>
           : data.map(p => 
               <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
-                <IonThumbnail slot="start">
+                {/* <IonThumbnail slot="start">
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
-                </IonThumbnail>
+                </IonThumbnail> */}
                 <IonLabel>
                   <IonText color={randomColors[0].name}>{p.product.name}</IonText>
                   <IonText color={randomColors[1].name}>{p.product.alias}</IonText>

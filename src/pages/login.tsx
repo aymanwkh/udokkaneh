@@ -4,7 +4,6 @@ import labels from '../data/labels'
 import { IonButton, IonButtons, IonContent, IonFooter, IonInput, IonItem, IonLabel, IonList, IonPage, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
-import { Link } from 'react-router-dom'
 import { patterns } from '../data/config'
 
 const Login = () => {
@@ -14,8 +13,8 @@ const Login = () => {
   const [mobileInvalid, setMobileInvalid] = useState(true)
   const history = useHistory()
   const location = useLocation()
-  const [message] = useIonToast();
-  const [loading, dismiss] = useIonLoading();
+  const [message] = useIonToast()
+  const [loading, dismiss] = useIonLoading()
   useEffect(() => {
     setPasswordInvalid(!password || !patterns.password.test(password))
   }, [password])
@@ -81,10 +80,14 @@ const Login = () => {
       <IonFooter>
         <IonToolbar>
           <IonButtons slot="start">
-            <Link to="/register">{labels.newUser}</Link>
+            <IonButton fill="clear" onClick={() => history.replace('/register')}>
+              {labels.newUser}
+            </IonButton>
           </IonButtons>
           <IonButtons slot="end">
-            <Link to="/password-request">{labels.forgetPassword}</Link>
+            <IonButton fill="clear" routerLink="/password-request">
+              {labels.forgetPassword}
+            </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonFooter>
