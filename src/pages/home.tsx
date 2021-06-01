@@ -65,7 +65,7 @@ const Home = () => {
           </IonButton>
         }
         <IonButton 
-          routerLink="/packs/0/a"
+          routerLink="/packs/a/0/0"
           className="sections"
           expand="block"
           shape="round"
@@ -75,7 +75,7 @@ const Home = () => {
         </IonButton>
         {categories.map(c => 
           <IonButton
-            routerLink={c.isLeaf ? `/packs/${c.id}/n` : `/categories/${c.id}`} 
+            routerLink={c.isLeaf ? `/packs/n/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"
             shape="round"
             color={randomColors[i++ % 7].name}

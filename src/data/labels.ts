@@ -220,8 +220,12 @@ const labels: Label = {
   stores: 'محلات',
   nearby: 'قريبة',
   bestPrices: 'لأفضل سعر',
-  nearbyStores: 'محلات قريبة'
-
+  nearbyStores: 'محلات قريبة',
+  notShowedPacks: 'منتجات غير معروضة',
+  packs: 'المنتجات',
+  storePacks: 'منتجات محل',
+  addClaim: 'تقديم شكوى',
+  wholeStores: 'محلات الجملة'
 }
 
 export default labels

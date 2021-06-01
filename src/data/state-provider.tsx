@@ -63,6 +63,7 @@ const StateProvider = ({children}: Props) => {
           imageUrl: doc.data().imageUrl,
           unitsCount: doc.data().unitsCount,
           byWeight: doc.data().byWeight,
+          mainPackId: doc.data().mainPackId,
           subPackId: doc.data().subPackId,
           subCount: doc.data().subCount,
           withGift: doc.data().withGift,

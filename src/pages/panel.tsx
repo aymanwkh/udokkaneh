@@ -49,14 +49,17 @@ const Panel = () => {
             }
             {state.user && state.userInfo?.storeId &&
               <>
-                <IonItem routerLink='/packs/0/s'>
+                <IonItem routerLink={`/packs/s/0/${state.userInfo.storeId}`}>
                   <IonLabel>{labels.myPacks}</IonLabel>
                 </IonItem>
                 <IonItem routerLink='/product-requests'>
                   <IonLabel>{labels.productRequests}</IonLabel>
                 </IonItem>
+                <IonItem routerLink='/packs/n/0/0'>
+                  <IonLabel>{labels.notShowedPacks}</IonLabel>
+                </IonItem>
                 {state.userInfo.type === 'd' ?
-                  <IonItem routerLink='/packs/0/r'>
+                  <IonItem routerLink='/packs/r/0/0'>
                     <IonLabel>{labels.requests}</IonLabel>
                   </IonItem>
                 : <>

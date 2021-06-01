@@ -5,7 +5,7 @@ import {randomColors} from '../data/config'
 import {getCategoryName, getChildren, productOfText} from '../data/actions'
 import {Pack, PackStore} from '../data/types'
 import Footer from './footer'
-import { IonContent, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText } from '@ionic/react'
+import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { useParams } from 'react-router'
 import Fuse from "fuse.js";
@@ -17,32 +17,56 @@ type ExtendedPack = Pack & {
   packStoreInfo?: PackStore
 }
 type Params = {
-  id: string,
-  type: string
+  packId: string,
+  type: string,
+  storeId: string
 }
 const Packs = () => {
   const {state, dispatch} = useContext(StateContext)
   const params = useParams<Params>()
   const [packs, setPacks] = useState<ExtendedPack[]>([])
-  const [category] = useState(() => state.categories.find(category => category.id === params.id))
+  const [category] = useState(() => state.categories.find(category => category.id === params.packId))
   const [sortBy, setSortBy] = useState('v')
   const [data, setData] = useState<ExtendedPack[]>([])
+  const [title] = useState(() => {
+    let title
+    switch (params.type) {
+      case 's':
+        title = `${labels.storePacks} ${state.stores.find(s => s.id === params.storeId)?.name}`
+        break
+      case 'r':
+        title = labels.requests
+        break
+      case 'n':
+        title = labels.notShowedPacks
+        break
+      case 'a':
+        title = labels.allProducts
+        break
+      default:
+        title = category?.name
+    }
+    return title
+  })
   useEffect(() => {
     setPacks(() => {
       let packs
       switch (params.type){
         case 'a':
-          const children = getChildren(params.id, state.categories)
+          const children = getChildren(params.packId, state.categories)
           packs = state.packs.filter(p => p.price! > 0 && children.includes(p.product.categoryId))
           break
         case 's':
-          packs = state.packs.filter(p => state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId))
+          packs = state.packs.filter(p => state.packStores.find(s => s.packId === p.id && s.storeId === params.storeId))
           break
         case 'r':
           packs = state.packs.filter(p => state.storeRequests.find(r => r.packId === p.id))
           break
+        case 'n':
+          packs = state.packs.filter(p => p.price! === 0 && p.forSale && !p.subPackId)
+          break
         default:
-          packs = state.packs.filter(p => p.price! > 0 && p.product.categoryId === params.id)
+          packs = state.packs.filter(p => p.price! > 0 && p.product.categoryId === params.packId)
       }
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
@@ -59,7 +83,7 @@ const Packs = () => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, params.id, params.type, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests])
+  }, [state.packs, state.userInfo, params, params.type, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests])
   useEffect(() => {
     if (!state.searchText) {
       setData(packs)
@@ -95,10 +119,10 @@ const Packs = () => {
   }
   return(
     <IonPage>
-      <Header title={params.type === 's' ? labels.myPacks : params.type === 'r' ? labels.requests : category?.name || labels.allProducts} withSearch/>
+      <Header title={title} withSearch/>
       <IonContent fullscreen className="ion-padding">
         <IonList>
-          {data.length > 1 &&
+          {data.length > 1 && ['a', 'c'].includes(params.type) &&
             <IonSegment value={sortBy} onIonChange={e => handleSorting(e.detail.value!)}>
               <IonSegmentButton value="v">
                 <IonLabel>{labels.value}</IonLabel>
@@ -117,9 +141,9 @@ const Packs = () => {
             </IonItem>
           : data.map(p => 
               <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
-                {/* <IonThumbnail slot="start">
+                <IonThumbnail slot="start">
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
-                </IonThumbnail> */}
+                </IonThumbnail>
                 <IonLabel>
                   <IonText color={randomColors[0].name}>{p.product.name}</IonText>
                   <IonText color={randomColors[1].name}>{p.product.alias}</IonText>
@@ -129,7 +153,7 @@ const Packs = () => {
                   <IonText color={randomColors[5].name}>{p.packStoreInfo?.price ? `${labels.myPrice}:${p.packStoreInfo.price.toFixed(2)} ${p.packStoreInfo.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
                   <IonText color={randomColors[6].name}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
                 </IonLabel>
-                <IonLabel slot="end" className="price">{p.price!.toFixed(2)}</IonLabel>
+                {p.price! > 0 && <IonLabel slot="end" className="price">{p.price!.toFixed(2)}</IonLabel>}
               </IonItem>    
             )
           }

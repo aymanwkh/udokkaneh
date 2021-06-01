@@ -29,7 +29,7 @@ const Categories = () => {
       <Header title={currentCategory?.name} />
       <IonContent fullscreen className="ion-padding">
         <IonButton 
-          routerLink={`/packs/${params.id}/a`} 
+          routerLink={`/packs/a/${params.id}/0`} 
           className="sections"
           expand="block"
           shape="round"
@@ -39,7 +39,7 @@ const Categories = () => {
         </IonButton>
         {categories.map(c => 
           <IonButton
-            routerLink={c.isLeaf ? `/packs/${c.id}/n` : `/categories/${c.id}`} 
+            routerLink={c.isLeaf ? `/packs/c/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"
             shape="round"
             color={randomColors[i++ % 7].name}

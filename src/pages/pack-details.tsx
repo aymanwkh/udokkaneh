@@ -7,7 +7,7 @@ import {Store} from '../data/types'
 import Footer from './footer'
 import { setup, randomColors, userTypes } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
+import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 import moment from 'moment'
@@ -17,11 +17,13 @@ type Params = {
   id: string,
   type: string
 }
-type ExtendedStores = Store & {
-  storeInfo?: string,
+type ExtendedStore = Store & {
+  regionName: string,
+  typeName: string,
   distance: number,
+  packId: string,
   price: number,
-  time?: Date
+  time: Date
 }
 const PackDetails = () => {
   const {state} = useContext(StateContext)
@@ -33,7 +35,9 @@ const PackDetails = () => {
   const [actionOpened, setActionOpened] = useState(false)
   const [ratingOpened, setRatingOpened] = useState(false)
   const [nearbyOnly, setNearbyOnly] = useState(false)
-  const [stores, setStores] = useState<ExtendedStores[]>([])
+  const [storesType, setStoresType] = useState('s')
+  const [stores, setStores] = useState<ExtendedStore[]>([])
+  const [myPrice] = useState(() => state.packStores.find(ps => ps.packId === params.id && ps.storeId === state.userInfo?.storeId)?.price)
   const [trademarkName] = useState(() => state.trademarks.find(t => t.id === pack.product.trademarkId)?.name)
   const [countryName] = useState(() => state.countries.find(c => c.id === pack.product.countryId)!.name)
   const [storesCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId).length : 0)
@@ -47,31 +51,52 @@ const PackDetails = () => {
   const [transType, setTransType] = useState('')
   useEffect(() => {
     setStores(() => {
-      let stores
-      switch (state.userInfo?.type){
-        case 'n':
-          stores = state.stores.filter(s => state.packStores.find(p => p.storeId === s.id && p.packId === params.id && p.isActive && p.isRetail))
-          break
-        case 's':
-          stores = state.stores.filter(s => state.packStores.find(p => p.storeId === s.id && p.packId === params.id && p.isActive && !p.isRetail))
-          break
-        case 'd':
-          stores = state.stores.filter(s => state.storeRequests.find(r => r.storeId === s.id && r.packId === params.id))
-          break
-        default:
-          return []
+      let packStores, stores
+      if (storesType === 's') {
+        switch (state.userInfo?.type){
+          case 'n':
+            packStores = state.packStores.filter(p => p.packId === params.id && p.isActive && p.isRetail)
+            break
+          case 's':
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && (pa.subPackId === params.id || pa.mainPackId === params.id))) && state.stores.find(s => s.id === p.storeId)?.type !== 's')
+            break
+          case 'd':
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && (pa.subPackId === params.id || pa.mainPackId === params.id))) && state.stores.find(s => s.id === p.storeId)?.type === 'w')
+            break
+          default:
+            return []
+        }
+        stores = packStores.map(s => {
+          return {
+            storeId: s.storeId,
+            packId: s.packId,
+            price: s.price,
+            time: s.time
+          }
+        })
+      } else {
+        const storeRequests = state.storeRequests.filter(r => r.packId === params.id)
+        stores = storeRequests.map(r => {
+          return {
+            ...r,
+            price: 0
+          }
+        })
       }
       const results = stores.map(s => {
+        const store = state.stores.find(ss => ss.id === s.storeId)!
         let distance = 1000
-        if (state.userInfo?.position?.lat && s.position.lat) {
-          distance = calcDistance(state.userInfo?.position, s.position)
+        if (state.userInfo?.position?.lat && store.position.lat) {
+          distance = calcDistance(state.userInfo?.position, store.position)
         }
         return {
-          ...s,
-          storeInfo: state.userInfo?.type === 'n' ? state.regions.find(r => r.id === s.regionId)?.name : userTypes.find(t => t.id === s.type)?.name,
+          ...store,
+          regionName: state.regions.find(r => r.id === store.regionId)!.name,
+          typeName: userTypes.find(t => t.id === store.type)!.name,
           distance,
-          price: state.packStores.find(p => p.packId === params.id && p.storeId === s.id)?.price || 0,
-          time: state.storeRequests.find(r => r.storeId === s.id && r.packId === params.id)?.time
+          packId: s.packId,
+          price: s.price,
+          time: s.time
         }
       })
       if (nearbyOnly && state.userInfo?.position?.lat) {
@@ -80,7 +105,7 @@ const PackDetails = () => {
         return results.sort((r1, r2) => r1.distance - r2.distance)
       }
     })
-  }, [state.packStores, state.stores, state.regions, state.user, pack, state.userInfo, nearbyOnly, params.id, state.storeRequests])
+  }, [state.packStores, state.stores, state.packs, state.regions, state.user, pack, state.userInfo, nearbyOnly, params.id, state.storeRequests, storesType])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
@@ -130,7 +155,7 @@ const PackDetails = () => {
       if (transType === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
         throw new Error('samePrice')
       }
-      if (Math.abs(+value - pack?.price!) / pack?.price! > setup.priceDiff) {
+      if (pack?.price! > 0 && Math.abs(+value - pack?.price!) / pack?.price! > setup.priceDiff) {
         throw new Error('invalidChangePrice')
       }
       const storePack = {
@@ -204,7 +229,7 @@ const PackDetails = () => {
           <IonGrid>
             <IonRow>
               <IonCol className="card-title">{pack.name}</IonCol>
-              <IonCol className="price">{pack.price!.toFixed(2)}</IonCol>
+              {(myPrice || pack.price!) > 0 &&  <IonCol className="price">{myPrice ? myPrice.toFixed(2) : pack.price!.toFixed(2)}</IonCol>}
             </IonRow>
             <IonRow>
               <IonCol>
@@ -260,16 +285,29 @@ const PackDetails = () => {
             </IonRow>
           </IonGrid>
         }
-        <IonList>
+        {state.userInfo?.type === 'd' &&
+          <div style={{margin: '10px'}}>
+            <IonSegment value={storesType} onIonChange={e => setStoresType(e.detail.value!)}>
+              <IonSegmentButton value="s">
+                <IonLabel>{labels.wholeStores}</IonLabel>
+              </IonSegmentButton>
+              <IonSegmentButton value="r">
+                <IonLabel>{labels.requests}</IonLabel>
+              </IonSegmentButton>
+            </IonSegment>
+          </div>
+        }
+        <IonList className="list">
           {stores.map((s, i) => 
             <IonItem key={i} routerLink={`/store-details/${s.id}/${params.id}`}>
               <IonLabel>
                 <IonText color={randomColors[0].name}>{s.name}</IonText>
-                <IonText color={randomColors[1].name}>{s.storeInfo}</IonText>
+                <IonText color={randomColors[1].name}>{state.userInfo?.type === 'n' ? s.regionName : s.typeName}</IonText>
+                {s.packId !== pack?.id && <IonText color={randomColors[1].name}>{state.packs.find(p => p.id === s.packId)?.name}</IonText>}
                 {state.userInfo?.type !== 's' && <IonText color={randomColors[2].name}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
                 {state.userInfo?.type === 'd' && <IonText color={randomColors[3].name}>{moment(s.time).fromNow()}</IonText>}
               </IonLabel>
-              {s.price > 0 && <IonLabel slot="end" className="ion-text-end">{s.price.toFixed(2)}</IonLabel>}
+              {state.userInfo?.type !== 'd' && <IonLabel slot="end" className="ion-text-end">{s.price.toFixed(2)}</IonLabel>}
             </IonItem>
           )}
         </IonList>

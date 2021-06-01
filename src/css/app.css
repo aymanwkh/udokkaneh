@@ -151,3 +151,10 @@ ion-toast {
   font-size: 0.8rem;
 }
 
+.list {
+  border-style: outset;
+  border-width: 2px;
+  margin: 10px;
+  border-radius: 10px;
+}
+

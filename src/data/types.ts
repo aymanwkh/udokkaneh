@@ -45,12 +45,13 @@ export type Pack = {
   product: Product,
   imageUrl?: string,
   price?: number,
-  subPackId?: string,
-  subCount?: number,
+  mainPackId: string | null,
+  subPackId: string | null,
+  subCount: number | null,
   weightedPrice?: number,
-  unitsCount?: number,
+  unitsCount: number,
   byWeight: boolean,
-  withGift?: boolean,
+  withGift: boolean,
   forSale: boolean,
 }
 export type PackRequest = {

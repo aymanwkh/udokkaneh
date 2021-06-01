@@ -62,7 +62,7 @@ const app = () => {
               <Route path="/password-request" exact={true} component={PasswordRequest} />
               <Route path="/change-password" exact={true} component={ChangePassword} />
               <Route path="/categories/:id" exact={true} component={Categories} />
-              <Route path="/packs/:id/:type" exact={true} component={Packs} />
+              <Route path="/packs/:type/:packId/:storeId" exact={true} component={Packs} />
               <Route path="/pack-details/:id" exact={true} component={PackDetails} />
               <Route path="/add-pack-request/:id" exact={true} component={AddPackRequest} />
               <Route path="/basket" exact={true} component={Basket} />

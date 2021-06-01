@@ -1,12 +1,13 @@
 import {useState, useContext} from 'react'
 import {addClaim, getMessage} from '../data/actions'
 import labels from '../data/labels'
-import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
+import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
-import { warningOutline } from 'ionicons/icons'
+import { menuOutline } from 'ionicons/icons'
 import Footer from './footer'
+import { randomColors } from '../data/config'
 
 type Params = {
   storeId: string,
@@ -16,10 +17,11 @@ const StoreDetails = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
   const [store] = useState(() => state.stores.find(s => s.id === params.storeId)!)
+  const [actionOpened, setActionOpened] = useState(false)
   const [message] = useIonToast();
   const location = useLocation()
   const history = useHistory()
-  const [alert] = useIonAlert();
+  const [alert] = useIonAlert()
   const handleAddClaim = () => {
     alert({
       header: labels.claimTitle,
@@ -42,6 +44,7 @@ const StoreDetails = () => {
       ],
     })
   }
+  let i = 0
   return (
     <IonPage>
       <Header title={store.type === 'd' ? labels.salesmanDetails : labels.storeDetails} />
@@ -84,36 +87,46 @@ const StoreDetails = () => {
                 readonly
               />
             </IonItem>
-            <IonItem>
-              <IonLabel position="floating">
-                {labels.alarmsCount}
-              </IonLabel>
-              <IonInput 
-                value={store.claimsCount} 
-                readonly
-              />
-            </IonItem>
+            {state.userInfo?.type === 'n' &&
+              <IonItem>
+                <IonLabel position="floating">
+                  {labels.alarmsCount}
+                </IonLabel>
+                <IonInput 
+                  value={store.claimsCount} 
+                  readonly
+                />
+              </IonItem>
+            }
           </>}
         </IonList>
-        {store.type !== 'd' && 
-          <div className="ion-padding" style={{textAlign: 'center'}}>
-            <IonButton 
-              fill="solid" 
-              style={{width: '10rem'}}
-              routerLink={`/map/${store.position?.lat}/${store.position?.lng}/0`}
-            >
-              {labels.map}
-            </IonButton>
-          </div>
-        }
       </IonContent>
-      {!state.userInfo?.storeId &&
-        <IonFab vertical="top" horizontal="end" slot="fixed">
-          <IonFabButton onClick={handleAddClaim} color="danger">
-            <IonIcon ios={warningOutline}/>
-          </IonFabButton>
-        </IonFab>
-      }
+      <IonFab vertical="top" horizontal="end" slot="fixed">
+        <IonFabButton onClick={() => setActionOpened(true)}>
+          <IonIcon ios={menuOutline}/>
+        </IonFabButton>
+      </IonFab>
+      <IonActionSheet
+        isOpen={actionOpened}
+        onDidDismiss={() => setActionOpened(false)}
+        buttons={[
+          {
+            text: labels.packs,
+            cssClass: randomColors[i++ % 7].name,
+            handler: () => history.push(`/packs/s/0/${store.id}`)
+          },
+          {
+            text: labels.map,
+            cssClass: store.type !== 'd' ? randomColors[i++ % 7].name : 'ion-hide',
+            handler: () => history.push(`/map/${store.position?.lat}/${store.position?.lng}/0`)
+          },
+          {
+            text: labels.addClaim,
+            cssClass: state.userInfo?.type === 'n' || store.type === 'w' ? randomColors[i++ % 7].name : 'ion-hide',
+            handler: () => handleAddClaim()
+          },
+        ]}
+      />
       <Footer />
     </IonPage>
   )
