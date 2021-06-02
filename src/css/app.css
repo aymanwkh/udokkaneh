@@ -158,3 +158,9 @@ ion-toast {
   border-radius: 10px;
 }
 
+.help {
+  margin: 20px;
+  font-size: 2rem;
+  color: var(--ion-color-primary);
+  text-align: center;
+}

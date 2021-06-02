@@ -73,6 +73,9 @@ const Panel = () => {
                 </>}
               </>
             }
+            <IonItem routerLink='/help'>
+              <IonLabel>{labels.contactUs}</IonLabel>
+            </IonItem>
           </IonMenuToggle>
         </IonList>
       </IonContent>

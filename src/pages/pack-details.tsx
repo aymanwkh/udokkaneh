@@ -5,7 +5,7 @@ import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage,
 import labels from '../data/labels'
 import {Store} from '../data/types'
 import Footer from './footer'
-import { setup, randomColors, userTypes } from '../data/config'
+import { setup, randomColors } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -18,8 +18,6 @@ type Params = {
   type: string
 }
 type ExtendedStore = Store & {
-  regionName: string,
-  typeName: string,
   distance: number,
   packId: string,
   price: number,
@@ -55,13 +53,13 @@ const PackDetails = () => {
       if (storesType === 's') {
         switch (state.userInfo?.type){
           case 'n':
-            packStores = state.packStores.filter(p => p.packId === params.id && p.isActive && p.isRetail)
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.mainPackId === params.id)) && p.isActive && p.isRetail)
             break
           case 's':
-            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && (pa.subPackId === params.id || pa.mainPackId === params.id))) && state.stores.find(s => s.id === p.storeId)?.type !== 's')
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.mainPackId === params.id)) && state.stores.find(s => s.id === p.storeId)?.type !== 's')
             break
           case 'd':
-            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && (pa.subPackId === params.id || pa.mainPackId === params.id))) && state.stores.find(s => s.id === p.storeId)?.type === 'w')
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.mainPackId === params.id)) && state.stores.find(s => s.id === p.storeId)?.type === 'w')
             break
           default:
             return []
@@ -91,8 +89,6 @@ const PackDetails = () => {
         }
         return {
           ...store,
-          regionName: state.regions.find(r => r.id === store.regionId)!.name,
-          typeName: userTypes.find(t => t.id === store.type)!.name,
           distance,
           packId: s.packId,
           price: s.price,
@@ -302,10 +298,10 @@ const PackDetails = () => {
             <IonItem key={i} routerLink={`/store-details/${s.id}/${params.id}`}>
               <IonLabel>
                 <IonText color={randomColors[0].name}>{s.name}</IonText>
-                <IonText color={randomColors[1].name}>{state.userInfo?.type === 'n' ? s.regionName : s.typeName}</IonText>
-                {s.packId !== pack?.id && <IonText color={randomColors[1].name}>{state.packs.find(p => p.id === s.packId)?.name}</IonText>}
-                {state.userInfo?.type !== 's' && <IonText color={randomColors[2].name}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
-                {state.userInfo?.type === 'd' && <IonText color={randomColors[3].name}>{moment(s.time).fromNow()}</IonText>}
+                <IonText color={randomColors[1].name}>{state.regions.find(r => r.id === s.regionId)?.name}</IonText>
+                {s.packId !== pack?.id && <IonText color={randomColors[2].name}>{state.packs.find(p => p.id === s.packId)?.name}</IonText>}
+                {state.userInfo?.type !== 's' && <IonText color={randomColors[3].name}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
+                {state.userInfo?.type === 'd' && <IonText color={randomColors[4].name}>{moment(s.time).fromNow()}</IonText>}
               </IonLabel>
               {state.userInfo?.type !== 'd' && <IonLabel slot="end" className="ion-text-end">{s.price.toFixed(2)}</IonLabel>}
             </IonItem>
@@ -371,12 +367,12 @@ const PackDetails = () => {
           {
             text: labels.otherProducts,
             cssClass: state.userInfo?.type === 'n' && otherProducts.length > 0 ? randomColors[i++ % 7].name: 'ion-hide',
-            handler: () => history.push(`/hints/${pack.id}/type/a`)
+            handler: () => history.push(`/hints/${pack.id}/a`)
           },
           {
             text: labels.otherPacks,
             cssClass: state.userInfo?.type === 'n' && otherPacks.length > 0 ? randomColors[i++ % 7].name : 'ion-hide',
-            handler: () => history.push(`/hints/${pack.id}/type/p`)
+            handler: () => history.push(`/hints/${pack.id}/p`)
           }
         ]}
       />

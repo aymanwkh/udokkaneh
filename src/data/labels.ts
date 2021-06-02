@@ -49,7 +49,6 @@ const labels: Label = {
   invalidPrice: 'الرجاء التأكد من السعر المدخل',
   passwordRequest: 'طلب كلمة السر',
   allProducts: 'كل المنتجات',
-  myOrders: 'طلباتي',
   sendSuccess: 'تم الارسال',
   loginSuccess: 'اهلا وسهلا بك',
   registerSuccess: 'شكرا لتسجيلك معنا',
@@ -65,8 +64,6 @@ const labels: Label = {
   back: 'رجوع',
   myPrice: 'سعري',
   myPacks: 'منتجاتي',
-  invalidOfferEnd: 'الرجاء التأكد من تاريخ انتهاء العرض',
-  limitOverFlow: 'لقد تجاوزت الحد المسموح به للطلبات التي هي قيد التسليم',
   changePasswordSuccess: 'تم تغيير كلمة السر',
   changePassword: 'تغيير كلمة السر',
   oldPassword: 'كلمة السر الحالية',
@@ -87,7 +84,6 @@ const labels: Label = {
   deleteSuccess: 'تم الحذف',
   duplicatePasswordRequest: 'لقد ارسلت سابقا طلبا بنسيان كلمة السر ولم يعالج بعد',
   quantity: 'الكمية',
-  helpPageTitle: 'توضيح',
   close: 'اغلاق',
   remain: 'المتبقي',
   changePriceNote: 'تغير السعر',
@@ -118,7 +114,6 @@ const labels: Label = {
   suggestions: 'اقتراحات لبدائل',
   favorites: 'المفضلة',
   inprocess: 'الرجاء الانتظار',
-  orderHelp: 'للمزيد عن الرسوم،الخصم،الشراء ومتابعة الطلب',
   clickHere: 'اضغط هنا',
   advert: 'اعلان',
   unitPrice: 'سعر الوحدة',
@@ -172,7 +167,7 @@ const labels: Label = {
   rateProduct: 'رأيك في هذا المنتج',
   newAlarm: 'بلاغ جديد',
   positionError: 'حدث خطأ في تحديد الموقع، يرجى التحديد من خلال الخريطة',
-  productRequests: 'طلبات منتجات جديدة',
+  productRequests: 'طلب منتجات جديدة',
   duplicatePack: 'يوجد عبوة اخرى لنفس المنتج بنفس الوزن',
   withGift: 'مع هدية',
   gift: 'الهدية',
@@ -221,11 +216,13 @@ const labels: Label = {
   nearby: 'قريبة',
   bestPrices: 'لأفضل سعر',
   nearbyStores: 'محلات قريبة',
-  notShowedPacks: 'منتجات غير معروضة',
+  notShowedPacks: 'منتجات/عبوات غير معروضة',
   packs: 'المنتجات',
   storePacks: 'منتجات محل',
   addClaim: 'تقديم شكوى',
-  wholeStores: 'محلات الجملة'
+  wholeStores: 'محلات الجملة',
+  contactUs: 'تواصل معنا',
+  help: 'للمساعدة والاقتراحات ... يمكنك التراسل والتواصل معنا من خلال الارقام التالية'
 }
 
 export default labels

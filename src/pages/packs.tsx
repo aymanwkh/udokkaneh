@@ -63,7 +63,7 @@ const Packs = () => {
           packs = state.packs.filter(p => state.storeRequests.find(r => r.packId === p.id))
           break
         case 'n':
-          packs = state.packs.filter(p => p.price! === 0 && p.forSale && !p.subPackId)
+          packs = state.packs.filter(p => p.price! === 0 && p.forSale)
           break
         default:
           packs = state.packs.filter(p => p.price! > 0 && p.product.categoryId === params.packId)
