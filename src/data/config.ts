@@ -1,6 +1,6 @@
 export const setup = {
   priceDiff: 0.25,
-  firstPhone: '0799982800'
+  firstPhone: '0795700667'
 }
 
 export const randomColors = [
@@ -23,18 +23,14 @@ export const units = [
 
 export const patterns = {
   password: /^.{4}$/,
-  name: /^.{4,50}$/,
+  name: /^.{3,50}$/,
   mobile: /^07[7-9][0-9]{7}$/
 }
 
-export const storeTypes = [
-  {id: 's', name: 'تجزئة'},
-  {id: 'w', name: 'جملة'},
-]
-
 export const userTypes = [
-  {id: 'n', name: 'مستخدم عادي', isStore: false},
-  {id: 's', name: 'محل تجزئة', isStore: true},
-  {id: 'w', name: 'محل جملة', isStore: true},
-  {id: 'd', name: 'موزع', isStore: true}
+  {id: 'n', name: 'مستخدم', isStore: false},
+  {id: 's', name: 'دكانة', isStore: true},
+  {id: 'w', name: 'جملة', isStore: true},
+  {id: 'd', name: 'موزع', isStore: true},
+  {id: 'r', name: 'مطعم', isStore: true}
 ]

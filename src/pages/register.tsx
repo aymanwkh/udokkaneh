@@ -1,11 +1,11 @@
 import {useState, useEffect, useContext} from 'react'
 import {getMessage, registerUser} from '../data/actions'
 import labels from '../data/labels'
-import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
+import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
 import { Region, UserInfo } from '../data/types'
-import { patterns, storeTypes } from '../data/config'
+import { patterns, userTypes } from '../data/config'
 import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
 
@@ -14,13 +14,13 @@ const Register = () => {
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
-  const [storeName, setStoreName] = useState('')
+  const [storeName, setStoreName] = useState<string | null>(null)
   const [nameInvalid, setNameInvalid] = useState(true)
   const [passwordInvalid, setPasswordInvalid] = useState(true)
   const [mobileInvalid, setMobileInvalid] = useState(true)
   const [position, setPosition] = useState({lat: 0, lng: 0})
   const [positionError, setPositionError] = useState(false)
-  const [regionId, setRegionId] = useState('')
+  const [regionId, setRegionId] = useState<string | null>(null)
   const [type, setType] = useState('n')
   const history = useHistory()
   const location = useLocation()
@@ -70,8 +70,8 @@ const Register = () => {
         position,
         type,
         isActive: type === 'n',
-        storeName: ['s', 'w'].includes(type) ? storeName : null,
-        regionId: ['s', 'w'].includes(type) ? regionId : null,
+        storeName,
+        regionId,
       }
       await registerUser(user)
       dismiss()
@@ -139,7 +139,18 @@ const Register = () => {
               color={passwordInvalid ? 'danger' : ''}
             />
           </IonItem>
-          {['s', 'w'].includes(type) && <>
+          <IonItem>
+            <IonLabel position="floating" color="primary">{labels.type}</IonLabel>
+            <IonSelect 
+              ok-text={labels.ok} 
+              cancel-text={labels.cancel} 
+              value={type}
+              onIonChange={e => setType(e.detail.value)}
+            >
+              {userTypes.map(t => <IonSelectOption key={t.id} value={t.id}>{t.name}</IonSelectOption>)}
+            </IonSelect>
+          </IonItem>
+          {['s', 'w', 'r'].includes(type) && 
             <IonItem>
               <IonLabel position="floating" color="primary">
                 {labels.storeName}
@@ -151,18 +162,7 @@ const Register = () => {
                 onIonChange={e => setStoreName(e.detail.value!)} 
               />
             </IonItem>
-            <IonItem>
-              <IonLabel position="floating" color="primary">{labels.type}</IonLabel>
-              <IonSelect 
-                ok-text={labels.ok} 
-                cancel-text={labels.cancel}
-                value={type} 
-                onIonChange={e => setType(e.detail.value)}
-              >
-                {storeTypes.map(t => <IonSelectOption key={t.id} value={t.id}>{t.name}</IonSelectOption>)}
-              </IonSelect>
-            </IonItem>
-          </>}
+          }
           <div className="ion-padding">
             <div className="ion-text-center">
               {labels.setPosition}
@@ -202,16 +202,6 @@ const Register = () => {
           </IonFabButton>
         </IonFab>
       }
-      <IonFooter>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonButton fill="clear" onClick={() => setType(type === 's' ? 'n': 's')}>{type === 's' ? labels.normalUser : labels.storeOwner}</IonButton>
-          </IonButtons>
-          <IonButtons slot="end">
-            <IonButton fill="clear" onClick={() => setType(type === 'd' ? 'n' : 'd')}>{type === 'd' ? labels.normalUser : labels.salesman}</IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonFooter>
       <IonModal isOpen={showModal} animated mode="ios">
         <IonHeader>
           <IonToolbar>

@@ -17,7 +17,7 @@ type ExtendedPack = Pack & {
   packStoreInfo?: PackStore
 }
 type Params = {
-  packId: string,
+  id: string,
   type: string,
   storeId: string
 }
@@ -25,7 +25,7 @@ const Packs = () => {
   const {state, dispatch} = useContext(StateContext)
   const params = useParams<Params>()
   const [packs, setPacks] = useState<ExtendedPack[]>([])
-  const [category] = useState(() => state.categories.find(category => category.id === params.packId))
+  const [category] = useState(() => state.categories.find(category => category.id === params.id))
   const [sortBy, setSortBy] = useState('v')
   const [data, setData] = useState<ExtendedPack[]>([])
   const [title] = useState(() => {
@@ -43,6 +43,9 @@ const Packs = () => {
       case 'a':
         title = labels.allProducts
         break
+      case 'p':
+        title = labels.otherProducts
+        break
       default:
         title = category?.name
     }
@@ -53,7 +56,7 @@ const Packs = () => {
       let packs
       switch (params.type){
         case 'a':
-          const children = getChildren(params.packId, state.categories)
+          const children = getChildren(params.id, state.categories)
           packs = state.packs.filter(p => p.price! > 0 && children.includes(p.product.categoryId))
           break
         case 's':
@@ -65,14 +68,18 @@ const Packs = () => {
         case 'n':
           packs = state.packs.filter(p => p.price! === 0 && p.forSale)
           break
+        case 'p':
+          const pack = state.packs.find(p => p.id === params.id)
+          packs = state.packs.filter(p => p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId)
+          break
         default:
-          packs = state.packs.filter(p => p.price! > 0 && p.product.categoryId === params.packId)
+          packs = state.packs.filter(p => p.price! > 0 && p.product.categoryId === params.id)
       }
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkName = state.trademarks.find(t => t.id === p.product.trademarkId)?.name
         const countryName = state.countries.find(c => c.id === p.product.countryId)!.name
-        const packStoreInfo = state.packStores.find(s => s.packId === p.id && s.storeId === state.userInfo?.storeId)
+        const packStoreInfo = state.packStores.find(s => s.packId === p.id && s.storeId === params.storeId)
         return {
           ...p,
           categoryName: getCategoryName(categoryInfo, state.categories),
@@ -150,10 +157,10 @@ const Packs = () => {
                   <IonText color={randomColors[2].name}>{p.name}</IonText>
                   <IonText color={randomColors[3].name}>{p.categoryName}</IonText>
                   <IonText color={randomColors[4].name}>{productOfText(p.countryName, p.trademarkName)}</IonText>
-                  <IonText color={randomColors[5].name}>{p.packStoreInfo?.price ? `${labels.myPrice}:${p.packStoreInfo.price.toFixed(2)} ${p.packStoreInfo.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
+                  <IonText color={randomColors[5].name}>{params.type !== 's' && p.packStoreInfo?.price ? `${labels.myPrice}:${p.packStoreInfo.price.toFixed(2)} ${p.packStoreInfo.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
                   <IonText color={randomColors[6].name}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
                 </IonLabel>
-                {p.price! > 0 && <IonLabel slot="end" className="price">{p.price!.toFixed(2)}</IonLabel>}
+                <IonLabel slot="end" className="price">{params.type === 's' ? p.packStoreInfo?.price.toFixed(2) : p.price!.toFixed(2)}</IonLabel>
               </IonItem>    
             )
           }

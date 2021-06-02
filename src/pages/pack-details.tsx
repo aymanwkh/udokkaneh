@@ -5,7 +5,7 @@ import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage,
 import labels from '../data/labels'
 import {Store} from '../data/types'
 import Footer from './footer'
-import { setup, randomColors } from '../data/config'
+import { setup, randomColors, userTypes } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -18,6 +18,8 @@ type Params = {
   type: string
 }
 type ExtendedStore = Store & {
+  regionName?: string,
+  typeName?: string,
   distance: number,
   packId: string,
   price: number,
@@ -29,7 +31,6 @@ const PackDetails = () => {
   const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
   const [isAvailable, setIsAvailable] = useState(false)
   const [otherProducts] = useState(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
-  const [otherPacks] = useState(() => state.packs.filter(pa => pa.id !== params.id && pa.product.id === pack?.product.id))
   const [actionOpened, setActionOpened] = useState(false)
   const [ratingOpened, setRatingOpened] = useState(false)
   const [nearbyOnly, setNearbyOnly] = useState(false)
@@ -53,13 +54,14 @@ const PackDetails = () => {
       if (storesType === 's') {
         switch (state.userInfo?.type){
           case 'n':
-            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.mainPackId === params.id)) && p.isActive && p.isRetail)
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.product.id === pack.product.id)) && p.isActive && p.isRetail)
             break
           case 's':
-            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.mainPackId === params.id)) && state.stores.find(s => s.id === p.storeId)?.type !== 's')
+          case 'r':
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.product.id === pack.product.id)) && state.stores.find(s => s.id === p.storeId)?.type !== 's')
             break
           case 'd':
-            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.mainPackId === params.id)) && state.stores.find(s => s.id === p.storeId)?.type === 'w')
+            packStores = state.packStores.filter(p => (p.packId === params.id || state.packs.find(pa => pa.id === p.packId && pa.product.id === pack.product.id)) && state.stores.find(s => s.id === p.storeId)?.type === 'w')
             break
           default:
             return []
@@ -90,6 +92,8 @@ const PackDetails = () => {
         return {
           ...store,
           distance,
+          regionName: state.regions.find(r => r.id === store.regionId)?.name,
+          typeName: userTypes.find(t => t.id === store.type)?.name,
           packId: s.packId,
           price: s.price,
           time: s.time
@@ -151,7 +155,7 @@ const PackDetails = () => {
       if (transType === 'c' && +value === state.packStores.find(p => p.packId === pack?.id && p.storeId === state.userInfo?.storeId)?.price) {
         throw new Error('samePrice')
       }
-      if (pack?.price! > 0 && Math.abs(+value - pack?.price!) / pack?.price! > setup.priceDiff) {
+      if (state.userInfo?.type === 's' && pack?.price! > 0 && Math.abs(+value - pack?.price!) / pack?.price! > setup.priceDiff) {
         throw new Error('invalidChangePrice')
       }
       const storePack = {
@@ -297,11 +301,10 @@ const PackDetails = () => {
           {stores.map((s, i) => 
             <IonItem key={i} routerLink={`/store-details/${s.id}/${params.id}`}>
               <IonLabel>
-                <IonText color={randomColors[0].name}>{s.name}</IonText>
-                <IonText color={randomColors[1].name}>{state.regions.find(r => r.id === s.regionId)?.name}</IonText>
-                {s.packId !== pack?.id && <IonText color={randomColors[2].name}>{state.packs.find(p => p.id === s.packId)?.name}</IonText>}
-                {state.userInfo?.type !== 's' && <IonText color={randomColors[3].name}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
-                {state.userInfo?.type === 'd' && <IonText color={randomColors[4].name}>{moment(s.time).fromNow()}</IonText>}
+                <IonText color={randomColors[0].name}>{`${s.name}-${s.type === 'd' ? s.typeName : s.regionName}`}</IonText>
+                {s.packId !== pack?.id && <IonText color={randomColors[1].name}>{state.packs.find(p => p.id === s.packId)?.name}</IonText>}
+                {s.type !== 'd' && <IonText color={randomColors[2].name}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
+                {storesType === 'r' && <IonText color={randomColors[3].name}>{moment(s.time).fromNow()}</IonText>}
               </IonLabel>
               {state.userInfo?.type !== 'd' && <IonLabel slot="end" className="ion-text-end">{s.price.toFixed(2)}</IonLabel>}
             </IonItem>
@@ -321,32 +324,32 @@ const PackDetails = () => {
         buttons={[
           {
             text: labels.newRequest,
-            cssClass: state.userInfo?.type === 's' && !state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type && ['s', 'r'].includes(state.userInfo?.type) && !state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleNewRequest()
           },
           {
             text: labels.deleteRequest,
-            cssClass: state.userInfo?.type === 's' && state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type && ['s', 'r'].includes(state.userInfo?.type) && state.storeRequests.find(r => r.packId === pack?.id && r.storeId === state.userInfo?.storeId) ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleDeleteRequest()
           },
           {
             text: labels.unAvailable,
-            cssClass: state.userInfo?.storeId && isAvailable ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) && isAvailable ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleUnAvailable()
           },
           {
             text: labels.changePrice,
-            cssClass: state.userInfo?.storeId && isAvailable ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) && isAvailable ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleAvailable('c')
           },
           {
             text: labels.available,
-            cssClass: state.userInfo?.storeId && !isAvailable ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) && !isAvailable ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleAvailable('n')
           },
           {
             text: labels.addPack,
-            cssClass: state.userInfo?.storeId && !pack.subPackId ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) && !pack.subPackId ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => history.push(`/add-pack-request/${params.id}`)
           },
           {
@@ -367,13 +370,8 @@ const PackDetails = () => {
           {
             text: labels.otherProducts,
             cssClass: state.userInfo?.type === 'n' && otherProducts.length > 0 ? randomColors[i++ % 7].name: 'ion-hide',
-            handler: () => history.push(`/hints/${pack.id}/a`)
+            handler: () => history.push(`/packs/p/${pack.id}/0`)
           },
-          {
-            text: labels.otherPacks,
-            cssClass: state.userInfo?.type === 'n' && otherPacks.length > 0 ? randomColors[i++ % 7].name : 'ion-hide',
-            handler: () => history.push(`/hints/${pack.id}/p`)
-          }
         ]}
       />
       <IonActionSheet

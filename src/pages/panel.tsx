@@ -47,31 +47,36 @@ const Panel = () => {
                 <IonLabel>{labels.login}</IonLabel>
               </IonItem>
             }
-            {state.user && state.userInfo?.storeId &&
-              <>
-                <IonItem routerLink={`/packs/s/0/${state.userInfo.storeId}`}>
-                  <IonLabel>{labels.myPacks}</IonLabel>
-                </IonItem>
-                <IonItem routerLink='/product-requests'>
-                  <IonLabel>{labels.productRequests}</IonLabel>
-                </IonItem>
-                <IonItem routerLink='/packs/n/0/0'>
-                  <IonLabel>{labels.notShowedPacks}</IonLabel>
-                </IonItem>
-                {state.userInfo.type === 'd' ?
-                  <IonItem routerLink='/packs/r/0/0'>
-                    <IonLabel>{labels.requests}</IonLabel>
-                  </IonItem>
-                : <>
-                  <IonItem routerLink={`/store-details/${state.userInfo?.storeId}/0`}>
-                    <IonLabel>{labels.myInfo}</IonLabel>
-                  </IonItem>
-                  <IonItem routerLink='/claims'>
-                    <IonLabel>{labels.claims}</IonLabel>
-                    {claimsCount > 0 && <IonBadge color="danger">{claimsCount}</IonBadge>}
-                  </IonItem>
-                </>}
-              </>
+            {state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) &&
+              <IonItem routerLink={`/packs/s/0/${state.userInfo.storeId}`}>
+                <IonLabel>{labels.myPacks}</IonLabel>
+              </IonItem>
+            }
+            {state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) &&
+              <IonItem routerLink='/product-requests'>
+                <IonLabel>{labels.productRequests}</IonLabel>
+              </IonItem>
+            }
+            {state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) &&
+              <IonItem routerLink='/packs/n/0/0'>
+                <IonLabel>{labels.notShowedPacks}</IonLabel>
+              </IonItem>
+            }
+            {state.userInfo?.type === 'd' &&
+              <IonItem routerLink='/packs/r/0/0'>
+                <IonLabel>{labels.requests}</IonLabel>
+              </IonItem>
+            }
+            {state.userInfo?.storeId &&
+              <IonItem routerLink={`/store-details/${state.userInfo?.storeId}/0`}>
+                <IonLabel>{labels.myInfo}</IonLabel>
+              </IonItem>
+            }
+            {state.userInfo?.type && ['s', 'w'].includes(state.userInfo?.type) &&
+              <IonItem routerLink='/claims'>
+                <IonLabel>{labels.claims}</IonLabel>
+                {claimsCount > 0 && <IonBadge color="danger">{claimsCount}</IonBadge>}
+              </IonItem>
             }
             <IonItem routerLink='/help'>
               <IonLabel>{labels.contactUs}</IonLabel>

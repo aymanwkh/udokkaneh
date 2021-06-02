@@ -45,7 +45,6 @@ export type Pack = {
   product: Product,
   imageUrl?: string,
   price?: number,
-  mainPackId: string | null,
   subPackId: string | null,
   subCount: number | null,
   weightedPrice?: number,

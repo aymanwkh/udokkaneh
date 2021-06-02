@@ -112,7 +112,7 @@ const StoreDetails = () => {
         buttons={[
           {
             text: labels.packs,
-            cssClass: randomColors[i++ % 7].name,
+            cssClass: store.type !== 'r' ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => history.push(`/packs/s/0/${store.id}`)
           },
           {
