@@ -18,7 +18,7 @@ const Footer = () => {
           />
         </IonButtons>
         <IonButtons slot="end" onClick={() => {if (state.basket.length > 0) history.push('/basket')}}>
-          {state.basket.length > 0 && <IonBadge color="danger" style={{fontSize: '10px', position: 'relative', bottom: '10px', right: '10px'}}>{state.basket.length}</IonBadge>}
+          {state.basket.length > 0 && <IonBadge style={{fontSize: '10px', position: 'relative', bottom: '10px', right: '10px', backgroundColor: 'red'}}>{state.basket.length}</IonBadge>}
           <IonIcon 
             ios={cartOutline} 
             style={{fontSize: '25px', marginLeft: '10px'}} 

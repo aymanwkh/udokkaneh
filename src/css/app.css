@@ -34,8 +34,7 @@ ion-toast {
 }
 
 .primary {
-  --color: var(--ion-color-primary);
-  --button-color: var(--ion-color-primary);
+  --button-color: red;
 }
 
 .secondary {
@@ -87,36 +86,31 @@ ion-toast {
   color: cyan;
 }
 
-.green {
-  color: green;
-}
-
-.blue {
-  color: blue;
-}
-
-.red {
-  color: red;
-}
-
 .block-title {
   color: blue;
 }
 
 .price {
   text-align: end;
-  color: red;
+  color: var(--ion-color-danger);
   max-width: 15%;
-  font-size: 1.1rem;
+  font-size: 1rem;
+}
+
+.card-right {
+  color: purple;
+  font-size: 1rem;
 }
 
 .card-title {
-  font-size: 1.1rem;
-  color: blue;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--ion-color-primary);
 }
 
 .background1 {
-  background-color: #3880ff	;
+  background-color: darkblue	;
   border-radius: 12px;
   color: white;
   text-align: center;
@@ -125,7 +119,7 @@ ion-toast {
 }
 
 .background2 {
-  background-color:#3dc2ff;
+  background-color: deeppink;
   border-radius: 12px;
   color: white;
   text-align: center;
@@ -134,7 +128,7 @@ ion-toast {
 }
 
 .background3 {
-  background-color:#5260ff	;
+  background-color: dodgerblue	;
   border-radius: 12px;
   color: white;
   text-align: center;
@@ -143,7 +137,7 @@ ion-toast {
 }
 
 .background4 {
-  background-color:#2dd36f;
+  background-color: red;
   border-radius: 12px;
   color: white;
   text-align: center;
@@ -163,4 +157,39 @@ ion-toast {
   font-size: 2rem;
   color: var(--ion-color-primary);
   text-align: center;
+}
+
+.darkblue {
+  --background: darkblue;
+  --button-color: darkblue;
+}
+
+.deeppink {
+  --background: deeppink;
+  --button-color: deeppink;
+}
+
+.dodgerblue {
+  --background: dodgerblue;
+  --button-color: dodgerblue;
+}
+
+.red {
+  --background: red;
+  --button-color: red;
+}
+
+.purple {
+  --background: purple;
+  --button-color: purple;
+}
+
+.green {
+  --background: green;
+  --button-color: green;
+}
+
+.crimson {
+  --background: crimson;
+  --button-color: crimson;
 }

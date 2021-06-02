@@ -51,7 +51,7 @@ const StoreDetails = () => {
       <IonContent fullscreen className="ion-padding">
         <IonList>
           <IonItem>
-            <IonLabel position="floating">
+            <IonLabel position="floating" color="primary">
               {labels.name}
             </IonLabel>
             <IonInput 
@@ -60,7 +60,7 @@ const StoreDetails = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating">
+            <IonLabel position="floating" color="primary">
               {labels.mobile}
             </IonLabel>
             <IonInput 
@@ -70,7 +70,7 @@ const StoreDetails = () => {
           </IonItem>
           {store.type !== 'd' && <>
             <IonItem>
-              <IonLabel position="floating">
+              <IonLabel position="floating" color="primary">
                 {labels.region}
               </IonLabel>
               <IonInput 
@@ -79,7 +79,7 @@ const StoreDetails = () => {
               />
             </IonItem>
             <IonItem>
-              <IonLabel position="floating">
+              <IonLabel position="floating" color="primary">
                 {labels.address}
               </IonLabel>
               <IonInput 
@@ -89,7 +89,7 @@ const StoreDetails = () => {
             </IonItem>
             {state.userInfo?.type === 'n' &&
               <IonItem>
-                <IonLabel position="floating">
+                <IonLabel position="floating" color="primary">
                   {labels.alarmsCount}
                 </IonLabel>
                 <IonInput 
@@ -99,6 +99,26 @@ const StoreDetails = () => {
               </IonItem>
             }
           </>}
+        {params.packId !== '0' && <>
+          <IonItem>
+            <IonLabel position="floating" color="primary">
+              {labels.productName}
+            </IonLabel>
+            <IonInput 
+              value={state.packs.find(p => p.id === params.packId)?.product.name} 
+              readonly
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating" color="primary">
+              {labels.price}
+            </IonLabel>
+            <IonInput 
+              value={state.packStores.find(s => s.packId === params.packId && s.storeId === params.storeId)?.price.toFixed(2)} 
+              readonly
+            />
+          </IonItem>
+        </>}
         </IonList>
       </IonContent>
       <IonFab vertical="top" horizontal="end" slot="fixed">

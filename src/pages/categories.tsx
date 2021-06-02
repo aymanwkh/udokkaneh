@@ -30,10 +30,10 @@ const Categories = () => {
       <IonContent fullscreen className="ion-padding">
         <IonButton 
           routerLink={`/packs/a/${params.id}/0`} 
-          className="sections"
           expand="block"
           shape="round"
-          color={randomColors[i++ % 7].name}
+          className={randomColors[i++ % 7].name}
+          style={{margin: '0.9rem'}}
         >
           {labels.allProducts}
         </IonButton>
@@ -42,8 +42,8 @@ const Categories = () => {
             routerLink={c.isLeaf ? `/packs/c/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"
             shape="round"
-            color={randomColors[i++ % 7].name}
-            className="sections" 
+            className={randomColors[i++ % 7].name}
+            style={{margin: '0.9rem'}} 
             key={c.id}
           >
             {c.name}

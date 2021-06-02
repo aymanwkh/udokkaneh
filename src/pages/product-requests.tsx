@@ -54,10 +54,10 @@ const ProductRequests = () => {
                   <IonImg src={p.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <IonText color={randomColors[0].name}>{p.name}</IonText>
-                  <IonText color={randomColors[1].name}>{p.weight}</IonText>
-                  <IonText color={randomColors[2].name}>{p.country}</IonText>
-                  <IonText color={randomColors[3].name}>{`${labels.price}: ${p.price.toFixed(2)}`}</IonText>
+                  <IonText style={{color: randomColors[0].name}}>{p.name}</IonText>
+                  <IonText style={{color: randomColors[1].name}}>{p.weight}</IonText>
+                  <IonText style={{color: randomColors[2].name}}>{p.country}</IonText>
+                  <IonText style={{color: randomColors[3].name}}>{`${labels.price}: ${p.price.toFixed(2)}`}</IonText>
                 </IonLabel>
                 <IonIcon 
                   ios={trashOutline} 

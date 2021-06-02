@@ -43,9 +43,9 @@ const Notifications = () => {
           : notifications.map(n => 
               <IonItem key={n.id}>
                 <IonLabel>
-                  <IonText color={randomColors[0].name}>{n.title}</IonText>
-                  <IonText color={randomColors[1].name}>{n.message}</IonText>
-                  <IonText color={randomColors[2].name}>{moment(n.time).fromNow()}</IonText>
+                  <IonText style={{color: randomColors[0].name}}>{n.title}</IonText>
+                  <IonText style={{color: randomColors[1].name}}>{n.message}</IonText>
+                  <IonText style={{color: randomColors[2].name}}>{moment(n.time).fromNow()}</IonText>
                 </IonLabel>
                 <IonIcon 
                   ios={trashOutline} 

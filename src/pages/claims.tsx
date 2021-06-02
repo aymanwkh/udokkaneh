@@ -44,13 +44,13 @@ const Claims = () => {
                 <IonImg src={c.packInfo.imageUrl || c.packInfo.product.imageUrl} alt={labels.noImage} />
               </IonThumbnail>
               <IonLabel>
-                <IonText color={randomColors[0].name}>{c.packInfo.product.name}</IonText>
-                <IonText color={randomColors[1].name}>{c.packInfo.product.alias}</IonText>
-                <IonText color={randomColors[2].name}>{c.packInfo.name}</IonText>
-                <IonText color={randomColors[3].name}>{c.categoryName}</IonText>
-                <IonText color={randomColors[4].name}>{productOfText(c.countryName, c.trademarkName)}</IonText>
-                <IonText color={randomColors[5].name}>{c.isActive ? labels.oneClaim : labels.twoClaims}</IonText>
-                <IonText color={randomColors[6].name}>{moment(c.time).fromNow()}</IonText>
+                <IonText style={{color: randomColors[0].name}}>{c.packInfo.product.name}</IonText>
+                <IonText style={{color: randomColors[1].name}}>{c.packInfo.product.alias}</IonText>
+                <IonText style={{color: randomColors[2].name}}>{c.packInfo.name}</IonText>
+                <IonText style={{color: randomColors[3].name}}>{c.categoryName}</IonText>
+                <IonText style={{color: randomColors[4].name}}>{productOfText(c.countryName, c.trademarkName)}</IonText>
+                <IonText style={{color: randomColors[5].name}}>{c.isActive ? labels.oneClaim : labels.twoClaims}</IonText>
+                <IonText style={{color: randomColors[6].name}}>{moment(c.time).fromNow()}</IonText>
               </IonLabel>
               <IonLabel slot="end" className="price">{c.price!.toFixed(2)}</IonLabel>
           </IonItem>    

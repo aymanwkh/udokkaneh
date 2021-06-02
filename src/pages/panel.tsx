@@ -48,18 +48,8 @@ const Panel = () => {
               </IonItem>
             }
             {state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) &&
-              <IonItem routerLink={`/packs/s/0/${state.userInfo.storeId}`}>
-                <IonLabel>{labels.myPacks}</IonLabel>
-              </IonItem>
-            }
-            {state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) &&
               <IonItem routerLink='/product-requests'>
                 <IonLabel>{labels.productRequests}</IonLabel>
-              </IonItem>
-            }
-            {state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) &&
-              <IonItem routerLink='/packs/n/0/0'>
-                <IonLabel>{labels.notShowedPacks}</IonLabel>
               </IonItem>
             }
             {state.userInfo?.type === 'd' &&

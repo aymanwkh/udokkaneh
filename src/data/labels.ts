@@ -216,13 +216,12 @@ const labels: Label = {
   nearby: 'قريبة',
   bestPrices: 'لأفضل سعر',
   nearbyStores: 'محلات قريبة',
-  notShowedPacks: 'منتجات/عبوات غير معروضة',
   packs: 'المنتجات',
   storePacks: 'منتجات محل',
   addClaim: 'تقديم شكوى',
   wholeStores: 'محلات الجملة',
   contactUs: 'تواصل معنا',
-  help: 'للمساعدة والاقتراحات ... يمكنك التراسل والتواصل معنا من خلال الارقام التالية'
+  help: 'للمساعدة والاقتراحات ... يمكنك التراسل والتواصل معنا من خلال الارقام التالية',
 }
 
 export default labels

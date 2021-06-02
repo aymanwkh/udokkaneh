@@ -50,11 +50,11 @@ const Basket = () => {
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <IonText color={randomColors[0].name}>{p.product.name}</IonText>
-                  <IonText color={randomColors[1].name}>{p.product.alias}</IonText>
-                  <IonText color={randomColors[2].name}>{p.name}</IonText>
-                  <IonText color={randomColors[3].name}>{p.categoryName}</IonText>
-                  <IonText color={randomColors[4].name}>{productOfText(p.countryName, p.trademarkName)}</IonText>
+                  <IonText style={{color: randomColors[0].name}}>{p.product.name}</IonText>
+                  <IonText style={{color: randomColors[1].name}}>{p.product.alias}</IonText>
+                  <IonText style={{color: randomColors[2].name}}>{p.name}</IonText>
+                  <IonText style={{color: randomColors[3].name}}>{p.categoryName}</IonText>
+                  <IonText style={{color: randomColors[4].name}}>{productOfText(p.countryName, p.trademarkName)}</IonText>
                 </IonLabel>
                 <IonLabel slot="end" className="price">{p.price!.toFixed(2)}</IonLabel>
               </IonItem>    

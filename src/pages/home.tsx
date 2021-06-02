@@ -38,8 +38,7 @@ const Home = () => {
             <IonMenuButton />
             {notificationsCount > 0 && 
               <IonBadge 
-              color="danger" 
-              style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '20px'}}
+              style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '20px', backgroundColor: 'red'}}
               >
                 {notificationsCount}
               </IonBadge>
@@ -66,10 +65,10 @@ const Home = () => {
         }
         <IonButton 
           routerLink="/packs/a/0/0"
-          className="sections"
           expand="block"
           shape="round"
-          color={randomColors[i++ % 7].name}
+          className={randomColors[i++ % 7].name}
+          style={{margin: '0.9rem'}}
         >
           {labels.allProducts}
         </IonButton>
@@ -78,8 +77,8 @@ const Home = () => {
             routerLink={c.isLeaf ? `/packs/n/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"
             shape="round"
-            color={randomColors[i++ % 7].name}
-            className="sections" 
+            className={randomColors[i++ % 7].name}
+            style={{margin: '0.9rem'}}
             key={c.id}
           >
             {c.name}

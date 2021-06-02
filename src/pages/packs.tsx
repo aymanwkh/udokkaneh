@@ -37,9 +37,6 @@ const Packs = () => {
       case 'r':
         title = labels.requests
         break
-      case 'n':
-        title = labels.notShowedPacks
-        break
       case 'a':
         title = labels.allProducts
         break
@@ -57,7 +54,7 @@ const Packs = () => {
       switch (params.type){
         case 'a':
           const children = getChildren(params.id, state.categories)
-          packs = state.packs.filter(p => p.price! > 0 && children.includes(p.product.categoryId))
+          packs = state.packs.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && children.includes(p.product.categoryId))
           break
         case 's':
           packs = state.packs.filter(p => state.packStores.find(s => s.packId === p.id && s.storeId === params.storeId))
@@ -65,21 +62,18 @@ const Packs = () => {
         case 'r':
           packs = state.packs.filter(p => state.storeRequests.find(r => r.packId === p.id))
           break
-        case 'n':
-          packs = state.packs.filter(p => p.price! === 0 && p.forSale)
-          break
         case 'p':
           const pack = state.packs.find(p => p.id === params.id)
           packs = state.packs.filter(p => p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId)
           break
         default:
-          packs = state.packs.filter(p => p.price! > 0 && p.product.categoryId === params.id)
+          packs = state.packs.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && p.product.categoryId === params.id)
       }
       const results = packs.map(p => {
         const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
         const trademarkName = state.trademarks.find(t => t.id === p.product.trademarkId)?.name
         const countryName = state.countries.find(c => c.id === p.product.countryId)!.name
-        const packStoreInfo = state.packStores.find(s => s.packId === p.id && s.storeId === params.storeId)
+        const packStoreInfo = state.packStores.find(s => s.packId === p.id && s.storeId === (params.storeId === '0' ? state.userInfo?.storeId : params.storeId))
         return {
           ...p,
           categoryName: getCategoryName(categoryInfo, state.categories),
@@ -152,15 +146,15 @@ const Packs = () => {
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <IonText color={randomColors[0].name}>{p.product.name}</IonText>
-                  <IonText color={randomColors[1].name}>{p.product.alias}</IonText>
-                  <IonText color={randomColors[2].name}>{p.name}</IonText>
-                  <IonText color={randomColors[3].name}>{p.categoryName}</IonText>
-                  <IonText color={randomColors[4].name}>{productOfText(p.countryName, p.trademarkName)}</IonText>
-                  <IonText color={randomColors[5].name}>{params.type !== 's' && p.packStoreInfo?.price ? `${labels.myPrice}:${p.packStoreInfo.price.toFixed(2)} ${p.packStoreInfo.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
-                  <IonText color={randomColors[6].name}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
+                  <IonText style={{color: randomColors[0].name}}>{p.product.name}</IonText>
+                  <IonText style={{color: randomColors[1].name}}>{p.product.alias}</IonText>
+                  <IonText style={{color: randomColors[2].name}}>{p.name}</IonText>
+                  <IonText style={{color: randomColors[3].name}}>{p.categoryName}</IonText>
+                  <IonText style={{color: randomColors[4].name}}>{productOfText(p.countryName, p.trademarkName)}</IonText>
+                  <IonText style={{color: randomColors[5].name}}>{params.type !== 's' && p.packStoreInfo ? `${labels.myPrice}:${p.packStoreInfo?.price.toFixed(2)} ${p.packStoreInfo?.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
+                  <IonText style={{color: randomColors[6].name}}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
                 </IonLabel>
-                <IonLabel slot="end" className="price">{params.type === 's' ? p.packStoreInfo?.price.toFixed(2) : p.price!.toFixed(2)}</IonLabel>
+                <IonLabel slot="end" className="price">{params.type === 's' ? p.packStoreInfo?.price.toFixed(2) : p.price! > 0 ? p.price!.toFixed(2) : ''}</IonLabel>
               </IonItem>    
             )
           }
