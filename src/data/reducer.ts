@@ -1,4 +1,4 @@
-import {State, Action} from './types'
+import {State, Action, Region, Country, Trademark} from './types'
 
 const Reducer = (state: State, action: Action) => {
   switch (action.type){
@@ -29,11 +29,14 @@ const Reducer = (state: State, action: Action) => {
     case 'SET_ADVERTS':
       return {...state, adverts: action.payload}
     case 'SET_REGIONS':
-      return {...state, regions: action.payload}
+      const regions: Region[] = action.payload
+      return {...state, regions: regions.sort((r1, r2) => r1.ordering - r2.ordering)}
     case 'SET_COUNTRIES':
-      return {...state, countries: action.payload}
+      const countries: Country[] = action.payload
+      return {...state, countries: countries.sort((c1, c2) => c1.name > c2.name ? 1 : -1)}
     case 'SET_TRADEMARKS':
-      return {...state, trademarks: action.payload}
+      const trademarks: Trademark[] = action.payload
+      return {...state, trademarks: trademarks.sort((t1, t2) => t1.name > t2.name ? 1 : -1)}
     case 'SET_PASSWORD_REQUESTS':
       return {...state, passwordRequests: action.payload}
     case 'SET_STORE_REQUESTS':

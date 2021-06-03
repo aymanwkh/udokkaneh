@@ -5,7 +5,7 @@ import {randomColors} from '../data/config'
 import {getCategoryName, getChildren, productOfText} from '../data/actions'
 import {Pack, PackStore} from '../data/types'
 import Footer from './footer'
-import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
+import { IonContent, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { useParams } from 'react-router'
 import Fuse from "fuse.js";
@@ -28,26 +28,23 @@ const Packs = () => {
   const [category] = useState(() => state.categories.find(category => category.id === params.id))
   const [sortBy, setSortBy] = useState('v')
   const [data, setData] = useState<ExtendedPack[]>([])
-  const [title] = useState(() => {
-    let title
-    switch (params.type) {
-      case 's':
-        title = `${labels.storePacks} ${state.stores.find(s => s.id === params.storeId)?.name}`
-        break
-      case 'r':
-        title = labels.requests
-        break
-      case 'a':
-        title = labels.allProducts
-        break
-      case 'p':
-        title = labels.otherProducts
-        break
-      default:
-        title = category?.name
-    }
-    return title
-  })
+  const [title, setTitle] = useState('')
+  useEffect(() => {
+    setTitle(() => {
+      switch (params.type) {
+        case 's':
+          return `${labels.packs}-${state.stores.find(s => s.id === params.storeId)?.name}`
+        case 'r':
+          return labels.requests
+        case 'a':
+          return labels.allProducts
+        case 'p':
+          return labels.otherProducts
+        default:
+          return category?.name || ''
+      }
+    })
+  }, [params, state.stores, category])
   useEffect(() => {
     setPacks(() => {
       let packs
@@ -84,7 +81,7 @@ const Packs = () => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, params, params.type, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests])
+  }, [state.packs, state.userInfo, params, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests])
   useEffect(() => {
     if (!state.searchText) {
       setData(packs)
@@ -143,7 +140,7 @@ const Packs = () => {
           : data.map(p => 
               <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
                 <IonThumbnail slot="start">
-                  <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
+                  <img src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
                   <IonText style={{color: randomColors[0].name}}>{p.product.name}</IonText>

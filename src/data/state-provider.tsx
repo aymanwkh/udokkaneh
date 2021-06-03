@@ -154,8 +154,11 @@ const StateProvider = ({children}: Props) => {
             doc.data()!.notifications?.forEach((n: any) => {
               notifications.push({
                 id: n.id,
+                userId: n.userId,
+                userName: n.userName,
                 message: n.message,
                 title: n.title,
+                isResponse: n.isResponse,
                 time: n.time.toDate()
               })
             })
@@ -186,6 +189,7 @@ const StateProvider = ({children}: Props) => {
               id: doc.id,
               name: doc.data().name,
               type: doc.data().type,
+              ownerId: doc.data().ownerId,
               regionId: doc.data().regionId,
               address: doc.data().address,
               position: doc.data().position,

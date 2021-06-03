@@ -391,19 +391,19 @@ const PackDetails = () => {
           {
             text: labels.rateGood,
             icon: heartOutline,
-            cssClass: 'success',
+            cssClass: 'good',
             handler: () => handleRate(5)
           },
           {
             text: labels.rateMiddle,
             icon: heartHalfOutline,
-            cssClass: 'warning',
+            cssClass: 'medium',
             handler: () => handleRate(3)
           },
           {
             text: labels.rateBad,
             icon: heartDislikeOutline,
-            cssClass: 'danger',
+            cssClass: 'bad',
             handler: () => handleRate(1)
           },
         ]}

@@ -1,5 +1,5 @@
 import {useState, useContext} from 'react'
-import {addClaim, getMessage} from '../data/actions'
+import {addClaim, getMessage, sendNotification} from '../data/actions'
 import labels from '../data/labels'
 import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -7,7 +7,7 @@ import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
 import { menuOutline } from 'ionicons/icons'
 import Footer from './footer'
-import { randomColors } from '../data/config'
+import { randomColors, userTypes } from '../data/config'
 
 type Params = {
   storeId: string,
@@ -17,6 +17,8 @@ const StoreDetails = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
   const [store] = useState(() => state.stores.find(s => s.id === params.storeId)!)
+  const [pack] = useState(() => state.packs.find(p => p.id === params.packId))
+  const [price] = useState(() => state.packStores.find(s => s.packId === params.packId && s.storeId === params.storeId)?.price)
   const [actionOpened, setActionOpened] = useState(false)
   const [message] = useIonToast();
   const location = useLocation()
@@ -35,6 +37,43 @@ const StoreDetails = () => {
               throw new Error('duplicateClaims')
             }
             addClaim(params.storeId, params.packId, state.packStores)
+            message(labels.sendSuccess, 3000)
+            history.goBack()
+          } catch(err) {
+            message(getMessage(location.pathname, err), 3000)
+          }
+        }},
+      ],
+    })
+  }
+  const handleConfirm = () => {
+    const myStore = state.stores.find(s => s.ownerId === state.user?.uid)
+    const typeName = userTypes.find(t => t.id === state.userInfo?.type)?.name
+    let notificationText: string, messageText: string
+    if (myStore?.type === 'd' && ['s', 'r'].includes(store.type)) {
+      notificationText = `${labels.doYouWant} ${pack?.product.name} ${pack?.name}`
+      messageText = labels.confirmRequest
+    } else {
+      notificationText = `${labels.isPack} ${pack?.product.name} ${pack?.name} ${labels.exists} ${price?.toFixed(2)}`
+      messageText = labels.confirmAvailable
+    }
+    alert({
+      header: labels.confirm,
+      message: messageText,
+      buttons: [
+        {text: labels.cancel},
+        {text: labels.ok, handler: async () => {
+          try{
+            const confirmMessage = {
+              id: Math.random().toString(),
+              userId: state.user?.uid || null,
+              userName: `${state.userInfo?.name} ${myStore ? '-' + (myStore.type === 'd' ? typeName : myStore.name) : ''}` || '',
+              title: labels.confirm,
+              message: notificationText,
+              isResponse: false,
+              time: new Date()
+            }        
+            sendNotification(store.ownerId!, confirmMessage)
             message(labels.sendSuccess, 3000)
             history.goBack()
           } catch(err) {
@@ -65,6 +104,15 @@ const StoreDetails = () => {
             </IonLabel>
             <IonInput 
               value={store.mobile} 
+              readonly
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating" color="primary">
+              {labels.type}
+            </IonLabel>
+            <IonInput 
+              value={userTypes.find(t => t.id === store.type)?.name} 
               readonly
             />
           </IonItem>
@@ -105,7 +153,7 @@ const StoreDetails = () => {
               {labels.productName}
             </IonLabel>
             <IonInput 
-              value={state.packs.find(p => p.id === params.packId)?.product.name} 
+              value={pack?.product.name} 
               readonly
             />
           </IonItem>
@@ -114,7 +162,7 @@ const StoreDetails = () => {
               {labels.price}
             </IonLabel>
             <IonInput 
-              value={state.packStores.find(s => s.packId === params.packId && s.storeId === params.storeId)?.price.toFixed(2)} 
+              value={price?.toFixed(2)} 
               readonly
             />
           </IonItem>
@@ -144,6 +192,11 @@ const StoreDetails = () => {
             text: labels.addClaim,
             cssClass: state.userInfo?.type === 'n' || store.type === 'w' ? randomColors[i++ % 7].name : 'ion-hide',
             handler: () => handleAddClaim()
+          },
+          {
+            text: labels.confirm,
+            cssClass: randomColors[i++ % 7].name,
+            handler: () => handleConfirm()
           },
         ]}
       />

@@ -1,8 +1,8 @@
 import {useContext, useState} from 'react'
 import {StateContext} from '../data/state-provider'
-import labels from '../data/labels'
 import { IonCard, IonCol, IonContent, IonGrid, IonImg, IonPage, IonRow } from '@ionic/react'
 import Header from './header'
+import labels from '../data/labels'
 
 const Advert = () => {
   const {state} = useContext(StateContext)
@@ -14,15 +14,15 @@ const Advert = () => {
         <IonCard>
           <IonGrid>
             <IonRow>
-              <IonCol>{advert.title}</IonCol>
+              <IonCol className="card-title">{advert.title}</IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonImg src={advert.imageUrl} alt={advert.title} />
+                {advert.imageUrl && <IonImg src={advert.imageUrl} alt={advert.title} />}
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol>{advert.text}</IonCol>
+              <IonCol className="ion-text-center">{advert.text}</IonCol>
             </IonRow>
           </IonGrid>
         </IonCard>

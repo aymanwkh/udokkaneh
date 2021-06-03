@@ -77,6 +77,9 @@ export type PackStore = {
 }
 export type Notification = {
   id: string,
+  userId: string | null,
+  userName: string,
+  isResponse: boolean,
   title: string,
   message: string,
   time: Date
@@ -135,9 +138,10 @@ export type Store = {
   mobile: string,
   address: string,
   position: Position,
-  regionId?: string,
+  regionId: string | null,
   claimsCount: number,
-  type: string
+  type: string,
+  ownerId: string | null
 }
 export type StoreRequest = {
   storeId: string,

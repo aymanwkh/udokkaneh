@@ -57,8 +57,9 @@ const Home = () => {
           <IonButton 
             routerLink="/advert" 
             expand="block" 
-            fill="outline" 
-            className="sections" 
+            shape="round" 
+            fill="outline"
+            className="advert"
           >
             {advert.title}
           </IonButton>

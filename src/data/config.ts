@@ -28,8 +28,9 @@ export const patterns = {
 
 export const userTypes = [
   {id: 'n', name: 'مستخدم', isStore: false},
-  {id: 's', name: 'دكانة', isStore: true},
+  {id: 's', name: 'محل', isStore: true},
   {id: 'w', name: 'جملة', isStore: true},
   {id: 'd', name: 'موزع', isStore: true},
   {id: 'r', name: 'مطعم', isStore: true}
 ]
+

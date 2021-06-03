@@ -25,9 +25,9 @@ const Categories = () => {
   let i = 0
   return (
     <IonPage>
-      <IonLoading isOpen={state.categories.length === 0} message={labels.inprocess} />
+      <IonLoading isOpen={state.categories.length === 0} />
       <Header title={currentCategory?.name} />
-      <IonContent fullscreen className="ion-padding">
+      <IonContent fullscreen>
         <IonButton 
           routerLink={`/packs/a/${params.id}/0`} 
           expand="block"
