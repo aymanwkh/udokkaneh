@@ -89,15 +89,15 @@ const StateProvider = ({children}: Props) => {
     }, err => {
       unsubscribePacks()
     })
-    const unsubscribeAdverts = firebase.firestore().collection('adverts').where('isActive', '==', true).onSnapshot(docs => {
+    const unsubscribeAdverts = firebase.firestore().collection('adverts').onSnapshot(docs => {
       let adverts: Advert[] = []
       docs.forEach(doc => {
         adverts.push({
           id: doc.id,
-          type: doc.data().type,
           title: doc.data().title,
           text: doc.data().text,
-          isActive: doc.data().isActive,
+          startDate: doc.data().startDate,
+          endDate: doc.data().endDate,
           imageUrl: doc.data().imageUrl
         })
       })

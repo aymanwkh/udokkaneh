@@ -6,6 +6,7 @@ import { Advert } from '../data/types';
 import Footer from './footer';
 import {colors} from '../data/config'
 import {Category} from '../data/types'
+import moment from 'moment';
 
 const Home = () => {
   const {state} = useContext(StateContext)
@@ -19,7 +20,9 @@ const Home = () => {
     })
   }, [state.categories])
   useEffect(() => {
-    setAdvert(() => state.adverts.find(a => a.isActive))
+    const now = new Date()
+    const today = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate()
+    setAdvert(() => state.adverts.find(a => a.startDate <= today && a.endDate >= today))
   }, [state.adverts])
   useEffect(() => {
     if (state.userInfo) {

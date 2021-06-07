@@ -108,10 +108,10 @@ export type UserInfo = {
 }
 export type Advert = {
   id: string,
-  type: string,
   title: string,
   text: string,
-  isActive: boolean,
+  startDate: number,
+  endDate: number,
   imageUrl?: string
 }
 export type Region = {
