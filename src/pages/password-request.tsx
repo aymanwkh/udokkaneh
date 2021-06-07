@@ -50,7 +50,16 @@ const PasswordRequest = () => {
           </IonItem>
         </IonList>
         {!mobileInvalid &&  
-          <IonButton expand="block" fill="clear" onClick={handlePasswordRequest}>{labels.send}</IonButton>
+          <div className="ion-padding" style={{textAlign: 'center'}}>
+            <IonButton 
+              fill="solid" 
+              shape="round"
+              style={{width: '10rem'}}
+              onClick={handlePasswordRequest}
+            >
+              {labels.send}
+            </IonButton>
+          </div>
         }
       </IonContent>
     </IonPage>

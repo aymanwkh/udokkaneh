@@ -85,7 +85,7 @@ const Login = () => {
             </IonButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton fill="clear" routerLink="/password-request">
+            <IonButton fill="clear" onClick={() => history.replace('/password-request')}>
               {labels.forgetPassword}
             </IonButton>
           </IonButtons>
