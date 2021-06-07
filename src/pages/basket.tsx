@@ -6,7 +6,7 @@ import {Pack} from '../data/types'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
-import { randomColors } from '../data/config'
+import { colors } from '../data/config'
 
 type ExtendedPack = Pack & {
   countryName: string,
@@ -50,11 +50,11 @@ const Basket = () => {
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <IonText style={{color: randomColors[0].name}}>{p.product.name}</IonText>
-                  <IonText style={{color: randomColors[1].name}}>{p.product.alias}</IonText>
-                  <IonText style={{color: randomColors[2].name}}>{p.name}</IonText>
-                  <IonText style={{color: randomColors[3].name}}>{p.categoryName}</IonText>
-                  <IonText style={{color: randomColors[4].name}}>{productOfText(p.countryName, p.trademarkName)}</IonText>
+                  <IonText style={{color: colors[0].name}}>{p.product.name}</IonText>
+                  <IonText style={{color: colors[1].name}}>{p.product.alias}</IonText>
+                  <IonText style={{color: colors[2].name}}>{p.name}</IonText>
+                  <IonText style={{color: colors[3].name}}>{p.categoryName}</IonText>
+                  <IonText style={{color: colors[4].name}}>{productOfText(p.countryName, p.trademarkName)}</IonText>
                 </IonLabel>
                 <IonLabel slot="end" className="price">{p.price!.toFixed(2)}</IonLabel>
               </IonItem>    

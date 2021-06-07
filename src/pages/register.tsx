@@ -76,7 +76,7 @@ const Register = () => {
       await registerUser(user)
       dismiss()
       message(type === 'n' ? labels.registerSuccess : labels.registerStoreOwnerSuccess, 3000)
-      history.goBack()
+      history.replace('/')
     } catch (err){
       dismiss()
       message(getMessage(location.pathname, err), 3000)

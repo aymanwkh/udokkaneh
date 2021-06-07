@@ -8,7 +8,7 @@ import Header from './header'
 import { ProductRequest } from '../data/types'
 import { useLocation } from 'react-router'
 import { addOutline, trashOutline } from 'ionicons/icons'
-import { randomColors } from '../data/config'
+import { colors } from '../data/config'
 
 const ProductRequests = () => {
   const {state} = useContext(StateContext)
@@ -54,10 +54,10 @@ const ProductRequests = () => {
                   <IonImg src={p.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <IonText style={{color: randomColors[0].name}}>{p.name}</IonText>
-                  <IonText style={{color: randomColors[1].name}}>{p.weight}</IonText>
-                  <IonText style={{color: randomColors[2].name}}>{p.country}</IonText>
-                  <IonText style={{color: randomColors[3].name}}>{`${labels.price}: ${p.price.toFixed(2)}`}</IonText>
+                  <IonText style={{color: colors[0].name}}>{p.name}</IonText>
+                  <IonText style={{color: colors[1].name}}>{p.weight}</IonText>
+                  <IonText style={{color: colors[2].name}}>{p.country}</IonText>
+                  <IonText style={{color: colors[3].name}}>{`${labels.price}: ${p.price.toFixed(2)}`}</IonText>
                 </IonLabel>
                 <IonIcon 
                   ios={trashOutline} 

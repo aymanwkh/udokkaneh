@@ -1,6 +1,6 @@
 import firebase from './firebase'
 import labels from './labels'
-import {randomColors, userTypes} from './config'
+import {colors, userTypes} from './config'
 import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region} from './types'
 
 export const getMessage = (path: string, error: Error) => {
@@ -51,9 +51,9 @@ export const rateProduct = (product: Product, value: number, packs: Pack[]) => {
       value
     })
   })
-  const oldRating = product.rating ?? 0
-  const ratingCount = product.ratingCount ?? 0
-  const newRating = Math.round((oldRating * ratingCount + value) / (ratingCount + 1))
+  const oldRating = product.rating
+  const ratingCount = product.ratingCount
+  const newRating = +(((oldRating * ratingCount + value) / (ratingCount + 1)).toFixed(1))
   const productRef = firebase.firestore().collection('products').doc(product.id)
   batch.update(productRef, {
     rating: newRating,
@@ -90,14 +90,15 @@ export const addPasswordRequest = (mobile: string) => {
 
 export const registerUser = async (user: UserInfo) => {
   await firebase.auth().createUserWithEmailAndPassword(user.mobile + '@gmail.com', user.mobile.substring(9, 2) + user.password)
-  let colors = []
+  let userColors = ''
   for (var i = 0; i < 4; i++){
-    colors.push(randomColors[Number(user.password!.charAt(i))].name)
+    userColors = colors + ' ' + colors[Number(user.password!.charAt(i))].name
   }
+  userColors = userColors.trim()
   const {password, ...others} = user
   firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).set({
     ...others,
-    colors,
+    colors: userColors,
     time: firebase.firestore.FieldValue.serverTimestamp()
   })
 }
@@ -111,12 +112,12 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
       user = firebase.auth().currentUser
       if (user) {
         await user.updatePassword(mobile.substring(9, 2) + newPassword)
-        let colors = []
+        let userColors = ''
         for (var i = 0; i < 4; i++){
-          colors.push(randomColors[Number(newPassword.charAt(i))].name)
+          userColors = userColors + ' ' + colors[Number(newPassword.charAt(i))].name
         }
         return firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
-          colors
+          colors: userColors
         }) 
       }
     }

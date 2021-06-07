@@ -1,7 +1,7 @@
 import {useContext, useState, useEffect} from 'react'
 import {IonButton, IonContent, IonLoading, IonPage} from '@ionic/react'
 import {StateContext} from '../data/state-provider'
-import {randomColors} from '../data/config'
+import {colors} from '../data/config'
 import labels from '../data/labels'
 import {Category} from '../data/types'
 import Header from './header'
@@ -32,7 +32,7 @@ const Categories = () => {
           routerLink={`/packs/a/${params.id}/0`} 
           expand="block"
           shape="round"
-          className={randomColors[i++ % 7].name}
+          className={colors[i++ % 10].name}
           style={{margin: '0.9rem'}}
         >
           {labels.allProducts}
@@ -42,7 +42,7 @@ const Categories = () => {
             routerLink={c.isLeaf ? `/packs/c/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"
             shape="round"
-            className={randomColors[i++ % 7].name}
+            className={colors[i++ % 10].name}
             style={{margin: '0.9rem'}} 
             key={c.id}
           >

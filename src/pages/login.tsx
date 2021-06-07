@@ -27,7 +27,7 @@ const Login = () => {
       await login(mobile, password)
       dismiss()
       message(labels.loginSuccess, 3000)
-      history.goBack()
+      history.replace('/')
     } catch (err){
       dismiss()
       message(getMessage(location.pathname, err), 3000)

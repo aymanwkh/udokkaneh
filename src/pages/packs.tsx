@@ -1,14 +1,15 @@
 import {useContext, useState, useEffect} from 'react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
-import {randomColors} from '../data/config'
+import {colors} from '../data/config'
 import {getCategoryName, getChildren, productOfText} from '../data/actions'
 import {Pack, PackStore} from '../data/types'
 import Footer from './footer'
 import { IonContent, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { useParams } from 'react-router'
-import Fuse from "fuse.js";
+import Fuse from "fuse.js"
+import RatingStars from './rating-stars'
 
 type ExtendedPack = Pack & {
   categoryName: string,
@@ -29,6 +30,11 @@ const Packs = () => {
   const [sortBy, setSortBy] = useState('v')
   const [data, setData] = useState<ExtendedPack[]>([])
   const [title, setTitle] = useState('')
+  useEffect(() => {
+    return function cleanUp() {
+      dispatch({type: 'CLEAR_SEARCH'})
+    }
+  }, [dispatch])
   useEffect(() => {
     setTitle(() => {
       switch (params.type) {
@@ -96,10 +102,7 @@ const Packs = () => {
     const fuse = new Fuse(packs, options);
     const result = fuse.search(state.searchText);
     setData(result.map(p => p.item));
-    return function cleanUp() {
-      dispatch({type: 'CLEAR_SEARCH'})
-    }
-  }, [state.searchText, packs, dispatch])
+  }, [state.searchText, packs])
   const handleSorting = (sortByValue: string) => {
     setSortBy(sortByValue)
     switch(sortByValue){
@@ -107,7 +110,7 @@ const Packs = () => {
         setPacks([...packs].sort((p1, p2) => (p1.price! - (p1.withGift ? 0.01 : 0)) - (p2.price! - (p2.withGift ? 0.01 : 0))))
         break
       case 'r':
-        setPacks([...packs].sort((p1, p2) => (p2.product.rating * p2.product.ratingCount) - (p1.product.rating * p1.product.ratingCount)))
+        setPacks([...packs].sort((p1, p2) => (p1.product.rating === 0 ? 2.5 : p1.product.rating) === (p2.product.rating === 0 ? 2.5 : p2.product.rating) ? (p2.product.ratingCount - p1.product.ratingCount) : (p2.product.rating === 0 ? 2.5 : p2.product.rating) - (p1.product.rating === 0 ? 2.5 : p1.product.rating)))
         break
       case 'v':
         setPacks([...packs].sort((p1, p2) => (p1.weightedPrice! - (p1.withGift ? 0.01 : 0)) - (p2.weightedPrice! - (p2.withGift ? 0.01 : 0))))
@@ -143,15 +146,16 @@ const Packs = () => {
                   <img src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>
                 <IonLabel>
-                  <IonText style={{color: randomColors[0].name}}>{p.product.name}</IonText>
-                  <IonText style={{color: randomColors[1].name}}>{p.product.alias}</IonText>
-                  <IonText style={{color: randomColors[2].name}}>{p.name}</IonText>
-                  <IonText style={{color: randomColors[3].name}}>{p.categoryName}</IonText>
-                  <IonText style={{color: randomColors[4].name}}>{productOfText(p.countryName, p.trademarkName)}</IonText>
-                  <IonText style={{color: randomColors[5].name}}>{params.type !== 's' && p.packStoreInfo ? `${labels.myPrice}:${p.packStoreInfo?.price.toFixed(2)} ${p.packStoreInfo?.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
-                  <IonText style={{color: randomColors[6].name}}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
+                  <IonText style={{color: colors[0].name}}>{p.product.name}</IonText>
+                  <IonText style={{color: colors[1].name}}>{p.product.alias}</IonText>
+                  <IonText style={{color: colors[2].name}}>{p.name}</IonText>
+                  <IonText style={{color: colors[3].name}}>{p.categoryName}</IonText>
+                  <IonText style={{color: colors[4].name}}>{productOfText(p.countryName, p.trademarkName)}</IonText>
+                  <IonText style={{color: colors[5].name}}>{params.type !== 's' && p.packStoreInfo ? `${labels.myPrice}:${p.packStoreInfo?.price.toFixed(2)} ${p.packStoreInfo?.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
+                  <IonText style={{color: colors[6].name}}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
+                  <IonText><RatingStars rating={p.product.rating} count={p.product.ratingCount} size="s" /></IonText>
                 </IonLabel>
-                <IonLabel slot="end" className="price">{params.type === 's' ? p.packStoreInfo?.price.toFixed(2) : p.price! > 0 ? p.price!.toFixed(2) : ''}</IonLabel>
+                <IonLabel slot="end" className={params.type === 's' && !p.packStoreInfo?.isActive ? 'price-off' : 'price'}><IonText style={{color: 'red', fontSize: '1rem'}}>{params.type === 's' ? p.packStoreInfo?.price.toFixed(2) : p.price! > 0 ? p.price!.toFixed(2) : ''}</IonText></IonLabel>
               </IonItem>    
             )
           }

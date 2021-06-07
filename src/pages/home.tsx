@@ -4,7 +4,7 @@ import labels from '../data/labels';
 import { StateContext } from '../data/state-provider';
 import { Advert } from '../data/types';
 import Footer from './footer';
-import {randomColors} from '../data/config'
+import {colors} from '../data/config'
 import {Category} from '../data/types'
 
 const Home = () => {
@@ -68,7 +68,7 @@ const Home = () => {
           routerLink="/packs/a/0/0"
           expand="block"
           shape="round"
-          className={randomColors[i++ % 7].name}
+          className={colors[i++ % 10].name}
           style={{margin: '0.9rem'}}
         >
           {labels.allProducts}
@@ -78,7 +78,7 @@ const Home = () => {
             routerLink={c.isLeaf ? `/packs/n/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"
             shape="round"
-            className={randomColors[i++ % 7].name}
+            className={colors[i++ % 10].name}
             style={{margin: '0.9rem'}}
             key={c.id}
           >

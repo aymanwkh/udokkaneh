@@ -34,7 +34,11 @@ const Header = (props: Props) => {
     </IonToolbar>
     {visible && 
       <IonToolbar>
-        <IonSearchbar placeholder={labels.search} value={state.searchText} onIonChange={e => dispatch({type: 'SET_SEARCH', payload: e.detail.value})}/>
+        <IonSearchbar
+          placeholder={labels.search} 
+          value={state.searchText} 
+          onIonChange={e => dispatch({type: 'SET_SEARCH', payload: e.detail.value})}
+        />
       </IonToolbar>
     }
   </IonHeader>

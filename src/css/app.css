@@ -34,6 +34,14 @@ ion-toast {
   font-size: 1rem;
 }
 
+.price-off {
+  text-decoration: line-through;
+  text-align: end;
+  color: red;
+  max-width: 15%;
+  font-size: 1rem;
+}
+
 .card-right {
   color: green;
   font-size: 1rem;
@@ -67,7 +75,7 @@ ion-toast {
 }
 
 .background3 {
-  background-color: dodgerblue;
+  background-color: darkgreen;
   border-radius: 12px;
   color: white;
   text-align: center;
@@ -95,7 +103,7 @@ ion-toast {
 
 .help {
   margin: 20px;
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: var(--ion-color-primary);
   text-align: center;
 }
@@ -110,9 +118,9 @@ ion-toast {
   --button-color: deeppink;
 }
 
-.dodgerblue {
-  --background: dodgerblue;
-  --button-color: dodgerblue;
+.maroon {
+  --background: maroon;
+  --button-color: maroon;
 }
 
 .red {
@@ -125,14 +133,30 @@ ion-toast {
   --button-color: purple;
 }
 
-.green {
-  --background: green;
-  --button-color: green;
+
+.darkgreen {
+  --background: darkgreen;
+  --button-color: darkgreen;
+}
+
+.darkslategray {
+  --background: darkslategray;
+  --button-color: darkslategray;
 }
 
 .crimson {
   --background: crimson;
   --button-color: crimson;
+}
+
+.chocolate {
+  --background: chocolate;
+  --button-color: chocolate;
+}
+
+.darkolivegreen {
+  --background: darkolivegreen;
+  --button-color: darkolivegreen;
 }
 
 .good {
@@ -157,10 +181,10 @@ ion-toast {
 }
 
 .advert {
-  --background: maroon;
-  color: yellow;
+  --background: lime;
+  color: darkblue;
   font-size: 1.2rem;
   margin: 0.9rem;
   --border-width: 2px;
-  --border-color: yellow;
+  --border-color: darkblue;
 }

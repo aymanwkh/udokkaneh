@@ -6,7 +6,7 @@ import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonTh
 import Header from './header'
 import moment from 'moment'
 import 'moment/locale/ar'
-import { randomColors } from '../data/config'
+import { colors } from '../data/config'
 import { getCategoryName, productOfText } from '../data/actions'
 
 const Claims = () => {
@@ -44,15 +44,15 @@ const Claims = () => {
                 <IonImg src={c.packInfo.imageUrl || c.packInfo.product.imageUrl} alt={labels.noImage} />
               </IonThumbnail>
               <IonLabel>
-                <IonText style={{color: randomColors[0].name}}>{c.packInfo.product.name}</IonText>
-                <IonText style={{color: randomColors[1].name}}>{c.packInfo.product.alias}</IonText>
-                <IonText style={{color: randomColors[2].name}}>{c.packInfo.name}</IonText>
-                <IonText style={{color: randomColors[3].name}}>{c.categoryName}</IonText>
-                <IonText style={{color: randomColors[4].name}}>{productOfText(c.countryName, c.trademarkName)}</IonText>
-                <IonText style={{color: randomColors[5].name}}>{c.isActive ? labels.oneClaim : labels.twoClaims}</IonText>
-                <IonText style={{color: randomColors[6].name}}>{moment(c.time).fromNow()}</IonText>
+                <IonText style={{color: colors[0].name}}>{c.packInfo.product.name}</IonText>
+                <IonText style={{color: colors[1].name}}>{c.packInfo.product.alias}</IonText>
+                <IonText style={{color: colors[2].name}}>{c.packInfo.name}</IonText>
+                <IonText style={{color: colors[3].name}}>{c.categoryName}</IonText>
+                <IonText style={{color: colors[4].name}}>{productOfText(c.countryName, c.trademarkName)}</IonText>
+                <IonText style={{color: colors[5].name}}>{c.isActive ? labels.oneClaim : labels.twoClaims}</IonText>
+                <IonText style={{color: colors[6].name}}>{moment(c.time).fromNow()}</IonText>
               </IonLabel>
-              <IonLabel slot="end" className="price">{c.price!.toFixed(2)}</IonLabel>
+              <IonLabel slot="end" className={c.isActive ? 'price' : 'price-off'}>{c.price!.toFixed(2)}</IonLabel>
           </IonItem>    
           )}
         </IonList>

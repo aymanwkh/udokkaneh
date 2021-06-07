@@ -7,7 +7,7 @@ import { useHistory, useLocation, useParams } from 'react-router'
 import { StateContext } from '../data/state-provider'
 import { menuOutline } from 'ionicons/icons'
 import Footer from './footer'
-import { randomColors, userTypes } from '../data/config'
+import { colors, userTypes } from '../data/config'
 
 type Params = {
   storeId: string,
@@ -180,22 +180,22 @@ const StoreDetails = () => {
         buttons={[
           {
             text: labels.packs,
-            cssClass: store.type !== 'r' ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: store.type !== 'r' ? colors[i++ % 10].name : 'ion-hide',
             handler: () => history.push(`/packs/s/0/${store.id}`)
           },
           {
             text: labels.map,
-            cssClass: store.type !== 'd' ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: store.type !== 'd' ? colors[i++ % 10].name : 'ion-hide',
             handler: () => history.push(`/map/${store.position?.lat}/${store.position?.lng}/0`)
           },
           {
             text: labels.addClaim,
-            cssClass: state.userInfo?.type === 'n' || store.type === 'w' ? randomColors[i++ % 7].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' || store.type === 'w' ? colors[i++ % 10].name : 'ion-hide',
             handler: () => handleAddClaim()
           },
           {
             text: labels.confirm,
-            cssClass: randomColors[i++ % 7].name,
+            cssClass: params.packId !== '0' ? colors[i++ % 10].name : 'ion-hide',
             handler: () => handleConfirm()
           },
         ]}

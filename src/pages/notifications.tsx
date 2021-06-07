@@ -10,7 +10,7 @@ import {Notification} from '../data/types'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { refreshOutline, trashOutline } from 'ionicons/icons'
-import { randomColors } from '../data/config'
+import { colors } from '../data/config'
 
 const Notifications = () => {
   const {state} = useContext(StateContext)
@@ -77,10 +77,10 @@ const Notifications = () => {
           : notifications.map(n => 
               <IonItem key={n.id}>
                 <IonLabel>
-                  <IonText style={{color: randomColors[0].name}}>{`${labels.from} ${n.userName}`}</IonText>
-                  <IonText style={{color: randomColors[1].name}}>{n.title}</IonText>
-                  <IonText style={{color: randomColors[2].name}}><p>{n.message}</p></IonText>
-                  <IonText style={{color: randomColors[3].name}}>{moment(n.time).fromNow()}</IonText>
+                  <IonText style={{color: colors[0].name}}>{`${labels.from} ${n.userName}`}</IonText>
+                  <IonText style={{color: colors[1].name}}>{n.title}</IonText>
+                  <IonText style={{color: colors[2].name}}><p>{n.message}</p></IonText>
+                  <IonText style={{color: colors[3].name}}>{moment(n.time).fromNow()}</IonText>
                 </IonLabel>
                 <IonIcon 
                   ios={n.isResponse || !n.userId ? trashOutline : refreshOutline} 
