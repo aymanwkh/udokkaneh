@@ -62,6 +62,10 @@ const Register = () => {
   }
   const handleRegister = async () => {
     try{
+      const first = +password[0]
+      if (+password[1] === first + 1 && +password[2] === first + 2 && +password[3] === first + 3) {
+        throw new Error('simplePassword')
+      }
       loading()
       let user: UserInfo = {
         mobile,

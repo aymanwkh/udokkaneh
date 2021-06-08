@@ -23,6 +23,10 @@ const ChangePassword = () => {
   }, [newPassword])
   const handleSubmit = async () => {
     try{
+      const first = +newPassword[0]
+      if (+newPassword[1] === first + 1 && +newPassword[2] === first + 2 && +newPassword[3] === first + 3) {
+        throw new Error('simplePassword')
+      }
       loading()
       await changePassword(oldPassword, newPassword)
       dismiss()

@@ -123,7 +123,8 @@ const Packs = () => {
       <Header title={title} withSearch/>
       <IonContent fullscreen className="ion-padding">
         <IonList>
-          {data.length > 1 && ['a', 'c'].includes(params.type) &&
+          {data.length > 1 && ['a', 'c'].includes(params.type) && <>
+            <IonText style={{marginBottom: '2px', color: 'blue'}}>{labels.sortBy}</IonText>
             <IonSegment value={sortBy} onIonChange={e => handleSorting(e.detail.value!)}>
               <IonSegmentButton value="v">
                 <IonLabel>{labels.value}</IonLabel>
@@ -135,7 +136,7 @@ const Packs = () => {
                 <IonLabel>{labels.price}</IonLabel>
               </IonSegmentButton>
             </IonSegment>
-          }
+          </>}
           {data.length === 0 ?
             <IonItem> 
               <IonLabel>{labels.noData}</IonLabel>

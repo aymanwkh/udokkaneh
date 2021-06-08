@@ -229,7 +229,7 @@ const PackDetails = () => {
           <IonGrid>
             <IonRow>
               <IonCol className="card-right">{pack.name}</IonCol>
-              {(myPrice?.price || pack.price!) > 0 &&  <IonCol className={myPrice?.isActive ? 'price' : 'price-off'}>{myPrice ? myPrice?.price.toFixed(2) : pack.price!.toFixed(2)}</IonCol>}
+              {(myPrice?.price || pack.price!) > 0 &&  <IonCol className={myPrice && !myPrice.isActive ? 'price-off' : 'price'}>{myPrice ? myPrice?.price.toFixed(2) : pack.price!.toFixed(2)}</IonCol>}
             </IonRow>
             <IonRow>
               <IonCol className="card-title">

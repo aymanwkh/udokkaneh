@@ -1,12 +1,11 @@
 import { IonButtons, IonContent, IonHeader, IonLoading , IonMenuButton, IonPage, IonTitle, IonToolbar, IonBadge, IonButton } from '@ionic/react';
-import { useContext, useEffect, useState } from 'react';
-import labels from '../data/labels';
-import { StateContext } from '../data/state-provider';
-import { Advert } from '../data/types';
-import Footer from './footer';
+import { useContext, useEffect, useState } from 'react'
+import labels from '../data/labels'
+import { StateContext } from '../data/state-provider'
+import { Advert } from '../data/types'
+import Footer from './footer'
 import {colors} from '../data/config'
 import {Category} from '../data/types'
-import moment from 'moment';
 
 const Home = () => {
   const {state} = useContext(StateContext)
@@ -40,9 +39,7 @@ const Home = () => {
           <IonButtons slot="start">
             <IonMenuButton />
             {notificationsCount > 0 && 
-              <IonBadge 
-              style={{fontSize: '10px', position: 'relative', bottom: '10px', left: '20px', backgroundColor: 'red'}}
-              >
+              <IonBadge className="badge" style={{left: '20px'}}>
                 {notificationsCount}
               </IonBadge>
             }
