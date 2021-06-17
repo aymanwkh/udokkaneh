@@ -198,7 +198,7 @@ const PackDetails = () => {
     try{
       const storeRequest = state.storeRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === pack?.id!)!
       if (state.userInfo?.storeId) {
-        deleteStoreRequest(storeRequest, state.storeRequests)
+        deleteStoreRequest(storeRequest, state.storeRequests, state.basket)
         message(labels.deleteSuccess, 3000)
         history.goBack()
       } 
@@ -209,13 +209,15 @@ const PackDetails = () => {
   const handleAddToBasket = () => {
     try {
       addToBasket(pack.id!)
+      message(labels.addSuccess, 3000)
     } catch(err) {
       message(getMessage(location.pathname, err), 3000)
     }
   }
   const handleRemoveFromBasket = () => {
     try {
-      removeFromBasket(pack.id!)
+      removeFromBasket(pack.id!, state.basket)
+      message(labels.deleteSuccess, 3000)
     } catch(err) {
       message(getMessage(location.pathname, err), 3000)
     }
@@ -272,22 +274,22 @@ const PackDetails = () => {
         {state.userInfo?.storeId && state.userInfo?.type === 's' &&
           <IonGrid style={{margin: '5px'}}>
             <IonRow>
-              <IonCol className="background1">
+              <IonCol className="box darkblue">
                 <div>{labels.stores}</div>
                 <div>{labels.others}</div>
                 <div>{storesCount.toString()}</div>
               </IonCol>
-              <IonCol className="background2">
+              <IonCol className="box deeppink">
                 <div>{labels.stores}</div>
                 <div>{labels.nearby}</div>
                 <div>{nearStoresCount.toString()}</div>
               </IonCol>
-              <IonCol className="background3">
+              <IonCol className="box darkgreen">
                 <div>{labels.stores}</div>
                 <div>{labels.bestPrices}</div>
                 <div>{bestPriceStoresCount.toString()}</div>
               </IonCol>
-              <IonCol className="background4">
+              <IonCol className="box red">
                 <div>{labels.nearbyStores}</div>
                 <div>{labels.bestPrices}</div>
                 <div>{bestPriceNearStoresCount.toString()}</div>
@@ -364,12 +366,12 @@ const PackDetails = () => {
           },
           {
             text: labels.addToBasket,
-            cssClass: state.userInfo?.type === 'n' && !state.basket.includes(params.id) ? colors[i++ % 10].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && !state.basket.find(i => i.packId === params.id) ? colors[i++ % 10].name : 'ion-hide',
             handler: () => handleAddToBasket()
           },
           {
             text: labels.removeFromBasket,
-            cssClass: state.userInfo?.type === 'n' && state.basket.includes(params.id) ? colors[i++ % 10].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && state.basket.find(i => i.packId === params.id) ? colors[i++ % 10].name : 'ion-hide',
             handler: () => handleRemoveFromBasket()
           },
           {

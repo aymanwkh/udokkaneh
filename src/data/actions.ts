@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import {colors, userTypes} from './config'
-import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region} from './types'
+import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region, BasketItem} from './types'
 
 export const getMessage = (path: string, error: Error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -274,12 +274,15 @@ export const addStoreRequest = (storeRequest: StoreRequest) => {
   })
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
   batch.update(userRef, {
-      basket: firebase.firestore.FieldValue.arrayUnion(storeRequest.packId)
+      basket: firebase.firestore.FieldValue.arrayUnion({
+        packId: storeRequest.packId,
+        quantity: null
+      })
   })
   batch.commit()
 }
 
-export const deleteStoreRequest = (storeRequest: StoreRequest, storeRequests: StoreRequest[]) => {
+export const deleteStoreRequest = (storeRequest: StoreRequest, storeRequests: StoreRequest[], basket: BasketItem[]) => {
   const batch =  firebase.firestore().batch()
   const otherStoreRequests = storeRequests.filter(p => p.packId !== storeRequest.packId && p.storeId === storeRequest.storeId)
   const requests = otherStoreRequests.map(p => {
@@ -291,8 +294,9 @@ export const deleteStoreRequest = (storeRequest: StoreRequest, storeRequests: St
     requests
   })
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  const otherBasketItems = basket.filter(i => i.packId !== storeRequest.packId)
   batch.update(userRef, {
-    basket: firebase.firestore.FieldValue.arrayRemove(storeRequest.packId)
+    basket: otherBasketItems
   })
   batch.commit()
 }
@@ -343,13 +347,17 @@ export const getCategoryName = (category: Category, categories: Category[]): str
 export const addToBasket = (packId: string) => {
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
   userRef.update({
-    basket: firebase.firestore.FieldValue.arrayUnion(packId)
+    basket: firebase.firestore.FieldValue.arrayUnion({
+      packId,
+      quantity: null
+    })
   })
 }
 
-export const removeFromBasket = (packId: string) => {
+export const removeFromBasket = (packId: string, basket: BasketItem[]) => {
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
+  const otherBasketItems = basket.filter(i => i.packId !== packId)
   userRef.update({
-    basket: firebase.firestore.FieldValue.arrayRemove(packId)
+    basket: otherBasketItems
   })
 }

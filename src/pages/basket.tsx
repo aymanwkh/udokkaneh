@@ -19,7 +19,7 @@ const Basket = () => {
   useEffect(() => {
     setBasket(() => {
       return state.basket.map(b => {
-        const packInfo = state.packs.find(p => p.id === b)!
+        const packInfo = state.packs.find(p => p.id === b.packId)!
         const countryName = state.countries.find(c => c.id === packInfo.product.countryId)!.name
         const categoryName = state.categories.find(c => c.id === packInfo.product.categoryId)!.name
         const trademarkName = state.trademarks.find(t => t.id === packInfo.product.trademarkId)?.name
@@ -35,17 +35,14 @@ const Basket = () => {
   return(
     <IonPage>
       <Header title={labels.basket} />
-      <IonContent fullscreen className="ion-padding">
-        <IonList>
+      <IonContent fullscreen>
+        <IonList className="ion-padding">
           {basket.length === 0 ?
             <IonItem> 
               <IonLabel>{labels.noData}</IonLabel>
             </IonItem>
           : basket.map(p => 
-              <IonItem 
-                key={p.id} 
-                routerLink={`/pack-details/${p.id}`}
-              >
+              <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
                 <IonThumbnail slot="start">
                   <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
                 </IonThumbnail>

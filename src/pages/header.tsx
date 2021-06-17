@@ -16,33 +16,33 @@ const Header = (props: Props) => {
   }
   return (
     <IonHeader>
-    <IonToolbar>
-      <IonButtons slot="start">
-        <IonBackButton text={labels.back} defaultHref="/" />
-      </IonButtons>
-      {props.withSearch && 
-        <IonButtons slot="end" onClick={handleVisible}>
-          <IonIcon 
-            name="search-outline" 
-            color="primary" 
-            size="small" 
-            style={{fontSize: '20px', marginLeft: '10px'}}
-          />
-        </IonButtons>
-      }
-      <IonTitle>{props.title}</IonTitle>
-    </IonToolbar>
-    {visible && 
       <IonToolbar>
-        <IonSearchbar
-          placeholder={labels.search} 
-          value={state.searchText} 
-          onIonChange={e => dispatch({type: 'SET_SEARCH', payload: e.detail.value})}
-        />
+        <IonButtons slot="start">
+          <IonBackButton text={labels.back} defaultHref="/" />
+        </IonButtons>
+        {props.withSearch && 
+          <IonButtons slot="end" onClick={handleVisible}>
+            <IonIcon 
+              name="search-outline" 
+              color="primary" 
+              size="small" 
+              style={{fontSize: '20px', marginLeft: '10px'}}
+            />
+          </IonButtons>
+        }
+        <IonTitle>{props.title}</IonTitle>
       </IonToolbar>
-    }
-  </IonHeader>
-)
+      {visible && 
+        <IonToolbar>
+          <IonSearchbar
+            placeholder={labels.search} 
+            value={state.searchText} 
+            onIonChange={e => dispatch({type: 'SET_SEARCH', payload: e.detail.value})}
+          />
+        </IonToolbar>
+      }
+    </IonHeader>
+  )
 }
 
 export default Header

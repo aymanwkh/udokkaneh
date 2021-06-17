@@ -88,7 +88,7 @@ const Home = () => {
       </IonContent>
       <Footer />
     </IonPage>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

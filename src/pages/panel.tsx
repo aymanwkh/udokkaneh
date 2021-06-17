@@ -9,7 +9,7 @@ const Panel = () => {
   const {state, dispatch} = useContext(StateContext)
   const [notificationsCount, setNotificationsCount] = useState(0)
   const [claimsCount, setClaimsCount] = useState(0)
-  const menuEl = useRef<HTMLIonMenuElement | null>(null);
+  const menuEl = useRef<HTMLIonMenuElement | null>(null)
   const history = useHistory()
   useEffect(() => {
     setNotificationsCount(() => state.userInfo ? state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length : 0)
@@ -78,4 +78,4 @@ const Panel = () => {
   );
 };
 
-export default Panel;
+export default Panel

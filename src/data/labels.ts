@@ -25,6 +25,7 @@ const labels: Label = {
   basket: 'سلة المشتريات',
   send: 'ارسال',
   addToBasket: 'اضافة الى قائمة المشتريات',
+  removeFromBasket: 'حذف من قائمة المشتربات',
   submit: 'موافق',
   storeName: 'اسم المحل',
   storePlace: 'عنوان المحل',

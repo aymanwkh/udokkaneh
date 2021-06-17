@@ -54,38 +54,7 @@ ion-toast {
   color: dodgerblue;
 }
 
-.background1 {
-  background-color: darkblue;
-  border-radius: 12px;
-  color: white;
-  text-align: center;
-  margin-right: 5px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.background2 {
-  background-color: deeppink;
-  border-radius: 12px;
-  color: white;
-  text-align: center;
-  margin-right: 5px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.background3 {
-  background-color: darkgreen;
-  border-radius: 12px;
-  color: white;
-  text-align: center;
-  margin-right: 5px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.background4 {
-  background-color: red;
+.box {
   border-radius: 12px;
   color: white;
   text-align: center;
@@ -111,11 +80,13 @@ ion-toast {
 .darkblue {
   --background: darkblue;
   --button-color: darkblue;
+  background-color: darkblue;
 }
 
 .deeppink {
   --background: deeppink;
   --button-color: deeppink;
+  background-color: deeppink;
 }
 
 .maroon {
@@ -126,6 +97,7 @@ ion-toast {
 .red {
   --background: red;
   --button-color: red;
+  background-color: red;
 }
 
 .purple {
@@ -137,6 +109,7 @@ ion-toast {
 .darkgreen {
   --background: darkgreen;
   --button-color: darkgreen;
+  background-color: darkgreen;
 }
 
 .darkslategray {

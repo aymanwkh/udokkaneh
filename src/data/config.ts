@@ -1,6 +1,6 @@
 export const setup = {
   priceDiff: 0.25,
-  firstPhone: '0795700667'
+  firstPhone: '0799982800'
 }
 
 export const colors = [

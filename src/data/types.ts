@@ -148,11 +148,15 @@ export type StoreRequest = {
   packId: string,
   time: Date
 }
+export type BasketItem = {
+  packId: string,
+  quantity: string | null
+}
 export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
   categories: Category[],
-  basket: string[],
+  basket: BasketItem[],
   packs: Pack[],
   packStores: PackStore[],
   adverts: Advert[],
