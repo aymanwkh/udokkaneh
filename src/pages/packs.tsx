@@ -2,8 +2,8 @@ import {useContext, useState, useEffect} from 'react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {colors} from '../data/config'
-import {getCategoryName, getChildren, productOfText} from '../data/actions'
-import {Pack, PackStore} from '../data/types'
+import {getChildren, productOfText} from '../data/actions'
+import {CachedPack, PackStore} from '../data/types'
 import Footer from './footer'
 import { IonContent, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
@@ -11,10 +11,7 @@ import { useParams } from 'react-router'
 import Fuse from "fuse.js"
 import RatingStars from './rating-stars'
 
-type ExtendedPack = Pack & {
-  categoryName: string,
-  countryName: string,
-  trademarkName?: string,
+type ExtendedPack = CachedPack & {
   packStoreInfo?: PackStore
 }
 type Params = {
@@ -57,31 +54,25 @@ const Packs = () => {
       switch (params.type){
         case 'a':
           const children = getChildren(params.id, state.categories)
-          packs = state.packs.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && children.includes(p.product.categoryId))
+          packs = state.cachedPacks.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && children.includes(p.product.categoryId))
           break
         case 's':
-          packs = state.packs.filter(p => state.packStores.find(s => s.packId === p.id && s.storeId === params.storeId))
+          packs = state.cachedPacks.filter(p => state.packStores.find(s => s.packId === p.id && s.storeId === params.storeId))
           break
         case 'r':
-          packs = state.packs.filter(p => state.storeRequests.find(r => r.packId === p.id))
+          packs = state.cachedPacks.filter(p => state.storeRequests.find(r => r.packId === p.id))
           break
         case 'p':
           const pack = state.packs.find(p => p.id === params.id)
-          packs = state.packs.filter(p => p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId)
+          packs = state.cachedPacks.filter(p => p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId)
           break
         default:
-          packs = state.packs.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && p.product.categoryId === params.id)
+          packs = state.cachedPacks.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && p.product.categoryId === params.id)
       }
       const results = packs.map(p => {
-        const categoryInfo = state.categories.find(c => c.id === p.product.categoryId)!
-        const trademarkName = state.trademarks.find(t => t.id === p.product.trademarkId)?.name
-        const countryName = state.countries.find(c => c.id === p.product.countryId)!.name
         const packStoreInfo = state.packStores.find(s => s.packId === p.id && s.storeId === (params.storeId === '0' ? state.userInfo?.storeId : params.storeId))
         return {
           ...p,
-          categoryName: getCategoryName(categoryInfo, state.categories),
-          trademarkName,
-          countryName,
           packStoreInfo
         }
       })

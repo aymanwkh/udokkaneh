@@ -2,35 +2,17 @@ import {useContext, useState, useEffect} from 'react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {productOfText} from '../data/actions'
-import {Pack} from '../data/types'
+import {CachedPack, Pack} from '../data/types'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { colors } from '../data/config'
 
-type ExtendedPack = Pack & {
-  countryName: string,
-  categoryName: string,
-  trademarkName?: string
-}
 const Basket = () => {
   const {state} = useContext(StateContext)
-  const [basket, setBasket] = useState<ExtendedPack[]>([])
+  const [basket, setBasket] = useState<CachedPack[]>([])
   useEffect(() => {
-    setBasket(() => {
-      return state.basket.map(b => {
-        const packInfo = state.packs.find(p => p.id === b.packId)!
-        const countryName = state.countries.find(c => c.id === packInfo.product.countryId)!.name
-        const categoryName = state.categories.find(c => c.id === packInfo.product.categoryId)!.name
-        const trademarkName = state.trademarks.find(t => t.id === packInfo.product.trademarkId)?.name
-        return {
-          ...packInfo,
-          countryName,
-          categoryName,
-          trademarkName
-        }
-      })
-    })
+    setBasket(() => state.basket.map(b => state.cachedPacks.find(p => p.id === b.packId)!))
   }, [state.basket, state.stores, state.packs, state.categories, state.countries, state.trademarks])
   return(
     <IonPage>

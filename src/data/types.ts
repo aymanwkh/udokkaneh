@@ -37,17 +37,15 @@ export type Product = {
   rating: number,
   ratingCount: number,
   imageUrl: string,
-  isActive: boolean
+  isActive: boolean,
 }
 export type Pack = {
   id?: string,
   name: string,
   product: Product,
   imageUrl?: string,
-  price?: number,
   subPackId: string | null,
   subCount: number | null,
-  weightedPrice?: number,
   unitsCount: number,
   byWeight: boolean,
   withGift: boolean,
@@ -152,6 +150,13 @@ export type BasketItem = {
   packId: string,
   quantity: string | null
 }
+export type CachedPack = Pack & {
+  price: number,
+  weightedPrice: number,
+  categoryName: string,
+  countryName: string,
+  trademarkName?: string
+}
 export type State = {
   user?: firebase.User,
   userInfo?: UserInfo,
@@ -170,7 +175,8 @@ export type State = {
   ratings: Rating[],
   productRequests: ProductRequest[]
   searchText: string,
-  mapPosition?: Position
+  mapPosition?: Position,
+  cachedPacks: CachedPack[]
 }
 export type Action = {
   type: string

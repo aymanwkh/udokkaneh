@@ -80,13 +80,11 @@ ion-toast {
 .darkblue {
   --background: darkblue;
   --button-color: darkblue;
-  background-color: darkblue;
 }
 
 .deeppink {
   --background: deeppink;
   --button-color: deeppink;
-  background-color: deeppink;
 }
 
 .maroon {
@@ -97,7 +95,6 @@ ion-toast {
 .red {
   --background: red;
   --button-color: red;
-  background-color: red;
 }
 
 .purple {
@@ -109,7 +106,6 @@ ion-toast {
 .darkgreen {
   --background: darkgreen;
   --button-color: darkgreen;
-  background-color: darkgreen;
 }
 
 .darkslategray {

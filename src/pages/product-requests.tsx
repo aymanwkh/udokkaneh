@@ -30,7 +30,7 @@ const ProductRequests = () => {
         {text: labels.cancel},
         {text: labels.ok, handler: async () => {
           try{
-            await deleteProductRequest(productRequest, state.productRequests)
+            await deleteProductRequest(productRequest, state)
             message(labels.deleteSuccess, 3000) 
           } catch(err) {
             message(getMessage(location.pathname, err), 3000)

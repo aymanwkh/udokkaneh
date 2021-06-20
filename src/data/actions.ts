@@ -1,7 +1,7 @@
 import firebase from './firebase'
 import labels from './labels'
 import {colors, userTypes} from './config'
-import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region, BasketItem} from './types'
+import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region, BasketItem, State} from './types'
 
 export const getMessage = (path: string, error: Error) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
@@ -28,8 +28,8 @@ export const productOfText = (countryName: string, trademarkName?: string) => {
   return trademarkName ? `${labels.productFrom} ${trademarkName}-${countryName}` : `${labels.productOf} ${countryName}`
 }
 
-export const getStoreName = (store: Store, regions: Region[]) => {
-  return `${store.name} ${store.regionId ? '-' + regions.find(r => r.id === store.regionId)!.name : ''} (${userTypes.find(t => t.id === store.type)!.name})`
+export const getStoreName = (store: Store, state: State) => {
+  return `${store.name} ${store.regionId ? '-' + state.regions.find(r => r.id === store.regionId)!.name : ''} (${userTypes.find(t => t.id === store.type)!.name})`
 }
 
 export const getChildren = (categoryId: string, categories: Category[]) => {
@@ -42,7 +42,7 @@ export const getChildren = (categoryId: string, categories: Category[]) => {
   return childrenArray
 }
 
-export const rateProduct = (product: Product, value: number, packs: Pack[]) => {
+export const rateProduct = (product: Product, value: number, state: State) => {
   const batch = firebase.firestore().batch()
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid)
   batch.update(userRef, {
@@ -59,7 +59,7 @@ export const rateProduct = (product: Product, value: number, packs: Pack[]) => {
     rating: newRating,
     ratingCount: ratingCount + 1
   })
-  const affectedPacks = packs.filter(p => p.product.id === product.id)
+  const affectedPacks = state.packs.filter(p => p.product.id === product.id)
   affectedPacks.forEach(p => {
     const packRef = firebase.firestore().collection('packs').doc(p.id)
     batch.update(packRef, {
@@ -124,9 +124,9 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
   }
 }
 
-export const addClaim = (storeId: string, packId: string, packStores: PackStore[]) => {
+export const addClaim = (storeId: string, packId: string, state: State) => {
   const batch = firebase.firestore().batch()
-  const packStore = packStores.find(p => p.packId === packId && p.storeId === storeId)!
+  const packStore = state.packStores.find(p => p.packId === packId && p.storeId === storeId)!
   if (packStore.claimUserId) {
     packStore.isActive = false
     const storeRef = firebase.firestore().collection('stores').doc(storeId)
@@ -136,7 +136,7 @@ export const addClaim = (storeId: string, packId: string, packStores: PackStore[
   } else {
     packStore.claimUserId = firebase.auth().currentUser?.uid
   }
-  const otherStores = packStores.filter(p => p.packId === packId && p.storeId !== storeId)
+  const otherStores = state.packStores.filter(p => p.packId === packId && p.storeId !== storeId)
   otherStores.push(packStore)
   const stores = otherStores.map(p => {
     const {packId, ...others} = p
@@ -158,8 +158,8 @@ export const addClaim = (storeId: string, packId: string, packStores: PackStore[
 
 }
 
-export const deleteNotification = (notifications: Notification[], notificationId: string) => {
-    const newNotifications = notifications.filter(n => n.id !== notificationId)
+export const deleteNotification = (notificationId: string, state: State) => {
+    const newNotifications = state.notifications.filter(n => n.id !== notificationId)
     firebase.firestore().collection('users').doc(firebase.auth().currentUser?.uid).update({
       notifications: newNotifications
     })  
@@ -181,9 +181,9 @@ export const addProductRequest = async (productRequest: ProductRequest, image?: 
   })
 }
 
-export const changePrice = (packStore: PackStore, packStores: PackStore[]) => {
+export const changePrice = (packStore: PackStore, state: State) => {
   const batch = firebase.firestore().batch()
-  const otherStores = packStores.filter(p => p.packId === packStore.packId && p.storeId !== packStore.storeId)
+  const otherStores = state.packStores.filter(p => p.packId === packStore.packId && p.storeId !== packStore.storeId)
   otherStores.push(packStore)
   const stores = otherStores.map(p => {
     const {packId, ...others} = p
@@ -211,10 +211,10 @@ export const addPackRequest = async (packRequest: PackRequest, image?: File) => 
   })
 }
 
-export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], packs: Pack[], withRequest: boolean) => {
+export const deleteStorePack = (packStore: PackStore, state: State, withRequest: boolean) => {
   const batch = firebase.firestore().batch()
-  const pack = packs.find(p => p.id === packStore.packId)!
-  const otherStores = packStores.filter(p => p.packId === packStore.packId && p.storeId !== packStore.storeId)
+  const pack = state.packs.find(p => p.id === packStore.packId)!
+  const otherStores = state.packStores.filter(p => p.packId === packStore.packId && p.storeId !== packStore.storeId)
   const stores = otherStores.map(p => {
     const {packId, ...others} = p
     return others
@@ -240,7 +240,7 @@ export const deleteStorePack = (packStore: PackStore, packStores: PackStore[], p
   batch.commit()
 }
 
-export const addPackStore = (packStore: PackStore, storeRequests: StoreRequest[]) => {
+export const addPackStore = (packStore: PackStore, state: State) => {
   const batch = firebase.firestore().batch()
   const {packId, ...others} = packStore
   const packRef = firebase.firestore().collection('packs').doc(packId)
@@ -248,9 +248,9 @@ export const addPackStore = (packStore: PackStore, storeRequests: StoreRequest[]
     stores: firebase.firestore.FieldValue.arrayUnion(others),
     lastTrans: firebase.firestore.FieldValue.serverTimestamp()
   })
-  const storeRequest = storeRequests.find(r => r.storeId === packStore.storeId && r.packId === packId)
+  const storeRequest = state.storeRequests.find(r => r.storeId === packStore.storeId && r.packId === packId)
   if (storeRequest) {
-    const otherStoreRequests = storeRequests.filter(p => p.packId !== packId && p.storeId === packStore.storeId)
+    const otherStoreRequests = state.storeRequests.filter(p => p.packId !== packId && p.storeId === packStore.storeId)
     const requests = otherStoreRequests.map(p => {
       const {storeId, ...others} = p
       return others
@@ -282,9 +282,9 @@ export const addStoreRequest = (storeRequest: StoreRequest) => {
   batch.commit()
 }
 
-export const deleteStoreRequest = (storeRequest: StoreRequest, storeRequests: StoreRequest[], basket: BasketItem[]) => {
+export const deleteStoreRequest = (storeRequest: StoreRequest, state: State, basket: BasketItem[]) => {
   const batch =  firebase.firestore().batch()
-  const otherStoreRequests = storeRequests.filter(p => p.packId !== storeRequest.packId && p.storeId === storeRequest.storeId)
+  const otherStoreRequests = state.storeRequests.filter(p => p.packId !== storeRequest.packId && p.storeId === storeRequest.storeId)
   const requests = otherStoreRequests.map(p => {
     const {storeId, ...others} = p
     return others
@@ -314,9 +314,9 @@ export const updateLastSeen = () => {
   })
 }
 
-export const deleteProductRequest = async (productRequest: ProductRequest, productRequests: ProductRequest[]) => {
+export const deleteProductRequest = async (productRequest: ProductRequest, state: State) => {
   const storeRef = firebase.firestore().collection('stores').doc(productRequest.storeId)
-  const otherRequests = productRequests.filter(r => r.storeId === productRequest.storeId && r.id !== productRequest.id)
+  const otherRequests = state.productRequests.filter(r => r.storeId === productRequest.storeId && r.id !== productRequest.id)
   storeRef.update({
     productRequests: otherRequests
   })
@@ -335,11 +335,11 @@ export const calcDistance = (position1: Position, position2: Position) => {
   return d
 }
 
-export const getCategoryName = (category: Category, categories: Category[]): string => {
+export const getCategoryName = (category: Category, state: State): string => {
   if (category.parentId === '0') {
     return category.name
   } else {
-    const mainCategory = categories.find(c => c.id === category.mainId)
+    const mainCategory = state.categories.find(c => c.id === category.mainId)
     return mainCategory?.name + '-' + category.name
   }
 }

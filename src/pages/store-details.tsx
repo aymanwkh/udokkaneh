@@ -36,7 +36,7 @@ const StoreDetails = () => {
             if (packStore?.claimUserId === state.user?.uid){
               throw new Error('duplicateClaims')
             }
-            addClaim(params.storeId, params.packId, state.packStores)
+            addClaim(params.storeId, params.packId, state)
             message(labels.sendSuccess, 3000)
             history.goBack()
           } catch(err) {

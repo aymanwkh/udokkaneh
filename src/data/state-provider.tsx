@@ -2,6 +2,7 @@ import {createContext, useReducer, useEffect} from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import {State, Context, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, StoreRequest, UserInfo, Rating, ProductRequest, PackRequest} from './types'
+import { getCategoryName } from './actions'
 
 export const StateContext = createContext({} as Context)
 
@@ -25,7 +26,8 @@ const StateProvider = ({children}: Props) => {
     stores: [],
     ratings: [],
     productRequests: [],
-    searchText: ''
+    searchText: '',
+    cachedPacks: []
   }
   const [state, dispatch] = useReducer(Reducer, initState)
 
@@ -50,12 +52,6 @@ const StateProvider = ({children}: Props) => {
       let packs: Pack[] = []
       let packStores: PackStore[] = []
       docs.forEach(doc => {
-        let minPrice = 0
-        if (doc.data().stores) {
-          const activePrices = doc.data().stores.filter((s: PackStore) => s.isRetail && s.isActive)
-          const prices = activePrices.map((p: PackStore) => p.price)
-          minPrice = prices.length > 0 ? Math.min(...prices) : 0
-        }
         packs.push({
           id: doc.id,
           name: doc.data().name,
@@ -67,8 +63,6 @@ const StateProvider = ({children}: Props) => {
           subCount: doc.data().subCount,
           withGift: doc.data().withGift,
           forSale: doc.data().forSale,
-          price: minPrice,
-          weightedPrice: minPrice / doc.data().unitsCount,
         })
         if (doc.data().stores) {
           doc.data().stores.forEach((s: any) => {
@@ -244,6 +238,27 @@ const StateProvider = ({children}: Props) => {
       }
     })
   }, [])
+  useEffect(() => {
+    if (state.categories.length > 0 && state.countries.length > 0 && state.packs.length > 0) {
+      const packs = state.packs.map((p: Pack) => {
+        const category = state.categories.find((c: Category) => c.id === p.product.categoryId)!
+        const country = state.countries.find(c => c.id === p.product.countryId)!
+        const trademark = state.trademarks.find(t => t.id === p.product.trademarkId)
+        const activePrices = state.packStores.filter((s: PackStore) => s.packId === p.id && s.isRetail && s.isActive)
+        const prices = activePrices.map((p: PackStore) => p.price)
+        const price = prices.length > 0 ? Math.min(...prices) : 0
+        return {
+          ...p,
+          price,
+          weightedPrice: price / p.unitsCount,
+          categoryName: getCategoryName(category, state),
+          countryName: country.name,
+          trademarkName: trademark?.name
+        }
+      })
+      dispatch({type: 'SET_CACHED_PACKS', payload: packs})
+    }
+  }, [state.categories, state.countries, state.trademarks, state.packs, state.packStores])
   return (
     <StateContext.Provider value={{state, dispatch}}>
       {children}

@@ -28,7 +28,7 @@ type ExtendedStore = Store & {
 const PackDetails = () => {
   const {state} = useContext(StateContext)
   const params = useParams<Params>()
-  const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
+  const [pack] = useState(() => state.cachedPacks.find(p => p.id === params.id)!)
   const [isAvailable, setIsAvailable] = useState(false)
   const [otherProducts] = useState(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
   const [actionOpened, setActionOpened] = useState(false)
@@ -37,8 +37,6 @@ const PackDetails = () => {
   const [storesType, setStoresType] = useState('s')
   const [stores, setStores] = useState<ExtendedStore[]>([])
   const [myPrice] = useState(() => state.packStores.find(ps => ps.packId === params.id && ps.storeId === state.userInfo?.storeId))
-  const [trademarkName] = useState(() => state.trademarks.find(t => t.id === pack.product.trademarkId)?.name)
-  const [countryName] = useState(() => state.countries.find(c => c.id === pack.product.countryId)!.name)
   const [storesCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId).length : 0)
   const [nearStoresCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && calcDistance(state.userInfo?.position!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
   const [bestPriceStoresCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length : 0)
@@ -112,7 +110,7 @@ const PackDetails = () => {
   const deletePrice = (flag: boolean) => {
     try{
       const storePack = state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
-      deleteStorePack(storePack, state.packStores, state.packs, flag)
+      deleteStorePack(storePack, state, flag)
       message(flag ? labels.addSuccess : labels.deleteSuccess, 3000)
       history.goBack()
     } catch(err) {
@@ -166,8 +164,8 @@ const PackDetails = () => {
         isActive: true,
         time: new Date()
       }
-      if (transType === 'n') addPackStore(storePack, state.storeRequests)
-      else changePrice(storePack, state.packStores)
+      if (transType === 'n') addPackStore(storePack, state)
+      else changePrice(storePack, state)
       message(transType === 'n' ? labels.addSuccess : labels.editSuccess, 3000)
       history.goBack()
     } catch(err) {
@@ -187,7 +185,7 @@ const PackDetails = () => {
   }
   const handleRate = (value: number) => {
     try{
-      rateProduct(pack?.product!, value, state.packs)
+      rateProduct(pack?.product!, value, state)
       message(labels.ratingSuccess, 3000)
       history.goBack()   
 		} catch (err){
@@ -198,7 +196,7 @@ const PackDetails = () => {
     try{
       const storeRequest = state.storeRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === pack?.id!)!
       if (state.userInfo?.storeId) {
-        deleteStoreRequest(storeRequest, state.storeRequests, state.basket)
+        deleteStoreRequest(storeRequest, state, state.basket)
         message(labels.deleteSuccess, 3000)
         history.goBack()
       } 
@@ -249,7 +247,7 @@ const PackDetails = () => {
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol>{productOfText(countryName, trademarkName)}</IonCol>
+              <IonCol>{productOfText(pack.countryName, pack.trademarkName)}</IonCol>
               <IonCol className="ion-text-end"><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} size="m"/></IonCol>
             </IonRow>
           </IonGrid>
@@ -274,22 +272,22 @@ const PackDetails = () => {
         {state.userInfo?.storeId && state.userInfo?.type === 's' &&
           <IonGrid style={{margin: '5px'}}>
             <IonRow>
-              <IonCol className="box darkblue">
+              <IonCol className="box" style={{backgroundColor: 'darkblue'}}>
                 <div>{labels.stores}</div>
                 <div>{labels.others}</div>
                 <div>{storesCount.toString()}</div>
               </IonCol>
-              <IonCol className="box deeppink">
+              <IonCol className="box" style={{backgroundColor: 'deeppink'}}>
                 <div>{labels.stores}</div>
                 <div>{labels.nearby}</div>
                 <div>{nearStoresCount.toString()}</div>
               </IonCol>
-              <IonCol className="box darkgreen">
+              <IonCol className="box" style={{backgroundColor: 'darkgreen'}}>
                 <div>{labels.stores}</div>
                 <div>{labels.bestPrices}</div>
                 <div>{bestPriceStoresCount.toString()}</div>
               </IonCol>
-              <IonCol className="box red">
+              <IonCol className="box" style={{backgroundColor: 'red'}}>
                 <div>{labels.nearbyStores}</div>
                 <div>{labels.bestPrices}</div>
                 <div>{bestPriceNearStoresCount.toString()}</div>

@@ -53,6 +53,8 @@ const Reducer = (state: State, action: Action) => {
       return {...state, searchText: action.payload}
     case 'CLEAR_SEARCH':
       return {...state, searchText: ''}
+    case 'SET_CACHED_PACKS':
+      return {...state, cachedPacks: action.payload}
     default:
       return state
   }
