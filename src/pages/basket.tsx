@@ -2,7 +2,7 @@ import {useContext, useState, useEffect} from 'react'
 import {StateContext} from '../data/state-provider'
 import labels from '../data/labels'
 import {productOfText} from '../data/actions'
-import {CachedPack, Pack} from '../data/types'
+import {CachedPack} from '../data/types'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
@@ -13,7 +13,7 @@ const Basket = () => {
   const [basket, setBasket] = useState<CachedPack[]>([])
   useEffect(() => {
     setBasket(() => state.basket.map(b => state.cachedPacks.find(p => p.id === b.packId)!))
-  }, [state.basket, state.stores, state.packs, state.categories, state.countries, state.trademarks])
+  }, [state.basket, state.stores, state.packs, state.categories, state.countries, state.trademarks, state.cachedPacks])
   return(
     <IonPage>
       <Header title={labels.basket} />

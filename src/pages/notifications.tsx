@@ -43,13 +43,13 @@ const Notifications = () => {
       time: new Date()
     }
     sendNotification(notification.userId!, response)
-    deleteNotification(notification.id, state)
+    deleteNotification(notification.id, state.notifications)
     message(labels.sendSuccess, 3000)
   }
   const handleNotification = (notification: Notification) => {
     try{
       if (notification.isResponse || !notification.userId) {
-        deleteNotification(notification.id, state)
+        deleteNotification(notification.id, state.notifications)
         message(labels.deleteSuccess, 3000)
       } else {
         alert({

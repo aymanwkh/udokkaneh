@@ -251,7 +251,7 @@ const StateProvider = ({children}: Props) => {
           ...p,
           price,
           weightedPrice: price / p.unitsCount,
-          categoryName: getCategoryName(category, state),
+          categoryName: getCategoryName(category, state.categories),
           countryName: country.name,
           trademarkName: trademark?.name
         }

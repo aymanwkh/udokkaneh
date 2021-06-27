@@ -78,7 +78,7 @@ const Packs = () => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, params, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests])
+  }, [state.packs, state.userInfo, params, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests, state.cachedPacks])
   useEffect(() => {
     if (!state.searchText) {
       setData(packs)

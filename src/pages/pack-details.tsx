@@ -110,7 +110,7 @@ const PackDetails = () => {
   const deletePrice = (flag: boolean) => {
     try{
       const storePack = state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)!
-      deleteStorePack(storePack, state, flag)
+      deleteStorePack(storePack, state.packs, state.packStores, flag)
       message(flag ? labels.addSuccess : labels.deleteSuccess, 3000)
       history.goBack()
     } catch(err) {
@@ -164,8 +164,8 @@ const PackDetails = () => {
         isActive: true,
         time: new Date()
       }
-      if (transType === 'n') addPackStore(storePack, state)
-      else changePrice(storePack, state)
+      if (transType === 'n') addPackStore(storePack, state.storeRequests)
+      else changePrice(storePack, state.packStores)
       message(transType === 'n' ? labels.addSuccess : labels.editSuccess, 3000)
       history.goBack()
     } catch(err) {
@@ -185,7 +185,7 @@ const PackDetails = () => {
   }
   const handleRate = (value: number) => {
     try{
-      rateProduct(pack?.product!, value, state)
+      rateProduct(pack?.product!, value, state.packs)
       message(labels.ratingSuccess, 3000)
       history.goBack()   
 		} catch (err){
@@ -196,7 +196,7 @@ const PackDetails = () => {
     try{
       const storeRequest = state.storeRequests.find(p => p.storeId === state.userInfo?.storeId! && p.packId === pack?.id!)!
       if (state.userInfo?.storeId) {
-        deleteStoreRequest(storeRequest, state, state.basket)
+        deleteStoreRequest(storeRequest, state.storeRequests, state.basket)
         message(labels.deleteSuccess, 3000)
         history.goBack()
       } 

@@ -21,7 +21,7 @@ const Claims = () => {
       return {
         ...c,
         packInfo,
-        categoryName: getCategoryName(categoryInfo, state),
+        categoryName: getCategoryName(categoryInfo, state.categories),
         trademarkName,
         countryName
       }
