@@ -1,5 +1,5 @@
-import {useContext, useState} from 'react'
-import {StateContext} from '../data/state-provider'
+import { useContext, useState } from 'react'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
@@ -10,7 +10,7 @@ import { colors } from '../data/config'
 import { getCategoryName, productOfText } from '../data/actions'
 
 const Claims = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [claims] = useState(() => {
     const claims = state.packStores.filter(s => s.storeId === state.userInfo?.storeId && s.claimUserId)
     const result = claims.map(c => {

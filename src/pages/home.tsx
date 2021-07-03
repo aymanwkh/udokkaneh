@@ -4,11 +4,11 @@ import labels from '../data/labels'
 import { StateContext } from '../data/state-provider'
 import { Advert } from '../data/types'
 import Footer from './footer'
-import {colors} from '../data/config'
-import {Category} from '../data/types'
+import { colors } from '../data/config'
+import { Category } from '../data/types'
 
 const Home = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [advert, setAdvert] = useState<Advert | undefined>(undefined)
   const [notificationsCount, setNotificationsCount] = useState(0)
   const [categories, setCategories] = useState<Category[]>([])

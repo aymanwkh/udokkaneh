@@ -1,11 +1,11 @@
-import {useContext, useState} from 'react'
-import {StateContext} from '../data/state-provider'
+import { useContext, useState } from 'react'
+import { StateContext } from '../data/state-provider'
 import { IonCard, IonCol, IonContent, IonGrid, IonImg, IonPage, IonRow } from '@ionic/react'
 import Header from './header'
 import labels from '../data/labels'
 
 const Advert = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [advert] = useState(state.adverts[0])
   return (
     <IonPage>

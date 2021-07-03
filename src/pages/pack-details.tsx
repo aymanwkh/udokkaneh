@@ -1,9 +1,9 @@
-import {useContext, useEffect, useState} from 'react'
+import { useContext, useEffect, useState} from 'react'
 import RatingStars from './rating-stars'
-import {StateContext} from '../data/state-provider'
-import {addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance, addToBasket, removeFromBasket} from '../data/actions'
+import { StateContext} from '../data/state-provider'
+import { addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance, addToBasket, removeFromBasket } from '../data/actions'
 import labels from '../data/labels'
-import {Store} from '../data/types'
+import { Store } from '../data/types'
 import Footer from './footer'
 import { setup, colors, userTypes } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router'
@@ -26,7 +26,7 @@ type ExtendedStore = Store & {
   time: Date
 }
 const PackDetails = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const params = useParams<Params>()
   const [pack] = useState(() => state.cachedPacks.find(p => p.id === params.id)!)
   const [isAvailable, setIsAvailable] = useState(false)

@@ -1,5 +1,5 @@
-import {useState, useEffect} from 'react'
-import {getMessage, changePassword} from '../data/actions'
+import { useState, useEffect } from 'react'
+import { getMessage, changePassword } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonList, IonPage, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'

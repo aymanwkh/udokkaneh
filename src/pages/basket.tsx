@@ -1,15 +1,15 @@
-import {useContext, useState, useEffect} from 'react'
-import {StateContext} from '../data/state-provider'
+import { useContext, useState, useEffect } from 'react'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
-import {productOfText} from '../data/actions'
-import {CachedPack} from '../data/types'
+import { productOfText } from '../data/actions'
+import { CachedPack } from '../data/types'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { colors } from '../data/config'
 
 const Basket = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [basket, setBasket] = useState<CachedPack[]>([])
   useEffect(() => {
     setBasket(() => state.basket.map(b => state.cachedPacks.find(p => p.id === b.packId)!))

@@ -1,5 +1,5 @@
-import {useState, useContext, useRef, ChangeEvent} from 'react'
-import {getMessage, addPackRequest} from '../data/actions'
+import { useState, useContext, useRef, ChangeEvent } from 'react'
+import { getMessage, addPackRequest } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonToggle, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -12,7 +12,7 @@ type Params = {
   id: string
 }
 const AddPackRequest = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const params = useParams<Params>()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')

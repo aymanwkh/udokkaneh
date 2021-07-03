@@ -1,5 +1,5 @@
-import {useState, useEffect, useContext} from 'react'
-import {getMessage, registerUser} from '../data/actions'
+import { useState, useEffect, useContext } from 'react'
+import { getMessage, registerUser } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -10,7 +10,7 @@ import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
 
 const Register = () => {
-  const {state, dispatch} = useContext(StateContext)
+  const { state, dispatch } = useContext(StateContext)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')

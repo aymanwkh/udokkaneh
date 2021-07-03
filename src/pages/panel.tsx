@@ -1,4 +1,4 @@
-import {IonBadge, IonContent, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle} from '@ionic/react';
+import { IonBadge, IonContent, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { StateContext } from '../data/state-provider';
@@ -6,7 +6,7 @@ import { logout } from '../data/actions';
 import labels from '../data/labels';
 
 const Panel = () => {
-  const {state, dispatch} = useContext(StateContext)
+  const { state, dispatch } = useContext(StateContext)
   const [notificationsCount, setNotificationsCount] = useState(0)
   const [claimsCount, setClaimsCount] = useState(0)
   const menuEl = useRef<HTMLIonMenuElement | null>(null)

@@ -1,19 +1,19 @@
-import {useContext, useState, useEffect} from 'react'
-import {StateContext} from '../data/state-provider'
+import { useContext, useState, useEffect } from 'react'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
-import {deleteNotification, getMessage, sendNotification, updateLastSeen} from '../data/actions'
+import { deleteNotification, getMessage, sendNotification, updateLastSeen } from '../data/actions'
 import Footer from './footer'
 import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonText, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useLocation } from 'react-router'
-import {Notification} from '../data/types'
+import { Notification } from '../data/types'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { refreshOutline, trashOutline } from 'ionicons/icons'
 import { colors } from '../data/config'
 
 const Notifications = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const location = useLocation()
   const [message] = useIonToast()
   const [alert] = useIonAlert()

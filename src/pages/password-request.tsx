@@ -8,7 +8,7 @@ import { StateContext } from '../data/state-provider'
 import { patterns } from '../data/config'
 
 const PasswordRequest = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [mobile, setMobile] = useState('')
   const [mobileInvalid, setMobileInvalid] = useState(false)
   const history = useHistory()

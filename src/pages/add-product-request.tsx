@@ -1,5 +1,5 @@
-import {useState, useRef, ChangeEvent, useContext} from 'react'
-import {getMessage, addProductRequest} from '../data/actions'
+import { useState, useRef, ChangeEvent, useContext } from 'react'
+import { getMessage, addProductRequest } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -8,7 +8,7 @@ import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
 
 const AddProductRequest = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [name, setName] = useState('')
   const [country, setCountry] = useState('')
   const [weight, setWeight] = useState('')

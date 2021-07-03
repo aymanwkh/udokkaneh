@@ -1,9 +1,9 @@
-import {useContext, useState, useEffect} from 'react'
-import {StateContext} from '../data/state-provider'
+import { useContext, useState, useEffect } from 'react'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
-import {colors} from '../data/config'
-import {getChildren, productOfText} from '../data/actions'
-import {CachedPack, PackStore} from '../data/types'
+import { colors} from '../data/config'
+import { getChildren, productOfText } from '../data/actions'
+import {CachedPack, PackStore } from '../data/types'
 import Footer from './footer'
 import { IonContent, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
@@ -20,7 +20,7 @@ type Params = {
   storeId: string
 }
 const Packs = () => {
-  const {state, dispatch} = useContext(StateContext)
+  const { state, dispatch } = useContext(StateContext)
   const params = useParams<Params>()
   const [packs, setPacks] = useState<ExtendedPack[]>([])
   const [category] = useState(() => state.categories.find(category => category.id === params.id))

@@ -1,7 +1,7 @@
-import {useContext, useState, useEffect} from 'react'
-import {StateContext} from '../data/state-provider'
+import { useContext, useState, useEffect } from 'react'
+import { StateContext } from '../data/state-provider'
 import labels from '../data/labels'
-import {deleteProductRequest, getMessage} from '../data/actions'
+import { deleteProductRequest, getMessage } from '../data/actions'
 import Footer from './footer'
 import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -11,7 +11,7 @@ import { addOutline, trashOutline } from 'ionicons/icons'
 import { colors } from '../data/config'
 
 const ProductRequests = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const [productRequests, setProductRequests] = useState<ProductRequest[]>([])
   const [message] = useIonToast();
   const location = useLocation()

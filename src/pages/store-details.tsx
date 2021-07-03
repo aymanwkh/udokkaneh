@@ -1,5 +1,5 @@
-import {useState, useContext} from 'react'
-import {addClaim, getMessage, sendNotification} from '../data/actions'
+import { useState, useContext } from 'react'
+import { addClaim, getMessage, sendNotification } from '../data/actions'
 import labels from '../data/labels'
 import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
@@ -14,7 +14,7 @@ type Params = {
   packId: string
 }
 const StoreDetails = () => {
-  const {state} = useContext(StateContext)
+  const { state } = useContext(StateContext)
   const params = useParams<Params>()
   const [store] = useState(() => state.stores.find(s => s.id === params.storeId)!)
   const [pack] = useState(() => state.packs.find(p => p.id === params.packId))
