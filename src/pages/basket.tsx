@@ -4,7 +4,7 @@ import labels from '../data/labels'
 import { productOfText } from '../data/actions'
 import { CachedPack } from '../data/types'
 import Footer from './footer'
-import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
+import { IonContent, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { colors } from '../data/config'
 
@@ -26,7 +26,7 @@ const Basket = () => {
           : basket.map(p => 
               <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
                 <IonThumbnail slot="start">
-                  <IonImg src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
+                  <img src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} style={{width: '100%'}} />
                 </IonThumbnail>
                 <IonLabel>
                   <IonText style={{color: colors[0].name}}>{p.product.name}</IonText>

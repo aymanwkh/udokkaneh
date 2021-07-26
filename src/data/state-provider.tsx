@@ -1,4 +1,4 @@
-import {createContext, useReducer, useEffect} from 'react'
+import {createContext, useReducer, useEffect, ReactElement} from 'react'
 import Reducer from './reducer'
 import firebase from './firebase'
 import {State, Context, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, StoreRequest, UserInfo, Rating, ProductRequest, PackRequest} from './types'
@@ -7,10 +7,10 @@ import { getCategoryName } from './actions'
 export const StateContext = createContext({} as Context)
 
 type Props = {
-  children: React.ReactElement
+  children: ReactElement
 }
 
-const StateProvider = ({children}: Props) => {
+const StateProvider = (props: Props) => {
   const initState: State = {
     categories: [], 
     basket: [], 
@@ -261,7 +261,7 @@ const StateProvider = ({children}: Props) => {
   }, [state.categories, state.countries, state.trademarks, state.packs, state.packStores])
   return (
     <StateContext.Provider value={{state, dispatch}}>
-      {children}
+      {props.children}
     </StateContext.Provider>
   )
 }

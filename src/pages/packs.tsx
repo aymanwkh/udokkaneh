@@ -135,7 +135,7 @@ const Packs = () => {
           : data.map(p => 
               <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
                 <IonThumbnail slot="start">
-                  <img src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} />
+                  <img src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} style={{width: '100%'}}/>
                 </IonThumbnail>
                 <IonLabel>
                   <IonText style={{color: colors[0].name}}>{p.product.name}</IonText>

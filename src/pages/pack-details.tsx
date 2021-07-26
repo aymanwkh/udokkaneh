@@ -3,11 +3,11 @@ import RatingStars from './rating-stars'
 import { StateContext} from '../data/state-provider'
 import { addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance, addToBasket, removeFromBasket } from '../data/actions'
 import labels from '../data/labels'
-import { Store } from '../data/types'
+import { CachedPack, PackStore, Store } from '../data/types'
 import Footer from './footer'
 import { setup, colors, userTypes } from '../data/config'
-import { useHistory, useLocation, useParams } from 'react-router'
-import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { IonActionSheet, IonButton, IonCard, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonLoading, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonToggle, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 import moment from 'moment'
@@ -28,25 +28,42 @@ type ExtendedStore = Store & {
 const PackDetails = () => {
   const { state } = useContext(StateContext)
   const params = useParams<Params>()
-  const [pack] = useState(() => state.cachedPacks.find(p => p.id === params.id)!)
+  const [pack, setPack] = useState<CachedPack>()
   const [isAvailable, setIsAvailable] = useState(false)
-  const [otherProducts] = useState(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId))
+  const [otherProductsCount, setOtherProductsCount] = useState(0)
   const [actionOpened, setActionOpened] = useState(false)
   const [ratingOpened, setRatingOpened] = useState(false)
   const [nearbyOnly, setNearbyOnly] = useState(false)
   const [storesType, setStoresType] = useState('s')
   const [stores, setStores] = useState<ExtendedStore[]>([])
-  const [myPrice] = useState(() => state.packStores.find(ps => ps.packId === params.id && ps.storeId === state.userInfo?.storeId))
-  const [storesCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId).length : 0)
-  const [nearStoresCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && calcDistance(state.userInfo?.position!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
-  const [bestPriceStoresCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length : 0)
-  const [bestPriceNearStoresCount] = useState(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price && calcDistance(state.userInfo?.position!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
+  const [myPrice, setMyPrice] = useState<PackStore>()
+  const [storesCount, setStoresCount] = useState(0)
+  const [nearStoresCount, setNearStoresCount] = useState(0)
+  const [bestPriceStoresCount, setBestPriceStoresCount] = useState(0)
+  const [bestPriceNearStoresCount, setBestPriceNearStoresCount] = useState(0)
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast()
   const [alert] = useIonAlert()
   const [transType, setTransType] = useState('')
   useEffect(() => {
+    setPack(() => state.cachedPacks.find(p => p.id === params.id))
+  }, [params.id, state.cachedPacks])
+  useEffect(() => {
+    if (pack) {
+      setOtherProductsCount(() => state.packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId).length)
+    }
+  }, [pack, state.packs])
+  useEffect(() => {
+    if (!pack) return
+    setMyPrice(() => state.packStores.find(ps => ps.packId === params.id && ps.storeId === state.userInfo?.storeId))
+    setStoresCount(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId).length : 0)
+    setNearStoresCount(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && calcDistance(state.userInfo?.position!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
+    setBestPriceStoresCount(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price).length : 0)
+    setBestPriceNearStoresCount(() => state.userInfo?.type === 's' ? state.packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== state.userInfo?.storeId && ps.price === pack.price && calcDistance(state.userInfo?.position!, state.stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
+  }, [pack, params.id, state.packStores, state.userInfo, state.stores])
+  useEffect(() => {
+    if (!pack) return
     setStores(() => {
       let packStores, stores
       if (storesType === 's') {
@@ -103,7 +120,7 @@ const PackDetails = () => {
         return results.sort((r1, r2) => r1.distance - r2.distance)
       }
     })
-  }, [state.packStores, state.stores, state.packs, state.regions, state.user, pack, state.userInfo, nearbyOnly, params.id, state.storeRequests, storesType])
+  }, [pack, state.packStores, state.stores, state.packs, state.regions, state.user, state.userInfo, nearbyOnly, params.id, state.storeRequests, storesType])
   useEffect(() => {
     setIsAvailable(() => Boolean(state.packStores.find(p => p.storeId === state.userInfo?.storeId && p.packId === pack?.id)))
   }, [state.packStores, state.userInfo, pack])
@@ -206,6 +223,7 @@ const PackDetails = () => {
   }
   const handleAddToBasket = () => {
     try {
+      if (!pack) return
       addToBasket(pack.id!)
       message(labels.addSuccess, 3000)
     } catch(err) {
@@ -214,6 +232,7 @@ const PackDetails = () => {
   }
   const handleRemoveFromBasket = () => {
     try {
+      if (!pack) return
       removeFromBasket(pack.id!, state.basket)
       message(labels.deleteSuccess, 3000)
     } catch(err) {
@@ -223,104 +242,107 @@ const PackDetails = () => {
   let i = 0
   return (
     <IonPage>
-      <Header title={pack.product.name} />
-      <IonContent fullscreen>
-        <IonCard>
-          <IonGrid>
-            <IonRow>
-              <IonCol className="card-right">{pack.name}</IonCol>
-              {(myPrice?.price || pack.price!) > 0 &&  <IonCol className={myPrice && !myPrice.isActive ? 'price-off' : 'price'}>{myPrice ? myPrice?.price.toFixed(2) : pack.price!.toFixed(2)}</IonCol>}
-            </IonRow>
-            <IonRow>
-              <IonCol className="card-title">
-                {pack?.product.alias}
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonImg src={pack.imageUrl || pack.product.imageUrl} alt={labels.noImage} />
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol style={{textAlign: 'center'}}>
-                {pack.product.description}
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>{productOfText(pack.countryName, pack.trademarkName)}</IonCol>
-              <IonCol className="ion-text-end"><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} size="m"/></IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonCard>
-        {!state.user && 
-          <IonButton 
-            expand="block"
-            color="success"
-            routerLink="/login"
-            shape="round"
-            className="ion-padding-horizontal"
-          >
-            {labels.showPackStores}
-          </IonButton>
-        }
-        {state.userInfo?.type === 'n' &&
-          <IonItem>
-            <IonLabel>{labels.nearbyOnly}</IonLabel>
-            <IonToggle checked={nearbyOnly} onIonChange={() => setNearbyOnly(s => !s)} />
-          </IonItem>
-        }
-        {state.userInfo?.storeId && state.userInfo?.type === 's' &&
-          <IonGrid style={{margin: '5px'}}>
-            <IonRow>
-              <IonCol className="box" style={{backgroundColor: 'darkblue'}}>
-                <div>{labels.stores}</div>
-                <div>{labels.others}</div>
-                <div>{storesCount.toString()}</div>
-              </IonCol>
-              <IonCol className="box" style={{backgroundColor: 'deeppink'}}>
-                <div>{labels.stores}</div>
-                <div>{labels.nearby}</div>
-                <div>{nearStoresCount.toString()}</div>
-              </IonCol>
-              <IonCol className="box" style={{backgroundColor: 'darkgreen'}}>
-                <div>{labels.stores}</div>
-                <div>{labels.bestPrices}</div>
-                <div>{bestPriceStoresCount.toString()}</div>
-              </IonCol>
-              <IonCol className="box" style={{backgroundColor: 'red'}}>
-                <div>{labels.nearbyStores}</div>
-                <div>{labels.bestPrices}</div>
-                <div>{bestPriceNearStoresCount.toString()}</div>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        }
-        {state.userInfo?.type === 'd' &&
-          <div style={{margin: '10px'}}>
-            <IonSegment value={storesType} onIonChange={e => setStoresType(e.detail.value!)}>
-              <IonSegmentButton value="s">
-                <IonLabel>{labels.wholeStores}</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="r">
-                <IonLabel>{labels.requests}</IonLabel>
-              </IonSegmentButton>
-            </IonSegment>
-          </div>
-        }
-        <IonList className="list">
-          {stores.map((s, i) => 
-            <IonItem key={i} routerLink={`/store-details/${s.id}/${s.packId}`}>
-              <IonLabel>
-                <IonText style={{color: colors[0].name}}>{`${s.name}-${s.type === 'd' ? s.typeName : s.regionName}`}</IonText>
-                {s.packId !== pack?.id && <IonText style={{color: colors[1].name}}>{state.packs.find(p => p.id === s.packId)?.name}</IonText>}
-                {s.type !== 'd' && <IonText style={{color: colors[2].name}}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
-                {storesType === 'r' && <IonText style={{color: colors[3].name}}>{moment(s.time).fromNow()}</IonText>}
-              </IonLabel>
-              {storesType !== 'r' && <IonLabel slot="end" className="ion-text-end">{s.price.toFixed(2)}</IonLabel>}
+      {pack ? <>
+        <Header title={pack.product.name} />
+        <IonContent fullscreen>
+          <IonCard>
+            <IonGrid>
+              <IonRow>
+                <IonCol className="card-right">{pack.name}</IonCol>
+                {(myPrice?.price || pack.price!) > 0 &&  <IonCol className={myPrice && !myPrice.isActive ? 'price-off' : 'price'}>{myPrice ? myPrice?.price.toFixed(2) : pack.price!.toFixed(2)}</IonCol>}
+              </IonRow>
+              <IonRow>
+                <IonCol className="card-title">
+                  {pack?.product.alias}
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol>
+                  <img src={pack.imageUrl || pack.product.imageUrl} alt={labels.noImage} style={{width: '100%'}}/>
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol style={{textAlign: 'center'}}>
+                  {pack.product.description}
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol>{productOfText(pack.countryName, pack.trademarkName)}</IonCol>
+                <IonCol className="ion-text-end"><RatingStars rating={pack.product.rating ?? 0} count={pack.product.ratingCount ?? 0} size="m"/></IonCol>
+              </IonRow>
+            </IonGrid>
+          </IonCard>
+          {!state.user && 
+            <IonButton 
+              expand="block"
+              color="success"
+              routerLink="/login"
+              shape="round"
+              className="ion-padding-horizontal"
+            >
+              {labels.showPackStores}
+            </IonButton>
+          }
+          {state.userInfo?.type === 'n' &&
+            <IonItem>
+              <IonLabel>{labels.nearbyOnly}</IonLabel>
+              <IonToggle checked={nearbyOnly} onIonChange={() => setNearbyOnly(s => !s)} />
             </IonItem>
-          )}
-        </IonList>
-      </IonContent>
+          }
+          {state.userInfo?.storeId && state.userInfo?.type === 's' &&
+            <IonGrid style={{margin: '5px'}}>
+              <IonRow>
+                <IonCol className="box" style={{backgroundColor: 'darkblue'}}>
+                  <div>{labels.stores}</div>
+                  <div>{labels.others}</div>
+                  <div>{storesCount.toString()}</div>
+                </IonCol>
+                <IonCol className="box" style={{backgroundColor: 'deeppink'}}>
+                  <div>{labels.stores}</div>
+                  <div>{labels.nearby}</div>
+                  <div>{nearStoresCount.toString()}</div>
+                </IonCol>
+                <IonCol className="box" style={{backgroundColor: 'darkgreen'}}>
+                  <div>{labels.stores}</div>
+                  <div>{labels.bestPrices}</div>
+                  <div>{bestPriceStoresCount.toString()}</div>
+                </IonCol>
+                <IonCol className="box" style={{backgroundColor: 'red'}}>
+                  <div>{labels.nearbyStores}</div>
+                  <div>{labels.bestPrices}</div>
+                  <div>{bestPriceNearStoresCount.toString()}</div>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          }
+          {state.userInfo?.type === 'd' &&
+            <div style={{margin: '10px'}}>
+              <IonSegment value={storesType} onIonChange={e => setStoresType(e.detail.value!)}>
+                <IonSegmentButton value="s">
+                  <IonLabel>{labels.wholeStores}</IonLabel>
+                </IonSegmentButton>
+                <IonSegmentButton value="r">
+                  <IonLabel>{labels.requests}</IonLabel>
+                </IonSegmentButton>
+              </IonSegment>
+            </div>
+          }
+          <IonList className="list">
+            {stores.map((s, i) => 
+              <IonItem key={i} routerLink={`/store-details/${s.id}/${s.packId}`}>
+                <IonLabel>
+                  <IonText style={{color: colors[0].name}}>{`${s.name}-${s.type === 'd' ? s.typeName : s.regionName}`}</IonText>
+                  {s.packId !== pack?.id && <IonText style={{color: colors[1].name}}>{state.packs.find(p => p.id === s.packId)?.name}</IonText>}
+                  {s.type !== 'd' && <IonText style={{color: colors[2].name}}>{`${labels.distance}: ${Math.floor(s.distance * 1000)} ${labels.metre}`}</IonText>}
+                  {storesType === 'r' && <IonText style={{color: colors[3].name}}>{moment(s.time).fromNow()}</IonText>}
+                </IonLabel>
+                {storesType !== 'r' && <IonLabel slot="end" className="ion-text-end">{s.price.toFixed(2)}</IonLabel>}
+              </IonItem>
+            )}
+          </IonList>
+        </IonContent>
+      </> : <IonLoading isOpen={true} />
+      }
       {state.user && state.userInfo?.isActive &&
         <IonFab vertical="top" horizontal="end" slot="fixed">
           <IonFabButton onClick={() => setActionOpened(true)}>
@@ -359,7 +381,7 @@ const PackDetails = () => {
           },
           {
             text: labels.addPack,
-            cssClass: state.userInfo && ['s', 'w', 'd'].includes(state.userInfo.type) && !pack.subPackId ? colors[i++ % 10].name : 'ion-hide',
+            cssClass: state.userInfo && ['s', 'w', 'd'].includes(state.userInfo.type) && !pack?.subPackId ? colors[i++ % 10].name : 'ion-hide',
             handler: () => history.push(`/add-pack-request/${params.id}`)
           },
           {
@@ -374,13 +396,13 @@ const PackDetails = () => {
           },
           {
             text: labels.rateProduct,
-            cssClass: state.userInfo?.type === 'n' && !state.ratings.find(r => r.productId === pack.product.id) ? colors[i++ % 10].name : 'ion-hide',
+            cssClass: state.userInfo?.type === 'n' && !state.ratings.find(r => r.productId === pack?.product.id) ? colors[i++ % 10].name : 'ion-hide',
             handler: () => setRatingOpened(true)
           },
           {
             text: labels.otherProducts,
-            cssClass: state.userInfo?.type === 'n' && otherProducts.length > 0 ? colors[i++ % 10].name: 'ion-hide',
-            handler: () => history.push(`/packs/p/${pack.id}/0`)
+            cssClass: state.userInfo?.type === 'n' && otherProductsCount > 0 ? colors[i++ % 10].name: 'ion-hide',
+            handler: () => history.push(`/packs/p/${pack?.id}/0`)
           },
         ]}
       />
