@@ -1,9 +1,9 @@
 import firebase from './firebase'
 import labels from './labels'
 import {colors, userTypes} from './config'
-import {Error, Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region, BasketItem} from './types'
+import {Category, Pack, ProductRequest, PackStore, Product, Notification, UserInfo, StoreRequest, PackRequest, Position, Store, Region, BasketItem} from './types'
 
-export const getMessage = (path: string, error: Error) => {
+export const getMessage = (path: string, error: any) => {
   const errorCode = error.code ? error.code.replace(/-|\//g, '_') : error.message
   if (!labels[errorCode]) {
     firebase.firestore().collection('logs').add({

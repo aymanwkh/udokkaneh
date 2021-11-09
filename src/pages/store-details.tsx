@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { addClaim, getMessage, sendNotification } from '../data/actions'
 import labels from '../data/labels'
 import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
@@ -8,6 +8,7 @@ import { StateContext } from '../data/state-provider'
 import { menuOutline } from 'ionicons/icons'
 import Footer from './footer'
 import { colors, userTypes } from '../data/config'
+import QRCode from 'qrcode'
 
 type Params = {
   storeId: string,
@@ -24,6 +25,12 @@ const StoreDetails = () => {
   const location = useLocation()
   const history = useHistory()
   const [alert] = useIonAlert()
+  useEffect(() => {
+    QRCode.toCanvas(document.getElementById('canvas'), store.id || '', function (error) {
+      if (error) console.error(error)
+      console.log('success!');
+    })
+  }, [store])
   const handleAddClaim = () => {
     alert({
       header: labels.claimTitle,
@@ -168,6 +175,7 @@ const StoreDetails = () => {
           </IonItem>
         </>}
         </IonList>
+        <canvas id="canvas"></canvas>
       </IonContent>
       <IonFab vertical="top" horizontal="end" slot="fixed">
         <IonFabButton onClick={() => setActionOpened(true)}>
