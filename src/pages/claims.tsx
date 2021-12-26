@@ -1,5 +1,4 @@
-import { useContext, useState } from 'react'
-import { StateContext } from '../data/state-provider'
+import { useState } from 'react'
 import labels from '../data/labels'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
@@ -8,9 +7,11 @@ import moment from 'moment'
 import 'moment/locale/ar'
 import { colors } from '../data/config'
 import { getCategoryName, productOfText } from '../data/actions'
+import { useSelector } from 'react-redux'
+import { State } from '../data/types'
 
 const Claims = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const [claims] = useState(() => {
     const claims = state.packStores.filter(s => s.storeId === state.userInfo?.storeId && s.claimUserId)
     const result = claims.map(c => {

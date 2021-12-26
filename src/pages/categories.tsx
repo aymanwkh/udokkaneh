@@ -1,18 +1,18 @@
-import { useContext, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { IonButton, IonContent, IonLoading, IonPage } from '@ionic/react'
-import { StateContext } from '../data/state-provider'
 import { colors } from '../data/config'
 import labels from '../data/labels'
-import { Category } from '../data/types'
+import { Category, State } from '../data/types'
 import Header from './header'
 import { useParams } from 'react-router'
 import Footer from './footer'
+import { useSelector } from 'react-redux'
 
 type Params = {
   id: string
 } 
 const Categories = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const params = useParams<Params>()
   const [categories, setCategories] = useState<Category[]>([])
   const [currentCategory] = useState(() => state.categories.find(c => c.id === params.id))

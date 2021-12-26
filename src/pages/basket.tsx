@@ -1,15 +1,15 @@
-import { useContext, useState, useEffect } from 'react'
-import { StateContext } from '../data/state-provider'
+import { useState, useEffect } from 'react'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
-import { CachedPack } from '../data/types'
+import { CachedPack, State } from '../data/types'
 import Footer from './footer'
 import { IonContent, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
 import { colors } from '../data/config'
+import { useSelector } from 'react-redux'
 
 const Basket = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const [basket, setBasket] = useState<CachedPack[]>([])
   useEffect(() => {
     setBasket(() => state.basket.map(b => state.cachedPacks.find(p => p.id === b.packId)!))

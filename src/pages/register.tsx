@@ -1,16 +1,17 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import { getMessage, registerUser } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
-import { Region, UserInfo } from '../data/types'
+import { Region, State, UserInfo } from '../data/types'
 import { patterns, userTypes } from '../data/config'
-import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Register = () => {
-  const { state, dispatch } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
+  const dispatch = useDispatch()
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')

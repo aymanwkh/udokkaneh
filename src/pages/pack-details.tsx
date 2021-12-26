@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState} from 'react'
+import { useEffect, useState} from 'react'
 import RatingStars from './rating-stars'
-import { StateContext} from '../data/state-provider'
 import { addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance, addToBasket, removeFromBasket } from '../data/actions'
 import labels from '../data/labels'
-import { CachedPack, PackStore, Store } from '../data/types'
+import { CachedPack, PackStore, State, Store } from '../data/types'
 import Footer from './footer'
 import { setup, colors, userTypes } from '../data/config'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
@@ -12,6 +11,7 @@ import Header from './header'
 import { menuOutline, heartOutline, heartDislikeOutline, heartHalfOutline } from 'ionicons/icons'
 import moment from 'moment'
 import 'moment/locale/ar'
+import { useSelector } from 'react-redux'
 
 type Params = {
   id: string,
@@ -26,7 +26,7 @@ type ExtendedStore = Store & {
   time: Date
 }
 const PackDetails = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const params = useParams<Params>()
   const [pack, setPack] = useState<CachedPack>()
   const [isAvailable, setIsAvailable] = useState(false)

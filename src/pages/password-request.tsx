@@ -1,14 +1,15 @@
-import {useState, useEffect, useContext} from 'react'
-import {getMessage, addPasswordRequest} from '../data/actions'
+import { useState, useEffect} from 'react'
+import { getMessage, addPasswordRequest } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
-import { StateContext } from '../data/state-provider'
 import { patterns } from '../data/config'
+import { useSelector } from 'react-redux'
+import { State } from '../data/types'
 
 const PasswordRequest = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const [mobile, setMobile] = useState('')
   const [mobileInvalid, setMobileInvalid] = useState(false)
   const history = useHistory()

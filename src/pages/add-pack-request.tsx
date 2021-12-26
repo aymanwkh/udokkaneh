@@ -1,18 +1,18 @@
-import { useState, useContext, useRef, ChangeEvent } from 'react'
+import { useState, useRef, ChangeEvent } from 'react'
 import { getMessage, addPackRequest } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonToggle, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
-import { PackRequest } from '../data/types'
+import { PackRequest, State } from '../data/types'
+import { useSelector } from 'react-redux'
 
 type Params = {
   id: string
 }
 const AddPackRequest = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const params = useParams<Params>()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')

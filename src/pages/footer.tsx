@@ -1,11 +1,11 @@
-import { useContext } from 'react'
-import { StateContext } from '../data/state-provider'
 import { IonBadge, IonButtons, IonFooter, IonIcon, IonToolbar } from '@ionic/react'
 import { cartOutline, homeOutline } from 'ionicons/icons'
 import { useHistory } from 'react-router'
+import { useSelector } from 'react-redux'
+import { State } from '../data/types'
 
 const Footer = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const history = useHistory()
   return (
     <IonFooter>

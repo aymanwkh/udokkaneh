@@ -1,14 +1,15 @@
-import { useState, useRef, ChangeEvent, useContext } from 'react'
+import { useState, useRef, ChangeEvent } from 'react'
 import { getMessage, addProductRequest } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
-import { StateContext } from '../data/state-provider'
 import { checkmarkOutline } from 'ionicons/icons'
+import { useSelector } from 'react-redux'
+import { State } from '../data/types'
 
 const AddProductRequest = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const [name, setName] = useState('')
   const [country, setCountry] = useState('')
   const [weight, setWeight] = useState('')

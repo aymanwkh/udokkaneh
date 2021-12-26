@@ -1,21 +1,22 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { addClaim, getMessage, sendNotification } from '../data/actions'
 import labels from '../data/labels'
 import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
-import { StateContext } from '../data/state-provider'
 import { menuOutline } from 'ionicons/icons'
 import Footer from './footer'
 import { colors, userTypes } from '../data/config'
 import QRCode from 'qrcode'
+import { useSelector } from 'react-redux'
+import { State } from '../data/types'
 
 type Params = {
   storeId: string,
   packId: string
 }
 const StoreDetails = () => {
-  const { state } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
   const params = useParams<Params>()
   const [store] = useState(() => state.stores.find(s => s.id === params.storeId)!)
   const [pack] = useState(() => state.packs.find(p => p.id === params.packId))

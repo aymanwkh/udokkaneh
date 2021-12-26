@@ -1,6 +1,25 @@
 import {State, Action, Region, Country, Trademark} from './types'
 
-const Reducer = (state: State, action: Action) => {
+const initState: State = {
+  categories: [], 
+  basket: [], 
+  packs: [],
+  packStores: [],
+  adverts: [],
+  regions: [],
+  countries: [],
+  trademarks: [],
+  passwordRequests: [],
+  notifications: [],
+  storeRequests: [],
+  stores: [],
+  ratings: [],
+  productRequests: [],
+  searchText: '',
+  cachedPacks: []
+}
+
+const reducer = (state: State = initState, action: Action) => {
   switch (action.type){
     case 'SET_MAP_POSITION':
       return {...state, mapPosition: action.payload}
@@ -60,4 +79,4 @@ const Reducer = (state: State, action: Action) => {
   }
 }
 
-export default Reducer
+export default reducer

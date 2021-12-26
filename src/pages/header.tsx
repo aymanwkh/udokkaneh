@@ -1,14 +1,16 @@
 import { IonBackButton, IonButtons, IonHeader, IonIcon, IonSearchbar, IonTitle, IonToolbar } from '@ionic/react'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import labels from '../data/labels'
-import { StateContext } from '../data/state-provider'
+import { State } from '../data/types'
 
 type Props = {
   title?: string,
   withSearch?: boolean
 }
 const Header = (props: Props) => {
-  const { state, dispatch } = useContext(StateContext)
+  const state = useSelector<State, State>(state => state)
+  const dispatch = useDispatch()
   const [visible, setVisible] = useState(false)
   const handleVisible = () => {
     dispatch({type: 'CLEAR_SEARCH'})

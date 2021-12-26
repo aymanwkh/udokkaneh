@@ -1,10 +1,10 @@
 import { IonFab, IonFabButton, IonIcon, IonPage } from "@ionic/react"
 import { checkmarkOutline } from "ionicons/icons"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { MapContainer, TileLayer, Marker, useMapEvent } from 'react-leaflet'
+import { useDispatch } from "react-redux"
 import { useHistory, useParams } from "react-router"
 import labels from "../data/labels"
-import { StateContext } from "../data/state-provider"
 import { Position } from "../data/types"
 import Header from "./header"
 
@@ -26,7 +26,7 @@ type Params = {
 }
 
 const Map = () => {
-  const {dispatch} = useContext(StateContext)
+  const dispatch = useDispatch()
   const params = useParams<Params>()
   const history = useHistory()
   const [position, setPosition] = useState({lat: +params.lat, lng: +params.lng})
