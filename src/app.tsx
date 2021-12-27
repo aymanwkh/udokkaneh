@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import firebase from './data/firebase'
-import { State, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, StoreRequest, UserInfo, Rating, ProductRequest, PackRequest } from './data/types'
+import { State, Category, Pack, PackStore, Advert, PasswordRequest, Notification, Store, StoreRequest, UserInfo, Rating, ProductRequest, PackRequest, Country, Trademark } from './data/types'
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -49,7 +49,11 @@ import Help from './pages/help'
 import { getCategoryName } from './data/actions';
 
 const App = () => {
-  const state = useSelector<State, State>(state => state)
+  const categories = useSelector<State, Category[]>(state => state.categories)
+  const countries = useSelector<State, Country[]>(state => state.countries)
+  const trademarks = useSelector<State, Trademark[]>(state => state.trademarks)
+  const packs = useSelector<State, Pack[]>(state => state.packs)
+  const packStores = useSelector<State, PackStore[]>(state => state.packStores)
   const dispatch = useDispatch()
   const href = window.location.href
   if (href.length - href.replaceAll('/', '').length !== (href.endsWith('/') ? 3 : 2)) {
@@ -263,26 +267,26 @@ const App = () => {
     })
   }, [dispatch])
   useEffect(() => {
-    if (state.categories.length > 0 && state.countries.length > 0 && state.packs.length > 0) {
-      const packs = state.packs.map((p: Pack) => {
-        const category = state.categories.find(c => c.id === p.product.categoryId)!
-        const country = state.countries.find(c => c.id === p.product.countryId)!
-        const trademark = state.trademarks.find(t => t.id === p.product.trademarkId)
-        const activePrices = state.packStores.filter(s => s.packId === p.id && s.isRetail && s.isActive)
+    if (categories.length > 0 && countries.length > 0 && packs.length > 0) {
+      const result = packs.map(p => {
+        const category = categories.find(c => c.id === p.product.categoryId)!
+        const country = countries.find(c => c.id === p.product.countryId)!
+        const trademark = trademarks.find(t => t.id === p.product.trademarkId)
+        const activePrices = packStores.filter(s => s.packId === p.id && s.isRetail && s.isActive)
         const prices = activePrices.map(p => p.price)
         const price = prices.length > 0 ? Math.min(...prices) : 0
         return {
           ...p,
           price,
           weightedPrice: price / p.unitsCount,
-          categoryName: getCategoryName(category, state.categories),
+          categoryName: getCategoryName(category, categories),
           countryName: country.name,
           trademarkName: trademark?.name
         }
       })
-      dispatch({type: 'SET_CACHED_PACKS', payload: packs})
+      dispatch({type: 'SET_CACHED_PACKS', payload: result})
     }
-  }, [state.categories, state.countries, state.trademarks, state.packs, state.packStores, dispatch])
+  }, [categories, countries, trademarks, packs, packStores, dispatch])
 
   return (
     <IonApp dir="rtl">
