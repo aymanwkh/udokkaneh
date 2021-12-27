@@ -4,24 +4,22 @@ import { deleteProductRequest, getMessage } from '../data/actions'
 import Footer from './footer'
 import { IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
-import { ProductRequest, State } from '../data/types'
+import { ProductRequest, State, UserInfo } from '../data/types'
 import { useLocation } from 'react-router'
 import { addOutline, trashOutline } from 'ionicons/icons'
 import { colors } from '../data/config'
 import { useSelector } from 'react-redux'
 
 const ProductRequests = () => {
-  const state = useSelector<State, State>(state => state)
-  const [productRequests, setProductRequests] = useState<ProductRequest[]>([])
+  const productRequests = useSelector<State, ProductRequest[]>(state => state.productRequests)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
+  const [productRequestList, setProductRequestList] = useState<ProductRequest[]>([])
   const [message] = useIonToast();
   const location = useLocation()
   const [alert] = useIonAlert();
   useEffect(() => {
-    setProductRequests(() => {
-      const productRequests = state.productRequests.filter(r => r.storeId === state.userInfo?.storeId)
-      return productRequests.sort((r1, r2) => r1.time! > r2.time! ? 1 : -1)
-    })
-  }, [state.productRequests, state.userInfo])
+    setProductRequestList(() => productRequests.filter(r => r.storeId === userInfo?.storeId).sort((r1, r2) => r1.time! > r2.time! ? 1 : -1))
+  }, [productRequests, userInfo])
   const handleDelete = (productRequest: ProductRequest) => {
     alert({
       header: labels.confirmationTitle,
@@ -30,7 +28,7 @@ const ProductRequests = () => {
         {text: labels.cancel},
         {text: labels.ok, handler: async () => {
           try{
-            await deleteProductRequest(productRequest, state.productRequests)
+            await deleteProductRequest(productRequest, productRequests)
             message(labels.deleteSuccess, 3000) 
           } catch(err) {
             message(getMessage(location.pathname, err), 3000)
@@ -44,11 +42,11 @@ const ProductRequests = () => {
       <Header title={labels.productRequests} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
-          {productRequests.length === 0 ?
+          {productRequestList.length === 0 ?
             <IonItem> 
               <IonLabel>{labels.noData}</IonLabel>
             </IonItem>
-          : productRequests.map(p => 
+          : productRequestList.map(p => 
               <IonItem key={p.id}>
                 <IonThumbnail slot="start">
                   <IonImg src={p.imageUrl} alt={labels.noImage} />

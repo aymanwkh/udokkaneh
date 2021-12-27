@@ -4,13 +4,14 @@ import labels from '../data/labels'
 import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonLoading, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useHistory, useLocation } from 'react-router'
-import { Region, State, UserInfo } from '../data/types'
+import { Position, Region, State, UserInfo } from '../data/types'
 import { patterns, userTypes } from '../data/config'
 import { checkmarkOutline } from 'ionicons/icons'
 import { useDispatch, useSelector } from 'react-redux'
 
 const Register = () => {
-  const state = useSelector<State, State>(state => state)
+  const regions = useSelector<State, Region[]>(state => state.regions)
+  const mapPosition = useSelector<State, Position | undefined>(state => state.mapPosition)
   const dispatch = useDispatch()
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
@@ -38,11 +39,11 @@ const Register = () => {
     setMobileInvalid(!mobile || !patterns.mobile.test(mobile))
   }, [mobile])
   useEffect(() => {
-    if (state.mapPosition) setPosition(state.mapPosition)
+    if (mapPosition) setPosition(mapPosition)
     return function cleanUp() {
       dispatch({type: 'CLEAR_MAP_POSITION'})
     }
-  }, [state.mapPosition, dispatch])
+  }, [mapPosition, dispatch])
   const handleSetPosition = () => {
     loading()
     navigator.geolocation.getCurrentPosition(
@@ -218,7 +219,7 @@ const Register = () => {
         </IonHeader>
         <IonContent fullscreen className="ion-padding">
           <IonList>
-            {state.regions.map(r => 
+            {regions.map(r => 
               <IonItem key={r.id} detail onClick={() => goToMap(r)}>
                 <IonLabel>{r.name}</IonLabel>
               </IonItem>

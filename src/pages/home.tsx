@@ -1,39 +1,38 @@
 import { IonButtons, IonContent, IonHeader, IonLoading , IonMenuButton, IonPage, IonTitle, IonToolbar, IonBadge, IonButton } from '@ionic/react';
 import { useEffect, useState } from 'react'
 import labels from '../data/labels'
-import { Advert, State } from '../data/types'
+import { Advert, State, Category, Notification, UserInfo } from '../data/types'
 import Footer from './footer'
 import { colors } from '../data/config'
-import { Category } from '../data/types'
 import { useSelector } from 'react-redux';
 
 const Home = () => {
-  const state = useSelector<State, State>(state => state)
+  const categories = useSelector<State, Category[]>(state => state.categories)
+  const adverts = useSelector<State, Advert[]>(state => state.adverts)
+  const notifications = useSelector<State, Notification[]>(state => state.notifications)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const [advert, setAdvert] = useState<Advert | undefined>(undefined)
   const [notificationsCount, setNotificationsCount] = useState(0)
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryList, setCategoryList] = useState<Category[]>([])
   useEffect(() => {
-    setCategories(() => {
-      const categories = state.categories.filter(c => c.parentId === '0')
-      return categories.sort((c1, c2) => c1.ordering - c2.ordering)  
-    })
-  }, [state.categories])
+    setCategoryList(() => categories.filter(c => c.parentId === '0').sort((c1, c2) => c1.ordering - c2.ordering))
+  }, [categories])
   useEffect(() => {
     const now = new Date()
     const today = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate()
-    setAdvert(() => state.adverts.find(a => a.startDate <= today && a.endDate >= today))
-  }, [state.adverts])
+    setAdvert(() => adverts.find(a => a.startDate <= today && a.endDate >= today))
+  }, [adverts])
   useEffect(() => {
-    if (state.userInfo) {
-      setNotificationsCount(() => state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length)
+    if (userInfo) {
+      setNotificationsCount(() => notifications.filter(n => n.time > (userInfo!.lastSeen || userInfo!.time!)).length)
     } else {
       setNotificationsCount(0)
     }
-  }, [state.userInfo, state.notifications])
+  }, [userInfo, notifications])
   let i = 0
   return (
     <IonPage>
-      <IonLoading isOpen={state.categories.length === 0} />
+      <IonLoading isOpen={categories.length === 0} />
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -73,7 +72,7 @@ const Home = () => {
         >
           {labels.allProducts}
         </IonButton>
-        {categories.map(c => 
+        {categoryList.map(c => 
           <IonButton
             routerLink={c.isLeaf ? `/packs/n/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"

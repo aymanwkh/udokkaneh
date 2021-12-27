@@ -6,10 +6,10 @@ import Header from './header'
 import { useHistory, useLocation } from 'react-router'
 import { checkmarkOutline } from 'ionicons/icons'
 import { useSelector } from 'react-redux'
-import { State } from '../data/types'
+import { State, UserInfo } from '../data/types'
 
 const AddProductRequest = () => {
-  const state = useSelector<State, State>(state => state)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const [name, setName] = useState('')
   const [country, setCountry] = useState('')
   const [weight, setWeight] = useState('')
@@ -48,7 +48,7 @@ const AddProductRequest = () => {
       }
       const productRequest = {
         id: Math.random().toString(),
-        storeId: state.userInfo?.storeId!,
+        storeId: userInfo?.storeId!,
         name,
         country,
         weight,

@@ -9,7 +9,7 @@ type Props = {
   withSearch?: boolean
 }
 const Header = (props: Props) => {
-  const state = useSelector<State, State>(state => state)
+  const searchText = useSelector<State, string>(state => state.searchText)
   const dispatch = useDispatch()
   const [visible, setVisible] = useState(false)
   const handleVisible = () => {
@@ -38,7 +38,7 @@ const Header = (props: Props) => {
         <IonToolbar>
           <IonSearchbar
             placeholder={labels.search} 
-            value={state.searchText} 
+            value={searchText} 
             onIonChange={e => dispatch({type: 'SET_SEARCH', payload: e.detail.value})}
           />
         </IonToolbar>

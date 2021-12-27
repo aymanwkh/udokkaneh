@@ -30,7 +30,7 @@ import './css/app.css'
 import Panel from './pages/panel'
 import Home from './pages/home'
 import Login from './pages/login'
-import PasswordRequestPage from './pages/password-request'
+import AddPasswordRequest from './pages/add-password-request'
 import Register from './pages/register'
 import ChangePassword from './pages/change-password'
 import Categories from './pages/categories'
@@ -42,7 +42,7 @@ import ProductRequests from './pages/product-requests'
 import Notifications from './pages/notifications'
 import StoreDetails from './pages/store-details'
 import AddProductRequest from './pages/add-product-request'
-import AdvertPage from './pages/advert'
+import AdvertDetail from './pages/advert-detail'
 import Claims from './pages/claims'
 import Map from './pages/map'
 import Help from './pages/help'
@@ -261,7 +261,7 @@ const App = () => {
         dispatch({type: 'CLEAR_BASKET'})
       }
     })
-  }, [])
+  }, [dispatch])
   useEffect(() => {
     if (state.categories.length > 0 && state.countries.length > 0 && state.packs.length > 0) {
       const packs = state.packs.map((p: Pack) => {
@@ -282,7 +282,7 @@ const App = () => {
       })
       dispatch({type: 'SET_CACHED_PACKS', payload: packs})
     }
-  }, [state.categories, state.countries, state.trademarks, state.packs, state.packStores])
+  }, [state.categories, state.countries, state.trademarks, state.packs, state.packStores, dispatch])
 
   return (
     <IonApp dir="rtl">
@@ -293,7 +293,7 @@ const App = () => {
             <Route path="/" exact={true} component={Home} />
             <Route path="/login" exact={true} component={Login} />
             <Route path="/register" exact={true} component={Register} />
-            <Route path="/password-request" exact={true} component={PasswordRequestPage} />
+            <Route path="/password-request" exact={true} component={AddPasswordRequest} />
             <Route path="/change-password" exact={true} component={ChangePassword} />
             <Route path="/categories/:id" exact={true} component={Categories} />
             <Route path="/packs/:type/:id/:storeId" exact={true} component={Packs} />
@@ -304,7 +304,7 @@ const App = () => {
             <Route path="/notifications" exact={true} component={Notifications} />
             <Route path="/store-details/:storeId/:packId" exact={true} component={StoreDetails} />
             <Route path="/add-product-request" exact={true} component={AddProductRequest} />
-            <Route path="/advert" exact={true} component={AdvertPage} />
+            <Route path="/advert" exact={true} component={AdvertDetail} />
             <Route path="/claims" exact={true} component={Claims} />
             <Route path="/map/:lat/:lng/:updatable" exact={true} component={Map} />
             <Route path="/help" exact={true} component={Help} />

@@ -12,20 +12,17 @@ type Params = {
   id: string
 } 
 const Categories = () => {
-  const state = useSelector<State, State>(state => state)
+  const categories = useSelector<State, Category[]>(state => state.categories)
   const params = useParams<Params>()
-  const [categories, setCategories] = useState<Category[]>([])
-  const [currentCategory] = useState(() => state.categories.find(c => c.id === params.id))
+  const [categoryList, setCategoryList] = useState<Category[]>([])
+  const [currentCategory] = useState(() => categories.find(c => c.id === params.id))
   useEffect(() => {
-    setCategories(() => {
-      const categories = state.categories.filter(c => c.parentId === params.id)
-      return categories.sort((c1, c2) => c1.ordering - c2.ordering)
-    })
-  }, [state.categories, params.id])
+    setCategoryList(() => categories.filter(c => c.parentId === params.id).sort((c1, c2) => c1.ordering - c2.ordering))
+  }, [categories, params.id])
   let i = 0
   return (
     <IonPage>
-      <IonLoading isOpen={state.categories.length === 0} />
+      <IonLoading isOpen={categories.length === 0} />
       <Header title={currentCategory?.name} />
       <IonContent fullscreen>
         <IonButton 
@@ -37,7 +34,7 @@ const Categories = () => {
         >
           {labels.allProducts}
         </IonButton>
-        {categories.map(c => 
+        {categoryList.map(c => 
           <IonButton
             routerLink={c.isLeaf ? `/packs/c/${c.id}/0` : `/categories/${c.id}`} 
             expand="block"

@@ -8,21 +8,26 @@ import 'moment/locale/ar'
 import { colors } from '../data/config'
 import { getCategoryName, productOfText } from '../data/actions'
 import { useSelector } from 'react-redux'
-import { State } from '../data/types'
+import { Category, Country, Pack, PackStore, State, Trademark, UserInfo } from '../data/types'
 
 const Claims = () => {
-  const state = useSelector<State, State>(state => state)
+  const packStores = useSelector<State, PackStore[]>(state => state.packStores)
+  const packs = useSelector<State, Pack[]>(state => state.packs)
+  const categories = useSelector<State, Category[]>(state => state.categories)
+  const trademarks = useSelector<State, Trademark[]>(state => state.trademarks)
+  const countries = useSelector<State, Country[]>(state => state.countries)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const [claims] = useState(() => {
-    const claims = state.packStores.filter(s => s.storeId === state.userInfo?.storeId && s.claimUserId)
+    const claims = packStores.filter(s => s.storeId === userInfo?.storeId && s.claimUserId)
     const result = claims.map(c => {
-      const packInfo = state.packs.find(p => p.id === c.packId)!
-      const categoryInfo = state.categories.find(c => c.id === packInfo.product.categoryId)!
-      const trademarkName = state.trademarks.find(t => t.id === packInfo.product.trademarkId)?.name
-      const countryName = state.countries.find(c => c.id === packInfo.product.countryId)!.name
+      const packInfo = packs.find(p => p.id === c.packId)!
+      const categoryInfo = categories.find(c => c.id === packInfo.product.categoryId)!
+      const trademarkName = trademarks.find(t => t.id === packInfo.product.trademarkId)?.name
+      const countryName = countries.find(c => c.id === packInfo.product.countryId)!.name
       return {
         ...c,
         packInfo,
-        categoryName: getCategoryName(categoryInfo, state.categories),
+        categoryName: getCategoryName(categoryInfo, categories),
         trademarkName,
         countryName
       }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
-import { CachedPack, State } from '../data/types'
+import { BasketItem, CachedPack, State } from '../data/types'
 import Footer from './footer'
 import { IonContent, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
@@ -9,21 +9,22 @@ import { colors } from '../data/config'
 import { useSelector } from 'react-redux'
 
 const Basket = () => {
-  const state = useSelector<State, State>(state => state)
-  const [basket, setBasket] = useState<CachedPack[]>([])
+  const cachedPacks = useSelector<State, CachedPack[]>(state => state.cachedPacks)
+  const basket = useSelector<State, BasketItem[]>(state => state.basket)
+  const [basketItems, setBasketItems] = useState<CachedPack[]>([])
   useEffect(() => {
-    setBasket(() => state.basket.map(b => state.cachedPacks.find(p => p.id === b.packId)!))
-  }, [state.basket, state.stores, state.packs, state.categories, state.countries, state.trademarks, state.cachedPacks])
+    setBasketItems(() => basket.map(b => cachedPacks.find(p => p.id === b.packId)!))
+  }, [basket, cachedPacks])
   return(
     <IonPage>
       <Header title={labels.basket} />
       <IonContent fullscreen>
         <IonList className="ion-padding">
-          {basket.length === 0 ?
+          {basketItems.length === 0 ?
             <IonItem> 
               <IonLabel>{labels.noData}</IonLabel>
             </IonItem>
-          : basket.map(p => 
+          : basketItems.map(p => 
               <IonItem key={p.id} routerLink={`/pack-details/${p.id}`}>
                 <IonThumbnail slot="start">
                   <img src={p.imageUrl || p.product.imageUrl} alt={labels.noImage} style={{width: '100%'}} />

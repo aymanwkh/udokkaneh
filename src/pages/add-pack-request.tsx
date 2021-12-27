@@ -5,14 +5,15 @@ import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput,
 import Header from './header'
 import { useHistory, useLocation, useParams } from 'react-router'
 import { checkmarkOutline } from 'ionicons/icons'
-import { PackRequest, State } from '../data/types'
+import { Pack, PackRequest, State, UserInfo } from '../data/types'
 import { useSelector } from 'react-redux'
 
 type Params = {
   id: string
 }
 const AddPackRequest = () => {
-  const state = useSelector<State, State>(state => state)
+  const packs = useSelector<State, Pack[]>(state => state.packs)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const params = useParams<Params>()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
@@ -20,7 +21,7 @@ const AddPackRequest = () => {
   const [subCount, setSubCount] = useState('')
   const [withGift, setWithGift] = useState(false)
   const [gift, setGift] = useState('')
-  const [pack] = useState(() => state.packs.find(p => p.id === params.id)!)
+  const [pack] = useState(() => packs.find(p => p.id === params.id)!)
   const [specialImage, setSpecialImage] = useState(false)
   const [imageUrl, setImageUrl] = useState('')
   const [image, setImage] = useState<File>()
@@ -65,7 +66,7 @@ const AddPackRequest = () => {
       const packName = form === 'g' ? `${+subCount > 1 ? subCount + '×' : ''}${pack.name}${withGift ? '+' + gift : ''}` : name
       const packRequest: PackRequest = {
         id: Math.random().toString(),
-        storeId: state.userInfo?.storeId!,
+        storeId: userInfo?.storeId!,
         siblingPackId: params.id,
         name: packName,
         price: +price,

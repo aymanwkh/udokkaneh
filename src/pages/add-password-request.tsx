@@ -6,10 +6,10 @@ import Header from './header'
 import { useHistory, useLocation } from 'react-router'
 import { patterns } from '../data/config'
 import { useSelector } from 'react-redux'
-import { State } from '../data/types'
+import { PasswordRequest, State } from '../data/types'
 
-const PasswordRequest = () => {
-  const state = useSelector<State, State>(state => state)
+const AddPasswordRequest = () => {
+  const passwordRequests = useSelector<State, PasswordRequest[]>(state => state.passwordRequests)
   const [mobile, setMobile] = useState('')
   const [mobileInvalid, setMobileInvalid] = useState(false)
   const history = useHistory()
@@ -20,7 +20,7 @@ const PasswordRequest = () => {
   }, [mobile])
   const handlePasswordRequest = () => {
     try{
-      if (state.passwordRequests.find(r => r.mobile === mobile)) {
+      if (passwordRequests.find(r => r.mobile === mobile)) {
         throw new Error('duplicatePasswordRequest')
       }
       addPasswordRequest(mobile)
@@ -66,4 +66,4 @@ const PasswordRequest = () => {
     </IonPage>
   )
 }
-export default PasswordRequest
+export default AddPasswordRequest

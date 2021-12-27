@@ -4,21 +4,25 @@ import { useEffect, useRef, useState } from 'react';
 import { logout } from '../data/actions';
 import labels from '../data/labels';
 import { useDispatch, useSelector } from 'react-redux';
-import { State } from '../data/types';
+import { PackStore, State, Notification, UserInfo } from '../data/types';
+import firebase from '../data/firebase'
 
 const Panel = () => {
-  const state = useSelector<State, State>(state => state)
+  const notifications = useSelector<State, Notification[]>(state => state.notifications)
+  const packStores = useSelector<State, PackStore[]>(state => state.packStores)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
+  const user = useSelector<State, firebase.User | undefined>(state => state.user)
   const dispatch = useDispatch()
   const [notificationsCount, setNotificationsCount] = useState(0)
   const [claimsCount, setClaimsCount] = useState(0)
   const menuEl = useRef<HTMLIonMenuElement | null>(null)
   const history = useHistory()
   useEffect(() => {
-    setNotificationsCount(() => state.userInfo ? state.notifications.filter(n => n.time > (state.userInfo!.lastSeen || state.userInfo!.time!)).length : 0)
-  }, [state.userInfo, state.notifications])
+    setNotificationsCount(() => userInfo ? notifications.filter(n => n.time > (userInfo!.lastSeen || userInfo!.time!)).length : 0)
+  }, [userInfo, notifications])
   useEffect(() => {
-    setClaimsCount(() => state.userInfo?.storeId ? state.packStores.filter(s => s.storeId === state.userInfo?.storeId && s.claimUserId).length : 0)
-  }, [state.userInfo, state.packStores])
+    setClaimsCount(() => userInfo?.storeId ? packStores.filter(s => s.storeId === userInfo?.storeId && s.claimUserId).length : 0)
+  }, [userInfo, packStores])
   const handleLogout = () => {
     logout()
     dispatch({type: 'LOGOUT'})
@@ -32,7 +36,7 @@ const Panel = () => {
       <IonContent>
         <IonList>
           <IonMenuToggle autoHide={false}>
-            {state.user ?
+            {user ?
               <>
                 <IonItem href="#" onClick={handleLogout}>
                   <IonLabel style={{marginBottom: '5px'}}>{labels.logout}</IonLabel>
@@ -49,22 +53,22 @@ const Panel = () => {
                 <IonLabel>{labels.login}</IonLabel>
               </IonItem>
             }
-            {state.userInfo?.type && ['s', 'w', 'd'].includes(state.userInfo?.type) &&
+            {userInfo?.type && ['s', 'w', 'd'].includes(userInfo?.type) &&
               <IonItem routerLink='/product-requests'>
                 <IonLabel>{labels.productRequests}</IonLabel>
               </IonItem>
             }
-            {state.userInfo?.type === 'd' &&
+            {userInfo?.type === 'd' &&
               <IonItem routerLink='/packs/r/0/0'>
                 <IonLabel>{labels.requests}</IonLabel>
               </IonItem>
             }
-            {state.userInfo?.storeId &&
-              <IonItem routerLink={`/store-details/${state.userInfo?.storeId}/0`}>
+            {userInfo?.storeId &&
+              <IonItem routerLink={`/store-details/${userInfo?.storeId}/0`}>
                 <IonLabel>{labels.myInfo}</IonLabel>
               </IonItem>
             }
-            {state.userInfo?.type && ['s', 'w'].includes(state.userInfo?.type) &&
+            {userInfo?.type && ['s', 'w'].includes(userInfo?.type) &&
               <IonItem routerLink='/claims'>
                 <IonLabel>{labels.claims}</IonLabel>
                 {claimsCount > 0 && <IonBadge color="danger">{claimsCount}</IonBadge>}

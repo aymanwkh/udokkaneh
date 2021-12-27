@@ -9,18 +9,24 @@ import Footer from './footer'
 import { colors, userTypes } from '../data/config'
 import QRCode from 'qrcode'
 import { useSelector } from 'react-redux'
-import { State } from '../data/types'
+import { Pack, PackStore, Region, State, Store, UserInfo } from '../data/types'
+import firebase from '../data/firebase'
 
 type Params = {
   storeId: string,
   packId: string
 }
 const StoreDetails = () => {
-  const state = useSelector<State, State>(state => state)
+  const stores = useSelector<State, Store[]>(state => state.stores)
+  const packs = useSelector<State, Pack[]>(state => state.packs)
+  const packStores = useSelector<State, PackStore[]>(state => state.packStores)
+  const regions = useSelector<State, Region[]>(state => state.regions)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
+  const user = useSelector<State, firebase.User | undefined>(state => state.user)
   const params = useParams<Params>()
-  const [store] = useState(() => state.stores.find(s => s.id === params.storeId)!)
-  const [pack] = useState(() => state.packs.find(p => p.id === params.packId))
-  const [price] = useState(() => state.packStores.find(s => s.packId === params.packId && s.storeId === params.storeId)?.price)
+  const [store] = useState(() => stores.find(s => s.id === params.storeId)!)
+  const [pack] = useState(() => packs.find(p => p.id === params.packId))
+  const [price] = useState(() => packStores.find(s => s.packId === params.packId && s.storeId === params.storeId)?.price)
   const [actionOpened, setActionOpened] = useState(false)
   const [message] = useIonToast();
   const location = useLocation()
@@ -40,11 +46,11 @@ const StoreDetails = () => {
         {text: labels.cancel},
         {text: labels.ok, handler: async () => {
           try{
-            const packStore = state.packStores.find(s => s.storeId === params.storeId && s.packId === params.packId)
-            if (packStore?.claimUserId === state.user?.uid){
+            const packStore = packStores.find(s => s.storeId === params.storeId && s.packId === params.packId)
+            if (packStore?.claimUserId === user?.uid){
               throw new Error('duplicateClaims')
             }
-            addClaim(params.storeId, params.packId, state.packStores)
+            addClaim(params.storeId, params.packId, packStores)
             message(labels.sendSuccess, 3000)
             history.goBack()
           } catch(err) {
@@ -55,8 +61,8 @@ const StoreDetails = () => {
     })
   }
   const handleConfirm = () => {
-    const myStore = state.stores.find(s => s.ownerId === state.user?.uid)
-    const typeName = userTypes.find(t => t.id === state.userInfo?.type)?.name
+    const myStore = stores.find(s => s.ownerId === user?.uid)
+    const typeName = userTypes.find(t => t.id === userInfo?.type)?.name
     let notificationText: string, messageText: string
     if (myStore?.type === 'd' && ['s', 'r'].includes(store.type)) {
       notificationText = `${labels.doYouWant} ${pack?.product.name} ${pack?.name}`
@@ -74,8 +80,8 @@ const StoreDetails = () => {
           try{
             const confirmMessage = {
               id: Math.random().toString(),
-              userId: state.user?.uid || null,
-              userName: `${state.userInfo?.name} ${myStore ? '-' + (myStore.type === 'd' ? typeName : myStore.name) : ''}` || '',
+              userId: user?.uid || null,
+              userName: `${userInfo?.name} ${myStore ? '-' + (myStore.type === 'd' ? typeName : myStore.name) : ''}` || '',
               title: labels.confirm,
               message: notificationText,
               isResponse: false,
@@ -130,7 +136,7 @@ const StoreDetails = () => {
                 {labels.region}
               </IonLabel>
               <IonInput 
-                value={state.regions.find(r => r.id === store.regionId)?.name || ''} 
+                value={regions.find(r => r.id === store.regionId)?.name || ''} 
                 readonly
               />
             </IonItem>
@@ -143,7 +149,7 @@ const StoreDetails = () => {
                 readonly
               />
             </IonItem>
-            {state.userInfo?.type === 'n' &&
+            {userInfo?.type === 'n' &&
               <IonItem>
                 <IonLabel position="floating" color="primary">
                   {labels.alarmsCount}
@@ -199,7 +205,7 @@ const StoreDetails = () => {
           },
           {
             text: labels.addClaim,
-            cssClass: state.userInfo?.type === 'n' || store.type === 'w' ? colors[i++ % 10].name : 'ion-hide',
+            cssClass: userInfo?.type === 'n' || store.type === 'w' ? colors[i++ % 10].name : 'ion-hide',
             handler: () => handleAddClaim()
           },
           {

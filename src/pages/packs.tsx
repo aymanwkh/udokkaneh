@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import labels from '../data/labels'
-import { colors} from '../data/config'
+import { colors } from '../data/config'
 import { getChildren, productOfText } from '../data/actions'
-import {CachedPack, PackStore, State } from '../data/types'
+import { CachedPack, Category, Pack, PackStore, State, Store, StoreRequest, UserInfo } from '../data/types'
 import Footer from './footer'
 import { IonContent, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonThumbnail } from '@ionic/react'
 import Header from './header'
@@ -20,11 +20,18 @@ type Params = {
   storeId: string
 }
 const Packs = () => {
-  const state = useSelector<State, State>(state => state)
+  const packs = useSelector<State, Pack[]>(state => state.packs)
+  const categories = useSelector<State, Category[]>(state => state.categories)
+  const stores = useSelector<State, Store[]>(state => state.stores)
+  const cachedPacks = useSelector<State, CachedPack[]>(state => state.cachedPacks)
+  const packStores = useSelector<State, PackStore[]>(state => state.packStores)
+  const storeRequests = useSelector<State, StoreRequest[]>(state => state.storeRequests)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
+  const searchText = useSelector<State, string>(state => state.searchText)
   const dispatch = useDispatch()
   const params = useParams<Params>()
-  const [packs, setPacks] = useState<ExtendedPack[]>([])
-  const [category] = useState(() => state.categories.find(category => category.id === params.id))
+  const [packList, setPackList] = useState<ExtendedPack[]>([])
+  const [category] = useState(() => categories.find(c => c.id === params.id))
   const [sortBy, setSortBy] = useState('v')
   const [data, setData] = useState<ExtendedPack[]>([])
   const [title, setTitle] = useState('')
@@ -37,7 +44,7 @@ const Packs = () => {
     setTitle(() => {
       switch (params.type) {
         case 's':
-          return `${labels.packs}-${state.stores.find(s => s.id === params.storeId)?.name}`
+          return `${labels.packs}-${stores.find(s => s.id === params.storeId)?.name}`
         case 'r':
           return labels.requests
         case 'a':
@@ -48,30 +55,30 @@ const Packs = () => {
           return category?.name || ''
       }
     })
-  }, [params, state.stores, category])
+  }, [params, stores, category])
   useEffect(() => {
-    setPacks(() => {
-      let packs
+    setPackList(() => {
+      let result
       switch (params.type){
         case 'a':
-          const children = getChildren(params.id, state.categories)
-          packs = state.cachedPacks.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && children.includes(p.product.categoryId))
+          const children = getChildren(params.id, categories)
+          result = cachedPacks.filter(p => (p.price! > 0 || (userInfo?.type === 's' && p.forSale) || (userInfo && ['w', 'd'].includes(userInfo.type))) && children.includes(p.product.categoryId))
           break
         case 's':
-          packs = state.cachedPacks.filter(p => state.packStores.find(s => s.packId === p.id && s.storeId === params.storeId))
+          result = cachedPacks.filter(p => packStores.find(s => s.packId === p.id && s.storeId === params.storeId))
           break
         case 'r':
-          packs = state.cachedPacks.filter(p => state.storeRequests.find(r => r.packId === p.id))
+          result = cachedPacks.filter(p => storeRequests.find(r => r.packId === p.id))
           break
         case 'p':
-          const pack = state.packs.find(p => p.id === params.id)
-          packs = state.cachedPacks.filter(p => p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId)
+          const pack = packs.find(p => p.id === params.id)
+          result = cachedPacks.filter(p => p.product.id !== pack?.product.id && p.product.categoryId === pack?.product.categoryId)
           break
         default:
-          packs = state.cachedPacks.filter(p => (p.price! > 0 || (state.userInfo?.type === 's' && p.forSale) || (state.userInfo && ['w', 'd'].includes(state.userInfo.type))) && p.product.categoryId === params.id)
+          result = cachedPacks.filter(p => (p.price! > 0 || (userInfo?.type === 's' && p.forSale) || (userInfo && ['w', 'd'].includes(userInfo.type))) && p.product.categoryId === params.id)
       }
-      const results = packs.map(p => {
-        const packStoreInfo = state.packStores.find(s => s.packId === p.id && s.storeId === (params.storeId === '0' ? state.userInfo?.storeId : params.storeId))
+      const results = result.map(p => {
+        const packStoreInfo = packStores.find(s => s.packId === p.id && s.storeId === (params.storeId === '0' ? userInfo?.storeId : params.storeId))
         return {
           ...p,
           packStoreInfo
@@ -79,10 +86,10 @@ const Packs = () => {
       })
       return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
-  }, [state.packs, state.userInfo, params, state.categories, state.trademarks, state.countries, state.packStores, state.storeRequests, state.cachedPacks])
+  }, [packs, userInfo, params, categories, packStores, storeRequests, cachedPacks])
   useEffect(() => {
-    if (!state.searchText) {
-      setData(packs)
+    if (!searchText) {
+      setData(packList)
       return
     }
     const options = {
@@ -91,21 +98,21 @@ const Packs = () => {
       threshold: 0.1,
       keys: ['product.name', 'product.alias', 'name', 'categoryName', 'trademarkName', 'countryName']
     }
-    const fuse = new Fuse(packs, options);
-    const result = fuse.search(state.searchText);
+    const fuse = new Fuse(packList, options);
+    const result = fuse.search(searchText);
     setData(result.map(p => p.item));
-  }, [state.searchText, packs])
+  }, [searchText, packList])
   const handleSorting = (sortByValue: string) => {
     setSortBy(sortByValue)
     switch(sortByValue){
       case 'p':
-        setPacks([...packs].sort((p1, p2) => (p1.price! - (p1.withGift ? 0.01 : 0)) - (p2.price! - (p2.withGift ? 0.01 : 0))))
+        setPackList([...packList].sort((p1, p2) => (p1.price! - (p1.withGift ? 0.01 : 0)) - (p2.price! - (p2.withGift ? 0.01 : 0))))
         break
       case 'r':
-        setPacks([...packs].sort((p1, p2) => (p1.product.rating === 0 ? 2.5 : p1.product.rating) === (p2.product.rating === 0 ? 2.5 : p2.product.rating) ? (p2.product.ratingCount - p1.product.ratingCount) : (p2.product.rating === 0 ? 2.5 : p2.product.rating) - (p1.product.rating === 0 ? 2.5 : p1.product.rating)))
+        setPackList([...packList].sort((p1, p2) => (p1.product.rating === 0 ? 2.5 : p1.product.rating) === (p2.product.rating === 0 ? 2.5 : p2.product.rating) ? (p2.product.ratingCount - p1.product.ratingCount) : (p2.product.rating === 0 ? 2.5 : p2.product.rating) - (p1.product.rating === 0 ? 2.5 : p1.product.rating)))
         break
       case 'v':
-        setPacks([...packs].sort((p1, p2) => (p1.weightedPrice! - (p1.withGift ? 0.01 : 0)) - (p2.weightedPrice! - (p2.withGift ? 0.01 : 0))))
+        setPackList([...packList].sort((p1, p2) => (p1.weightedPrice! - (p1.withGift ? 0.01 : 0)) - (p2.weightedPrice! - (p2.withGift ? 0.01 : 0))))
         break
       default:
     }
@@ -145,7 +152,7 @@ const Packs = () => {
                   <IonText style={{color: colors[3].name}}>{p.categoryName}</IonText>
                   <IonText style={{color: colors[4].name}}>{productOfText(p.countryName, p.trademarkName)}</IonText>
                   <IonText style={{color: colors[5].name}}>{params.type !== 's' && p.packStoreInfo ? `${labels.myPrice}:${p.packStoreInfo?.price.toFixed(2)} ${p.packStoreInfo?.isActive ? '' : '(' + labels.inActive + ')'}` : ''}</IonText>
-                  <IonText style={{color: colors[6].name}}>{params.type === 'r' ? `${labels.requestsCount}:${state.storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
+                  <IonText style={{color: colors[6].name}}>{params.type === 'r' ? `${labels.requestsCount}:${storeRequests.filter(r => r.packId === p.id).length}` : ''}</IonText>
                   <IonText><RatingStars rating={p.product.rating} count={p.product.ratingCount} size="s" /></IonText>
                 </IonLabel>
                 <IonLabel slot="end" className={params.type === 's' && !p.packStoreInfo?.isActive ? 'price-off' : 'price'}><IonText style={{color: 'red', fontSize: '1rem'}}>{params.type === 's' ? p.packStoreInfo?.price.toFixed(2) : p.price! > 0 ? p.price!.toFixed(2) : ''}</IonText></IonLabel>

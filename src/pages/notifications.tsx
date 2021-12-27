@@ -5,28 +5,32 @@ import Footer from './footer'
 import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonText, useIonAlert, useIonToast } from '@ionic/react'
 import Header from './header'
 import { useLocation } from 'react-router'
-import { Notification, State } from '../data/types'
+import { Notification, State, Store, UserInfo } from '../data/types'
 import moment from 'moment'
 import 'moment/locale/ar'
 import { refreshOutline, trashOutline } from 'ionicons/icons'
 import { colors } from '../data/config'
 import { useSelector } from 'react-redux'
+import firebase from '../data/firebase'
 
 const Notifications = () => {
-  const state = useSelector<State, State>(state => state)
+  const notifications = useSelector<State, Notification[]>(state => state.notifications)
+  const stores = useSelector<State, Store[]>(state => state.stores)
+  const user = useSelector<State, firebase.User | undefined>(state => state.user)
+  const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const location = useLocation()
   const [message] = useIonToast()
   const [alert] = useIonAlert()
-  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [notificationList, setNotificationList] = useState<Notification[]>([])
   useEffect(() => {
     updateLastSeen()
   }, [])
   useEffect(() => {
-    setNotifications(() => [...state.notifications].sort((n1, n2) => n1.time > n2.time ? -1 : 1))
-  }, [state.notifications])
+    setNotificationList(() => [...notifications].sort((n1, n2) => n1.time > n2.time ? -1 : 1))
+  }, [notifications])
   const handleResponse = (notification: Notification, flag: boolean) => {
-    const myStore = state.stores.find(s => s.ownerId === state.user?.uid)
-    const senderStore = state.stores.find(s => s.ownerId === notification.userId)
+    const myStore = stores.find(s => s.ownerId === user?.uid)
+    const senderStore = stores.find(s => s.ownerId === notification.userId)
     let messageText
     if (myStore && ['s', 'r'].includes(myStore.type) && senderStore?.type === 'd') {
       messageText = flag ? labels.stillWant : labels.dontWant
@@ -35,21 +39,21 @@ const Notifications = () => {
     }
     const response = {
       id: Math.random().toString(),
-      userId: state.user?.uid || null,
-      userName: `${state.userInfo?.name} ${myStore ? '-' + myStore.name : ''}` || '',
+      userId: user?.uid || null,
+      userName: `${userInfo?.name} ${myStore ? '-' + myStore.name : ''}` || '',
       title: labels.response,
       message: messageText,
       isResponse: true,
       time: new Date()
     }
     sendNotification(notification.userId!, response)
-    deleteNotification(notification.id, state.notifications)
+    deleteNotification(notification.id, notifications)
     message(labels.sendSuccess, 3000)
   }
   const handleNotification = (notification: Notification) => {
     try{
       if (notification.isResponse || !notification.userId) {
-        deleteNotification(notification.id, state.notifications)
+        deleteNotification(notification.id, notifications)
         message(labels.deleteSuccess, 3000)
       } else {
         alert({
@@ -70,11 +74,11 @@ const Notifications = () => {
       <Header title={labels.notifications} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
-          {notifications.length === 0 ?
+          {notificationList.length === 0 ?
             <IonItem> 
               <IonLabel>{labels.noData}</IonLabel>
             </IonItem>
-          : notifications.map(n => 
+          : notificationList.map(n => 
               <IonItem key={n.id}>
                 <IonLabel>
                   <IonText style={{color: colors[0].name}}>{`${labels.from} ${n.userName}`}</IonText>

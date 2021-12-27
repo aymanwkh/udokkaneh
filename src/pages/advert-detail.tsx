@@ -3,11 +3,11 @@ import { IonCard, IonCol, IonContent, IonGrid, IonImg, IonPage, IonRow } from '@
 import Header from './header'
 import labels from '../data/labels'
 import { useSelector } from 'react-redux'
-import { State } from '../data/types'
+import { Advert, State } from '../data/types'
 
-const Advert = () => {
-  const state = useSelector<State, State>(state => state)
-  const [advert] = useState(state.adverts[0])
+const AdvertDetail = () => {
+  const adverts = useSelector<State, Advert[]>(state => state.adverts)
+  const [advert] = useState(adverts[0])
   return (
     <IonPage>
       <Header title={labels.advert} />
@@ -32,4 +32,4 @@ const Advert = () => {
   )
 }
 
-export default Advert
+export default AdvertDetail
