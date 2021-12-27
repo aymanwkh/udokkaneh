@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { addClaim, getMessage, sendNotification } from '../data/actions'
 import labels from '../data/labels'
 import { IonActionSheet, IonContent, IonFab, IonFabButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, useIonAlert, useIonToast } from '@ionic/react'
@@ -24,9 +24,9 @@ const StoreDetails = () => {
   const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const user = useSelector<State, firebase.User | undefined>(state => state.user)
   const params = useParams<Params>()
-  const [store] = useState(() => stores.find(s => s.id === params.storeId)!)
-  const [pack] = useState(() => packs.find(p => p.id === params.packId))
-  const [price] = useState(() => packStores.find(s => s.packId === params.packId && s.storeId === params.storeId)?.price)
+  const store = useMemo(() => stores.find(s => s.id === params.storeId)!, [stores, params.storeId])
+  const pack = useMemo(() => packs.find(p => p.id === params.packId), [packs, params.packId])
+  const price = useMemo(() => packStores.find(s => s.packId === params.packId && s.storeId === params.storeId)?.price, [packStores, params.storeId, params.packId])
   const [actionOpened, setActionOpened] = useState(false)
   const [message] = useIonToast();
   const location = useLocation()

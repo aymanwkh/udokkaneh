@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import labels from '../data/labels'
 import { colors } from '../data/config'
 import { getChildren, productOfText } from '../data/actions'
@@ -30,32 +30,29 @@ const Packs = () => {
   const searchText = useSelector<State, string>(state => state.searchText)
   const dispatch = useDispatch()
   const params = useParams<Params>()
+  const category = useMemo(() => categories.find(c => c.id === params.id), [categories, params.id])
   const [packList, setPackList] = useState<ExtendedPack[]>([])
-  const [category] = useState(() => categories.find(c => c.id === params.id))
   const [sortBy, setSortBy] = useState('v')
   const [data, setData] = useState<ExtendedPack[]>([])
-  const [title, setTitle] = useState('')
+  const title = useMemo(() => {
+    switch (params.type) {
+      case 's':
+        return `${labels.packs}-${stores.find(s => s.id === params.storeId)?.name}`
+        case 'r':
+          return labels.requests
+          case 'a':
+            return labels.allProducts
+            case 'p':
+              return labels.otherProducts
+              default:
+                return category?.name || ''
+              }
+            }, [params.storeId, stores, category, params.type])
   useEffect(() => {
     return function cleanUp() {
       dispatch({type: 'CLEAR_SEARCH'})
     }
   }, [dispatch])
-  useEffect(() => {
-    setTitle(() => {
-      switch (params.type) {
-        case 's':
-          return `${labels.packs}-${stores.find(s => s.id === params.storeId)?.name}`
-        case 'r':
-          return labels.requests
-        case 'a':
-          return labels.allProducts
-        case 'p':
-          return labels.otherProducts
-        default:
-          return category?.name || ''
-      }
-    })
-  }, [params, stores, category])
   useEffect(() => {
     setPackList(() => {
       let result
@@ -77,14 +74,14 @@ const Packs = () => {
         default:
           result = cachedPacks.filter(p => (p.price! > 0 || (userInfo?.type === 's' && p.forSale) || (userInfo && ['w', 'd'].includes(userInfo.type))) && p.product.categoryId === params.id)
       }
-      const results = result.map(p => {
-        const packStoreInfo = packStores.find(s => s.packId === p.id && s.storeId === (params.storeId === '0' ? userInfo?.storeId : params.storeId))
-        return {
-          ...p,
-          packStoreInfo
-        }
-      })
-      return results.sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
+      return result
+              .map(p => {
+                const packStoreInfo = packStores.find(s => s.packId === p.id && s.storeId === (params.storeId === '0' ? userInfo?.storeId : params.storeId))
+                return {
+                  ...p,
+                  packStoreInfo
+                }})
+              .sort((p1, p2) => p1.weightedPrice! - p2.weightedPrice!)
     })
   }, [packs, userInfo, params, categories, packStores, storeRequests, cachedPacks])
   useEffect(() => {
@@ -106,13 +103,13 @@ const Packs = () => {
     setSortBy(sortByValue)
     switch(sortByValue){
       case 'p':
-        setPackList([...packList].sort((p1, p2) => (p1.price! - (p1.withGift ? 0.01 : 0)) - (p2.price! - (p2.withGift ? 0.01 : 0))))
+        setPackList(packList.sort((p1, p2) => (p1.price! - (p1.withGift ? 0.01 : 0)) - (p2.price! - (p2.withGift ? 0.01 : 0))))
         break
       case 'r':
-        setPackList([...packList].sort((p1, p2) => (p1.product.rating === 0 ? 2.5 : p1.product.rating) === (p2.product.rating === 0 ? 2.5 : p2.product.rating) ? (p2.product.ratingCount - p1.product.ratingCount) : (p2.product.rating === 0 ? 2.5 : p2.product.rating) - (p1.product.rating === 0 ? 2.5 : p1.product.rating)))
+        setPackList(packList.sort((p1, p2) => (p1.product.rating === 0 ? 2.5 : p1.product.rating) === (p2.product.rating === 0 ? 2.5 : p2.product.rating) ? (p2.product.ratingCount - p1.product.ratingCount) : (p2.product.rating === 0 ? 2.5 : p2.product.rating) - (p1.product.rating === 0 ? 2.5 : p1.product.rating)))
         break
       case 'v':
-        setPackList([...packList].sort((p1, p2) => (p1.weightedPrice! - (p1.withGift ? 0.01 : 0)) - (p2.weightedPrice! - (p2.withGift ? 0.01 : 0))))
+        setPackList(packList.sort((p1, p2) => (p1.weightedPrice! - (p1.withGift ? 0.01 : 0)) - (p2.weightedPrice! - (p2.withGift ? 0.01 : 0))))
         break
       default:
     }

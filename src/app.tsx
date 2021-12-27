@@ -265,11 +265,11 @@ const App = () => {
   useEffect(() => {
     if (state.categories.length > 0 && state.countries.length > 0 && state.packs.length > 0) {
       const packs = state.packs.map((p: Pack) => {
-        const category = state.categories.find((c: Category) => c.id === p.product.categoryId)!
+        const category = state.categories.find(c => c.id === p.product.categoryId)!
         const country = state.countries.find(c => c.id === p.product.countryId)!
         const trademark = state.trademarks.find(t => t.id === p.product.trademarkId)
-        const activePrices = state.packStores.filter((s: PackStore) => s.packId === p.id && s.isRetail && s.isActive)
-        const prices = activePrices.map((p: PackStore) => p.price)
+        const activePrices = state.packStores.filter(s => s.packId === p.id && s.isRetail && s.isActive)
+        const prices = activePrices.map(p => p.price)
         const price = prices.length > 0 ? Math.min(...prices) : 0
         return {
           ...p,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { IonButton, IonContent, IonLoading, IonPage } from '@ionic/react'
 import { colors } from '../data/config'
 import labels from '../data/labels'
@@ -14,11 +14,8 @@ type Params = {
 const Categories = () => {
   const categories = useSelector<State, Category[]>(state => state.categories)
   const params = useParams<Params>()
-  const [categoryList, setCategoryList] = useState<Category[]>([])
-  const [currentCategory] = useState(() => categories.find(c => c.id === params.id))
-  useEffect(() => {
-    setCategoryList(() => categories.filter(c => c.parentId === params.id).sort((c1, c2) => c1.ordering - c2.ordering))
-  }, [categories, params.id])
+  const categoryList = useMemo(() => categories.filter(c => c.parentId === params.id).sort((c1, c2) => c1.ordering - c2.ordering), [categories, params.id])
+  const currentCategory = useMemo(() => categories.find(c => c.id === params.id), [categories, params.id])
   let i = 0
   return (
     <IonPage>

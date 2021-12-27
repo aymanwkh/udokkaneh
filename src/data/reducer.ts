@@ -1,4 +1,4 @@
-import {State, Action, Region, Country, Trademark} from './types'
+import {State, Action, Region, Country, Trademark, Notification} from './types'
 
 const initState: State = {
   categories: [], 
@@ -21,41 +21,42 @@ const initState: State = {
 
 const reducer = (state: State = initState, action: Action) => {
   switch (action.type){
-    case 'SET_MAP_POSITION':
-      return {...state, mapPosition: action.payload}
-    case 'CLEAR_MAP_POSITION':
-      return {...state, mapPosition: undefined}
-    case 'CLEAR_BASKET':
-      return {...state, basket: []}
-    case 'SET_BASKET':
-      return {...state, basket: action.payload}
-    case 'LOGIN':
-      return {...state, user: action.payload}
-    case 'LOGOUT':
-      return {...state, user: undefined}
-    case 'SET_USER_INFO':
-      return {...state, userInfo: action.payload}
-    case 'SET_NOTIFICATIONS':
-      return {...state, notifications: action.payload}
-    case 'CLEAR_USER_INFO':
-      return {...state, userInfo: undefined}
+    // case 'SET_MAP_POSITION':
+    //   return {...state, mapPosition: action.payload}
+    // case 'CLEAR_MAP_POSITION':
+    //   return {...state, mapPosition: undefined}
+    // case 'CLEAR_BASKET':
+    //   return {...state, basket: []}
+    // case 'SET_BASKET':
+    //   return {...state, basket: action.payload}
+    // case 'LOGIN':
+    //   return {...state, user: action.payload}
+    // case 'LOGOUT':
+    //   return {...state, user: undefined}
+    // case 'SET_USER_INFO':
+    //   return {...state, userInfo: action.payload}
+    // case 'SET_NOTIFICATIONS':
+    //   const notifications: Notification[] = action.payload
+    //   return {...state, notifications: notifications.sort((n1, n2) => n1.time > n2.time ? -1 : 1)}
+    // case 'CLEAR_USER_INFO':
+    //   return {...state, userInfo: undefined}
     case 'SET_PACKS':
       return {...state, packs: action.payload}
     case 'SET_CATEGORIES':
       return {...state, categories: action.payload}
-    case 'SET_PACK_STORES':
-      return {...state, packStores: action.payload}
-    case 'SET_ADVERTS':
-      return {...state, adverts: action.payload}
-    case 'SET_REGIONS':
-      const regions: Region[] = action.payload
-      return {...state, regions: regions.sort((r1, r2) => r1.ordering - r2.ordering)}
-    case 'SET_COUNTRIES':
-      const countries: Country[] = action.payload
-      return {...state, countries: countries.sort((c1, c2) => c1.name > c2.name ? 1 : -1)}
-    case 'SET_TRADEMARKS':
-      const trademarks: Trademark[] = action.payload
-      return {...state, trademarks: trademarks.sort((t1, t2) => t1.name > t2.name ? 1 : -1)}
+    // case 'SET_PACK_STORES':
+    //   return {...state, packStores: action.payload}
+    // case 'SET_ADVERTS':
+    //   return {...state, adverts: action.payload}
+    // case 'SET_REGIONS':
+    //   const regions: Region[] = action.payload
+    //   return {...state, regions: regions.sort((r1, r2) => r1.ordering - r2.ordering)}
+    // case 'SET_COUNTRIES':
+    //   const countries: Country[] = action.payload
+    //   return {...state, countries: countries.sort((c1, c2) => c1.name > c2.name ? 1 : -1)}
+    // case 'SET_TRADEMARKS':
+    //   const trademarks: Trademark[] = action.payload
+    //   return {...state, trademarks: trademarks.sort((t1, t2) => t1.name > t2.name ? 1 : -1)}
     case 'SET_PASSWORD_REQUESTS':
       return {...state, passwordRequests: action.payload}
     case 'SET_STORE_REQUESTS':

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import labels from '../data/labels'
 import { deleteProductRequest, getMessage } from '../data/actions'
 import Footer from './footer'
@@ -13,13 +13,10 @@ import { useSelector } from 'react-redux'
 const ProductRequests = () => {
   const productRequests = useSelector<State, ProductRequest[]>(state => state.productRequests)
   const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
-  const [productRequestList, setProductRequestList] = useState<ProductRequest[]>([])
-  const [message] = useIonToast();
+  const productRequestList = useMemo(() => productRequests.filter(r => r.storeId === userInfo?.storeId).sort((r1, r2) => r1.time! > r2.time! ? 1 : -1), [productRequests, userInfo])
+  const [message] = useIonToast()
   const location = useLocation()
-  const [alert] = useIonAlert();
-  useEffect(() => {
-    setProductRequestList(() => productRequests.filter(r => r.storeId === userInfo?.storeId).sort((r1, r2) => r1.time! > r2.time! ? 1 : -1))
-  }, [productRequests, userInfo])
+  const [alert] = useIonAlert()
   const handleDelete = (productRequest: ProductRequest) => {
     alert({
       header: labels.confirmationTitle,

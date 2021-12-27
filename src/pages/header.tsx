@@ -13,7 +13,8 @@ const Header = (props: Props) => {
   const dispatch = useDispatch()
   const [visible, setVisible] = useState(false)
   const handleVisible = () => {
-    dispatch({type: 'CLEAR_SEARCH'})
+    console.log('clicked..')
+    // dispatch({type: 'CLEAR_SEARCH'})
     setVisible(true)
   }
   return (

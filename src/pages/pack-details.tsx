@@ -1,4 +1,4 @@
-import { useEffect, useState} from 'react'
+import { useMemo, useState} from 'react'
 import RatingStars from './rating-stars'
 import { addPackStore, changePrice, deleteStorePack, addStoreRequest, getMessage, productOfText, rateProduct, deleteStoreRequest, calcDistance, addToBasket, removeFromBasket } from '../data/actions'
 import labels from '../data/labels'
@@ -18,14 +18,6 @@ type Params = {
   id: string,
   type: string
 }
-type ExtendedStore = Store & {
-  regionName?: string,
-  typeName?: string,
-  distance: number,
-  packId: string,
-  price: number,
-  time: Date
-}
 const PackDetails = () => {
   const cachedPacks = useSelector<State, CachedPack[]>(state => state.cachedPacks)
   const packs = useSelector<State, Pack[]>(state => state.packs)
@@ -38,102 +30,79 @@ const PackDetails = () => {
   const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const user = useSelector<State, firebase.User | undefined>(state => state.user)
   const params = useParams<Params>()
-  const [pack, setPack] = useState<CachedPack>()
-  const [isAvailable, setIsAvailable] = useState(false)
-  const [otherProductsCount, setOtherProductsCount] = useState(0)
+  const pack = useMemo(() => cachedPacks.find(p => p.id === params.id), [params.id, cachedPacks])
+  const isAvailable = useMemo(() => Boolean(packStores.find(p => p.storeId === userInfo?.storeId && p.packId === pack?.id)), [packStores, userInfo, pack])
+  const otherProductsCount = useMemo(() => pack ? packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId).length : 0, [pack, packs])
   const [actionOpened, setActionOpened] = useState(false)
   const [ratingOpened, setRatingOpened] = useState(false)
   const [nearbyOnly, setNearbyOnly] = useState(false)
   const [storesType, setStoresType] = useState('s')
-  const [storeList, setStoreList] = useState<ExtendedStore[]>([])
-  const [myPrice, setMyPrice] = useState<PackStore>()
-  const [storesCount, setStoresCount] = useState(0)
-  const [nearStoresCount, setNearStoresCount] = useState(0)
-  const [bestPriceStoresCount, setBestPriceStoresCount] = useState(0)
-  const [bestPriceNearStoresCount, setBestPriceNearStoresCount] = useState(0)
+  const myPrice = useMemo(() => packStores.find(ps => ps.packId === params.id && ps.storeId === userInfo?.storeId), [packStores, params.id, userInfo])
+  const storesCount = useMemo(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack?.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId).length : 0, [pack, userInfo, packStores])
+  const nearStoresCount = useMemo(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack?.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId && calcDistance(userInfo?.position!, stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0, [pack, userInfo, packStores, stores])
+  const bestPriceStoresCount = useMemo(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack?.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId && ps.price === pack.price).length : 0, [pack, userInfo, packStores])
+  const bestPriceNearStoresCount = useMemo(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack?.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId && ps.price === pack.price && calcDistance(userInfo?.position!, stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0, [pack, userInfo, packStores, stores])
   const history = useHistory()
   const location = useLocation()
   const [message] = useIonToast()
   const [alert] = useIonAlert()
   const [transType, setTransType] = useState('')
-  useEffect(() => {
-    setPack(() => cachedPacks.find(p => p.id === params.id))
-  }, [params.id, cachedPacks])
-  useEffect(() => {
-    if (pack) {
-      setOtherProductsCount(() => packs.filter(pa => pa.product.id !== pack?.product.id && pa.product.categoryId === pack?.product.categoryId).length)
-    }
-  }, [pack, packs])
-  useEffect(() => {
-    if (!pack) return
-    setMyPrice(() => packStores.find(ps => ps.packId === params.id && ps.storeId === userInfo?.storeId))
-    setStoresCount(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId).length : 0)
-    setNearStoresCount(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId && calcDistance(userInfo?.position!, stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
-    setBestPriceStoresCount(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId && ps.price === pack.price).length : 0)
-    setBestPriceNearStoresCount(() => userInfo?.type === 's' ? packStores.filter(ps => ps.packId === pack.id && ps.isRetail && ps.isActive && ps.storeId !== userInfo?.storeId && ps.price === pack.price && calcDistance(userInfo?.position!, stores.find(s => s.id === ps.storeId)?.position!) < 1).length : 0)
-  }, [pack, params.id, packStores, userInfo, stores])
-  useEffect(() => {
-    if (!pack) return
-    setStoreList(() => {
-      let result, filteredPackStores
-      if (storesType === 's') {
-        switch (userInfo?.type){
-          case 'n':
-            filteredPackStores = packStores.filter(p => (p.packId === params.id || packs.find(pa => pa.id === p.packId && pa.product.id === pack.product.id)) && p.isActive && p.isRetail)
-            break
-          case 's':
-          case 'r':
-            filteredPackStores = packStores.filter(p => (p.packId === params.id || packs.find(pa => pa.id === p.packId && pa.product.id === pack.product.id)) && stores.find(s => s.id === p.storeId)?.type !== 's')
-            break
-          case 'd':
-            filteredPackStores = packStores.filter(p => (p.packId === params.id || packs.find(pa => pa.id === p.packId && pa.product.id === pack.product.id)) && stores.find(s => s.id === p.storeId)?.type === 'w')
-            break
-          default:
-            return []
-        }
-        result = filteredPackStores.map(s => {
-          return {
-            storeId: s.storeId,
-            packId: s.packId,
-            price: s.price,
-            time: s.time
-          }
-        })
-      } else {
-        const requests = storeRequests.filter(r => r.packId === params.id || packs.find(pa => pa.id === r.packId && pa.product.id === pack.product.id))
-        result = requests.map(r => {
-          return {
-            ...r,
-            price: 0
-          }
-        })
+  const storeList = useMemo(() => {
+    let result, filteredPackStores
+    if (storesType === 's') {
+      switch (userInfo?.type){
+        case 'n':
+          filteredPackStores = packStores.filter(p => (p.packId === params.id || packs.find(pa => pa.id === p.packId && pa.product.id === pack?.product.id)) && p.isActive && p.isRetail)
+          break
+        case 's':
+        case 'r':
+          filteredPackStores = packStores.filter(p => (p.packId === params.id || packs.find(pa => pa.id === p.packId && pa.product.id === pack?.product.id)) && stores.find(s => s.id === p.storeId)?.type !== 's')
+          break
+        case 'd':
+          filteredPackStores = packStores.filter(p => (p.packId === params.id || packs.find(pa => pa.id === p.packId && pa.product.id === pack?.product.id)) && stores.find(s => s.id === p.storeId)?.type === 'w')
+          break
+        default:
+          return []
       }
-      const results = result.map(s => {
-        const store = stores.find(ss => ss.id === s.storeId)!
-        let distance = 1000
-        if (userInfo?.position?.lat && store.position.lat) {
-          distance = calcDistance(userInfo?.position, store.position)
-        }
+      result = filteredPackStores.map(s => {
         return {
-          ...store,
-          distance,
-          regionName: regions.find(r => r.id === store.regionId)?.name,
-          typeName: userTypes.find(t => t.id === store.type)?.name,
+          storeId: s.storeId,
           packId: s.packId,
           price: s.price,
           time: s.time
         }
       })
-      if (nearbyOnly && userInfo?.position?.lat) {
-        return results.filter(r => r.distance < 1).sort((r1, r2) => r1.price === r2.price ? (r1.claimsCount - r2.claimsCount) : (r1.price - r2.price))
-      } else {
-        return results.sort((r1, r2) => r1.distance - r2.distance)
+    } else {
+      const requests = storeRequests.filter(r => r.packId === params.id || packs.find(pa => pa.id === r.packId && pa.product.id === pack?.product.id))
+      result = requests.map(r => {
+        return {
+          ...r,
+          price: 0
+        }
+      })
+    }
+    const results = result.map(s => {
+      const store = stores.find(ss => ss.id === s.storeId)!
+      let distance = 1000
+      if (userInfo?.position?.lat && store.position.lat) {
+        distance = calcDistance(userInfo?.position, store.position)
+      }
+      return {
+        ...store,
+        distance,
+        regionName: regions.find(r => r.id === store.regionId)?.name,
+        typeName: userTypes.find(t => t.id === store.type)?.name,
+        packId: s.packId,
+        price: s.price,
+        time: s.time
       }
     })
+    if (nearbyOnly && userInfo?.position?.lat) {
+      return results.filter(r => r.distance < 1).sort((r1, r2) => r1.price === r2.price ? (r1.claimsCount - r2.claimsCount) : (r1.price - r2.price))
+    } else {
+      return results.sort((r1, r2) => r1.distance - r2.distance)
+    }
   }, [pack, packStores, stores, packs, regions, userInfo, nearbyOnly, params.id, storeRequests, storesType])
-  useEffect(() => {
-    setIsAvailable(() => Boolean(packStores.find(p => p.storeId === userInfo?.storeId && p.packId === pack?.id)))
-  }, [packStores, userInfo, pack])
   const deletePrice = (flag: boolean) => {
     try{
       const storePack = packStores.find(p => p.storeId === userInfo?.storeId && p.packId === pack?.id)!

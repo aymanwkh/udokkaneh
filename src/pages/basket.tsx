@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import labels from '../data/labels'
 import { productOfText } from '../data/actions'
 import { BasketItem, CachedPack, State } from '../data/types'
@@ -11,10 +11,7 @@ import { useSelector } from 'react-redux'
 const Basket = () => {
   const cachedPacks = useSelector<State, CachedPack[]>(state => state.cachedPacks)
   const basket = useSelector<State, BasketItem[]>(state => state.basket)
-  const [basketItems, setBasketItems] = useState<CachedPack[]>([])
-  useEffect(() => {
-    setBasketItems(() => basket.map(b => cachedPacks.find(p => p.id === b.packId)!))
-  }, [basket, cachedPacks])
+  const basketItems = useMemo(() => basket.map(b => cachedPacks.find(p => p.id === b.packId)!), [basket, cachedPacks])
   return(
     <IonPage>
       <Header title={labels.basket} />

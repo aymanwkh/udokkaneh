@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import labels from '../data/labels'
 import Footer from './footer'
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail } from '@ionic/react'
@@ -17,24 +17,23 @@ const Claims = () => {
   const trademarks = useSelector<State, Trademark[]>(state => state.trademarks)
   const countries = useSelector<State, Country[]>(state => state.countries)
   const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
-  const [claims] = useState(() => {
-    const claims = packStores.filter(s => s.storeId === userInfo?.storeId && s.claimUserId)
-    const result = claims.map(c => {
-      const packInfo = packs.find(p => p.id === c.packId)!
-      const categoryInfo = categories.find(c => c.id === packInfo.product.categoryId)!
-      const trademarkName = trademarks.find(t => t.id === packInfo.product.trademarkId)?.name
-      const countryName = countries.find(c => c.id === packInfo.product.countryId)!.name
-      return {
-        ...c,
-        packInfo,
-        categoryName: getCategoryName(categoryInfo, categories),
-        trademarkName,
-        countryName
-      }
-
-    })
-    return result.sort((c1, c2) => c1.time > c2.time ? 1 : -1)
-  })
+  const claims = useMemo(() => 
+    packStores
+      .filter(s => s.storeId === userInfo?.storeId && s.claimUserId)
+      .map(c => {
+        const packInfo = packs.find(p => p.id === c.packId)!
+        const categoryInfo = categories.find(c => c.id === packInfo.product.categoryId)!
+        const trademarkName = trademarks.find(t => t.id === packInfo.product.trademarkId)?.name
+        const countryName = countries.find(c => c.id === packInfo.product.countryId)!.name
+        return {
+          ...c,
+          packInfo,
+          categoryName: getCategoryName(categoryInfo, categories),
+          trademarkName,
+          countryName
+        }})
+      .sort((c1, c2) => c1.time > c2.time ? 1 : -1)
+  , [packStores, packs, categories, trademarks, countries, userInfo])
   return(
     <IonPage>
       <Header title={labels.claims} />

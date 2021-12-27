@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import labels from '../data/labels'
 import { deleteNotification, getMessage, sendNotification, updateLastSeen } from '../data/actions'
 import Footer from './footer'
@@ -21,13 +21,9 @@ const Notifications = () => {
   const location = useLocation()
   const [message] = useIonToast()
   const [alert] = useIonAlert()
-  const [notificationList, setNotificationList] = useState<Notification[]>([])
   useEffect(() => {
     updateLastSeen()
   }, [])
-  useEffect(() => {
-    setNotificationList(() => [...notifications].sort((n1, n2) => n1.time > n2.time ? -1 : 1))
-  }, [notifications])
   const handleResponse = (notification: Notification, flag: boolean) => {
     const myStore = stores.find(s => s.ownerId === user?.uid)
     const senderStore = stores.find(s => s.ownerId === notification.userId)
@@ -74,11 +70,11 @@ const Notifications = () => {
       <Header title={labels.notifications} />
       <IonContent fullscreen className="ion-padding">
         <IonList>
-          {notificationList.length === 0 ?
+          {notifications.length === 0 ?
             <IonItem> 
               <IonLabel>{labels.noData}</IonLabel>
             </IonItem>
-          : notificationList.map(n => 
+          : notifications.map(n => 
               <IonItem key={n.id}>
                 <IonLabel>
                   <IonText style={{color: colors[0].name}}>{`${labels.from} ${n.userName}`}</IonText>

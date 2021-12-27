@@ -1,6 +1,6 @@
 import { IonBadge, IonContent, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { logout } from '../data/actions';
 import labels from '../data/labels';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,16 +13,10 @@ const Panel = () => {
   const userInfo = useSelector<State, UserInfo | undefined>(state => state.userInfo)
   const user = useSelector<State, firebase.User | undefined>(state => state.user)
   const dispatch = useDispatch()
-  const [notificationsCount, setNotificationsCount] = useState(0)
-  const [claimsCount, setClaimsCount] = useState(0)
+  const notificationsCount = useMemo(() => userInfo ? notifications.filter(n => n.time > (userInfo!.lastSeen || userInfo!.time!)).length : 0, [userInfo, notifications])
+  const claimsCount = useMemo(() => userInfo?.storeId ? packStores.filter(s => s.storeId === userInfo?.storeId && s.claimUserId).length : 0, [userInfo, packStores])
   const menuEl = useRef<HTMLIonMenuElement | null>(null)
   const history = useHistory()
-  useEffect(() => {
-    setNotificationsCount(() => userInfo ? notifications.filter(n => n.time > (userInfo!.lastSeen || userInfo!.time!)).length : 0)
-  }, [userInfo, notifications])
-  useEffect(() => {
-    setClaimsCount(() => userInfo?.storeId ? packStores.filter(s => s.storeId === userInfo?.storeId && s.claimUserId).length : 0)
-  }, [userInfo, packStores])
   const handleLogout = () => {
     logout()
     dispatch({type: 'LOGOUT'})
