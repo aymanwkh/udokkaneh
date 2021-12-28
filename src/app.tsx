@@ -1,4 +1,4 @@
-import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react'
+import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { Route } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
@@ -47,6 +47,9 @@ import Claims from './pages/claims'
 import Map from './pages/map'
 import Help from './pages/help'
 import { getCategoryName } from './data/actions';
+
+setupIonicReact();
+
 
 const App = () => {
   const categories = useSelector<State, Category[]>(state => state.categories)
@@ -289,7 +292,7 @@ const App = () => {
   }, [categories, countries, trademarks, packs, packStores, dispatch])
 
   return (
-    <IonApp dir="rtl">
+    <IonApp>
       <IonReactRouter>
         <IonSplitPane contentId="main">
           <Panel />

@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent } from 'react'
+import { useState, useRef, ChangeEvent, useMemo } from 'react'
 import { getMessage, addPackRequest } from '../data/actions'
 import labels from '../data/labels'
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonToggle, useIonToast } from '@ionic/react'
@@ -21,7 +21,7 @@ const AddPackRequest = () => {
   const [subCount, setSubCount] = useState('')
   const [withGift, setWithGift] = useState(false)
   const [gift, setGift] = useState('')
-  const [pack] = useState(() => packs.find(p => p.id === params.id)!)
+  const pack = useMemo(() => packs.find(p => p.id === params.id)!, [packs, params.id])
   const [specialImage, setSpecialImage] = useState(false)
   const [imageUrl, setImageUrl] = useState('')
   const [image, setImage] = useState<File>()
